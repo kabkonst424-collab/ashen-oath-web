@@ -1,0 +1,26 @@
+[
+  {
+    "file": "CormorantSC-Bold.ttf",
+    "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/cormorantsc/CormorantSC-Bold.ttf",
+    "sha256": "78f70c79b5c0a1e66641d4b4a2e2ed32e1a45774b3de94e56f8de68510219177",
+    "bytes": 763124
+  },
+  {
+    "file": "CormorantSC-OFL.txt",
+    "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/cormorantsc/OFL.txt",
+    "sha256": "60700d351cac4650c51f3f9db318d2a420f8b45052dba2715eb5fec41f0f6956",
+    "bytes": 4387
+  },
+  {
+    "file": "Lora-Variable.ttf",
+    "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/lora/Lora%5Bwght%5D.ttf",
+    "sha256": "822a6621ccbe8d97d20ac88c1c41f5615c9c2c202eaa75f272cd452aac6475a7",
+    "bytes": 212196
+  },
+  {
+    "file": "Lora-OFL.txt",
+    "url": "https://raw.githubusercontent.com/google/fonts/main/ofl/lora/OFL.txt",
+    "sha256": "1d9a970809ac804b582a6ce7f0ebc4e7fefcbfd7ff6299cad35ee656a21be716",
+    "bytes": 4423
+  }
+]

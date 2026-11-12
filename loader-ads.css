@@ -1,0 +1,8 @@
+/* Preserve the game's artwork and controls; reserve separate space for ads. */
+#actMenu[data-loader-ads]{display:grid;grid-template-columns:minmax(300px,420px) 266px;justify-content:end;align-items:center;align-content:safe center;gap:24px;overflow:auto;overscroll-behavior:contain;padding:max(20px,var(--safe-top,0px)) max(24px,var(--safe-right,0px)) max(20px,var(--safe-bottom,0px)) max(24px,var(--safe-left,0px))}
+#actMenu[data-loader-ads]>.menu-card{width:100%;min-width:0;max-height:calc(100dvh - var(--safe-top,0px) - var(--safe-bottom,0px) - 40px);grid-column:1;grid-row:1}
+.ashen-loading-ad{width:266px;padding:12px;border:1px solid #c6a15e66;border-radius:8px;background:#0b131aeb;box-shadow:0 12px 40px #0007;align-self:center;grid-column:2;grid-row:1}
+.ashen-loading-ad-label{display:block;margin-bottom:10px;color:#d3c6ab;text-align:center;font:10px/1.3 system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase}
+.ashen-loading-ad .mrg-tag{display:block;width:240px;height:400px;background:#151e25}
+@media(max-width:759px){#actMenu[data-loader-ads]{grid-template-columns:minmax(0,1fr);align-content:start;justify-items:center;gap:18px;padding:max(16px,var(--safe-top,0px)) max(12px,var(--safe-right,0px)) max(16px,var(--safe-bottom,0px)) max(12px,var(--safe-left,0px))}#actMenu[data-loader-ads]>.menu-card{grid-column:1;grid-row:1;width:min(100%,420px);max-height:none}#actMenu[data-loader-ads]>.ashen-loading-ad{grid-column:1;grid-row:2;justify-self:end}}
+@media(max-height:599px){#actMenu[data-loader-ads]{align-content:start}}

@@ -1,0 +1,173 @@
+{
+  "schema": 1,
+  "columns": 5,
+  "rows": 5,
+  "frames": 25,
+  "tileSize": 128,
+  "width": 640,
+  "height": 640,
+  "layout": "rowmajor top-left,frame0top-left",
+  "file": "blender-ember-atlas.png",
+  "blenderVersion": "5.2.3 LTS",
+  "renderer": "CYCLES CPU12samples 2threads",
+  "transparent": true,
+  "recipe": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-bake.py",
+  "recipeSHA256": "883019ce0849827096f7162380134a62f271f9118dd7dd808c6d54e52fdb10b3",
+  "atlasSHA256": "e8b204978f762b156ac49d5a679e99781b532a068d43daf12538e4a790a9a1ce",
+  "source": "Original procedural emissive tapered meshes authored for this task; no external asset pixels",
+  "license": "Task-original generated output",
+  "actualFrameRenders": [
+    {
+      "frame": 0,
+      "path": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-00.png",
+      "sha256": "341079bb51f1f92faa3f08e8ee8c23b62d768eb85162a4565c98cadc55ee123e",
+      "nonzeroAlphaPixels": 622
+    },
+    {
+      "frame": 1,
+      "path": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-01.png",
+      "sha256": "59ac85b454ac888faf928581c7829886f4de8d36315efa115041e9563c46ad4b",
+      "nonzeroAlphaPixels": 763
+    },
+    {
+      "frame": 2,
+      "path": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-02.png",
+      "sha256": "0575d33b94642ce5e6af6c249bcd1317cbaf989bfd4234a5d1c042bd943e40c3",
+      "nonzeroAlphaPixels": 942
+    },
+    {
+      "frame": 3,
+      "path": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-03.png",
+      "sha256": "cb7bb96b82dd82a39771be8e56c03c3682cad5c62872150c6bc21d833e92aac6",
+      "nonzeroAlphaPixels": 1153
+    },
+    {
+      "frame": 4,
+      "path": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-04.png",
+      "sha256": "94b04a5823cb7c9ad8e91c54c1efc6563ca2d9083e6bf8fe29527d80c77cfd78",
+      "nonzeroAlphaPixels": 1344
+    },
+    {
+      "frame": 5,
+      "path": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-05.png",
+      "sha256": "13f4a688aa02887adefbd5bd1ddd27861f60d4b8fe89c70399a13f1a6aebdbb0",
+      "nonzeroAlphaPixels": 1522
+    },
+    {
+      "frame": 6,
+      "path": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-06.png",
+      "sha256": "4117a49d08792bebe443010afaf3a4a251d2539743660ffabbe99005d3864c79",
+      "nonzeroAlphaPixels": 1686
+    },
+    {
+      "frame": 7,
+      "path": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-07.png",
+      "sha256": "7f31d6db33b774e88b92ffec34d738a68662fc0bd575beee39f37c17f22cc8f2",
+      "nonzeroAlphaPixels": 1779
+    },
+    {
+      "frame": 8,
+      "path": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-08.png",
+      "sha256": "ae7b9b60425570a745c231e50c337c7a7e2f84d2de1fcfd67d4d77783b0006a9",
+      "nonzeroAlphaPixels": 1806
+    },
+    {
+      "frame": 9,
+      "path": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-09.png",
+      "sha256": "0965d84e26deeaf91c57f9e6b33bd72b71eadddaec806c96e262703f71351b42",
+      "nonzeroAlphaPixels": 1858
+    },
+    {
+      "frame": 10,
+      "path": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-10.png",
+      "sha256": "5a602afe6c3768b8b5957b4c338db5e1bcc15fdda0652b72e93f63453cb2980d",
+      "nonzeroAlphaPixels": 1897
+    },
+    {
+      "frame": 11,
+      "path": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-11.png",
+      "sha256": "17aaf02eef86fe73889db56073d708b4bec35413bad4150d2d8704c498b5f673",
+      "nonzeroAlphaPixels": 1889
+    },
+    {
+      "frame": 12,
+      "path": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-12.png",
+      "sha256": "8b7ba562a618a828ec919bd476261b313d78e1e7466c4619fd393f7ff6c29d9c",
+      "nonzeroAlphaPixels": 1839
+    },
+    {
+      "frame": 13,
+      "path": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-13.png",
+      "sha256": "f4840fbfb147b82a52378136119a42be5192a6559f4ab7ef26c48d025206d574",
+      "nonzeroAlphaPixels": 1733
+    },
+    {
+      "frame": 14,
+      "path": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-14.png",
+      "sha256": "8d1e99b439e17159492b8d7bbd3a8b8d000a7d9933df84ce0f95ae512b2c4df3",
+      "nonzeroAlphaPixels": 1584
+    },
+    {
+      "frame": 15,
+      "path": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-15.png",
+      "sha256": "5b62e14a42061a4d4dcf81a879c4ba711df5ae30402f5e14c0cd869e56777066",
+      "nonzeroAlphaPixels": 1388
+    },
+    {
+      "frame": 16,
+      "path": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-16.png",
+      "sha256": "a32337af186681e9e6c75beb1e622edff765d3f9c79b674562bf9863da31c4cc",
+      "nonzeroAlphaPixels": 1145
+    },
+    {
+      "frame": 17,
+      "path": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-17.png",
+      "sha256": "ebf94f8a7eca58817d853905e84f0f1603b8aca7735049e45c1b7b63688fa7b6",
+      "nonzeroAlphaPixels": 942
+    },
+    {
+      "frame": 18,
+      "path": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-18.png",
+      "sha256": "5811e37187ef2ac95e923efb06a60f34f11a6949e941b2ac87538c00c5c6e3ea",
+      "nonzeroAlphaPixels": 785
+    },
+    {
+      "frame": 19,
+      "path": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-19.png",
+      "sha256": "fb96ccef4b1a5dadaf58c085c4650e4a7f60d8087040c8a043d5c77ec6031a5d",
+      "nonzeroAlphaPixels": 640
+    },
+    {
+      "frame": 20,
+      "path": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-20.png",
+      "sha256": "65e5bb768dff85d4eed886d34fd98ac769828758865378b93a63148997144088",
+      "nonzeroAlphaPixels": 990
+    },
+    {
+      "frame": 21,
+      "path": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-21.png",
+      "sha256": "56ed0212f33c882d381db6d812ceac4a2a0bba9ad19dcea10e3c572be2196316",
+      "nonzeroAlphaPixels": 810
+    },
+    {
+      "frame": 22,
+      "path": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-22.png",
+      "sha256": "5e6c1e9484dc976a23d74ccda2e45ac241179958bdf7ff9ff8272091804ed8dd",
+      "nonzeroAlphaPixels": 647
+    },
+    {
+      "frame": 23,
+      "path": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-23.png",
+      "sha256": "b7617bb89304d2f71cf0ae4ac5a0ec1628a14df4d3c4f00b1749a48f61bf0610",
+      "nonzeroAlphaPixels": 502
+    },
+    {
+      "frame": 24,
+      "path": "C:\\Users\\comp\\Desktop\\content\\c6\\ashen-combat-200-20261107\\production\\animation\\vfx-bake\\ember-24.png",
+      "sha256": "e02176a45eb9e51bbcaf942d37b8124ced1dbbe77213063d54f5225ce724a30d",
+      "nonzeroAlphaPixels": 358
+    }
+  ],
+  "visualStatus": "PENDING_REVIEW",
+  "independentQA": "NOT_RUN"
+}

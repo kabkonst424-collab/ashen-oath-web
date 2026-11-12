@@ -1,0 +1,1426 @@
+{
+  "schema": 1,
+  "sourceHashes": {
+    "alar_nocape": "1ab69060e589c86c4b1e369e8fdcef9a13a063ed28e62a60b3c4a04f978f5868",
+    "ash_husk": "c854d97d421936ada393fbc3212a574596064ac035eb0a322e2be266b66828d3",
+    "bellkeeper": "cd40181f7eddad323a8eb64dab7cf3ff38a78738b56728ef6d69ede5b4e9cb77",
+    "bird": "d43c54b72d2d3b87b831c3be5d4ec503a515a3f69ac90391a8b568f075d0de26",
+    "ember_acolyte": "f7f213c5addce5e967b23a33eeac15013349f1d5e24dd9ba3b83c2594429cee8",
+    "iona_nocape": "1ead16b553484ccb4e765e24e7df8312ab49bfcedcc21992e87927c85ddf371c",
+    "leia_nocape": "aa4a303d228803787871c8714676fdb9232ba2c178af91598ada74b79e102a23",
+    "moth": "c7dd3a4f8d743673ed67aac2cb3acdd7318cb0830d0b07e3f5008d9982f1f870",
+    "radan_nocape": "5c270577811b089e675a87eaf0b106dacad747b15e964be7ddc8f41ab1edd660",
+    "rat": "b44f3132dd4be6301da39fae78482fd10c2365beb4a31ce8c672555d12bb4af7",
+    "root_keeper": "a800e882326492c4ee90c2fa2f92d8f5a80f3cd277ae27a9859a2f8f9b67b870",
+    "townsman": "bb4d47646d10fd69267412ea9ce63ef81ce166f4d310370052e1677593deea92",
+    "townswoman": "b7c13f05daf6e75d9bc9369a9f32c1425d16336e0545206649b3b0b21241368e",
+    "wolf": "7c6e8f935137a339040ce6fb56ae9486588826be361e5c921bd6f8136637a372"
+  },
+  "frontYawByBase": {
+    "alar_nocape": 0,
+    "ash_husk": 0,
+    "bellkeeper": 0,
+    "bird": 0,
+    "ember_acolyte": 0,
+    "iona_nocape": 0,
+    "leia_nocape": 0,
+    "moth": 0,
+    "radan_nocape": 0,
+    "rat": 0,
+    "root_keeper": 0,
+    "townsman": 0,
+    "townswoman": 0,
+    "wolf": 0
+  },
+  "profiles": {
+    "party:alar": {
+      "base": "alar_nocape",
+      "file": "profiles/party-alar.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "CastWard",
+        "CastNova",
+        "CastMend",
+        "Death",
+        "Hit",
+        "Attack",
+        "CastSunCut",
+        "CastOathGuard",
+        "CastCinderWave",
+        "CastLastLight",
+        "CastDawnChallenge",
+        "CastOathLink",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "sun_cut": "CastSunCut",
+        "oath_guard": "CastOathGuard",
+        "cinder_wave": "CastCinderWave",
+        "last_light": "CastLastLight",
+        "dawn_challenge": "CastDawnChallenge",
+        "oath_link": "CastOathLink"
+      },
+      "motionIntent": "disciplined sword and shield",
+      "sourceHash": "1ab69060e589c86c4b1e369e8fdcef9a13a063ed28e62a60b3c4a04f978f5868",
+      "sha256": "0bebfd2b82e6fabf4ff92330d41f5162e797c1a3bbd96257a898f5751a640be4",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 2,
+      "gaitCorrection": {
+        "id": "alar-gait1",
+        "clips": [
+          "Walk",
+          "Run"
+        ],
+        "method": "Blender native lower-chain solve, bind-derived forward sole frame",
+        "bakedSamplesPerClip": 25,
+        "sourceGeometryUnchanged": true
+      },
+      "castHands": {
+        "CastSunCut": "RightHand",
+        "CastOathGuard": "LeftHand",
+        "CastCinderWave": "LeftHand",
+        "CastLastLight": "LeftHand",
+        "CastDawnChallenge": "LeftHand",
+        "CastOathLink": "LeftHand",
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:oath_knight": {
+      "base": "alar_nocape",
+      "file": "profiles/enemy-oath_knight.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastEnemyGuard",
+        "CastWard",
+        "Death",
+        "Hit",
+        "CastEnemyClaw",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_claw": "CastEnemyClaw",
+        "enemy_guard": "CastEnemyGuard"
+      },
+      "motionIntent": "rigid high guard descending sword",
+      "sourceHash": "1ab69060e589c86c4b1e369e8fdcef9a13a063ed28e62a60b3c4a04f978f5868",
+      "sha256": "b57c977b6c0b7910c463b20525b8b96b6dd76cd232c678df1272aac822431b4d",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 5,
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "party:iona": {
+      "base": "iona_nocape",
+      "file": "profiles/party-iona.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "CastFire",
+        "CastFrost",
+        "CastRunes",
+        "CastMend",
+        "Death",
+        "Hit",
+        "Attack",
+        "CastEmberScript",
+        "CastFrostMargin",
+        "CastScatterRunes",
+        "CastClearThought",
+        "CastLightningChain",
+        "CastInkSeal",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "ember_script": "CastEmberScript",
+        "frost_margin": "CastFrostMargin",
+        "scatter_runes": "CastScatterRunes",
+        "clear_thought": "CastClearThought",
+        "lightning_chain": "CastLightningChain",
+        "ink_seal": "CastInkSeal"
+      },
+      "motionIntent": "measured free-hand seal scholar",
+      "sourceHash": "1ead16b553484ccb4e765e24e7df8312ab49bfcedcc21992e87927c85ddf371c",
+      "sha256": "c95e2040a9cc03266307735ae37fd08278d16549a603d26d28816fe9416b176a",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 3,
+      "castHands": {
+        "CastEmberScript": "LeftHand",
+        "CastFrostMargin": "LeftHand",
+        "CastScatterRunes": "LeftHand",
+        "CastClearThought": "LeftHand",
+        "CastLightningChain": "LeftHand",
+        "CastInkSeal": "LeftHand",
+        "CastHeavy": "RightHand"
+      }
+    },
+    "npc:iona_monastery": {
+      "base": "iona_nocape",
+      "file": "profiles/npc-iona_monastery.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "Death"
+      ],
+      "skillClips": {},
+      "motionIntent": "quiet reading scholar guarded reach",
+      "sourceHash": "1ead16b553484ccb4e765e24e7df8312ab49bfcedcc21992e87927c85ddf371c",
+      "sha256": "5bb34474350695e9fb67be4449c8f577246abc6bedc5eeefddf624bcb620610b",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.82,
+      "acceptedCycle": 6
+    },
+    "party:radan": {
+      "base": "radan_nocape",
+      "file": "profiles/party-radan.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "CastWard",
+        "CastMend",
+        "Death",
+        "Hit",
+        "Attack",
+        "CastSpearThrust",
+        "CastShieldWall",
+        "CastIronSweep",
+        "CastRally",
+        "CastCounterCharge",
+        "CastBraceImpact",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "spear_thrust": "CastSpearThrust",
+        "shield_wall": "CastShieldWall",
+        "iron_sweep": "CastIronSweep",
+        "rally": "CastRally",
+        "counter_charge": "CastCounterCharge",
+        "brace_impact": "CastBraceImpact"
+      },
+      "motionIntent": "low braced veteran spear",
+      "sourceHash": "5c270577811b089e675a87eaf0b106dacad747b15e964be7ddc8f41ab1edd660",
+      "sha256": "bac8bb5325f452c1f17e6c72f11140dc18f9a3c5e64c40c467c6ae09fd3aff3f",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 7,
+      "castHands": {
+        "CastSpearThrust": "RightHand",
+        "CastShieldWall": "LeftHand",
+        "CastIronSweep": "RightHand",
+        "CastRally": "LeftHand",
+        "CastCounterCharge": "RightHand",
+        "CastBraceImpact": "LeftHand",
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:iron_sentinel": {
+      "base": "radan_nocape",
+      "file": "profiles/enemy-iron_sentinel.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastEnemyGuard",
+        "CastWard",
+        "Death",
+        "Hit",
+        "CastEnemyClaw",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_claw": "CastEnemyClaw",
+        "enemy_guard": "CastEnemyGuard"
+      },
+      "motionIntent": "square iron shield brace",
+      "sourceHash": "5c270577811b089e675a87eaf0b106dacad747b15e964be7ddc8f41ab1edd660",
+      "sha256": "3eb81a4c942e177b46d6fdf213c97462e51c73a23199dbce234538db790f5837",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 8,
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:tithe_guard": {
+      "base": "radan_nocape",
+      "file": "profiles/enemy-tithe_guard.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastEnemyGuard",
+        "CastWard",
+        "Death",
+        "Hit",
+        "CastEnemyClaw",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_claw": "CastEnemyClaw",
+        "enemy_guard": "CastEnemyGuard"
+      },
+      "motionIntent": "upright tax-guard spear jab",
+      "sourceHash": "5c270577811b089e675a87eaf0b106dacad747b15e964be7ddc8f41ab1edd660",
+      "sha256": "0f77851be769e11e813eb09a0970760b9e293fa458e73be938a754e3f5c25f44",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 9,
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:ink_guard": {
+      "base": "radan_nocape",
+      "file": "profiles/enemy-ink_guard.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastEnemyGuard",
+        "CastWard",
+        "Death",
+        "Hit",
+        "CastEnemyClaw",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_claw": "CastEnemyClaw",
+        "enemy_guard": "CastEnemyGuard"
+      },
+      "motionIntent": "angled narrow injunction spear",
+      "sourceHash": "5c270577811b089e675a87eaf0b106dacad747b15e964be7ddc8f41ab1edd660",
+      "sha256": "d1a07324fd0442a2a15622eb50dc01fc9348d3686d1a253cb45cc1cbec08dc54",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 10,
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:fortress_archer": {
+      "base": "radan_nocape",
+      "file": "profiles/enemy-fortress_archer.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "Death",
+        "Hit",
+        "CastEnemyClaw",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_claw": "CastEnemyClaw"
+      },
+      "motionIntent": "compact crossbow shoulder aim",
+      "sourceHash": "5c270577811b089e675a87eaf0b106dacad747b15e964be7ddc8f41ab1edd660",
+      "sha256": "8012067f4e3dd09e733742026605b6d2e1c485ebc2af0a6f31a65597884a1271",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 11,
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:dagan": {
+      "base": "radan_nocape",
+      "file": "profiles/enemy-dagan.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastEnemyGuard",
+        "CastEnemyRing",
+        "CastWard",
+        "CastNova",
+        "Death",
+        "Hit",
+        "CastEnemyClaw",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_claw": "CastEnemyClaw",
+        "enemy_guard": "CastEnemyGuard",
+        "enemy_ring": "CastEnemyRing"
+      },
+      "motionIntent": "commanding shield-first countercut",
+      "sourceHash": "5c270577811b089e675a87eaf0b106dacad747b15e964be7ddc8f41ab1edd660",
+      "sha256": "689f3c984b3f77a98b88810bb7893b41fe5b9b4c85203fdd745cef0a1eb136aa",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 12,
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "npc:radan_village": {
+      "base": "radan_nocape",
+      "file": "profiles/npc-radan_village.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "Death"
+      ],
+      "skillClips": {},
+      "motionIntent": "resting veteran low shield",
+      "sourceHash": "5c270577811b089e675a87eaf0b106dacad747b15e964be7ddc8f41ab1edd660",
+      "sha256": "00f75bc8fcf4e19684cdd422397ff06f13f0123b36e2d27455ea9d6a7ca1c14d",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.82,
+      "acceptedCycle": 13
+    },
+    "npc:dagan_gate": {
+      "base": "radan_nocape",
+      "file": "profiles/npc-dagan_gate.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "Death"
+      ],
+      "skillClips": {},
+      "motionIntent": "gate commander ceremonial shield",
+      "sourceHash": "5c270577811b089e675a87eaf0b106dacad747b15e964be7ddc8f41ab1edd660",
+      "sha256": "c2c029554f19b33bf53b65705eae71ab483531e77d72c83ca711a483e6212972",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.82,
+      "acceptedCycle": 14
+    },
+    "party:leia": {
+      "base": "leia_nocape",
+      "file": "profiles/party-leia.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "CastMend",
+        "CastRevive",
+        "CastLightning",
+        "Death",
+        "Hit",
+        "Attack",
+        "CastWarmHands",
+        "CastSharedBreath",
+        "CastWakeFlame",
+        "CastCopperSpark",
+        "CastHealingThread",
+        "CastWardingHymn",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "warm_hands": "CastWarmHands",
+        "shared_breath": "CastSharedBreath",
+        "wake_flame": "CastWakeFlame",
+        "copper_spark": "CastCopperSpark",
+        "healing_thread": "CastHealingThread",
+        "warding_hymn": "CastWardingHymn"
+      },
+      "motionIntent": "open protective healer",
+      "sourceHash": "aa4a303d228803787871c8714676fdb9232ba2c178af91598ada74b79e102a23",
+      "sha256": "54db893efa832424bfe25d3691a0e787d4aac518e5323be15023d6c0b31a5fce",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 15,
+      "castHands": {
+        "CastWarmHands": "LeftHand",
+        "CastSharedBreath": "LeftHand",
+        "CastWakeFlame": "LeftHand",
+        "CastCopperSpark": "LeftHand",
+        "CastHealingThread": "LeftHand",
+        "CastWardingHymn": "LeftHand",
+        "CastHeavy": "RightHand"
+      }
+    },
+    "npc:leia_wood": {
+      "base": "leia_nocape",
+      "file": "profiles/npc-leia_wood.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "Death"
+      ],
+      "skillClips": {},
+      "motionIntent": "listening healer careful reach",
+      "sourceHash": "aa4a303d228803787871c8714676fdb9232ba2c178af91598ada74b79e102a23",
+      "sha256": "da9ced18cf71f87303d097e7837f3e94e82447c8506a36449a4ad7076071eb8d",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.82,
+      "acceptedCycle": 16
+    },
+    "npc:elda_abbey": {
+      "base": "leia_nocape",
+      "file": "profiles/npc-elda_abbey.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "Death"
+      ],
+      "skillClips": {},
+      "motionIntent": "elder healer calm censer blessing",
+      "sourceHash": "aa4a303d228803787871c8714676fdb9232ba2c178af91598ada74b79e102a23",
+      "sha256": "2d76b705fcaab6d767289f797c5b684168defb644e1dca3c577ebf70857ef8b1",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.82,
+      "acceptedCycle": 17
+    },
+    "enemy:ash_husk": {
+      "base": "ash_husk",
+      "file": "profiles/enemy-ash_husk.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "Death",
+        "Hit",
+        "CastEnemyClaw",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_claw": "CastEnemyClaw"
+      },
+      "motionIntent": "crooked dragging blade",
+      "sourceHash": "c854d97d421936ada393fbc3212a574596064ac035eb0a322e2be266b66828d3",
+      "sha256": "5b146308907b17db50d83ae629948867d743a814076c52bfe0457b89f63d2fa7",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 18,
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:drowned": {
+      "base": "ash_husk",
+      "file": "profiles/enemy-drowned.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastFrost",
+        "Death",
+        "Hit",
+        "CastEnemyIce",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_ice": "CastEnemyIce"
+      },
+      "motionIntent": "limp cold reach and sinking collapse",
+      "sourceHash": "c854d97d421936ada393fbc3212a574596064ac035eb0a322e2be266b66828d3",
+      "sha256": "91ecf167a9122a2d4ece3dc0203d048bf24b09624fa84d20c8e47d937ff84749",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 19,
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:hollow_reaper": {
+      "base": "ash_husk",
+      "file": "profiles/enemy-hollow_reaper.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "Death",
+        "Hit",
+        "CastEnemyClaw",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_claw": "CastEnemyClaw"
+      },
+      "motionIntent": "long scything spear hook",
+      "sourceHash": "c854d97d421936ada393fbc3212a574596064ac035eb0a322e2be266b66828d3",
+      "sha256": "d68f72635521e5eccd09d2a3e0bad77c1ac4f151d7b7b77110ee90b905ba64ce",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 20,
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:oathshade": {
+      "base": "ash_husk",
+      "file": "profiles/enemy-oathshade.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastEnemyClaw",
+        "CastFrost",
+        "Death",
+        "Hit",
+        "CastEnemyIce",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_ice": "CastEnemyIce",
+        "enemy_claw": "CastEnemyClaw"
+      },
+      "motionIntent": "off-axis reaching shade slash",
+      "sourceHash": "c854d97d421936ada393fbc3212a574596064ac035eb0a322e2be266b66828d3",
+      "sha256": "f005b25a6c148e3aa594f4b4f1cf3bdc38421c89eeeae31594860426e0740d67",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 21,
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:ember_acolyte": {
+      "base": "ember_acolyte",
+      "file": "profiles/enemy-ember_acolyte.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastFire",
+        "Death",
+        "Hit",
+        "CastEnemyFire",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_fire": "CastEnemyFire"
+      },
+      "motionIntent": "fervent staff flame gather",
+      "sourceHash": "f7f213c5addce5e967b23a33eeac15013349f1d5e24dd9ba3b83c2594429cee8",
+      "sha256": "f12f3604690658194718e7e5ebfce919e4de4bee973e73aed0236d581469830f",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 22,
+      "castHands": {
+        "CastEnemyFire": "LeftHand",
+        "CastHeavy": "LeftHand"
+      }
+    },
+    "enemy:ferry_echo": {
+      "base": "ember_acolyte",
+      "file": "profiles/enemy-ferry_echo.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastEnemyRing",
+        "CastFrost",
+        "CastNova",
+        "Death",
+        "Hit",
+        "CastEnemyIce",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_ice": "CastEnemyIce",
+        "enemy_ring": "CastEnemyRing"
+      },
+      "motionIntent": "two-handed ferryman sweep",
+      "sourceHash": "f7f213c5addce5e967b23a33eeac15013349f1d5e24dd9ba3b83c2594429cee8",
+      "sha256": "85a24fa7f42e52a43d1ef93bf30d7bcb9d1f3c10e3a874a3f4d05d21707256ff",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 23,
+      "castHands": {
+        "CastEnemyIce": "LeftHand",
+        "CastHeavy": "LeftHand"
+      }
+    },
+    "enemy:hush_acolyte": {
+      "base": "ember_acolyte",
+      "file": "profiles/enemy-hush_acolyte.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastEnemyMend",
+        "CastFire",
+        "CastMend",
+        "Death",
+        "Hit",
+        "CastEnemyFire",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_fire": "CastEnemyFire",
+        "enemy_mend": "CastEnemyMend"
+      },
+      "motionIntent": "folded whispering restorative seals",
+      "sourceHash": "f7f213c5addce5e967b23a33eeac15013349f1d5e24dd9ba3b83c2594429cee8",
+      "sha256": "b6a0f365fcf9e8ced708fe83e70ee9946f945a4487d31b41eb819228daa1b07a",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 24,
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:silent_choir": {
+      "base": "ember_acolyte",
+      "file": "profiles/enemy-silent_choir.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastEnemyMend",
+        "CastNova",
+        "CastMend",
+        "Death",
+        "Hit",
+        "CastEnemyRing",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_ring": "CastEnemyRing",
+        "enemy_mend": "CastEnemyMend"
+      },
+      "motionIntent": "open choral chest and shared pulse",
+      "sourceHash": "f7f213c5addce5e967b23a33eeac15013349f1d5e24dd9ba3b83c2594429cee8",
+      "sha256": "ddb36a9351fd18907c5940e22df18e4d124175f98e0117006c9afedb186bbec6",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 25,
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:mute_abbot": {
+      "base": "ember_acolyte",
+      "file": "profiles/enemy-mute_abbot.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastEnemyRing",
+        "CastEnemyMend",
+        "CastFire",
+        "CastNova",
+        "CastMend",
+        "Death",
+        "Hit",
+        "CastEnemyFire",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_fire": "CastEnemyFire",
+        "enemy_ring": "CastEnemyRing",
+        "enemy_mend": "CastEnemyMend"
+      },
+      "motionIntent": "weighty censer procession and decree",
+      "sourceHash": "f7f213c5addce5e967b23a33eeac15013349f1d5e24dd9ba3b83c2594429cee8",
+      "sha256": "f0ce0d5fba16a6f9979f6916dc44edf863f8ebc0f6769f6124401bbafa110929",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 26,
+      "castHands": {
+        "CastEnemyFire": "LeftHand",
+        "CastHeavy": "LeftHand"
+      }
+    },
+    "enemy:broken_reliquary": {
+      "base": "bellkeeper",
+      "file": "profiles/enemy-broken_reliquary.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastEnemyRing",
+        "CastNova",
+        "Death",
+        "Hit",
+        "CastEnemyClaw",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_claw": "CastEnemyClaw",
+        "enemy_ring": "CastEnemyRing"
+      },
+      "motionIntent": "cracked hunched double slam",
+      "sourceHash": "cd40181f7eddad323a8eb64dab7cf3ff38a78738b56728ef6d69ede5b4e9cb77",
+      "sha256": "748fe2723c6e18a6f5529ad79a110148ed3715cb098e8bc1bd819cf7486d6426",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 27,
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:catalogue_warden": {
+      "base": "bellkeeper",
+      "file": "profiles/enemy-catalogue_warden.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastEnemyRing",
+        "CastEnemyGuard",
+        "CastNova",
+        "CastWard",
+        "Death",
+        "Hit",
+        "CastEnemyClaw",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_claw": "CastEnemyClaw",
+        "enemy_ring": "CastEnemyRing",
+        "enemy_guard": "CastEnemyGuard"
+      },
+      "motionIntent": "ceremonial book ward and double press",
+      "sourceHash": "cd40181f7eddad323a8eb64dab7cf3ff38a78738b56728ef6d69ede5b4e9cb77",
+      "sha256": "740a4f8caaeb3bed7f85f95c1778ec1d680dfb26b42552e7ff43b4276682a6f5",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 28,
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:bellkeeper": {
+      "base": "bellkeeper",
+      "file": "profiles/enemy-bellkeeper.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastEnemyClaw",
+        "CastEnemyGuard",
+        "CastNova",
+        "CastWard",
+        "Death",
+        "Hit",
+        "CastEnemyRing",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_ring": "CastEnemyRing",
+        "enemy_claw": "CastEnemyClaw",
+        "enemy_guard": "CastEnemyGuard"
+      },
+      "motionIntent": "bell-hauling broad resonant slam",
+      "sourceHash": "cd40181f7eddad323a8eb64dab7cf3ff38a78738b56728ef6d69ede5b4e9cb77",
+      "sha256": "fe0cb6cd19565066c5dfcf60b165afa812b641117cc5f54ad7c70bd7139343cb",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 29,
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:road_extorter": {
+      "base": "townsman",
+      "file": "profiles/enemy-road_extorter.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "Death",
+        "Hit",
+        "CastEnemyClaw",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_claw": "CastEnemyClaw"
+      },
+      "motionIntent": "loose swaggering diagonal cut",
+      "sourceHash": "bb4d47646d10fd69267412ea9ce63ef81ce166f4d310370052e1677593deea92",
+      "sha256": "3566fd214022e939ec7b050cb80b319f3190b1a1a2c96ef58d3974e28e73e9ed",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 30,
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:quarry_overseer": {
+      "base": "townsman",
+      "file": "profiles/enemy-quarry_overseer.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastEnemyRing",
+        "CastNova",
+        "Death",
+        "Hit",
+        "CastEnemyClaw",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_claw": "CastEnemyClaw",
+        "enemy_ring": "CastEnemyRing"
+      },
+      "motionIntent": "heavy hammer shoulder windup",
+      "sourceHash": "bb4d47646d10fd69267412ea9ce63ef81ce166f4d310370052e1677593deea92",
+      "sha256": "0400f157f292099bd3cca99089b9f33295e1a01b692f14bbfd4c3e6b22b8839c",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 31,
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:reed_stalker": {
+      "base": "townsman",
+      "file": "profiles/enemy-reed_stalker.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "Death",
+        "Hit",
+        "CastEnemyClaw",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_claw": "CastEnemyClaw"
+      },
+      "motionIntent": "low hunter aimed release",
+      "sourceHash": "bb4d47646d10fd69267412ea9ce63ef81ce166f4d310370052e1677593deea92",
+      "sha256": "f3f4059de977df0ff62635c86f94215daeb4794a8acb401b5ae048f1e106eacb",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 32,
+      "castHands": {
+        "CastEnemyClaw": "LeftHand",
+        "CastHeavy": "LeftHand"
+      }
+    },
+    "npc:orin_village": {
+      "base": "townsman",
+      "file": "profiles/npc-orin_village.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "Death"
+      ],
+      "skillClips": {},
+      "motionIntent": "smith hammer shoulder rest and blow",
+      "sourceHash": "bb4d47646d10fd69267412ea9ce63ef81ce166f4d310370052e1677593deea92",
+      "sha256": "4326768b6021839dc9b980fb2b4a36ae7c26a5b1da9ca44e6ef7241a47f1f407",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.82,
+      "acceptedCycle": 33
+    },
+    "npc:mirel_wood": {
+      "base": "townsman",
+      "file": "profiles/npc-mirel_wood.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "Death"
+      ],
+      "skillClips": {},
+      "motionIntent": "hunter scanning low ready stance",
+      "sourceHash": "bb4d47646d10fd69267412ea9ce63ef81ce166f4d310370052e1677593deea92",
+      "sha256": "253fc6eb74c505c99251cb4a598bbdf77759c132fcc5e500ced61024c4bc2263",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.82,
+      "acceptedCycle": 34
+    },
+    "npc:lio_quarry": {
+      "base": "townsman",
+      "file": "profiles/npc-lio_quarry.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "Death"
+      ],
+      "skillClips": {},
+      "motionIntent": "young messenger curious forward lean",
+      "sourceHash": "bb4d47646d10fd69267412ea9ce63ef81ce166f4d310370052e1677593deea92",
+      "sha256": "a96826a2f715562a761db3a944cd319e4623bc738547b762961762ccb91ddb7a",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.82,
+      "acceptedCycle": 35
+    },
+    "npc:teren_quarry": {
+      "base": "townsman",
+      "file": "profiles/npc-teren_quarry.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "Death"
+      ],
+      "skillClips": {},
+      "motionIntent": "lantern keeper wary compact shoulders",
+      "sourceHash": "bb4d47646d10fd69267412ea9ce63ef81ce166f4d310370052e1677593deea92",
+      "sha256": "3aaffb94defd96866614c2d03f5a1296b8243d1f0d4f8cd5496dd0b25795d36b",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.82,
+      "acceptedCycle": 36
+    },
+    "npc:gerd_fen": {
+      "base": "townsman",
+      "file": "profiles/npc-gerd_fen.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "Death"
+      ],
+      "skillClips": {},
+      "motionIntent": "ferryman both-hand oar balance",
+      "sourceHash": "bb4d47646d10fd69267412ea9ce63ef81ce166f4d310370052e1677593deea92",
+      "sha256": "3864e971675721675e44000df0b899e270c9c813b29bbd847931371df61f3cf4",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.82,
+      "acceptedCycle": 4
+    },
+    "npc:severin_archive": {
+      "base": "townsman",
+      "file": "profiles/npc-severin_archive.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "Death"
+      ],
+      "skillClips": {},
+      "motionIntent": "archivist dignified close book",
+      "sourceHash": "bb4d47646d10fd69267412ea9ce63ef81ce166f4d310370052e1677593deea92",
+      "sha256": "56d7efb460cc7c4e031b1f47b7ca3a8ad3f81f5ac10f5b42a159286a2cb0c633",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.82,
+      "acceptedCycle": 37
+    },
+    "enemy:thorn_wolf": {
+      "base": "wolf",
+      "file": "profiles/enemy-thorn_wolf.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "Death",
+        "Hit",
+        "CastEnemyClaw",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_claw": "CastEnemyClaw"
+      },
+      "motionIntent": "low stalking snap and recoil",
+      "sourceHash": "7c6e8f935137a339040ce6fb56ae9486588826be361e5c921bd6f8136637a372",
+      "sha256": "8dda1a933cba183c61a11c16f2589a7a57d68819f41078eb274736de5263b5ad",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 87,
+      "acceptedSupplement": "supplement-wolf-contact",
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:warden_hound": {
+      "base": "wolf",
+      "file": "profiles/enemy-warden_hound.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "Death",
+        "Hit",
+        "CastEnemyClaw",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_claw": "CastEnemyClaw"
+      },
+      "motionIntent": "high guarded chest and pounce bite",
+      "sourceHash": "7c6e8f935137a339040ce6fb56ae9486588826be361e5c921bd6f8136637a372",
+      "sha256": "f995a5727b04bdf5102f45fb99e43837198cd1999bb8f786df636a11b32e1a68",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 88,
+      "acceptedSupplement": "supplement-wolf-contact",
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:resin_moth": {
+      "base": "moth",
+      "file": "profiles/enemy-resin_moth.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastFire",
+        "Death",
+        "Hit",
+        "CastEnemyFire",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_fire": "CastEnemyFire"
+      },
+      "motionIntent": "wide resin wings and heat spit",
+      "sourceHash": "c7dd3a4f8d743673ed67aac2cb3acdd7318cb0830d0b07e3f5008d9982f1f870",
+      "sha256": "71e085af10cce428004a8631f7a9b2e5255c26c84930d6a150abdbf421b1965c",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 89,
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:wick_light": {
+      "base": "moth",
+      "file": "profiles/enemy-wick_light.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastEnemyIce",
+        "CastFire",
+        "CastFrost",
+        "Death",
+        "Hit",
+        "CastEnemyFire",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_fire": "CastEnemyFire",
+        "enemy_ice": "CastEnemyIce"
+      },
+      "motionIntent": "tight wings radiant cold-hot flare",
+      "sourceHash": "c7dd3a4f8d743673ed67aac2cb3acdd7318cb0830d0b07e3f5008d9982f1f870",
+      "sha256": "c110a8c09bfc13f1c6f0c0a3a75ea3ef31bf567acfe09698f234a7ff7551fea2",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 90,
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:paper_swarm": {
+      "base": "moth",
+      "file": "profiles/enemy-paper_swarm.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastNova",
+        "Death",
+        "Hit",
+        "CastEnemyRing",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_ring": "CastEnemyRing"
+      },
+      "motionIntent": "broad fluttering sheet fan",
+      "sourceHash": "c7dd3a4f8d743673ed67aac2cb3acdd7318cb0830d0b07e3f5008d9982f1f870",
+      "sha256": "7e37949e28adf6cb71d08975bcbb80e54529a91e2d076c357a3b32d537078e80",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 91,
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:thorn_keeper": {
+      "base": "root_keeper",
+      "file": "profiles/enemy-thorn_keeper.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastEnemyRing",
+        "CastNova",
+        "Death",
+        "Hit",
+        "CastEnemyClaw",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_claw": "CastEnemyClaw",
+        "enemy_ring": "CastEnemyRing"
+      },
+      "motionIntent": "rooted broad overhand crush",
+      "sourceHash": "a800e882326492c4ee90c2fa2f92d8f5a80f3cd277ae27a9859a2f8f9b67b870",
+      "sha256": "5ec78bb3ab8817e0b97d48d475d640752c7ad535009c4ea7b501baba1b965d71",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 92,
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:quarry_echo": {
+      "base": "root_keeper",
+      "file": "profiles/enemy-quarry_echo.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastEnemyGuard",
+        "CastNova",
+        "CastWard",
+        "Death",
+        "Hit",
+        "CastEnemyRing",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_ring": "CastEnemyRing",
+        "enemy_guard": "CastEnemyGuard"
+      },
+      "motionIntent": "swaying echo resonant chest strike",
+      "sourceHash": "a800e882326492c4ee90c2fa2f92d8f5a80f3cd277ae27a9859a2f8f9b67b870",
+      "sha256": "858a159c99542bcb84750bd50e21c968ec42891b67db874e6c04a1b1f45e62bd",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 93,
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:harvest_engine": {
+      "base": "root_keeper",
+      "file": "profiles/enemy-harvest_engine.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastEnemyRing",
+        "CastNova",
+        "Death",
+        "Hit",
+        "CastEnemyClaw",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_claw": "CastEnemyClaw",
+        "enemy_ring": "CastEnemyRing"
+      },
+      "motionIntent": "wide asymmetrical harvesting crush",
+      "sourceHash": "a800e882326492c4ee90c2fa2f92d8f5a80f3cd277ae27a9859a2f8f9b67b870",
+      "sha256": "2116f48bcb6da54a39822eaf7366de4140ee0ba85c7d457721d780ca3209641c",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 94,
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:iron_rat": {
+      "base": "rat",
+      "file": "profiles/enemy-iron_rat.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "Death",
+        "Hit",
+        "CastEnemyClaw",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_claw": "CastEnemyClaw"
+      },
+      "motionIntent": "compressed scuttling incisor lunge",
+      "sourceHash": "b44f3132dd4be6301da39fae78482fd10c2365beb4a31ce8c672555d12bb4af7",
+      "sha256": "fd99ef359143d7c4f0306b576d4ca689d68a690254fa85d7ebbf19cc70c330db",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 95,
+      "acceptedSupplement": "supplement-rat-contact",
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:cinder_bird": {
+      "base": "bird",
+      "file": "profiles/enemy-cinder_bird.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastFire",
+        "Death",
+        "Hit",
+        "CastEnemyFire",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_fire": "CastEnemyFire"
+      },
+      "motionIntent": "forward hunting wingbeat and fire snap",
+      "sourceHash": "d43c54b72d2d3b87b831c3be5d4ec503a515a3f69ac90391a8b568f075d0de26",
+      "sha256": "55de40ee44212a56da53203f9a858be59c60c0460ec9a9d04417138213f9fbce",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.8333333333333334,
+      "acceptedCycle": 47,
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "npc:velda_village": {
+      "base": "townswoman",
+      "file": "profiles/npc-velda_village.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "Death"
+      ],
+      "skillClips": {},
+      "motionIntent": "composed village elder folded arms",
+      "sourceHash": "b7c13f05daf6e75d9bc9369a9f32c1425d16336e0545206649b3b0b21241368e",
+      "sha256": "4edbddd7567ee086c7bcd90f9a5c03e48a539d70853e7b62ef9d0be29825bf46",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.82,
+      "acceptedCycle": 48
+    },
+    "npc:nara_village": {
+      "base": "townswoman",
+      "file": "profiles/npc-nara_village.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "Death"
+      ],
+      "skillClips": {},
+      "motionIntent": "basket carrier balanced open stance",
+      "sourceHash": "b7c13f05daf6e75d9bc9369a9f32c1425d16336e0545206649b3b0b21241368e",
+      "sha256": "c60dba1e6388e8f1901d78ea4550fb09faebca2f9ce20eaf03b474ba9d9601b9",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.82,
+      "acceptedCycle": 49
+    },
+    "npc:nara_fields": {
+      "base": "townswoman",
+      "file": "profiles/npc-nara_fields.json",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "Death"
+      ],
+      "skillClips": {},
+      "motionIntent": "tired field basket carrier stooped",
+      "sourceHash": "b7c13f05daf6e75d9bc9369a9f32c1425d16336e0545206649b3b0b21241368e",
+      "sha256": "38a82fc6ba71ee4ee720f23db7249e5b5980895d8e93fd99d6479842ed81e848",
+      "rootMotion": false,
+      "deathHeldEndNormalized": 0.82,
+      "acceptedCycle": 50
+    }
+  },
+  "loopClips": [
+    "Idle",
+    "Walk",
+    "Run"
+  ],
+  "authoring": {
+    "fps": 24,
+    "poseSamples": 25,
+    "rootMotion": false,
+    "deathHeldEndNormalized": 0.82,
+    "castReleaseNormalized": 0.2916667,
+    "physicalImpactNormalized": 0.5
+  },
+  "status": "AUTHORED_ASSETS_REVIEWED_GAMEPLAY_NOT_RUN",
+  "sourceVariants": {
+    "wolf": {
+      "sha256": "7c6e8f935137a339040ce6fb56ae9486588826be361e5c921bd6f8136637a372",
+      "originalSha256": "d6c4cb4dd48012530d96896552a8ab96d2ab828e5ad049ed649de5b1f857a486",
+      "derivation": "Meshy geometry/rest/bind/materials retained; skin-influence-only repair",
+      "reviewCycle": 39
+    },
+    "rat": {
+      "sha256": "b44f3132dd4be6301da39fae78482fd10c2365beb4a31ce8c672555d12bb4af7",
+      "originalSha256": "1aa068c1bf9fe46f1b0d1c01a2432e623f9b2db19a945cd9772cbaf2edf00a2d",
+      "derivation": "Meshy geometry/rest/bind/materials retained; skin-influence-only repair",
+      "reviewCycle": 95
+    }
+  },
+  "authoredAnimationReview": {
+    "requestedAuthoredAttempts": 99,
+    "completed": 60,
+    "accepted": 57,
+    "rejected": 3,
+    "baseline": "0.8.1-demo",
+    "runtimeCycle": "EXCLUDED_USER_STOP",
+    "fullPlaythrough": "NOT_RUN",
+    "seriesStatus": "STOPPED_USER_REQUEST"
+  },
+  "additionalContactRepairs": [
+    {
+      "id": "supplement-wolf-contact",
+      "decisionSHA256": "d2b0904771fc9583f83d37f2e73645ff124dc934b386abc5194710b35890481e",
+      "countedIn100": false,
+      "profiles": [
+        "enemy:thorn_wolf",
+        "enemy:warden_hound"
+      ]
+    },
+    {
+      "id": "supplement-rat-contact",
+      "decisionSHA256": "fc54c9e722112428972d6f391d7f0015aed753616bcb4825d92af16fb6db67f1",
+      "countedIn100": false,
+      "profiles": [
+        "enemy:iron_rat"
+      ]
+    }
+  ]
+}

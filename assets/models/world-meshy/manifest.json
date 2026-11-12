@@ -1,0 +1,313 @@
+{
+  "schema": 1,
+  "models": [
+    {
+      "id": "altar_inspect",
+      "file": "altar_inspect.glb",
+      "sha256": "1ad3fe4456beabcf0f062aa529b3537be73f2466535dda22d7c8aa057406c4a2",
+      "rawSha256": "c15860ff5237e5ec31f171293fbcdd31a598de9956dd720b55d269590225c9ce",
+      "taskId": "01a197f7-5ee6-771f-9d96-157feec876ec",
+      "triangles": 2978,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "arch",
+      "file": "arch.glb",
+      "sha256": "2e837ce60f666b0b2286b0fe301c24281cee875576ce9d98013794f9b2187aa5",
+      "rawSha256": "61ed3ed0ca00948ffb37b93caa22de3b9b2968c10d6e06c2a448e4f02f3c0813",
+      "taskId": "01a197f5-49aa-7781-9727-425a5146a608",
+      "triangles": 4493,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "banner",
+      "file": "banner.glb",
+      "sha256": "c649dd5aadb10dc45843f610b14548c7c920e215f00c84599aa8ae9dfbea864b",
+      "rawSha256": "06c533bcff3fdf6b442a94a9f9872b9273afbc94374d9bd3b8f13d38f669a0f3",
+      "taskId": "01a19800-e315-76a5-a2e5-833cac95327c",
+      "triangles": 2477,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "barrel",
+      "file": "barrel.glb",
+      "sha256": "fac97d9013dab44ad2b5e6195e518f71354c24d89684db2642652011c8bf35e6",
+      "rawSha256": "cdf16b043eadd6f3ae7546771792f500704b38a9ee7847b32b73728077f79ff6",
+      "taskId": "01a197fa-f0d6-7249-9668-ada6d821b40e",
+      "triangles": 1790,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "basket",
+      "file": "basket.glb",
+      "sha256": "fbc53825aa96b290fa7c2f8dfe9567c8853cc351511660c1561ca99247449762",
+      "rawSha256": "6d85ffb2c17f604a7f562a845cc5a8fba8ed6cbc0e67492525fcdcac20b2ea2e",
+      "taskId": "01a19803-a364-77a4-bdc1-9c3aa29de8cb",
+      "triangles": 1611,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "book",
+      "file": "book.glb",
+      "sha256": "c63ab09443fc31b7b9a10febac5bf7e85c2380adc297821ce37c8db741c6c36f",
+      "rawSha256": "13535539c4335f5ca5bee5172ab7e9a2f34c9dc5043ccd52cf3e80d2ccc01727",
+      "taskId": "01a197fd-e533-768b-b027-94e6c793a647",
+      "triangles": 1127,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on UV-preserving high source; Blender5.2 geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "bookshelf_book",
+      "file": "bookshelf_book.glb",
+      "sha256": "9f0977edabccb82ebe67a2f4d770f28b5083b641f506b7d59ba3ac3cd03834a6",
+      "rawSha256": "13535539c4335f5ca5bee5172ab7e9a2f34c9dc5043ccd52cf3e80d2ccc01727",
+      "taskId": "01a197fd-e533-768b-b027-94e6c793a647",
+      "triangles": 4976,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "brazier",
+      "file": "brazier.glb",
+      "sha256": "569fd41305f7dc8809728279e48df925df2f28dd77741e9129d0fe81feb9b52d",
+      "rawSha256": "a365d99a63b2e1f40556bcbaaa5e250f1bca3a7cc48e2a1529ce1ed8a251e647",
+      "taskId": "01a197f7-33d2-7727-8daf-be3226ec04cb",
+      "triangles": 2000,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "bridge",
+      "file": "bridge.glb",
+      "sha256": "976d0d1b0114c5fb1df210333989be9bc417fd86a8d86f9abe58b1bdc11ff55b",
+      "rawSha256": "1754556dd3877c4b9b9bd91f55de5a2bea3e2b72f6f35055adc9cbc80217474f",
+      "taskId": "01a197fe-a821-72a5-8f09-a809ad7c78f9",
+      "triangles": 4465,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "camp",
+      "file": "camp.glb",
+      "sha256": "972351790ef67acc3af1698ecb2ccda92b20b242d98bb29d5461eb888d454aee",
+      "rawSha256": "1d047d6343fee7a5f85879f13ac7b6fbf3853a07516ee281cd457ac74c7fc07e",
+      "taskId": "01a197fb-fecd-7537-bf2c-cee6e3ef9398",
+      "triangles": 2970,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "cart",
+      "file": "cart.glb",
+      "sha256": "2af1762c1eb1c174159c8c843b796b6cee6de7b38ca971ffcac18748e3a9dfc9",
+      "rawSha256": "90f9a95498fa5575df42034bc26264b5e92300c75e6a98b5c9fe2aabec915595",
+      "taskId": "01a197ff-65f2-7506-8dfd-b0a430dfa1fc",
+      "triangles": 3464,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "chest",
+      "file": "chest.glb",
+      "sha256": "d631bcab3a427def782b87b851df8fb217dadf0a1a382bb5acc5add16d93dc3f",
+      "rawSha256": "97432f2a68470967f457e6df1be470f670bf38bd1aaf3df4fd70cf916a41a09a",
+      "taskId": "01a197fa-12f6-73ec-a1a1-620c410f2863",
+      "triangles": 2484,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "crane",
+      "file": "crane.glb",
+      "sha256": "a0eaec77031c272e2b8cd9feed2b189b74edd64e5324a7f936f20bf4647d18a1",
+      "rawSha256": "7e1be24557c9a863387a19aa9b550aaabff657d0d006b666366e577f38292d98",
+      "taskId": "01a19800-56f5-75f6-a8ce-818055af84dc",
+      "triangles": 4998,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "crate",
+      "file": "crate.glb",
+      "sha256": "89e95680e109b151ee782e567fde2576b6defb2afcfbf1b991a0a66de8854dcb",
+      "rawSha256": "00f1bfbcc398db31c17457e4bd1fbb608054fed0580b4e4cd8dcec240568e93c",
+      "taskId": "01a197fa-b9b8-74d8-8ac2-373cbbc55477",
+      "triangles": 1768,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "grass",
+      "file": "grass.glb",
+      "sha256": "201bba78f81088d61f671ef52789fc1707b7070fe9c1aae6542e8f0ee77677a2",
+      "rawSha256": "4f5faca671b83e03c37ce1d3a88ff8b12c7bc1d9ebd250bde185b9fe31eec042",
+      "taskId": "01a197f2-1025-70c6-ac3e-02db5f1d68fb",
+      "triangles": 174,
+      "derivation": "Selected disconnected upper original Meshy blade components above common fused turf; original faces/UV/material retained; per-component translation/rotation only; no new vertices or procedural blade geometry; embedded textures256 and normal strength0.35"
+    },
+    {
+      "id": "house",
+      "file": "house.glb",
+      "sha256": "ff90496b41288b97b89e68aa6ee7b19199057ed8a5c50bdaf173195a2092916d",
+      "rawSha256": "7bf8b241d7ad974399cc27c4d57d3f3eab7517eceee6ef381237b9a026161a95",
+      "taskId": "01a197f1-643e-7358-8816-3f349c341195",
+      "triangles": 7971,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "lantern",
+      "file": "lantern.glb",
+      "sha256": "b2cf268e6389e734d0e0b441b716f0ce331b981da047d91ae5d06085b34cac68",
+      "rawSha256": "dba87209a9bee87fbb0a336d80b041d40b904e255135cbbdbe0681699ce15d9b",
+      "taskId": "01a19802-e6b0-710e-94a6-0554fb6e8d93",
+      "triangles": 1171,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "merchant_stall",
+      "file": "merchant_stall.glb",
+      "sha256": "230783ff966a5d6baf413929f4dcdd73f246818e47747ca281317699ec9fd0ed",
+      "rawSha256": "6a6eb907b000e81eed058f5245e2b148e8dd9b29925bdd0fd3a854d79bd48fdc",
+      "taskId": "01a197fe-5de5-75d7-b6c3-43c2a041b559",
+      "triangles": 5658,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "path_strip",
+      "file": "path_strip.glb",
+      "sha256": "97b2255d496172a89a1ba7e9fe2e7b597b1bdc1c3c5290385b2bbb5f85259375",
+      "rawSha256": "f8401bbf5ce42effdac80729f221f2d936e8dd4cebb3ce9c3d11ec3284319201",
+      "taskId": "01a19806-0dbb-7126-ab71-b61b6f359f9a",
+      "triangles": 2494,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "pillar",
+      "file": "pillar.glb",
+      "sha256": "7a9ea06f2506a7924dc70f23554153dc7d798f6c545b1b76a841e6797133fc97",
+      "rawSha256": "79013079adf994e6a8ffdb2b162772b17e0d6d847f3578d2cae1e0c361c150c1",
+      "taskId": "01a197f5-0afa-74ad-ba58-8026fa686f5b",
+      "triangles": 2500,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "puzzle",
+      "file": "puzzle.glb",
+      "sha256": "0010a9b938932d87aa4527195e46ce1e4091ac3f2203feb88160de27d65ace9c",
+      "rawSha256": "371848f08985ecefb3beea691026fee3737133e08ceb22743e4675cafd401b5c",
+      "taskId": "01a197fd-6ca9-73ed-b3e3-b31494e9b494",
+      "triangles": 2498,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "rock",
+      "file": "rock.glb",
+      "sha256": "ad23b13f6aea905f109504c6a1b66eedb6e1d13dadc78d4f3191b8237b8c2975",
+      "rawSha256": "c1d6f49dd39ccd55708833b8c35b73dd7e92f32bc21a111ae794c19c339cd879",
+      "taskId": "01a197f0-d70c-7652-a04e-5f6d6de26941",
+      "triangles": 1997,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "satchel",
+      "file": "satchel.glb",
+      "sha256": "df91fb9e56826c3900061ac3cb1fa81c64515e716bc86542f5a37a57bfb3a7cb",
+      "rawSha256": "eb8243ec974e63b936d8859388344f027e778ffc27e14b42d6a224191eb54913",
+      "taskId": "01a19802-6fc7-772b-8f2d-fa0516b82a19",
+      "triangles": 3466,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on UV-preserving high source; Blender5.2 geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "terrain_forest",
+      "file": "terrain_forest.glb",
+      "sha256": "37cecf9e340b2a4a0187a369fe7b1d34664d4552a2bab99925cc546bae4306b9",
+      "rawSha256": "5728f4976fe5de421f1a9190076eb97b2cd91165693b778919bcb1543172869c",
+      "taskId": "01a19803-e13f-70a3-b359-2af58faba971",
+      "triangles": 2279,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "terrain_marsh",
+      "file": "terrain_marsh.glb",
+      "sha256": "b8b55e698b3ae1e91a2c9014242f6fabec4f9ae76123ce8175a8cbcc65c60fd2",
+      "rawSha256": "f5596e36128b735c3ebbb7ad6d2a7f232540d9c80f208d035b55ee1da21d1f15",
+      "taskId": "01a19805-69bf-72c5-9248-15003d7aeaac",
+      "triangles": 2459,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "terrain_ruin",
+      "file": "terrain_ruin.glb",
+      "sha256": "63e67869d8b81677ab6285092e060df250211b4f242c320235f05c4d8a7c6a94",
+      "rawSha256": "4ea4ccab7d70f900b411e0f3145ff405506810ec69fda81376992e81541b5b8e",
+      "taskId": "01a19805-69bc-7068-be3b-6b32290a9a4a",
+      "triangles": 2463,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "terrain_village",
+      "file": "terrain_village.glb",
+      "sha256": "dc98a64ca6542735e5cc487bf8a09bd97e115e0e0377ce50ff26be35cab59f22",
+      "rawSha256": "95dcf278c994a934844feb91c5c3e43635b0c608925ccb6f6dbc425ab7a46d27",
+      "taskId": "01a19803-e1de-7359-b00c-341adf5de934",
+      "triangles": 2373,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "tower",
+      "file": "tower.glb",
+      "sha256": "6a7630af00dd789f0701f25dae328bdfad8de9776682c42b6990921fdbab2663",
+      "rawSha256": "a617ed054a97717c9a17e4c2e9baa4d89a54fe054d752fe51a0be6069d679428",
+      "taskId": "01a197f2-f356-71bc-8848-421003b51056",
+      "triangles": 7986,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "tree",
+      "file": "tree.glb",
+      "sha256": "2155082bf5b9b712d3bb4107b808925bbd72f0b2b44996a4c6695902363d1261",
+      "rawSha256": "ad33fe0de21acd971a06e93544da6f429f077d56861ee6c0a37d0a693c888c13",
+      "taskId": "01a197f1-7353-74c4-8d6f-d3f27b9feaee",
+      "triangles": 7444,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "wall",
+      "file": "wall.glb",
+      "sha256": "71328e028cba9456764ab1ccf9fed6344893c75dc86f5d802c2ddcec660ffcdf",
+      "rawSha256": "e7287290867c886a72ff3c23a13ac40e5371c235b60921e4f3ed241a4d773b51",
+      "taskId": "01a197f4-7625-7667-ab9f-04282bb04b56",
+      "triangles": 2888,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "water_strip",
+      "file": "water_strip.glb",
+      "sha256": "f67d60c2bd57c368a338a0c43dd07cec761ee11b7b6a59ddaedd5d50e6e03292",
+      "rawSha256": "72ea7c083d49582c123b981e40dcfb8da02cfd3061ddaaab93ee5faafe23f7cf",
+      "taskId": "01a19807-fd62-742c-8a56-c697489e3764",
+      "triangles": 2498,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "waterwheel",
+      "file": "waterwheel.glb",
+      "sha256": "2a51c6017d34ae69941af785e9de7eca7977e6fc2c9d0dba5c2897a896f458c2",
+      "rawSha256": "413c0ed4defd8165570d9f1d4052dbab9c575edfa5e98777b4e91f88a97143c3",
+      "taskId": "01a19800-9598-724a-a703-d96e75fd9793",
+      "triangles": 3998,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "well",
+      "file": "well.glb",
+      "sha256": "54f645b1d07cd8173fedd2f4c315f26b4b809a7ba5c69b5e9e175cbc507c76b2",
+      "rawSha256": "6eb020e040882df767068f8658aa001d7bf06c864cba662958acc74dba901c21",
+      "taskId": "01a197f8-01e9-731f-be04-58ea3df6b526",
+      "triangles": 3496,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    },
+    {
+      "id": "wheat",
+      "file": "wheat.glb",
+      "sha256": "28957b423fc6fe8b476d141b8dbcf3b6cc9cefaf54e359ad72f70e899cca1c51",
+      "rawSha256": "7eeeb1cbeef3e8f5a7413928f64fb0cb37675567873afe92df8aecc5ba363e19",
+      "taskId": "01a197f1-20cf-742e-a116-061ea4b60da1",
+      "triangles": 682,
+      "derivation": "Meshy geometry local LOD; original UV/PBR preserved on verified high source; Blender5.2 fresh geometric target normals and selected-to-active transfer to new SmartProject UV: unlit Emit color, roughness and metallic; tangent normal; no procedural geometry replacement"
+    }
+  ],
+  "scope": "33 approved Meshy bases plus locally extracted book; existing characters and exempt weapons remain separate",
+  "complete": true
+}

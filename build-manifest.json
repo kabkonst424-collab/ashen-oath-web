@@ -1,0 +1,3134 @@
+{
+  "id": "ashen-oath",
+  "version": "0.16.0-demo",
+  "releaseStatus": "demo",
+  "demo": true,
+  "posterArtRevision": {
+    "id": "poster-20261105",
+    "menuSHA256": "0717dfc3104f91415155f0d6d1cf3db740903a069584d334f8e8463460f4cc67",
+    "coverSHA256": "03c9bdfead7101474985940f42b68ac104d7843dee094978cbc95782a29f1811"
+  },
+  "level": "act1",
+  "graphics": "Meshy_world_continuous_PBR_Blender_unique_profile_animations_gilded_Cyrillic_magic_water",
+  "presentation": {
+    "baselineAuthoredBlenderActions": 314,
+    "baselineCompatibilityAliases": 45,
+    "independentlyReviewedProfiles": 49,
+    "animatedProfiles": 49,
+    "profileClips": 437,
+    "skillProfiles": 30,
+    "enemyVariants": 31,
+    "posesPerClip": 25,
+    "surface": "World-space coordinated PBR blends and biome macro variation",
+    "water": "Meshy-derived surfaces; analytic sky reflection, waves and shore foam",
+    "browser": "Adaptive resolution; spatial instance chunks; shadow budgets; shared raster HUD observers"
+  },
+  "combatAnimationMagic200": {
+    "requested": 200,
+    "completed": 200,
+    "implementedRecords": 200,
+    "status": "SOURCE_EVIDENCE_COMPLETE_PENDING_FULL_GAME_QA",
+    "completionMeaning": "200 различных исходных изменений с планом и адресной проверкой; полный игровой, GPU, device и пользовательский visual acceptance считаются отдельно.",
+    "countingRule": "Один ID — одно реальное изменение с before/after и адресной проверкой. Исправления обнаруженных ошибок и CastHeavy не увеличивают счётчик.",
+    "groups": [
+      {
+        "range": "001–035",
+        "category": "Death",
+        "count": 35
+      },
+      {
+        "range": "036–070",
+        "category": "Hit",
+        "count": 35
+      },
+      {
+        "range": "071–105",
+        "category": "ActualPrimary",
+        "count": 35
+      },
+      {
+        "range": "106–129",
+        "category": "HeroSkillCast",
+        "count": 24
+      },
+      {
+        "range": "130–159",
+        "category": "CasterTravelVFX",
+        "count": 30
+      },
+      {
+        "range": "160–189",
+        "category": "ImpactVFX",
+        "count": 30
+      },
+      {
+        "range": "190–200",
+        "category": "RootIntegration",
+        "count": 11
+      }
+    ],
+    "uncountedSupport": {
+      "CastHeavy": 35,
+      "animationCorrections": "Сохранены отдельными revision/as-found артефактами, входят в исходные IDs.",
+      "vfxQualityShrink": "journal/vfx130-189/support-quality-shrink",
+      "reviveCorpse": "journal/integration-support-revive-corpse"
+    }
+  },
+  "combat200Evidence": "SOURCE.zip + EVIDENCE-200-CYCLES.zip; release QA separately",
+  "animationSeries": {
+    "requested": 100,
+    "completed": 60,
+    "accepted": 57,
+    "rejected": 3,
+    "reviewedProfiles": 49,
+    "totalProfiles": 49,
+    "baseline": "0.8.1-demo",
+    "rejectedDraftsInstalled": false,
+    "status": "STOPPED_USER_REQUEST"
+  },
+  "animationFollowupSeries": {
+    "series": "animation50-v2",
+    "requested": 50,
+    "completed": 50,
+    "accepted": 45,
+    "rejected": 5,
+    "status": "ALL_50_REVIEWED_RELEASE_PENDING",
+    "releaseVersion": "0.9.3-demo"
+  },
+  "animationFollowupCycles": [
+    {
+      "cycle": 1,
+      "profile": "party:alar",
+      "changedClips": [
+        "Attack"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "4e5cc57ba2a452aef12665b33a8fb441e08fb80dd97ee5870047e064c588cc1b",
+      "candidateSHA256": "b9e5b6477e3bb032308e43dfcbe67564fc2a2b8e625f242cd61d8105310ae3d5",
+      "installedSHA256": "b9e5b6477e3bb032308e43dfcbe67564fc2a2b8e625f242cd61d8105310ae3d5",
+      "reviewSHA256": "06d86d39a3989754f46487778ef2b7ee4345c262f101bcf366e0f9b1515c7c8f",
+      "receiptSHA256": "c275134d3500aef68748f1e4e59569997117fd896b220ff239b077863f2aca24",
+      "committedAt": "2026-11-02T06:46:04.170270+00:00"
+    },
+    {
+      "cycle": 2,
+      "profile": "enemy:oath_knight",
+      "changedClips": [
+        "Attack"
+      ],
+      "decision": "REJECT",
+      "beforeSHA256": "6892b5499320e121b128afe6781fd66c2ea282c09511ffed03189ffd0e91e747",
+      "candidateSHA256": "4d1fe2620d12ee74e22f21a9cb52b028de654f505fee39e1d886bd9c8d05aca7",
+      "installedSHA256": "6892b5499320e121b128afe6781fd66c2ea282c09511ffed03189ffd0e91e747",
+      "reviewSHA256": "b1df472405a5a3b83dd4b433659fdfc25a650a283cfee2361463d42788f904db",
+      "receiptSHA256": "5436bf7b714d9de5439aaa8acf0927a31d86d1ac6297ba900457fc0de5b85df2",
+      "committedAt": "2026-11-02T06:56:05.202181+00:00"
+    },
+    {
+      "cycle": 3,
+      "profile": "enemy:oath_knight",
+      "changedClips": [
+        "Attack"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "6892b5499320e121b128afe6781fd66c2ea282c09511ffed03189ffd0e91e747",
+      "candidateSHA256": "b76ad07dbcbb3a9de54ef6f8a0793d7d1ba8f0c3b8e880f3595c4fb6bbc6cba9",
+      "installedSHA256": "b76ad07dbcbb3a9de54ef6f8a0793d7d1ba8f0c3b8e880f3595c4fb6bbc6cba9",
+      "reviewSHA256": "957047f553d26192a44f5149ff51213f4016fe9ce90db201e9394c9ee70adae4",
+      "receiptSHA256": "0cab5e4ed7bfac184de657c5d540ef53ba73493f135b90b6a53a0c6bd738f25e",
+      "committedAt": "2026-11-02T07:01:26.287316+00:00"
+    },
+    {
+      "cycle": 4,
+      "profile": "party:iona",
+      "changedClips": [
+        "Attack"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "4ec6970395a33cd123f886cd11470c8bece9cc2c5561ad55c73ad3604ab2d9d2",
+      "candidateSHA256": "3bdd149563ba42e01bb45c2b77efbf1ac929fa39b7ac2f5b47cfa03766c097cd",
+      "installedSHA256": "3bdd149563ba42e01bb45c2b77efbf1ac929fa39b7ac2f5b47cfa03766c097cd",
+      "reviewSHA256": "754d7ca8e1dc3ef1050eae6c0602dd5baad14e5cd975fc0942d975083765964f",
+      "receiptSHA256": "dc3390c1d349ad0af75c9d52b6dd83b56c50f1bf5bf5b94b985ddb9b05483e55",
+      "committedAt": "2026-11-02T07:07:13.216327+00:00"
+    },
+    {
+      "cycle": 5,
+      "profile": "party:radan",
+      "changedClips": [
+        "Attack"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "05e48b21d079267dc7cd119a177d1d07706edab1dbfcd2e27649c2343dd3438a",
+      "candidateSHA256": "243dbb88b9077703fd159982815da097729ee68ebb9aeae1ddfd896bf1148f6a",
+      "installedSHA256": "243dbb88b9077703fd159982815da097729ee68ebb9aeae1ddfd896bf1148f6a",
+      "reviewSHA256": "95e92210e24fde84a42a54ed94231059d4c57f30407c9a2d9662b83e9322caef",
+      "receiptSHA256": "e9cbd73bb46f17b5204e63bd2eaeb18edc50a0d7d285fb209b3d555d9e21a07d",
+      "committedAt": "2026-11-02T07:25:00.899523+00:00"
+    },
+    {
+      "cycle": 6,
+      "profile": "enemy:iron_sentinel",
+      "changedClips": [
+        "CastEnemyClaw"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "3cbee4ed29e8c4d9a38ff46cd6d5aa143c4ec1d06082089854d68e9bf2ae59be",
+      "candidateSHA256": "b3e40df05e0adcf1829c8b5841b465536df6809291312e3297bdcdbb9a3b5ac2",
+      "installedSHA256": "b3e40df05e0adcf1829c8b5841b465536df6809291312e3297bdcdbb9a3b5ac2",
+      "reviewSHA256": "16eae31b8a384a4fa735201d02083b18c01b13a02e4e441605bcc6026fef62bf",
+      "receiptSHA256": "d50d29d199142f1075257a4b5de9908a58319e62f25f6dddd870212469e196ef",
+      "committedAt": "2026-11-02T07:36:34.086637+00:00"
+    },
+    {
+      "cycle": 7,
+      "profile": "enemy:tithe_guard",
+      "changedClips": [
+        "CastEnemyClaw"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "5e0897c9901e3bae5114b7841a78e0de8268d4f0aa7a15bfdbcf9a67465a9b6f",
+      "candidateSHA256": "e9029a70ad566e26b4b549fa5d56383bb34c01430880605d2e9c418193bf4453",
+      "installedSHA256": "e9029a70ad566e26b4b549fa5d56383bb34c01430880605d2e9c418193bf4453",
+      "reviewSHA256": "3fe56f30663172d03a0493ad1410f7f17ef0b2515ddbe5e73f54fa03b4979b24",
+      "receiptSHA256": "b698b1386b068f3ec4df3f4b22a789347a8a69f240f12b6e46e906dc5a7b32e8",
+      "committedAt": "2026-11-02T07:49:30.826125+00:00"
+    },
+    {
+      "cycle": 8,
+      "profile": "enemy:ink_guard",
+      "changedClips": [
+        "CastEnemyClaw"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "dee04b37fc2a156265cafe50798ffc262174265bc4818f77f0f7b1f99dbe9833",
+      "candidateSHA256": "eb263c6f5b4eadd56040161b9e5f2f1db586e3a3070f888346390b0b57855c49",
+      "installedSHA256": "eb263c6f5b4eadd56040161b9e5f2f1db586e3a3070f888346390b0b57855c49",
+      "reviewSHA256": "c454256a24ce8d36da06ba8b447dd70782332803adb8a62c2816f55c875f2c16",
+      "receiptSHA256": "97dd39ca49502c5991f9b4a569e129117c1f2ec90a4b44b95754aab131f99e66",
+      "committedAt": "2026-11-02T08:08:51.760582+00:00"
+    },
+    {
+      "cycle": 9,
+      "profile": "enemy:fortress_archer",
+      "changedClips": [
+        "CastEnemyClaw"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "96a572e46a03d230f098f1fdb83d381754da562347a2d549620496f31fba8e98",
+      "candidateSHA256": "36641ce3518cab87b40c9fba6c4871eb1a489028cf4fa70daeb7c6d3a2716131",
+      "installedSHA256": "36641ce3518cab87b40c9fba6c4871eb1a489028cf4fa70daeb7c6d3a2716131",
+      "reviewSHA256": "e9192a7a6b27c4cda8c2ce608c3e04f5ed11926884233d4e741516fbf7bdaba9",
+      "receiptSHA256": "9556a32b0b64e7026dec7feef08a2c36dfc24b5ea138dd1bb2c5465e5d7a56e7",
+      "committedAt": "2026-11-02T08:52:47.770500+00:00"
+    },
+    {
+      "cycle": 10,
+      "profile": "enemy:dagan",
+      "changedClips": [
+        "CastEnemyClaw"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "43325e459cce9dba160ffee46d25200e5cc7969daa3b6620d737b87e6a8eadc6",
+      "candidateSHA256": "7a008c49c6328689b07828732f22e6a3a6644abb2334e767ff75121fc190a245",
+      "installedSHA256": "7a008c49c6328689b07828732f22e6a3a6644abb2334e767ff75121fc190a245",
+      "reviewSHA256": "7159d9328a15ab559cce835406af78851ef5be84acb8a552a7de167e1a068c75",
+      "receiptSHA256": "3332f6e0c88a93e1c322d557e1a220029fbf601b37fbfdf430c867150366bbcd",
+      "committedAt": "2026-11-02T08:52:48.999832+00:00"
+    },
+    {
+      "cycle": 11,
+      "profile": "party:leia",
+      "changedClips": [
+        "Attack"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "51e45d78de00279425ec15fa47342f57d873c37f63e72c71b31361896c695592",
+      "candidateSHA256": "4a1002ba61e7af1fdcfb7d360a1af88ec4fa10bb6e9b787f987fe7acf2c2b5f9",
+      "installedSHA256": "4a1002ba61e7af1fdcfb7d360a1af88ec4fa10bb6e9b787f987fe7acf2c2b5f9",
+      "reviewSHA256": "c3bfc8c9c65110666a7e65bf1216ecb6773acb2b34218031bc64f4612ac799d1",
+      "receiptSHA256": "7b2638b0390caa071296ecef56e5625d6f7bbac2d5566a08990b63db9105aa50",
+      "committedAt": "2026-11-02T08:52:50.267402+00:00"
+    },
+    {
+      "cycle": 12,
+      "profile": "enemy:ash_husk",
+      "changedClips": [
+        "CastEnemyClaw"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "9af32014ea4e9c724bae731b4079ac33221dfec193a897918df1740410354716",
+      "candidateSHA256": "d5d636637c45e49fc340c2498f80a4a4a2f61f4d0a0af9d816af418b803a0842",
+      "installedSHA256": "d5d636637c45e49fc340c2498f80a4a4a2f61f4d0a0af9d816af418b803a0842",
+      "reviewSHA256": "c2a434e40bc6d5cc996963b6e76962d94c7dd2c26d0f83e5589b92dffb6848f8",
+      "receiptSHA256": "23df04d34e42e5df247b845bce5080e7a25c89eb93542960b7778c798201bfdd",
+      "committedAt": "2026-11-02T09:35:17.645551+00:00"
+    },
+    {
+      "cycle": 13,
+      "profile": "enemy:drowned",
+      "changedClips": [
+        "CastEnemyIce"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "2f50c830dba24ff0ca8c5a770779f7e75d770e233316d784f85fa204e00c090d",
+      "candidateSHA256": "c652d11d9f5c77629daca9d2907fcc8d28c7ccb6d975195a8ec93be44db3b5fe",
+      "installedSHA256": "c652d11d9f5c77629daca9d2907fcc8d28c7ccb6d975195a8ec93be44db3b5fe",
+      "reviewSHA256": "02e34e40a910a98b2c1bdb3ae93754fd814ebef4c6bd1b4f640cbd33adb8c472",
+      "receiptSHA256": "9dcc4e506bb2c05abe0f9f958ecc577bcd3d408a3e1100ada9b5a4be9d0577d0",
+      "committedAt": "2026-11-02T09:35:21.176556+00:00"
+    },
+    {
+      "cycle": 14,
+      "profile": "enemy:hollow_reaper",
+      "changedClips": [
+        "CastEnemyClaw"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "937967ff4f2e882f9667e62bb54c068cc18b6ec766d1d2a615e5644f00aa037b",
+      "candidateSHA256": "f8e0b55bcd52de905d90b824ac9c9f93acb05e6a46afcb34b73c787363082d6a",
+      "installedSHA256": "f8e0b55bcd52de905d90b824ac9c9f93acb05e6a46afcb34b73c787363082d6a",
+      "reviewSHA256": "c2da1d80b89c51e8c13ffe6a330bf76f671e0f78177a2f1dfca64ac3a30abd39",
+      "receiptSHA256": "3bc234fae2d87138390d7909a8258e6d860e3d1b7fe3bf04bc0e27b829a1be9c",
+      "committedAt": "2026-11-02T09:35:24.482396+00:00"
+    },
+    {
+      "cycle": 15,
+      "profile": "enemy:oathshade",
+      "changedClips": [
+        "CastEnemyClaw"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "5ae0ddeefa7a6abcfe41de2aaa8afb05cf824a2c045a47638b1ad2a2f4c78f31",
+      "currentParentSHA256": "5ae0ddeefa7a6abcfe41de2aaa8afb05cf824a2c045a47638b1ad2a2f4c78f31",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "f2268f057d3335ef37d879dff0d2d3d398312402ef2986ad3500af10c76e45a1",
+      "installedSHA256": "f2268f057d3335ef37d879dff0d2d3d398312402ef2986ad3500af10c76e45a1",
+      "reviewSHA256": "2a10ef15b3ea2b99c6d42c00f51c92e7e845c03b92a34b92306dbe385454b533",
+      "receiptSHA256": "8eee8e951c84234953cc31e7320ced3aab0bed64ff5da6b195123ca111548a57",
+      "committedAt": "2026-11-02T10:25:00.294925+00:00"
+    },
+    {
+      "cycle": 16,
+      "profile": "enemy:ember_acolyte",
+      "changedClips": [
+        "CastEnemyFire"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "c3afa4a9cbd8c2919843698695011a46a411354477f035fc1dac6af95e982f79",
+      "currentParentSHA256": "c3afa4a9cbd8c2919843698695011a46a411354477f035fc1dac6af95e982f79",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "a493e7e2f4bcae5cd38a1c374cd0bdc8ead3fd9fb2ae12edce3ae0fb31b59bae",
+      "installedSHA256": "a493e7e2f4bcae5cd38a1c374cd0bdc8ead3fd9fb2ae12edce3ae0fb31b59bae",
+      "reviewSHA256": "c0bbbf4d6bb3ea2f914002c5132ac3d9e46666b28267114b043ef7b464c608c6",
+      "receiptSHA256": "4e8449f5676290183b726c57234f727b429903bacacb35500c2b4e2687ea6729",
+      "committedAt": "2026-11-02T10:25:04.860754+00:00"
+    },
+    {
+      "cycle": 17,
+      "profile": "enemy:ferry_echo",
+      "changedClips": [
+        "CastEnemyIce"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "eb11cf5849126b91b1a5e48df10e2e5831510a9d0fb2b7406c5bdd63b30b58c8",
+      "currentParentSHA256": "eb11cf5849126b91b1a5e48df10e2e5831510a9d0fb2b7406c5bdd63b30b58c8",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "f6d90fafd07d63767a1538d4194750c34db587cdc07117888adf3be875fcbaa3",
+      "installedSHA256": "f6d90fafd07d63767a1538d4194750c34db587cdc07117888adf3be875fcbaa3",
+      "reviewSHA256": "5544a386a9e1649007073f513a078788648645c837ddec362b47b6d244795c75",
+      "receiptSHA256": "2752bf2a6265986660cd8e8dc074c3e06eb58f8a775151de1a8cf043a0cdd3fc",
+      "committedAt": "2026-11-02T10:25:09.604970+00:00"
+    },
+    {
+      "cycle": 18,
+      "profile": "enemy:hush_acolyte",
+      "changedClips": [
+        "CastEnemyFire"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "09cbe8ec14ea9f900fe9f350ad34096c6e4c345a42498d3121b1d74ac8e71a43",
+      "currentParentSHA256": "09cbe8ec14ea9f900fe9f350ad34096c6e4c345a42498d3121b1d74ac8e71a43",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "c2ea62f20d3479084dab81609f56b2c882483441105ae305c002f9b2377abc36",
+      "installedSHA256": "c2ea62f20d3479084dab81609f56b2c882483441105ae305c002f9b2377abc36",
+      "reviewSHA256": "1ab5fdb6c3b4f6c7ce9f665f28ebea03faf0c54903c0467c8a3488f9c8f4c020",
+      "receiptSHA256": "10425ec16e67dbf4d48a03f8538d3281eb48171d2201c50047a6e7453fea0d28",
+      "committedAt": "2026-11-02T10:40:19.417034+00:00"
+    },
+    {
+      "cycle": 19,
+      "profile": "enemy:silent_choir",
+      "changedClips": [
+        "CastEnemyRing"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "05aedc86bde1248a3f8935eaa3cf35149f66277c3494a7fa5ee23027f23a915f",
+      "currentParentSHA256": "05aedc86bde1248a3f8935eaa3cf35149f66277c3494a7fa5ee23027f23a915f",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "eb0dead12866c14e3d941b7dfaab3d9f352e3dd03d18556ef24fb1ffb0007877",
+      "installedSHA256": "eb0dead12866c14e3d941b7dfaab3d9f352e3dd03d18556ef24fb1ffb0007877",
+      "reviewSHA256": "5925d55b6653ec5e40ad68e8848a4a59cd5785c02a71248f7a84653c913031f5",
+      "receiptSHA256": "4a564e3cfdbf59ce2149ffe7383307aa2ff068732a1e11d7efa7d0ebf7d6626d",
+      "committedAt": "2026-11-02T10:40:24.783438+00:00"
+    },
+    {
+      "cycle": 20,
+      "profile": "enemy:mute_abbot",
+      "changedClips": [
+        "CastEnemyFire"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "b1d729f10a0780e5e3938f9c8668de015995034645dc989838fd62fcea33160c",
+      "currentParentSHA256": "b1d729f10a0780e5e3938f9c8668de015995034645dc989838fd62fcea33160c",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "cbd912958a432d601afeda46510d4e081a074be43d44dcd2f1f709a07fd8b623",
+      "installedSHA256": "cbd912958a432d601afeda46510d4e081a074be43d44dcd2f1f709a07fd8b623",
+      "reviewSHA256": "8579792ab645ef41e14fdaf564673c645d4757ca8f536cde03ec0fdd0cafaaea",
+      "receiptSHA256": "3929764ee8f9dad568494197746c462b1fe2ddcbf2c801019ea0e05052f42cbe",
+      "committedAt": "2026-11-02T10:40:29.396742+00:00"
+    },
+    {
+      "cycle": 21,
+      "profile": "enemy:broken_reliquary",
+      "changedClips": [
+        "CastEnemyClaw"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "5a44d7b7b5910cb48d04b12106cd0903231e08c4ee07391ad8ae7f6a3ee86658",
+      "currentParentSHA256": "5a44d7b7b5910cb48d04b12106cd0903231e08c4ee07391ad8ae7f6a3ee86658",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "be5e16f31dd5d1fc2770a9e19775918844cc2caa4895ee1505f8f25665ec96dc",
+      "installedSHA256": "be5e16f31dd5d1fc2770a9e19775918844cc2caa4895ee1505f8f25665ec96dc",
+      "reviewSHA256": "40a24c2acd52b908ec42bf00a1fee6e4f64cbbf110a23195b0e1d5f20c770f28",
+      "receiptSHA256": "730755535d0280b468a3f3fc8c6fb2b87745643225646c589bbe373885e2d381",
+      "committedAt": "2026-11-02T14:50:03.053772+00:00"
+    },
+    {
+      "cycle": 22,
+      "profile": "enemy:catalogue_warden",
+      "changedClips": [
+        "CastEnemyClaw"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "e05c3832978a01be5a2f038578934f673c4f862b1e5a812a882ea6cb6efd0105",
+      "currentParentSHA256": "e05c3832978a01be5a2f038578934f673c4f862b1e5a812a882ea6cb6efd0105",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "0a4c2893e5161e2ce918a1b0103b7120293ae2ea67ec6008d1c32b3ce2b70eb1",
+      "installedSHA256": "0a4c2893e5161e2ce918a1b0103b7120293ae2ea67ec6008d1c32b3ce2b70eb1",
+      "reviewSHA256": "26dac3e8b5a1a70182c54f21c1a054576b848cb2c2db5d6d02c492b693e9ba21",
+      "receiptSHA256": "02e61d586c0086b024fafa8bec85abaf728d02d80ec0a37656d6ec8418b0db65",
+      "committedAt": "2026-11-02T14:50:08.365110+00:00"
+    },
+    {
+      "cycle": 23,
+      "profile": "enemy:bellkeeper",
+      "changedClips": [
+        "CastEnemyClaw"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "de3884062da8785e4671b6008be645b33feae64e4b8225b4227a3baf9110cd3c",
+      "currentParentSHA256": "de3884062da8785e4671b6008be645b33feae64e4b8225b4227a3baf9110cd3c",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "932a67fdb132b4fa255274b3a76da0e603b7beef3901201920e45c3d0b1f2279",
+      "installedSHA256": "932a67fdb132b4fa255274b3a76da0e603b7beef3901201920e45c3d0b1f2279",
+      "reviewSHA256": "fea26b8716094d5e54fcc1fa95b91999ff79b7838f5b6eeb5cf0bcb2bec12485",
+      "receiptSHA256": "8d27fe6fba8a725aa83dbc26ea11f7fd1fecda92cf603d18ff0e5611099d733c",
+      "committedAt": "2026-11-02T14:50:13.751861+00:00"
+    },
+    {
+      "cycle": 24,
+      "profile": "enemy:road_extorter",
+      "changedClips": [
+        "CastEnemyClaw"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "8078b6fc12838c506523867b0a0c75abb4ea830907c72645d5d91cbd2274fa91",
+      "currentParentSHA256": "8078b6fc12838c506523867b0a0c75abb4ea830907c72645d5d91cbd2274fa91",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "776d0c0692181f371abedbedc7e5ab661613511f446fc52407624e39880e121b",
+      "installedSHA256": "776d0c0692181f371abedbedc7e5ab661613511f446fc52407624e39880e121b",
+      "reviewSHA256": "d3d6712c1ebf013bfbdeb1e52984685571e5cfd08a4389a6e7eabf110e42b387",
+      "receiptSHA256": "269ead97ad6c66b00402c3077ad7b0378e4289ac1e8b270c95f6de02354662f5",
+      "committedAt": "2026-11-02T14:50:15.892647+00:00"
+    },
+    {
+      "cycle": 25,
+      "profile": "enemy:quarry_overseer",
+      "changedClips": [
+        "CastEnemyClaw"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "584bfb577c89ae68d3314637d749f8725e4b104035c352250e0c79b107cb727a",
+      "currentParentSHA256": "584bfb577c89ae68d3314637d749f8725e4b104035c352250e0c79b107cb727a",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "90d8f461e77fd530317ee1b92da6f2768cbac4766b836e8b825db7f6344c263a",
+      "installedSHA256": "90d8f461e77fd530317ee1b92da6f2768cbac4766b836e8b825db7f6344c263a",
+      "reviewSHA256": "81a339e82ab8a3ccf7161064c95c1796fb99d8728d082a8c5b39797304ca4e11",
+      "receiptSHA256": "e06f70e1a91ae03643db87c8547e57288deb2d0a9c6e9470680b7dc730d75df2",
+      "committedAt": "2026-11-02T14:50:17.130358+00:00"
+    },
+    {
+      "cycle": 26,
+      "profile": "enemy:reed_stalker",
+      "changedClips": [
+        "CastEnemyClaw"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "aae3395eb990e43edefeaa69cfce4dd2a6d9344d58dfc47ab959e4a5fe94910a",
+      "currentParentSHA256": "aae3395eb990e43edefeaa69cfce4dd2a6d9344d58dfc47ab959e4a5fe94910a",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "6dfbb2c93ac20fff1a2fa492e1bec2e4af3f1de6f6c6a96feae4b33cf15c9870",
+      "installedSHA256": "6dfbb2c93ac20fff1a2fa492e1bec2e4af3f1de6f6c6a96feae4b33cf15c9870",
+      "reviewSHA256": "258173c8ae691f188f8139dec29c5753ded2904b49d820911d72168b40f627af",
+      "receiptSHA256": "92cf51286765eed2dac3a3beed8a7b6a23c36b98ac88d3eb4aee18c94e6a58ff",
+      "committedAt": "2026-11-02T14:50:18.814656+00:00"
+    },
+    {
+      "cycle": 27,
+      "profile": "enemy:thorn_wolf",
+      "changedClips": [
+        "CastEnemyClaw"
+      ],
+      "decision": "REJECT",
+      "beforeSHA256": "8610f0e57833e058ef6a21df8b24bdf73383ac8f649381dc275d1b6d16dddc28",
+      "currentParentSHA256": "8610f0e57833e058ef6a21df8b24bdf73383ac8f649381dc275d1b6d16dddc28",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "f1f0c9d4ba26f9a3ccf934a0442fb6e9e2de29f89eedaafe2528007dc4c7f0ab",
+      "installedSHA256": "8610f0e57833e058ef6a21df8b24bdf73383ac8f649381dc275d1b6d16dddc28",
+      "reviewSHA256": "ed13184b4742b4750530bb72a54fc0edc8655e07df8f440df92192d870a43504",
+      "receiptSHA256": "425ad435725e37f3d94f052e9be193a2cf4139aad1630c38277b9e32d837cee5",
+      "committedAt": "2026-11-02T17:42:38.840783+00:00"
+    },
+    {
+      "cycle": 28,
+      "profile": "enemy:warden_hound",
+      "changedClips": [
+        "CastEnemyClaw"
+      ],
+      "decision": "REJECT",
+      "beforeSHA256": "6b0de04dd80213dd577f1f87342970c3f4fb26e5de96dea5f2a54cbd225e5eab",
+      "currentParentSHA256": "6b0de04dd80213dd577f1f87342970c3f4fb26e5de96dea5f2a54cbd225e5eab",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "8d380f274ec31c8ebd4b51759aaffe1dc72dd6f82209f4471dc26273eeb534d5",
+      "installedSHA256": "6b0de04dd80213dd577f1f87342970c3f4fb26e5de96dea5f2a54cbd225e5eab",
+      "reviewSHA256": "a09db93d24114185dd02fe40b7b031052f1de49503bfce99e971dad8d92d152f",
+      "receiptSHA256": "3822536c857a89a47f8554a84891691c5c73b9b6819a3dfa3be7e4b52cfb31f2",
+      "committedAt": "2026-11-02T17:42:45.294680+00:00"
+    },
+    {
+      "cycle": 29,
+      "profile": "enemy:resin_moth",
+      "changedClips": [
+        "CastEnemyFire"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "9634a8585973c27f66eec59db47f105b1938c8621df0fc905d985d4fb535ea59",
+      "currentParentSHA256": "9634a8585973c27f66eec59db47f105b1938c8621df0fc905d985d4fb535ea59",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "7832c39d2eb330e3844b1da8be439c37f02edeaf1b8b0f2f479eb34fc1c344b3",
+      "installedSHA256": "7832c39d2eb330e3844b1da8be439c37f02edeaf1b8b0f2f479eb34fc1c344b3",
+      "reviewSHA256": "52765fabf2fc2eb081a82e740ed57af005398c03c792cc67fbd27c1ab5148c59",
+      "receiptSHA256": "0abfe6da1b55c33d7e23231001be2db56345cebd79e17521ad78e4075da4e604",
+      "committedAt": "2026-11-02T17:42:51.321968+00:00"
+    },
+    {
+      "cycle": 30,
+      "profile": "enemy:wick_light",
+      "changedClips": [
+        "CastEnemyFire"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "23530f7c4357d55d751b56a9ac8fce3674131bc6b7fe54d16c60310ad9b0957c",
+      "currentParentSHA256": "23530f7c4357d55d751b56a9ac8fce3674131bc6b7fe54d16c60310ad9b0957c",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "88dba5bf69e25a69c2bf35e8debe89197d84c2c94eab91e08d4a62eed2ff2f2d",
+      "installedSHA256": "88dba5bf69e25a69c2bf35e8debe89197d84c2c94eab91e08d4a62eed2ff2f2d",
+      "reviewSHA256": "ce62dd2b2dd72a0f5a39a5b193bdccc52d7c482282b9c06da1ec36a72d24f14f",
+      "receiptSHA256": "4c927aaf69017bb88bcc9861192abcdd75959903a72a2002e6f5ac4fc428e0cd",
+      "committedAt": "2026-11-02T18:20:03.509699+00:00"
+    },
+    {
+      "cycle": 31,
+      "profile": "enemy:paper_swarm",
+      "changedClips": [
+        "CastEnemyRing"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "826b857e7fde5c588fd03a3890cf48ae1f4096eeb786cbb91f68a0f2ab9cc4e1",
+      "currentParentSHA256": "826b857e7fde5c588fd03a3890cf48ae1f4096eeb786cbb91f68a0f2ab9cc4e1",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "6b0ffccf40ecdd74561afb3b5d35ad467bd3d94a9ae416519aa2cc4db2fb1c4b",
+      "installedSHA256": "6b0ffccf40ecdd74561afb3b5d35ad467bd3d94a9ae416519aa2cc4db2fb1c4b",
+      "reviewSHA256": "6b20838aa78499ed06faf1cd47f91968cca452a774932670d25d5a5c2b020263",
+      "receiptSHA256": "7800a841c3504808e77716c917a8abf90e7c31fddd4fb4628411a13025e59608",
+      "committedAt": "2026-11-02T18:20:09.016793+00:00"
+    },
+    {
+      "cycle": 32,
+      "profile": "enemy:thorn_keeper",
+      "changedClips": [
+        "CastEnemyClaw"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "36fc5e55526e865e8541e8f06327d31df743e2902e5d0f6e32d55d5b12303c7d",
+      "currentParentSHA256": "36fc5e55526e865e8541e8f06327d31df743e2902e5d0f6e32d55d5b12303c7d",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "6ddeb8d89b3e38a4edb20b2f873f2ee6ab046fc1aac3989f0a5b29cd6fc6e30e",
+      "installedSHA256": "6ddeb8d89b3e38a4edb20b2f873f2ee6ab046fc1aac3989f0a5b29cd6fc6e30e",
+      "reviewSHA256": "32284655af238b45f9868580f955d86b3c472d50461966d8bf2aeed59b4bee61",
+      "receiptSHA256": "c702a263d801ed3cd16af4012d6b9574907ffc7bdb3837b96d624ec39e66c160",
+      "committedAt": "2026-11-02T18:20:15.326890+00:00"
+    },
+    {
+      "cycle": 33,
+      "profile": "enemy:quarry_echo",
+      "changedClips": [
+        "CastEnemyRing"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "bd1864882670717962275976ecb35d9887e4fb90c0c78e73cab92dbcec75f3c9",
+      "currentParentSHA256": "bd1864882670717962275976ecb35d9887e4fb90c0c78e73cab92dbcec75f3c9",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "29db19e66102e7700417ff282d8759ddad4090924cd61b6a3b5d87bfc6cc1c04",
+      "installedSHA256": "29db19e66102e7700417ff282d8759ddad4090924cd61b6a3b5d87bfc6cc1c04",
+      "reviewSHA256": "8f486342cd58a324aec4f2ede1c1ba312bfc3300a209e0654c6d2389cb78d348",
+      "receiptSHA256": "a283c81a021259b836f67e3cb120ed18a04ce82eb281ff205b51d857fea65763",
+      "committedAt": "2026-11-02T21:15:54.606208+00:00"
+    },
+    {
+      "cycle": 34,
+      "profile": "enemy:harvest_engine",
+      "changedClips": [
+        "CastEnemyClaw"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "b0d7293729c95a5dc080e578bc72f81cb75503fab354ebfd5e45c7788c300f0f",
+      "currentParentSHA256": "b0d7293729c95a5dc080e578bc72f81cb75503fab354ebfd5e45c7788c300f0f",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "1faf31048b290daa1c5f16f92c308c7ba61e534ade4cd113d940128c61d96d11",
+      "installedSHA256": "1faf31048b290daa1c5f16f92c308c7ba61e534ade4cd113d940128c61d96d11",
+      "reviewSHA256": "9872c4d4a68f2cc0a57f6456faa1b7ea77a4e2ef5e34cda783779da240e607c3",
+      "receiptSHA256": "570698df201ee4e7b01c8daef4f373136b7c9e6cf7be115cd0d5d329aafd60ac",
+      "committedAt": "2026-11-02T21:16:02.308671+00:00"
+    },
+    {
+      "cycle": 35,
+      "profile": "enemy:iron_rat",
+      "changedClips": [
+        "CastEnemyClaw"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "d96e5cae0eacb67718bfca9a55ecccf724202fc787f544fa262f375f7e6d801b",
+      "currentParentSHA256": "d96e5cae0eacb67718bfca9a55ecccf724202fc787f544fa262f375f7e6d801b",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "1fc6f440dba6999146a006ec9f3479af99f94163a7db6c6be9bf4073800ed93c",
+      "installedSHA256": "1fc6f440dba6999146a006ec9f3479af99f94163a7db6c6be9bf4073800ed93c",
+      "reviewSHA256": "7bcf1845c5b48c2c595474fc9d42a8937b45a81f0aec351e99eab78733152e2f",
+      "receiptSHA256": "f2c85fba3ab706ff1db6644ce6c2d2f9978a70416511963fb3a2627f5f73d916",
+      "committedAt": "2026-11-02T21:16:07.648149+00:00"
+    },
+    {
+      "cycle": 36,
+      "profile": "enemy:cinder_bird",
+      "changedClips": [
+        "CastEnemyFire"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "d084932148654656c2f39ca79d3516fdfbb084578b83e0ed502337f3386ab9f3",
+      "currentParentSHA256": "d084932148654656c2f39ca79d3516fdfbb084578b83e0ed502337f3386ab9f3",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "d216811a7946d0271fc887a707ea50efb3557cca0fc75189eadd988badf1d714",
+      "installedSHA256": "d216811a7946d0271fc887a707ea50efb3557cca0fc75189eadd988badf1d714",
+      "reviewSHA256": "3e79736f2ccd2bbb7d620a29d90f7e056515f0f829f050b82773af8a935fbcf8",
+      "receiptSHA256": "5cf887eb7079b4ee3ef15d95f791bc5ac0fbf9ca26cf0c1fed9f00fa588ac5eb",
+      "committedAt": "2026-11-02T21:38:37.814227+00:00"
+    },
+    {
+      "cycle": 37,
+      "profile": "enemy:oath_knight",
+      "changedClips": [
+        "CastEnemyClaw"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "b76ad07dbcbb3a9de54ef6f8a0793d7d1ba8f0c3b8e880f3595c4fb6bbc6cba9",
+      "currentParentSHA256": "b76ad07dbcbb3a9de54ef6f8a0793d7d1ba8f0c3b8e880f3595c4fb6bbc6cba9",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "ba473eccc83ff66b05511caebe99c83534ec9894d1d44d5ec24d3faad2e78ff8",
+      "installedSHA256": "ba473eccc83ff66b05511caebe99c83534ec9894d1d44d5ec24d3faad2e78ff8",
+      "reviewSHA256": "7805f31c4d5f187cf57660a89278b6cea2ae1eadef4c606b75c75d4f119a6c09",
+      "receiptSHA256": "4e57b146ddae7238bed5518b655b8de50145c2a3dfa9f883824203ad2bf70728",
+      "committedAt": "2026-11-02T21:38:39.626229+00:00"
+    },
+    {
+      "cycle": 38,
+      "profile": "party:alar",
+      "changedClips": [
+        "CastSunCut"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "b9e5b6477e3bb032308e43dfcbe67564fc2a2b8e625f242cd61d8105310ae3d5",
+      "currentParentSHA256": "b9e5b6477e3bb032308e43dfcbe67564fc2a2b8e625f242cd61d8105310ae3d5",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "f2a82df40ff8839bcf58107e6122560b6bd4fe02c0986b121edd867a0bd45442",
+      "installedSHA256": "f2a82df40ff8839bcf58107e6122560b6bd4fe02c0986b121edd867a0bd45442",
+      "reviewSHA256": "d0af860d50ebdcbd30b881b31ff016336eb37fbf9a68f55e05fcbf56286b9c4e",
+      "receiptSHA256": "41cccd7774e42e3ae0f0c1e4f5c506accc91def0ca01da937509db620958c0e6",
+      "committedAt": "2026-11-02T21:38:40.901874+00:00"
+    },
+    {
+      "cycle": 39,
+      "profile": "party:alar",
+      "changedClips": [
+        "CastOathGuard"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "b9e5b6477e3bb032308e43dfcbe67564fc2a2b8e625f242cd61d8105310ae3d5",
+      "currentParentSHA256": "f2a82df40ff8839bcf58107e6122560b6bd4fe02c0986b121edd867a0bd45442",
+      "integration": "DISJOINT_PARTY_CLIP_COMPOSITION",
+      "candidateSHA256": "a54d3d00bfa77976af841a4cb9d5de60441c38d9a3d062b5de7268e531d8d750",
+      "installedSHA256": "901f7c99dea0e3a36e38ffd44a4f9bdcde0a2bdab48b1c2e860d312159291371",
+      "reviewSHA256": "dcfb8b775decabdbe223f99e642621cbd12d6628936926363c0f8ad6f33cdf66",
+      "receiptSHA256": "7a1b1a01c5a75b3139e6f18651b3529311cd5b7f9a5fb057f3a9b40736374f43",
+      "committedAt": "2026-11-02T21:38:42.797070+00:00"
+    },
+    {
+      "cycle": 40,
+      "profile": "party:alar",
+      "changedClips": [
+        "CastCinderWave"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "b9e5b6477e3bb032308e43dfcbe67564fc2a2b8e625f242cd61d8105310ae3d5",
+      "currentParentSHA256": "901f7c99dea0e3a36e38ffd44a4f9bdcde0a2bdab48b1c2e860d312159291371",
+      "integration": "DISJOINT_PARTY_CLIP_COMPOSITION",
+      "candidateSHA256": "3fe4569ddc038a2cde8c74f52f433d62bb95308f9fc6888c3814a8cb2ac9d5bc",
+      "installedSHA256": "309b0807cdce821251011c7c1251042de9a6c1461fd14c2d3e2e76746de4e53b",
+      "reviewSHA256": "28019c31e1328e162a04c18fe51d4163a79c43cf9993a29b69ce24781fb59826",
+      "receiptSHA256": "01a20184a48fa5b2edaa9fef881aeb2a1adec99b3bce879ad1db05206e24cdaa",
+      "committedAt": "2026-11-02T21:38:44.433838+00:00"
+    },
+    {
+      "cycle": 41,
+      "profile": "party:alar",
+      "changedClips": [
+        "CastLastLight"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "b9e5b6477e3bb032308e43dfcbe67564fc2a2b8e625f242cd61d8105310ae3d5",
+      "currentParentSHA256": "309b0807cdce821251011c7c1251042de9a6c1461fd14c2d3e2e76746de4e53b",
+      "integration": "DISJOINT_PARTY_CLIP_COMPOSITION",
+      "candidateSHA256": "cc292b57cab6d72251afa0da7d016cff727846ac109262c553b9f6f064383af4",
+      "installedSHA256": "3344f1641ceb226b18cb379597eec23bd8ba02c80a4d3e00d7d971ebc5e1bd43",
+      "reviewSHA256": "fd811b1025b23e43dfef96255c8ee84bc8cf1c94da9845a003e230263bf2e651",
+      "receiptSHA256": "10801b4c45be1fb17d2e3afb7e724731a6d281b80ca61a6490c5c033aec1474b",
+      "committedAt": "2026-11-02T21:38:46.178901+00:00"
+    },
+    {
+      "cycle": 42,
+      "profile": "party:iona",
+      "changedClips": [
+        "CastEmberScript"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "3bdd149563ba42e01bb45c2b77efbf1ac929fa39b7ac2f5b47cfa03766c097cd",
+      "currentParentSHA256": "3bdd149563ba42e01bb45c2b77efbf1ac929fa39b7ac2f5b47cfa03766c097cd",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "289f43373cbcdc3be20e6308042935cae3bccd829e1b529de31783c23a460fdd",
+      "installedSHA256": "289f43373cbcdc3be20e6308042935cae3bccd829e1b529de31783c23a460fdd",
+      "reviewSHA256": "728cbf613454a9efa21e11e94d92cec0bdce45b1516a3e96cffcd41e04af7bd9",
+      "receiptSHA256": "ed9f9e037cbe3b972dba251002095c84cad3df9ad044fe997f812d8d14309b58",
+      "committedAt": "2026-11-02T21:38:48.303553+00:00"
+    },
+    {
+      "cycle": 43,
+      "profile": "party:iona",
+      "changedClips": [
+        "CastFrostMargin"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "3bdd149563ba42e01bb45c2b77efbf1ac929fa39b7ac2f5b47cfa03766c097cd",
+      "currentParentSHA256": "289f43373cbcdc3be20e6308042935cae3bccd829e1b529de31783c23a460fdd",
+      "integration": "DISJOINT_PARTY_CLIP_COMPOSITION",
+      "candidateSHA256": "0221d4be62c48f9d350b7a72c034b6eae27a65c3a4accd12c4ff86c6f4d195a1",
+      "installedSHA256": "98c53722d766826ae1c8edffe9f90e3e823b6dc520191a9a1c278e321e65816a",
+      "reviewSHA256": "d6bd2a528bb05b658537dde3e0ea584f9d7b2867f0accf78137e012f6fbdb978",
+      "receiptSHA256": "d0b2605854207165b9c2882ffb250c5ec54d92d1e718cc7cfd7279da24f071e9",
+      "committedAt": "2026-11-02T21:38:49.860445+00:00"
+    },
+    {
+      "cycle": 44,
+      "profile": "party:iona",
+      "changedClips": [
+        "CastScatterRunes"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "3bdd149563ba42e01bb45c2b77efbf1ac929fa39b7ac2f5b47cfa03766c097cd",
+      "currentParentSHA256": "98c53722d766826ae1c8edffe9f90e3e823b6dc520191a9a1c278e321e65816a",
+      "integration": "DISJOINT_PARTY_CLIP_COMPOSITION",
+      "candidateSHA256": "42bd63c00f24862052e8ff7bfe0f7e3fca43f2fa8a52ba10320fdb235d5cda23",
+      "installedSHA256": "855cdf3b613890b8c682ca991471b789a675fb627434792ff59eabe71353a9bb",
+      "reviewSHA256": "d354976602655bec3b9ad30eccb9849a75eb915d1fe140fd0b9934f6e29cb886",
+      "receiptSHA256": "c0fbdd95b34a1e6463d28e70484cc50fa5f32f5ee65c4fd092e3a9cc7465a72c",
+      "committedAt": "2026-11-02T21:38:51.682004+00:00"
+    },
+    {
+      "cycle": 45,
+      "profile": "party:radan",
+      "changedClips": [
+        "CastSpearThrust"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "243dbb88b9077703fd159982815da097729ee68ebb9aeae1ddfd896bf1148f6a",
+      "currentParentSHA256": "243dbb88b9077703fd159982815da097729ee68ebb9aeae1ddfd896bf1148f6a",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "1dc87e619f2878afb2d564a43d50249ee7962e430359e7c2b6393b52f953aba1",
+      "installedSHA256": "1dc87e619f2878afb2d564a43d50249ee7962e430359e7c2b6393b52f953aba1",
+      "reviewSHA256": "f69ba5ac57e75247a64535b2d9b2cbb9d79fd619dfa7e2ae568ebd5954094301",
+      "receiptSHA256": "2f691c1561b21efad1cd5ad99a5b21d88abd9648f22989532019d061fd9a5867",
+      "committedAt": "2026-11-02T21:38:53.589927+00:00"
+    },
+    {
+      "cycle": 46,
+      "profile": "party:radan",
+      "changedClips": [
+        "CastShieldWall"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "243dbb88b9077703fd159982815da097729ee68ebb9aeae1ddfd896bf1148f6a",
+      "currentParentSHA256": "1dc87e619f2878afb2d564a43d50249ee7962e430359e7c2b6393b52f953aba1",
+      "integration": "DISJOINT_PARTY_CLIP_COMPOSITION",
+      "candidateSHA256": "8d75761d886fe33a152de0715e3b4a3c52aebcc2ffbf1b66510d4fff3117634f",
+      "installedSHA256": "76ce8a3efee53776a5bc95a004d71f826118a8589de88f6de403995a50d677e8",
+      "reviewSHA256": "af23939052820d08333287d374ac5f6cbbd0a88dc7a0158ff69cd9e2eab7a0a8",
+      "receiptSHA256": "1e2698093764a1ddb7bb841fddae6485bba1b7b4653c4318064001c3c898f852",
+      "committedAt": "2026-11-02T21:38:55.395146+00:00"
+    },
+    {
+      "cycle": 47,
+      "profile": "party:radan",
+      "changedClips": [
+        "CastIronSweep"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "243dbb88b9077703fd159982815da097729ee68ebb9aeae1ddfd896bf1148f6a",
+      "currentParentSHA256": "76ce8a3efee53776a5bc95a004d71f826118a8589de88f6de403995a50d677e8",
+      "integration": "DISJOINT_PARTY_CLIP_COMPOSITION",
+      "candidateSHA256": "733b01d226cdcdef9acc9513050e3ec75232c40cb43c228e31e3759e70cc6227",
+      "installedSHA256": "9fe5e2dcde6b92f4e63ff855fafba4071f144f9125eabfc7212edd7ac7999146",
+      "reviewSHA256": "e6d1ead799ad74da44bd5f4eef8f313a14f4e18522dcd0e3e03258691c6e4398",
+      "receiptSHA256": "4a4652f9fc8abfcdf8676985f532d11e861241c7e0d5717651c39fe81831721f",
+      "committedAt": "2026-11-02T21:38:57.065614+00:00"
+    },
+    {
+      "cycle": 48,
+      "profile": "party:leia",
+      "changedClips": [
+        "CastWarmHands"
+      ],
+      "decision": "REJECT",
+      "beforeSHA256": "4a1002ba61e7af1fdcfb7d360a1af88ec4fa10bb6e9b787f987fe7acf2c2b5f9",
+      "currentParentSHA256": "4a1002ba61e7af1fdcfb7d360a1af88ec4fa10bb6e9b787f987fe7acf2c2b5f9",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "160885208d9f115a4c5fc4fa7ac9def56b5a6c25703ca77ca1be65f5dcf30d41",
+      "installedSHA256": "4a1002ba61e7af1fdcfb7d360a1af88ec4fa10bb6e9b787f987fe7acf2c2b5f9",
+      "reviewSHA256": "2c447c563acc81a18f03993cbeb20ba1cc374693fc8b7a57f07893fd34251d93",
+      "receiptSHA256": "1cd2ae5b73c3d0abdee6658ad2bdca36542c458b5e2ff057217b629ada2b571e",
+      "committedAt": "2026-11-02T21:38:59.013096+00:00"
+    },
+    {
+      "cycle": 49,
+      "profile": "party:leia",
+      "changedClips": [
+        "CastWakeFlame"
+      ],
+      "decision": "ACCEPT",
+      "beforeSHA256": "4a1002ba61e7af1fdcfb7d360a1af88ec4fa10bb6e9b787f987fe7acf2c2b5f9",
+      "currentParentSHA256": "4a1002ba61e7af1fdcfb7d360a1af88ec4fa10bb6e9b787f987fe7acf2c2b5f9",
+      "integration": "EXACT_PARENT",
+      "candidateSHA256": "7274279fb5324c98cdc443ea5df5a76c45583845d1cf164fb451a66a31e45bf7",
+      "installedSHA256": "7274279fb5324c98cdc443ea5df5a76c45583845d1cf164fb451a66a31e45bf7",
+      "reviewSHA256": "bc9f481a9be9cb79c34cae609c529c641f6b03ade3b95d1bdf271820b1bac4e4",
+      "receiptSHA256": "e785d01fc0575d4b12a820c4fdf3d68fe5344aa28d2709788f73f1bae7830439",
+      "committedAt": "2026-11-02T21:39:01.311276+00:00"
+    },
+    {
+      "cycle": 50,
+      "profile": "runtime:battle-finish",
+      "changedClips": [
+        "Death presentation completion"
+      ],
+      "decision": "REJECT",
+      "candidateIdentitySHA256": "1ffb5f64257988d11fcc42c4703bdea7430bbcc3b31aef5e52619ca450140195",
+      "reviewSHA256": "5fce2232eb723badd79d6d3c43c8096755f0d88c061d08a5e927538bf7325b62",
+      "files": [
+        {
+          "path": "src/act1/world.js",
+          "beforeSHA256": "45ec25e81bfce8504c303b772ad4ea19cadc9ab07b6066ea9ca37f7f38c79d0b",
+          "candidateSHA256": "f1f729d8f8ab1344f90384dfceb30cf26c0da3f45cc857dc40affe81ec485d0d",
+          "installedSHA256": "45ec25e81bfce8504c303b772ad4ea19cadc9ab07b6066ea9ca37f7f38c79d0b"
+        },
+        {
+          "path": "src/act1/main.js",
+          "beforeSHA256": "48f68b1884acc65946afc0ad30eb230073614402979415b491b113a5fed3b4cd",
+          "candidateSHA256": "5024391999f5eb7a552801199152bc3acac908fa7c72e5690c9f615298897627",
+          "installedSHA256": "48f68b1884acc65946afc0ad30eb230073614402979415b491b113a5fed3b4cd"
+        },
+        {
+          "path": "src/act1/battle-finish.js",
+          "beforeSHA256": null,
+          "candidateSHA256": "71df8e08d6419ff7bac2a3d8bf1d64b048354fd38e32120716af4ccbb10f1739",
+          "installedSHA256": null
+        }
+      ],
+      "committedAt": "2026-11-02T21:43:47.692475+00:00"
+    }
+  ],
+  "surfaceFacingSeries": {
+    "status": "ACCEPTED",
+    "version": "0.14.0-demo",
+    "completedCycles": 50,
+    "tracks": {
+      "surface": 35,
+      "facing": 15
+    },
+    "primarySources": 10,
+    "sourceReuse": "Explicitreuseof10primarysources,not50independentsearchesorfullplaythroughs.",
+    "tests": {
+      "tests": 532,
+      "pass": 531,
+      "fail": 0,
+      "skipped": 1
+    },
+    "originalAssetsAndArtExactBaseline": true,
+    "wolfFront": "Hash-boundvisualglTF−Z/π correction, sourcebonesalonewereinsufficient",
+    "scope": "Atlas-awarestochasticPBR + source-facingbinding + boundedMeshyfoundationacceptancefollowup",
+    "publicUpload": false,
+    "cycles": [
+      {
+        "id": 1,
+        "recommendation": "S01",
+        "title": "Atlas-aware village"
+      },
+      {
+        "id": 2,
+        "recommendation": "S02",
+        "title": "Forest island"
+      },
+      {
+        "id": 3,
+        "recommendation": "S03",
+        "title": "Marsh island"
+      },
+      {
+        "id": 4,
+        "recommendation": "S04",
+        "title": "Ruin island"
+      },
+      {
+        "id": 5,
+        "recommendation": "S05",
+        "title": "Path island"
+      },
+      {
+        "id": 6,
+        "recommendation": "S06",
+        "title": "Filter-safe gutter"
+      },
+      {
+        "id": 7,
+        "recommendation": "S07",
+        "title": "Stable cell offsets"
+      },
+      {
+        "id": 8,
+        "recommendation": "S08",
+        "title": "Triangular support"
+      },
+      {
+        "id": 9,
+        "recommendation": "S09",
+        "title": "Smooth partition"
+      },
+      {
+        "id": 10,
+        "recommendation": "S10",
+        "title": "Cell rotation"
+      },
+      {
+        "id": 11,
+        "recommendation": "S11",
+        "title": "Density variation"
+      },
+      {
+        "id": 12,
+        "recommendation": "S12",
+        "title": "Organic domain warp"
+      },
+      {
+        "id": 13,
+        "recommendation": "S13",
+        "title": "Warp-aware footprint"
+      },
+      {
+        "id": 14,
+        "recommendation": "S14",
+        "title": "Covariant normals"
+      },
+      {
+        "id": 15,
+        "recommendation": "S15",
+        "title": "Slope normal blending"
+      },
+      {
+        "id": 16,
+        "recommendation": "S16",
+        "title": "World tangent frame"
+      },
+      {
+        "id": 17,
+        "recommendation": "S17",
+        "title": "Back-face frame"
+      },
+      {
+        "id": 18,
+        "recommendation": "S18",
+        "title": "Specular stability"
+      },
+      {
+        "id": 19,
+        "recommendation": "S19",
+        "title": "Contrast retention"
+      },
+      {
+        "id": 20,
+        "recommendation": "S20",
+        "title": "Source palette"
+      },
+      {
+        "id": 21,
+        "recommendation": "S21",
+        "title": "Organic macro field"
+      },
+      {
+        "id": 22,
+        "recommendation": "S22",
+        "title": "Packed ORM reuse"
+      },
+      {
+        "id": 23,
+        "recommendation": "S23",
+        "title": "Packed AO reuse"
+      },
+      {
+        "id": 24,
+        "recommendation": "S24",
+        "title": "Low normal budget"
+      },
+      {
+        "id": 25,
+        "recommendation": "S25",
+        "title": "Low footprint budget"
+      },
+      {
+        "id": 26,
+        "recommendation": "S26",
+        "title": "Owned sampler state"
+      },
+      {
+        "id": 27,
+        "recommendation": "S27",
+        "title": "Bounded anisotropy"
+      },
+      {
+        "id": 28,
+        "recommendation": "S28",
+        "title": "Sampler lifetime"
+      },
+      {
+        "id": 29,
+        "recommendation": "S29",
+        "title": "Upstream shader hooks"
+      },
+      {
+        "id": 30,
+        "recommendation": "S30",
+        "title": "Shader program identity"
+      },
+      {
+        "id": 31,
+        "recommendation": "S31",
+        "title": "Late texture readiness"
+      },
+      {
+        "id": 32,
+        "recommendation": "S32",
+        "title": "Shader compatibility"
+      },
+      {
+        "id": 33,
+        "recommendation": "S33",
+        "title": "Persistent quality state"
+      },
+      {
+        "id": 34,
+        "recommendation": "S34",
+        "title": "Path edge antialias"
+      },
+      {
+        "id": 35,
+        "recommendation": "S35",
+        "title": "Transformed world anchor"
+      },
+      {
+        "id": 36,
+        "recommendation": "F01",
+        "title": "Accept only finite numeric source yaw and canonicalize equivalent rotations."
+      },
+      {
+        "id": 37,
+        "recommendation": "F02",
+        "title": "Limit source lookup to own known-base keys; reject inherited or unknown model bases."
+      },
+      {
+        "id": 38,
+        "recommendation": "F03",
+        "title": "Normalize SHA256 identity without coercing arbitrary values."
+      },
+      {
+        "id": 39,
+        "recommendation": "F04",
+        "title": "Pin visual wolf front to actual rest mesh proof and original GLB hash."
+      },
+      {
+        "id": 40,
+        "recommendation": "F05",
+        "title": "Prefer proven source calibration over legacy bone-derived manifest zero."
+      },
+      {
+        "id": 41,
+        "recommendation": "F06",
+        "title": "Retain an explicit finite profile front override ahead of source calibration."
+      },
+      {
+        "id": 42,
+        "recommendation": "F07",
+        "title": "Reject malformed explicit profile yaw and retain the calibrated base basis."
+      },
+      {
+        "id": 43,
+        "recommendation": "F08",
+        "title": "Bound manifest input to known finite values and allow safe source defaults on malformed input."
+      },
+      {
+        "id": 44,
+        "recommendation": "F09",
+        "title": "Bind both wolf enemy variants to the same proven model basis."
+      },
+      {
+        "id": 45,
+        "recommendation": "F10",
+        "title": "Use a known visual base or a valid options base for source-only fallback; preserve authored source actions."
+      },
+      {
+        "id": 46,
+        "recommendation": "F11",
+        "title": "Freeze verified profile identity and front yaw without freezing mutable Three clips; retain source calibration on base mismatch."
+      },
+      {
+        "id": 47,
+        "recommendation": "F12",
+        "title": "Expose one immutable, bounded source-facing provenance record for every bind and fallback, including missing-node fallback."
+      },
+      {
+        "id": 48,
+        "recommendation": "F13",
+        "title": "Do not permanently mark an early source-only actor as fully profile-bound."
+      },
+      {
+        "id": 49,
+        "recommendation": "F14",
+        "title": "Preserve world-facing heading when a late profile changes source basis."
+      },
+      {
+        "id": 50,
+        "recommendation": "F15",
+        "title": "Invalidate actor binding cache when profile identity or visual base changes."
+      }
+    ]
+  },
+  "questArrowSeries": {
+    "status": "ACCEPTED",
+    "version": "0.13.0-demo",
+    "completedCycles": 50,
+    "tracks": {
+      "core": 25,
+      "view": 25
+    },
+    "primarySources": 12,
+    "sourceReuse": "Explicit reuse of12 primary sources, not50 independent searches or playthroughs.",
+    "tests": {
+      "tests": 475,
+      "pass": 474,
+      "fail": 0,
+      "skipped": 1
+    },
+    "scope": "Quest direction arrow from existing navigation snapshot with camera-relative projection and real route/arrival states.",
+    "modelsTexturesArtExactBaseline": true,
+    "storyBalanceSkillsNavigationPreserved": true,
+    "publicUpload": false,
+    "cycles": [
+      {
+        "id": 1,
+        "recommendation": "C01",
+        "title": "Локальная точка выбранного задания"
+      },
+      {
+        "id": 2,
+        "recommendation": "C02",
+        "title": "Свежая безопасная позиция"
+      },
+      {
+        "id": 3,
+        "recommendation": "C03",
+        "title": "Правдивое состояние маршрута"
+      },
+      {
+        "id": 4,
+        "recommendation": "C04",
+        "title": "Готовность точки действия"
+      },
+      {
+        "id": 5,
+        "recommendation": "C05",
+        "title": "Защита от старого контекста"
+      },
+      {
+        "id": 6,
+        "recommendation": "C06",
+        "title": "Завершение без старого указателя"
+      },
+      {
+        "id": 7,
+        "recommendation": "C07",
+        "title": "Согласованная конечная точка"
+      },
+      {
+        "id": 8,
+        "recommendation": "C08",
+        "title": "Следующий участок пути"
+      },
+      {
+        "id": 9,
+        "recommendation": "C09",
+        "title": "Переход к следующей области"
+      },
+      {
+        "id": 10,
+        "recommendation": "C10",
+        "title": "Недостаточные данные пути"
+      },
+      {
+        "id": 11,
+        "recommendation": "C11",
+        "title": "Экранное направление"
+      },
+      {
+        "id": 12,
+        "recommendation": "C12",
+        "title": "Цель за краем кадра"
+      },
+      {
+        "id": 13,
+        "recommendation": "C13",
+        "title": "Ошибки проекции без NaN"
+      },
+      {
+        "id": 14,
+        "recommendation": "C14",
+        "title": "Без дрожания у экранной точки"
+      },
+      {
+        "id": 15,
+        "recommendation": "C15",
+        "title": "Настоящее прибытие"
+      },
+      {
+        "id": 16,
+        "recommendation": "C16",
+        "title": "Свежая длина пути"
+      },
+      {
+        "id": 17,
+        "recommendation": "C17",
+        "title": "Кратчайший плавный поворот"
+      },
+      {
+        "id": 18,
+        "recommendation": "C18",
+        "title": "Ограниченная длительность кадра"
+      },
+      {
+        "id": 19,
+        "recommendation": "C19",
+        "title": "Снижение движения"
+      },
+      {
+        "id": 20,
+        "recommendation": "C20",
+        "title": "Границы экрана и отступы"
+      },
+      {
+        "id": 21,
+        "recommendation": "C21",
+        "title": "Обход панелей HUD"
+      },
+      {
+        "id": 22,
+        "recommendation": "C22",
+        "title": "Компактная геометрия"
+      },
+      {
+        "id": 23,
+        "recommendation": "C23",
+        "title": "Полный размер знака"
+      },
+      {
+        "id": 24,
+        "recommendation": "C24",
+        "title": "Пауза и отключение"
+      },
+      {
+        "id": 25,
+        "recommendation": "C25",
+        "title": "Ограниченное устойчивое состояние"
+      },
+      {
+        "id": 26,
+        "recommendation": "U01",
+        "title": "Stable gold quest arrow SVG"
+      },
+      {
+        "id": 27,
+        "recommendation": "U02",
+        "title": "Readable needle on bright and dark terrain"
+      },
+      {
+        "id": 28,
+        "recommendation": "U03",
+        "title": "Fixed compass ring with independent needle"
+      },
+      {
+        "id": 29,
+        "recommendation": "U04",
+        "title": "Finite deduplicated marker transforms"
+      },
+      {
+        "id": 30,
+        "recommendation": "U05",
+        "title": "Approximate remaining distance in raster gold"
+      },
+      {
+        "id": 31,
+        "recommendation": "U06",
+        "title": "Arrival replaces movement with interaction cue"
+      },
+      {
+        "id": 32,
+        "recommendation": "U07",
+        "title": "Blocked route has a lock, not a direction"
+      },
+      {
+        "id": 33,
+        "recommendation": "U08",
+        "title": "Next-area exit is visibly distinguished"
+      },
+      {
+        "id": 34,
+        "recommendation": "U09",
+        "title": "Compact and short world marker sizes"
+      },
+      {
+        "id": 35,
+        "recommendation": "U10",
+        "title": "Text scale invalidates raster labels"
+      },
+      {
+        "id": 36,
+        "recommendation": "U11",
+        "title": "Default-on navigator preference control"
+      },
+      {
+        "id": 37,
+        "recommendation": "U12",
+        "title": "Restorable disabled arrow without disabled UI"
+      },
+      {
+        "id": 38,
+        "recommendation": "U13",
+        "title": "Open the selected quest journal"
+      },
+      {
+        "id": 39,
+        "recommendation": "U14",
+        "title": "Optional navigation details disclosure"
+      },
+      {
+        "id": 40,
+        "recommendation": "U15",
+        "title": "Focused quest, target and action context"
+      },
+      {
+        "id": 41,
+        "recommendation": "U16",
+        "title": "Honest fallback and completion context"
+      },
+      {
+        "id": 42,
+        "recommendation": "U17",
+        "title": "Deduplicated meaningful live announcements"
+      },
+      {
+        "id": 43,
+        "recommendation": "U18",
+        "title": "Complete quiet accessible alternative"
+      },
+      {
+        "id": 44,
+        "recommendation": "U19",
+        "title": "Reduced motion for arrival highlight"
+      },
+      {
+        "id": 45,
+        "recommendation": "U20",
+        "title": "Stable controls and focus on updates"
+      },
+      {
+        "id": 46,
+        "recommendation": "U21",
+        "title": "Suspension clears stale world decoration"
+      },
+      {
+        "id": 47,
+        "recommendation": "U22",
+        "title": "Idempotent lifecycle cleanup"
+      },
+      {
+        "id": 48,
+        "recommendation": "U23",
+        "title": "Waiting, no-target and completion symbols"
+      },
+      {
+        "id": 49,
+        "recommendation": "U24",
+        "title": "Concise navigation legend/help control"
+      },
+      {
+        "id": 50,
+        "recommendation": "U25",
+        "title": "Bounded normalized raster-caption caches"
+      }
+    ]
+  },
+  "navigationSkillsSeries": {
+    "version": "0.12.0-demo",
+    "status": "ACCEPTED",
+    "completedCycles": 50,
+    "tracks": {
+      "navigation": 25,
+      "abilities": 25
+    },
+    "primarySources": 11,
+    "researchReuse": "Eleven primary sources explicitly reused across fifty real runtime changes, not50 independent searches/playthroughs.",
+    "heroes": 4,
+    "skillsPerHero": 6,
+    "preservedSkillIds": 16,
+    "newSkills": 8,
+    "newUnlockLevels": [
+      3,
+      6
+    ],
+    "tests": {
+      "tests": 408,
+      "pass": 407,
+      "fail": 0,
+      "skipped": 1
+    },
+    "questCoverage": {
+      "quests": 43,
+      "authoredTargetStages": 55
+    },
+    "browser": "Default100% representative desktop and compact browser UI; no phone/full-act certification",
+    "modelsTexturesArtExactBaseline": true,
+    "storyAndEnemyDefinitionsPreserved": true,
+    "publicUpload": false,
+    "cycles": [
+      {
+        "id": 1,
+        "recommendation": "N01",
+        "title": "Границы настоящей области"
+      },
+      {
+        "id": 2,
+        "recommendation": "N02",
+        "title": "Отряд и направление взгляда"
+      },
+      {
+        "id": 3,
+        "recommendation": "N03",
+        "title": "Цель выбранного задания"
+      },
+      {
+        "id": 4,
+        "recommendation": "N04",
+        "title": "Что сделать у цели"
+      },
+      {
+        "id": 5,
+        "recommendation": "N05",
+        "title": "Расстояние до действия"
+      },
+      {
+        "id": 6,
+        "recommendation": "N06",
+        "title": "Подсказка взаимодействия рядом"
+      },
+      {
+        "id": 7,
+        "recommendation": "N07",
+        "title": "Заметная смена этапа"
+      },
+      {
+        "id": 8,
+        "recommendation": "N08",
+        "title": "Достижимая точка подхода"
+      },
+      {
+        "id": 9,
+        "recommendation": "N09",
+        "title": "Маршрут по доступной поверхности"
+      },
+      {
+        "id": 10,
+        "recommendation": "N10",
+        "title": "Указатель за краем карты"
+      },
+      {
+        "id": 11,
+        "recommendation": "N11",
+        "title": "Путь между областями"
+      },
+      {
+        "id": 12,
+        "recommendation": "N12",
+        "title": "Закрытый переход объяснён"
+      },
+      {
+        "id": 13,
+        "recommendation": "N13",
+        "title": "Назван следующий переход"
+      },
+      {
+        "id": 14,
+        "recommendation": "N14",
+        "title": "Безопасный выбор старого задания"
+      },
+      {
+        "id": 15,
+        "recommendation": "N15",
+        "title": "Завершение без старой стрелки"
+      },
+      {
+        "id": 16,
+        "recommendation": "N16",
+        "title": "Понятное условие самой цели"
+      },
+      {
+        "id": 17,
+        "recommendation": "N17",
+        "title": "Быстрый выбор известного задания"
+      },
+      {
+        "id": 18,
+        "recommendation": "N18",
+        "title": "Ближайшие ориентиры разной формы"
+      },
+      {
+        "id": 19,
+        "recommendation": "N19",
+        "title": "Линия маршрута по желанию"
+      },
+      {
+        "id": 20,
+        "recommendation": "N20",
+        "title": "Обзор и приближение"
+      },
+      {
+        "id": 21,
+        "recommendation": "N21",
+        "title": "Компас и текст направления"
+      },
+      {
+        "id": 22,
+        "recommendation": "N22",
+        "title": "Сворачиваемая компактная карта"
+      },
+      {
+        "id": 23,
+        "recommendation": "N23",
+        "title": "Подробности в журнале"
+      },
+      {
+        "id": 24,
+        "recommendation": "N24",
+        "title": "Легенда и текстовое представление"
+      },
+      {
+        "id": 25,
+        "recommendation": "N25",
+        "title": "Устойчивые экономные обновления"
+      },
+      {
+        "id": 26,
+        "recommendation": "A01",
+        "title": "Рассветный разрез: удар сквозь стойку"
+      },
+      {
+        "id": 27,
+        "recommendation": "A02",
+        "title": "Стойкость обета: один ответный удар"
+      },
+      {
+        "id": 28,
+        "recommendation": "A03",
+        "title": "Волна углей: ослабление вражеской атаки"
+      },
+      {
+        "id": 29,
+        "recommendation": "A04",
+        "title": "Последний свет: адресное лечение и аварийный барьер"
+      },
+      {
+        "id": 30,
+        "recommendation": "A05",
+        "title": "Новый навык: Вызов рассвета"
+      },
+      {
+        "id": 31,
+        "recommendation": "A06",
+        "title": "Новый навык: Связанный обет"
+      },
+      {
+        "id": 32,
+        "recommendation": "A07",
+        "title": "Огненная строка: горение"
+      },
+      {
+        "id": 33,
+        "recommendation": "A08",
+        "title": "Морозная помета: сдерживание атаки"
+      },
+      {
+        "id": 34,
+        "recommendation": "A09",
+        "title": "Рассыпанные руны: снять стойки"
+      },
+      {
+        "id": 35,
+        "recommendation": "A10",
+        "title": "Ясная мысль: передача маны"
+      },
+      {
+        "id": 36,
+        "recommendation": "A11",
+        "title": "Новый навык: Цепь озарений"
+      },
+      {
+        "id": 37,
+        "recommendation": "A12",
+        "title": "Новый навык: Чернильная печать"
+      },
+      {
+        "id": 38,
+        "recommendation": "A13",
+        "title": "Упор копья: раскол брони"
+      },
+      {
+        "id": 39,
+        "recommendation": "A14",
+        "title": "Сомкнуть щиты: конечные заслоны"
+      },
+      {
+        "id": 40,
+        "recommendation": "A15",
+        "title": "Железная дуга: удержать внимание"
+      },
+      {
+        "id": 41,
+        "recommendation": "A16",
+        "title": "Держаться вместе: поддержка истощённого"
+      },
+      {
+        "id": 42,
+        "recommendation": "A17",
+        "title": "Новый навык: Сбить разгон"
+      },
+      {
+        "id": 43,
+        "recommendation": "A18",
+        "title": "Новый навык: Принять удар"
+      },
+      {
+        "id": 44,
+        "recommendation": "A19",
+        "title": "Тёплые ладони: сортировка раненых"
+      },
+      {
+        "id": 45,
+        "recommendation": "A20",
+        "title": "Общее дыхание: восстановление отряда"
+      },
+      {
+        "id": 46,
+        "recommendation": "A21",
+        "title": "Искра возвращения: защитить поднятого"
+      },
+      {
+        "id": 47,
+        "recommendation": "A22",
+        "title": "Медная искра: свет возвращается отряду"
+      },
+      {
+        "id": 48,
+        "recommendation": "A23",
+        "title": "Новый навык: Нить возвращения"
+      },
+      {
+        "id": 49,
+        "recommendation": "A24",
+        "title": "Песня заслона: групповые барьеры без подмены стойки"
+      },
+      {
+        "id": 50,
+        "recommendation": "A25",
+        "title": "Каталог разных ролей и умений героев"
+      }
+    ]
+  },
+  "interfaceImprovementSeries": {
+    "version": "0.11.0-demo",
+    "status": "ACCEPTED",
+    "completedCycles": 50,
+    "tracks": {
+      "battleExploreHUD": 25,
+      "windowsMenus": 25
+    },
+    "officialSources": 10,
+    "suppliedImagesCompared": 3,
+    "researchReuse": "Ten sources and three supplied images reused explicitly, not50 independent studies.",
+    "tests": {
+      "tests": 329,
+      "pass": 328,
+      "fail": 0,
+      "skipped": 1
+    },
+    "browser": "Default100% desktop+compact representative UI scenes accepted;150% short landscape retains label clipping limitations.",
+    "preserved": "Gameplay, saves, models, animation, weapons/shields and golden raster style; core cache strings only changed.",
+    "fullPlaythrough": false,
+    "phoneTest": false,
+    "publicUpload": false,
+    "features": [
+      "Named targets and timeline",
+      "Visible skills/HP/MP/status summaries",
+      "Stable selected forecast and contextual confirm",
+      "Inventory search/filter/compare/equip",
+      "Buy/sell tabs and real atomic quantities",
+      "Quest filters, known goal map, dialogue progress",
+      "Collapsed settings/save tools and party detail"
+    ],
+    "cycles": [
+      {
+        "id": 1,
+        "recommendation": "B01",
+        "title": "Именованные цели"
+      },
+      {
+        "id": 2,
+        "recommendation": "B02",
+        "title": "Явная фаза выбора"
+      },
+      {
+        "id": 3,
+        "recommendation": "B03",
+        "title": "Короткий итог выбора"
+      },
+      {
+        "id": 4,
+        "recommendation": "B04",
+        "title": "Название основной кнопки"
+      },
+      {
+        "id": 5,
+        "recommendation": "B05",
+        "title": "Расход до и после"
+      },
+      {
+        "id": 6,
+        "recommendation": "B06",
+        "title": "Единый язык недоступности"
+      },
+      {
+        "id": 7,
+        "recommendation": "B07",
+        "title": "Видимые подписи HP и MP"
+      },
+      {
+        "id": 8,
+        "recommendation": "B08",
+        "title": "Критическое здоровье текстом"
+      },
+      {
+        "id": 9,
+        "recommendation": "B09",
+        "title": "Короткий статус всегда виден"
+      },
+      {
+        "id": 10,
+        "recommendation": "B10",
+        "title": "Сейчас и далее"
+      },
+      {
+        "id": 11,
+        "recommendation": "B11",
+        "title": "Очередь следует за ходом"
+      },
+      {
+        "id": 12,
+        "recommendation": "B12",
+        "title": "Подписи боевых навыков"
+      },
+      {
+        "id": 13,
+        "recommendation": "B13",
+        "title": "Расположение действий по назначению"
+      },
+      {
+        "id": 14,
+        "recommendation": "B14",
+        "title": "Массовая цель словами"
+      },
+      {
+        "id": 15,
+        "recommendation": "B15",
+        "title": "Слабость рядом с прогнозом"
+      },
+      {
+        "id": 16,
+        "recommendation": "B16",
+        "title": "Намерения выбранного врага первыми"
+      },
+      {
+        "id": 17,
+        "recommendation": "B17",
+        "title": "Новая запись боевого журнала"
+      },
+      {
+        "id": 18,
+        "recommendation": "B18",
+        "title": "Пауза исполнения понятна"
+      },
+      {
+        "id": 19,
+        "recommendation": "E19",
+        "title": "Название области в маршруте"
+      },
+      {
+        "id": 20,
+        "recommendation": "E20",
+        "title": "Краткая цель и подробности"
+      },
+      {
+        "id": 21,
+        "recommendation": "E21",
+        "title": "Явный прогресс задания"
+      },
+      {
+        "id": 22,
+        "recommendation": "E22",
+        "title": "Ближайшее действие первым"
+      },
+      {
+        "id": 23,
+        "recommendation": "E23",
+        "title": "Клавиша рядом с действием"
+      },
+      {
+        "id": 24,
+        "recommendation": "E24",
+        "title": "Компактный режим цели в бою"
+      },
+      {
+        "id": 25,
+        "recommendation": "F25",
+        "title": "Stable armed confirmation during transient skill inspection"
+      },
+      {
+        "id": 26,
+        "recommendation": "I25",
+        "title": "Фильтр типов предметов"
+      },
+      {
+        "id": 27,
+        "recommendation": "I26",
+        "title": "Поиск по имени"
+      },
+      {
+        "id": 28,
+        "recommendation": "I27",
+        "title": "Текущее и выбранное рядом"
+      },
+      {
+        "id": 29,
+        "recommendation": "I28",
+        "title": "Явное Надеть"
+      },
+      {
+        "id": 30,
+        "recommendation": "I29",
+        "title": "Подпись владельца"
+      },
+      {
+        "id": 31,
+        "recommendation": "I30",
+        "title": "Подписи занятых слотов"
+      },
+      {
+        "id": 32,
+        "recommendation": "I31",
+        "title": "Видимый выбранный герой"
+      },
+      {
+        "id": 33,
+        "recommendation": "I32",
+        "title": "Пустая выдача фильтра"
+      },
+      {
+        "id": 34,
+        "recommendation": "I33",
+        "title": "Помощь по переносу по запросу"
+      },
+      {
+        "id": 35,
+        "recommendation": "I34",
+        "title": "Устойчивые фильтры и выбор"
+      },
+      {
+        "id": 36,
+        "recommendation": "S35",
+        "title": "Вкладки покупки и продажи"
+      },
+      {
+        "id": 37,
+        "recommendation": "S36",
+        "title": "Кошелек и стоимость рядом"
+      },
+      {
+        "id": 38,
+        "recommendation": "S37",
+        "title": "Количество из модели"
+      },
+      {
+        "id": 39,
+        "recommendation": "S38",
+        "title": "Причина недоступной покупки"
+      },
+      {
+        "id": 40,
+        "recommendation": "S39",
+        "title": "Фактическое владение товаром у отряда"
+      },
+      {
+        "id": 41,
+        "recommendation": "J40",
+        "title": "Активные и завершенные отдельно"
+      },
+      {
+        "id": 42,
+        "recommendation": "J41",
+        "title": "Отслеживаемое задание первым"
+      },
+      {
+        "id": 43,
+        "recommendation": "J42",
+        "title": "Сводка задания перед историей"
+      },
+      {
+        "id": 44,
+        "recommendation": "J43",
+        "title": "Открыть карту от цели"
+      },
+      {
+        "id": 45,
+        "recommendation": "D44",
+        "title": "Прогресс реплик"
+      },
+      {
+        "id": 46,
+        "recommendation": "D45",
+        "title": "Последствия внутри выбора"
+      },
+      {
+        "id": 47,
+        "recommendation": "D46",
+        "title": "Продолжить отдельно от выбора"
+      },
+      {
+        "id": 48,
+        "recommendation": "P47",
+        "title": "Навыки и рост по запросу"
+      },
+      {
+        "id": 49,
+        "recommendation": "M48",
+        "title": "Главное действие выше настроек"
+      },
+      {
+        "id": 50,
+        "recommendation": "M49",
+        "title": "Сервис сохранений в отдельной группе"
+      }
+    ]
+  },
+  "actOneImprovementSeriesV2": {
+    "id": "act1-improvements100-v2-20261107",
+    "requested": 100,
+    "implemented": 100,
+    "completed": 100,
+    "cpuVerified": 100,
+    "status": "IMPLEMENTED_CPU_VERIFIED",
+    "method": "Observation/source comparison → recommendation → plan → runtime delta → addressed CPU test. Corrections and promotion support are not extra numbered iterations."
+  },
+  "actOneImprovementEvidence": "SOURCE-AND-100-CYCLES archive; device/visual QA in release report",
+  "projectImprovementSeries": {
+    "id": "project100",
+    "requested": 100,
+    "implemented": 100,
+    "completed": 100,
+    "accepted": 100,
+    "status": "ACCEPTED",
+    "method": "Source comparison → recommendation → plan → actual runtime change → verification; 100 immutable per-cycle before/after records; primary guidance reused explicitly"
+  },
+  "projectImprovementQA": {
+    "node": {
+      "tests": 272,
+      "passed": 271,
+      "failed": 0,
+      "skipped": 1
+    },
+    "realIndexedDB": {
+      "passed": 10,
+      "failed": 0
+    },
+    "interactiveActPlaythrough": "NOT_RUN",
+    "phone": "NOT_RUN",
+    "FPSGain": "NOT_MEASURED",
+    "publicHosting": "MANUAL_UPLOAD",
+    "browser": {
+      "status": "PASS_SCOPED_DESKTOP_AND_RESPONSIVE_BROWSER_REVIEW",
+      "sizes": [
+        "1280x720",
+        "640x360",
+        "390x844"
+      ],
+      "report": "evidence/browser/REVIEW.json",
+      "physicalAndroid": "NOT_RUN",
+      "forcedContextRestore": "NOT_RUN"
+    }
+  },
+  "projectImprovementMetrics": {
+    "battleLayoutDOMReads600Frames": {
+      "before": 2400,
+      "after": 4
+    },
+    "battleProjectionUpdates600Frames": {
+      "before": 1200,
+      "after": 2
+    },
+    "hoverRequests6000": {
+      "before": 6000,
+      "after": 600
+    },
+    "equivalentGoldPaletteRasters100Requests": {
+      "before": 100,
+      "after": 1
+    },
+    "resizeBurstRasters": {
+      "before": 9,
+      "after": 1
+    },
+    "finishedAudioConnections1000Voices": {
+      "before": 2000,
+      "after": 0
+    },
+    "mutedAudioAllocations100Requests": {
+      "before": 100,
+      "after": 0
+    }
+  },
+  "qa": {
+    "independentComparisons": "60_COMPLETED_WITH_EXPLICIT_DECISIONS",
+    "scope": "50 actual completed research/comparison/implementation/review experiments; accepted variants only installed",
+    "fullActPlaythrough": "NOT_RUN",
+    "AndroidPhone": "NOT_RUN",
+    "devicePerformance": "NOT_MEASURED",
+    "menuStartup": "ACTUAL_BROWSER_NEW_CONTINUE_AND_TWO_TAB_RECOVERY_PASS",
+    "writerSessionTests": "6_PASS",
+    "resourceLoader": "14_PASS;30second_deadline_with_body;one_retry;48profiles_retained",
+    "enginePlayback": "PASS_SCOPED_49_PROFILES_69_SKILL_SELECTIONS_AND_THREE_BROWSER_EXAMPLES",
+    "projectSuite": {
+      "fail": 7,
+      "pass": 135,
+      "skipped": 1,
+      "tests": 143,
+      "status": "SAME_SEVEN_INHERITED_FAILURES_NOT_CLEAN_PASS",
+      "comparison": "evidence/baseline-test-comparison.json"
+    },
+    "browserLimits": [
+      "Neutral lighting/floor, no biome, enemy AI, full act or phone test",
+      "Original coarse grip/fingers and rigid bow/string retained",
+      "Existing Iona Book/back carry appears high in this real-runtime fixture; carry/model repair is not claimed",
+      "Rejected050 prolonged Death tail is excluded because it exposed floor-hidden body"
+    ],
+    "finalVerification": "animation50/evidence/final-verification.json"
+  },
+  "content": {
+    "areas": 9,
+    "party": 4,
+    "mainQuests": 35,
+    "sideQuests": 8,
+    "encounters": 34
+  },
+  "playtime": {
+    "targetMinutes": 180,
+    "status": "DESIGN_ESTIMATE_NOT_MEASURED"
+  },
+  "platform": "WebGL2",
+  "builtAt": "2026-11-07T21:12:06.215Z",
+  "files": [
+    {
+      "path": "act1.css",
+      "bytes": 44857,
+      "sha256": "5ce8f09e805dca792a1fa0e862e63240c6fcdebd5560329cf028643335a971ee"
+    },
+    {
+      "path": "act1.html",
+      "bytes": 1308,
+      "sha256": "e826108ca01431fbf5b82c69848c4e7c6102d971746fd7abd269247d856cf01b"
+    },
+    {
+      "path": "assets/act1/animation/animation-library.json",
+      "bytes": 42342,
+      "sha256": "9a9525aeb3c57ac386d403efa0ebbe91b98a9f5060d8014d6e8f44f8e39fb447"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-ash_husk.json",
+      "bytes": 453659,
+      "sha256": "5b146308907b17db50d83ae629948867d743a814076c52bfe0457b89f63d2fa7"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-bellkeeper.json",
+      "bytes": 590210,
+      "sha256": "fe0cb6cd19565066c5dfcf60b165afa812b641117cc5f54ad7c70bd7139343cb"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-broken_reliquary.json",
+      "bytes": 517397,
+      "sha256": "748fe2723c6e18a6f5529ad79a110148ed3715cb098e8bc1bd819cf7486d6426"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-catalogue_warden.json",
+      "bytes": 580958,
+      "sha256": "740a4f8caaeb3bed7f85f95c1778ec1d680dfb26b42552e7ff43b4276682a6f5"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-cinder_bird.json",
+      "bytes": 164250,
+      "sha256": "55de40ee44212a56da53203f9a858be59c60c0460ec9a9d04417138213f9fbce"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-dagan.json",
+      "bytes": 581099,
+      "sha256": "689f3c984b3f77a98b88810bb7893b41fe5b9b4c85203fdd745cef0a1eb136aa"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-drowned.json",
+      "bytes": 485266,
+      "sha256": "91ecf167a9122a2d4ece3dc0203d048bf24b09624fa84d20c8e47d937ff84749"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-ember_acolyte.json",
+      "bytes": 485992,
+      "sha256": "f12f3604690658194718e7e5ebfce919e4de4bee973e73aed0236d581469830f"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-ferry_echo.json",
+      "bytes": 548658,
+      "sha256": "85a24fa7f42e52a43d1ef93bf30d7bcb9d1f3c10e3a874a3f4d05d21707256ff"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-fortress_archer.json",
+      "bytes": 454457,
+      "sha256": "8012067f4e3dd09e733742026605b6d2e1c485ebc2af0a6f31a65597884a1271"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-harvest_engine.json",
+      "bytes": 1057893,
+      "sha256": "2116f48bcb6da54a39822eaf7366de4140ee0ba85c7d457721d780ca3209641c"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-hollow_reaper.json",
+      "bytes": 453790,
+      "sha256": "d68f72635521e5eccd09d2a3e0bad77c1ac4f151d7b7b77110ee90b905ba64ce"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-hush_acolyte.json",
+      "bytes": 549060,
+      "sha256": "b6a0f365fcf9e8ced708fe83e70ee9946f945a4487d31b41eb819228daa1b07a"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-ink_guard.json",
+      "bytes": 517990,
+      "sha256": "d1a07324fd0442a2a15622eb50dc01fc9348d3686d1a253cb45cc1cbec08dc54"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-iron_rat.json",
+      "bytes": 413099,
+      "sha256": "fd99ef359143d7c4f0306b576d4ca689d68a690254fa85d7ebbf19cc70c330db"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-iron_sentinel.json",
+      "bytes": 517695,
+      "sha256": "3eb81a4c942e177b46d6fdf213c97462e51c73a23199dbce234538db790f5837"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-mute_abbot.json",
+      "bytes": 612031,
+      "sha256": "f0ce0d5fba16a6f9979f6916dc44edf863f8ebc0f6769f6124401bbafa110929"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-oathshade.json",
+      "bytes": 545051,
+      "sha256": "f005b25a6c148e3aa594f4b4f1cf3bdc38421c89eeeae31594860426e0740d67"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-oath_knight.json",
+      "bytes": 545978,
+      "sha256": "b57c977b6c0b7910c463b20525b8b96b6dd76cd232c678df1272aac822431b4d"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-paper_swarm.json",
+      "bytes": 221208,
+      "sha256": "7e37949e28adf6cb71d08975bcbb80e54529a91e2d076c357a3b32d537078e80"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-quarry_echo.json",
+      "bytes": 1163471,
+      "sha256": "858a159c99542bcb84750bd50e21c968ec42891b67db874e6c04a1b1f45e62bd"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-quarry_overseer.json",
+      "bytes": 518626,
+      "sha256": "0400f157f292099bd3cca99089b9f33295e1a01b692f14bbfd4c3e6b22b8839c"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-reed_stalker.json",
+      "bytes": 455298,
+      "sha256": "f3f4059de977df0ff62635c86f94215daeb4794a8acb401b5ae048f1e106eacb"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-resin_moth.json",
+      "bytes": 221430,
+      "sha256": "71e085af10cce428004a8631f7a9b2e5255c26c84930d6a150abdbf421b1965c"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-road_extorter.json",
+      "bytes": 454833,
+      "sha256": "3566fd214022e939ec7b050cb80b319f3190b1a1a2c96ef58d3974e28e73e9ed"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-silent_choir.json",
+      "bytes": 548918,
+      "sha256": "ddb36a9351fd18907c5940e22df18e4d124175f98e0117006c9afedb186bbec6"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-thorn_keeper.json",
+      "bytes": 1057730,
+      "sha256": "5ec78bb3ab8817e0b97d48d475d640752c7ad535009c4ea7b501baba1b965d71"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-thorn_wolf.json",
+      "bytes": 408892,
+      "sha256": "8dda1a933cba183c61a11c16f2589a7a57d68819f41078eb274736de5263b5ad"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-tithe_guard.json",
+      "bytes": 517976,
+      "sha256": "0f77851be769e11e813eb09a0970760b9e293fa458e73be938a754e3f5c25f44"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-warden_hound.json",
+      "bytes": 408969,
+      "sha256": "f995a5727b04bdf5102f45fb99e43837198cd1999bb8f786df636a11b32e1a68"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-wick_light.json",
+      "bytes": 270757,
+      "sha256": "c110a8c09bfc13f1c6f0c0a3a75ea3ef31bf567acfe09698f234a7ff7551fea2"
+    },
+    {
+      "path": "assets/act1/animation/profiles/npc-dagan_gate.json",
+      "bytes": 244259,
+      "sha256": "c2c029554f19b33bf53b65705eae71ab483531e77d72c83ca711a483e6212972"
+    },
+    {
+      "path": "assets/act1/animation/profiles/npc-elda_abbey.json",
+      "bytes": 243975,
+      "sha256": "2d76b705fcaab6d767289f797c5b684168defb644e1dca3c577ebf70857ef8b1"
+    },
+    {
+      "path": "assets/act1/animation/profiles/npc-gerd_fen.json",
+      "bytes": 244199,
+      "sha256": "3864e971675721675e44000df0b899e270c9c813b29bbd847931371df61f3cf4"
+    },
+    {
+      "path": "assets/act1/animation/profiles/npc-iona_monastery.json",
+      "bytes": 244432,
+      "sha256": "5bb34474350695e9fb67be4449c8f577246abc6bedc5eeefddf624bcb620610b"
+    },
+    {
+      "path": "assets/act1/animation/profiles/npc-leia_wood.json",
+      "bytes": 243961,
+      "sha256": "da9ced18cf71f87303d097e7837f3e94e82447c8506a36449a4ad7076071eb8d"
+    },
+    {
+      "path": "assets/act1/animation/profiles/npc-lio_quarry.json",
+      "bytes": 244644,
+      "sha256": "a96826a2f715562a761db3a944cd319e4623bc738547b762961762ccb91ddb7a"
+    },
+    {
+      "path": "assets/act1/animation/profiles/npc-mirel_wood.json",
+      "bytes": 244377,
+      "sha256": "253fc6eb74c505c99251cb4a598bbdf77759c132fcc5e500ced61024c4bc2263"
+    },
+    {
+      "path": "assets/act1/animation/profiles/npc-nara_fields.json",
+      "bytes": 243685,
+      "sha256": "38a82fc6ba71ee4ee720f23db7249e5b5980895d8e93fd99d6479842ed81e848"
+    },
+    {
+      "path": "assets/act1/animation/profiles/npc-nara_village.json",
+      "bytes": 243778,
+      "sha256": "c60dba1e6388e8f1901d78ea4550fb09faebca2f9ce20eaf03b474ba9d9601b9"
+    },
+    {
+      "path": "assets/act1/animation/profiles/npc-orin_village.json",
+      "bytes": 244580,
+      "sha256": "4326768b6021839dc9b980fb2b4a36ae7c26a5b1da9ca44e6ef7241a47f1f407"
+    },
+    {
+      "path": "assets/act1/animation/profiles/npc-radan_village.json",
+      "bytes": 244353,
+      "sha256": "00f75bc8fcf4e19684cdd422397ff06f13f0123b36e2d27455ea9d6a7ca1c14d"
+    },
+    {
+      "path": "assets/act1/animation/profiles/npc-severin_archive.json",
+      "bytes": 244439,
+      "sha256": "56d7efb460cc7c4e031b1f47b7ca3a8ad3f81f5ac10f5b42a159286a2cb0c633"
+    },
+    {
+      "path": "assets/act1/animation/profiles/npc-teren_quarry.json",
+      "bytes": 244434,
+      "sha256": "3aaffb94defd96866614c2d03f5a1296b8243d1f0d4f8cd5496dd0b25795d36b"
+    },
+    {
+      "path": "assets/act1/animation/profiles/npc-velda_village.json",
+      "bytes": 243761,
+      "sha256": "4edbddd7567ee086c7bcd90f9a5c03e48a539d70853e7b62ef9d0be29825bf46"
+    },
+    {
+      "path": "assets/act1/animation/profiles/party-alar.json",
+      "bytes": 877510,
+      "sha256": "0bebfd2b82e6fabf4ff92330d41f5162e797c1a3bbd96257a898f5751a640be4"
+    },
+    {
+      "path": "assets/act1/animation/profiles/party-iona.json",
+      "bytes": 910922,
+      "sha256": "c95e2040a9cc03266307735ae37fd08278d16549a603d26d28816fe9416b176a"
+    },
+    {
+      "path": "assets/act1/animation/profiles/party-leia.json",
+      "bytes": 877750,
+      "sha256": "54db893efa832424bfe25d3691a0e787d4aac518e5323be15023d6c0b31a5fce"
+    },
+    {
+      "path": "assets/act1/animation/profiles/party-radan.json",
+      "bytes": 845643,
+      "sha256": "bac8bb5325f452c1f17e6c72f11140dc18f9a3c5e64c40c467c6ae09fd3aff3f"
+    },
+    {
+      "path": "assets/act1/combat-actions-v1.png",
+      "bytes": 1781721,
+      "sha256": "4fa06b9d67803006b086599183b9e32b155bded5bcb523155b81f809bfac75a1"
+    },
+    {
+      "path": "assets/act1/fonts/CormorantSC-Bold.ttf",
+      "bytes": 763124,
+      "sha256": "78f70c79b5c0a1e66641d4b4a2e2ed32e1a45774b3de94e56f8de68510219177"
+    },
+    {
+      "path": "assets/act1/fonts/CormorantSC-OFL.txt",
+      "bytes": 4387,
+      "sha256": "60700d351cac4650c51f3f9db318d2a420f8b45052dba2715eb5fec41f0f6956"
+    },
+    {
+      "path": "assets/act1/fonts/Lora-OFL.txt",
+      "bytes": 4423,
+      "sha256": "1d9a970809ac804b582a6ce7f0ebc4e7fefcbfd7ff6299cad35ee656a21be716"
+    },
+    {
+      "path": "assets/act1/fonts/Lora-Variable.ttf",
+      "bytes": 212196,
+      "sha256": "822a6621ccbe8d97d20ac88c1c41f5615c9c2c202eaa75f272cd452aac6475a7"
+    },
+    {
+      "path": "assets/act1/fonts/provenance.json",
+      "bytes": 969,
+      "sha256": "c82d65e46239d34c14223301e8c0e590fe3516fba118c2071d0b75413159942f"
+    },
+    {
+      "path": "assets/act1/gilded-menu-background.png",
+      "bytes": 2471670,
+      "sha256": "0717dfc3104f91415155f0d6d1cf3db740903a069584d334f8e8463460f4cc67"
+    },
+    {
+      "path": "assets/act1/gilded-title.png",
+      "bytes": 1173488,
+      "sha256": "60c5a7057ff9b5beaa65d5efc5797841a0e0764dff49b56e26b83f2fbbd480fc"
+    },
+    {
+      "path": "assets/act1/item-icons.png",
+      "bytes": 2216043,
+      "sha256": "b70a8332323e9b7472ecf0317ce9b1a747d58d6c394dce0845ee32ccadc1ae66"
+    },
+    {
+      "path": "assets/act1/magic/cast-motions.json",
+      "bytes": 537956,
+      "sha256": "0f4c1d6a80d3cfaa177dbb8f5a18653bdbaee6c42fb9a81b143b8edc3570fd6e"
+    },
+    {
+      "path": "assets/act1/magic/combat200/blender-ember-atlas.json",
+      "bytes": 7954,
+      "sha256": "ef38a089fc2f44294b45ba4f9208371435cd3bde0f8d2e14fd3415c0faa377db"
+    },
+    {
+      "path": "assets/act1/magic/combat200/blender-ember-atlas.png",
+      "bytes": 162349,
+      "sha256": "e8b204978f762b156ac49d5a679e99781b532a068d43daf12538e4a790a9a1ce"
+    },
+    {
+      "path": "assets/act1/magic/combat200/circle_05.png",
+      "bytes": 27583,
+      "sha256": "05e87b80ad4e65ddc0904f91f8520bb22059ca05c053ec7f5c780118e1294012"
+    },
+    {
+      "path": "assets/act1/magic/combat200/flame_01.png",
+      "bytes": 35189,
+      "sha256": "dc6b5decd0e7e99900b0493fa1496f80e34d272f5603081634d0e99235ea9d2b"
+    },
+    {
+      "path": "assets/act1/magic/combat200/LICENSE-Kenney.txt",
+      "bytes": 645,
+      "sha256": "dabd7cc9f78caf9dd0e0c2dbf27eca9c22383bed5bf035bc26341a246b748cc6"
+    },
+    {
+      "path": "assets/act1/magic/combat200/light_03.png",
+      "bytes": 62268,
+      "sha256": "adbef8446fe55f8a5ad1fe8423e2683f8102bca792164c95f276ab77abefeb5f"
+    },
+    {
+      "path": "assets/act1/magic/combat200/magic_03.png",
+      "bytes": 43622,
+      "sha256": "d6d41342a586c223c057d0f4000725e639787d31d8ec9ec72c58948b58177c75"
+    },
+    {
+      "path": "assets/act1/magic/combat200/provenance.json",
+      "bytes": 9082,
+      "sha256": "16bc502b99027464c2b4d9f2986460737c8ad0e595bb74d6407a1d4a08a4217d"
+    },
+    {
+      "path": "assets/act1/magic/combat200/scorch_01.png",
+      "bytes": 59486,
+      "sha256": "bae15192478d1db2cf6da8bccc3e7fad43a87d4354725d66e7d8d33987b8802c"
+    },
+    {
+      "path": "assets/act1/magic/combat200/slash_02.png",
+      "bytes": 28122,
+      "sha256": "4c226fe5bcc428ad8859f49832c1a933e31450dc0bafca8ab33610d15d3ea876"
+    },
+    {
+      "path": "assets/act1/magic/combat200/smoke_05.png",
+      "bytes": 67943,
+      "sha256": "d45c9fb99de978e0558492e0a3517ca5f3d8fb4530724c22b1ede6c2f85b16b2"
+    },
+    {
+      "path": "assets/act1/magic/combat200/spark_04.png",
+      "bytes": 77451,
+      "sha256": "542198dcb07aab51469cdb6211c87583ebc2516e6b03238fafbf92c6c8966707"
+    },
+    {
+      "path": "assets/act1/magic/effects-atlas.json",
+      "bytes": 194,
+      "sha256": "363af7aa3bdf11c0e8917251e8131ff787d13b9498e21d1fc5de31b546969c71"
+    },
+    {
+      "path": "assets/act1/magic/explosion-atlas.png",
+      "bytes": 339559,
+      "sha256": "565734fb6119131bc1daf4f5a7a1a39cce13fd7e45afa80baad7429ed4a8b73e"
+    },
+    {
+      "path": "assets/act1/magic/fire-atlas.png",
+      "bytes": 411832,
+      "sha256": "c8a4a101fcd2b1c3c22eba902902d05e6ac780e53f083e7d24d0791a0ea079a7"
+    },
+    {
+      "path": "assets/act1/magic/smoke-atlas.png",
+      "bytes": 282202,
+      "sha256": "bb5ab093d6dfb5035a31af6954ee4f1f2941cc533121af3f2ee58d48cff5e0fe"
+    },
+    {
+      "path": "assets/act1/manifest.json",
+      "bytes": 1806,
+      "sha256": "578f488d504c8541ba61029bba532580e096d2e68c3da740893a42589b6de53d"
+    },
+    {
+      "path": "assets/act1/portraits.png",
+      "bytes": 3174484,
+      "sha256": "42c9f756e0b48b207d29847df864405de4c554d12013381e2678d58cc580e033"
+    },
+    {
+      "path": "assets/act1/terrain-atlas.png",
+      "bytes": 4332963,
+      "sha256": "41385d3b9bff980083c8f5a72a1730b91a4c6297bd27f8a935c98d39bd2006de"
+    },
+    {
+      "path": "assets/act1/title.png",
+      "bytes": 2550008,
+      "sha256": "03c9bdfead7101474985940f42b68ac104d7843dee094978cbc95782a29f1811"
+    },
+    {
+      "path": "assets/act1/ui-kit.png",
+      "bytes": 2351075,
+      "sha256": "37efb9740ab6d46e7f7c87bdb36afc385cca99336ab5080766b0a062c320d285"
+    },
+    {
+      "path": "assets/cover.png",
+      "bytes": 762065,
+      "sha256": "670d335d2e46db324868b2f38171f19648aa8baf11ad2ef95eabc7145a81dbbb"
+    },
+    {
+      "path": "assets/models/acolyte.glb",
+      "bytes": 1296916,
+      "sha256": "8e31c2ee558fe0818f7a9513b4248991fe2c335cef8249dc232a04a88c65880c"
+    },
+    {
+      "path": "assets/models/boss.glb",
+      "bytes": 1735928,
+      "sha256": "5ebb235ebd825e2f14152f6bfd1c2d5cccbf10dbf301c81491f08209257bb8c7"
+    },
+    {
+      "path": "assets/models/environment.glb",
+      "bytes": 1951620,
+      "sha256": "6da661c9b86643d1573ad146838e36dd370eb72421e8292f55081992b21961bd"
+    },
+    {
+      "path": "assets/models/hero.glb",
+      "bytes": 1759600,
+      "sha256": "7c4f812b3a86c568ebfec24a90c179ce1657a8c52af341a98f207594cba3cd99"
+    },
+    {
+      "path": "assets/models/husk.glb",
+      "bytes": 1454012,
+      "sha256": "b737247ffcd0627e52e7283329fbe861c2ebf0bf91798ba0074d399e949dcaee"
+    },
+    {
+      "path": "assets/models/refresh/alar_nocape.glb",
+      "bytes": 9482284,
+      "sha256": "1ab69060e589c86c4b1e369e8fdcef9a13a063ed28e62a60b3c4a04f978f5868"
+    },
+    {
+      "path": "assets/models/refresh/ash_husk.glb",
+      "bytes": 5825708,
+      "sha256": "c854d97d421936ada393fbc3212a574596064ac035eb0a322e2be266b66828d3"
+    },
+    {
+      "path": "assets/models/refresh/bellkeeper.glb",
+      "bytes": 9926252,
+      "sha256": "cd40181f7eddad323a8eb64dab7cf3ff38a78738b56728ef6d69ede5b4e9cb77"
+    },
+    {
+      "path": "assets/models/refresh/bird.glb",
+      "bytes": 4997872,
+      "sha256": "d43c54b72d2d3b87b831c3be5d4ec503a515a3f69ac90391a8b568f075d0de26"
+    },
+    {
+      "path": "assets/models/refresh/ember_acolyte.glb",
+      "bytes": 5189220,
+      "sha256": "f7f213c5addce5e967b23a33eeac15013349f1d5e24dd9ba3b83c2594429cee8"
+    },
+    {
+      "path": "assets/models/refresh/iona_nocape.glb",
+      "bytes": 8851608,
+      "sha256": "1ead16b553484ccb4e765e24e7df8312ab49bfcedcc21992e87927c85ddf371c"
+    },
+    {
+      "path": "assets/models/refresh/leia_nocape.glb",
+      "bytes": 8964672,
+      "sha256": "aa4a303d228803787871c8714676fdb9232ba2c178af91598ada74b79e102a23"
+    },
+    {
+      "path": "assets/models/refresh/moth.glb",
+      "bytes": 6079780,
+      "sha256": "c7dd3a4f8d743673ed67aac2cb3acdd7318cb0830d0b07e3f5008d9982f1f870"
+    },
+    {
+      "path": "assets/models/refresh/radan_nocape.glb",
+      "bytes": 8962264,
+      "sha256": "5c270577811b089e675a87eaf0b106dacad747b15e964be7ddc8f41ab1edd660"
+    },
+    {
+      "path": "assets/models/refresh/rat.glb",
+      "bytes": 5989736,
+      "sha256": "b44f3132dd4be6301da39fae78482fd10c2365beb4a31ce8c672555d12bb4af7"
+    },
+    {
+      "path": "assets/models/refresh/root_keeper.glb",
+      "bytes": 10187568,
+      "sha256": "a800e882326492c4ee90c2fa2f92d8f5a80f3cd277ae27a9859a2f8f9b67b870"
+    },
+    {
+      "path": "assets/models/refresh/townsman.glb",
+      "bytes": 5388376,
+      "sha256": "bb4d47646d10fd69267412ea9ce63ef81ce166f4d310370052e1677593deea92"
+    },
+    {
+      "path": "assets/models/refresh/townswoman.glb",
+      "bytes": 5525996,
+      "sha256": "b7c13f05daf6e75d9bc9369a9f32c1425d16336e0545206649b3b0b21241368e"
+    },
+    {
+      "path": "assets/models/refresh/wolf.glb",
+      "bytes": 6245796,
+      "sha256": "7c6e8f935137a339040ce6fb56ae9486588826be361e5c921bd6f8136637a372"
+    },
+    {
+      "path": "assets/models/refresh-manifest.json",
+      "bytes": 5114,
+      "sha256": "b9cbc9c81e17852dd135dba32bc9c6693f89d90488473f41663cf7168a56bc47"
+    },
+    {
+      "path": "assets/models/refresh-props.glb",
+      "bytes": 5132260,
+      "sha256": "312f7e5e77ee97da7b1e8ab28ff0acf35fecb2136d019bde22a66128039bb6ac"
+    },
+    {
+      "path": "assets/models/sentinel.glb",
+      "bytes": 1701300,
+      "sha256": "ef707df5341640db4b6034f671ab4cc3a86a11b08f6e1d6509d9a3db1fa4c6c2"
+    },
+    {
+      "path": "assets/models/world-meshy/altar_inspect.glb",
+      "bytes": 1111312,
+      "sha256": "1ad3fe4456beabcf0f062aa529b3537be73f2466535dda22d7c8aa057406c4a2"
+    },
+    {
+      "path": "assets/models/world-meshy/arch.glb",
+      "bytes": 2803516,
+      "sha256": "2e837ce60f666b0b2286b0fe301c24281cee875576ce9d98013794f9b2187aa5"
+    },
+    {
+      "path": "assets/models/world-meshy/banner.glb",
+      "bytes": 1112172,
+      "sha256": "c649dd5aadb10dc45843f610b14548c7c920e215f00c84599aa8ae9dfbea864b"
+    },
+    {
+      "path": "assets/models/world-meshy/barrel.glb",
+      "bytes": 1196368,
+      "sha256": "fac97d9013dab44ad2b5e6195e518f71354c24d89684db2642652011c8bf35e6"
+    },
+    {
+      "path": "assets/models/world-meshy/basket.glb",
+      "bytes": 1176264,
+      "sha256": "fbc53825aa96b290fa7c2f8dfe9567c8853cc351511660c1561ca99247449762"
+    },
+    {
+      "path": "assets/models/world-meshy/book.glb",
+      "bytes": 278988,
+      "sha256": "c63ab09443fc31b7b9a10febac5bf7e85c2380adc297821ce37c8db741c6c36f"
+    },
+    {
+      "path": "assets/models/world-meshy/bookshelf_book.glb",
+      "bytes": 1044128,
+      "sha256": "9f0977edabccb82ebe67a2f4d770f28b5083b641f506b7d59ba3ac3cd03834a6"
+    },
+    {
+      "path": "assets/models/world-meshy/brazier.glb",
+      "bytes": 1038192,
+      "sha256": "569fd41305f7dc8809728279e48df925df2f28dd77741e9129d0fe81feb9b52d"
+    },
+    {
+      "path": "assets/models/world-meshy/bridge.glb",
+      "bytes": 1073352,
+      "sha256": "976d0d1b0114c5fb1df210333989be9bc417fd86a8d86f9abe58b1bdc11ff55b"
+    },
+    {
+      "path": "assets/models/world-meshy/camp.glb",
+      "bytes": 1127220,
+      "sha256": "972351790ef67acc3af1698ecb2ccda92b20b242d98bb29d5461eb888d454aee"
+    },
+    {
+      "path": "assets/models/world-meshy/cart.glb",
+      "bytes": 1138016,
+      "sha256": "2af1762c1eb1c174159c8c843b796b6cee6de7b38ca971ffcac18748e3a9dfc9"
+    },
+    {
+      "path": "assets/models/world-meshy/chest.glb",
+      "bytes": 1252308,
+      "sha256": "d631bcab3a427def782b87b851df8fb217dadf0a1a382bb5acc5add16d93dc3f"
+    },
+    {
+      "path": "assets/models/world-meshy/crane.glb",
+      "bytes": 1108700,
+      "sha256": "a0eaec77031c272e2b8cd9feed2b189b74edd64e5324a7f936f20bf4647d18a1"
+    },
+    {
+      "path": "assets/models/world-meshy/crate.glb",
+      "bytes": 1099796,
+      "sha256": "89e95680e109b151ee782e567fde2576b6defb2afcfbf1b991a0a66de8854dcb"
+    },
+    {
+      "path": "assets/models/world-meshy/grass.glb",
+      "bytes": 278364,
+      "sha256": "201bba78f81088d61f671ef52789fc1707b7070fe9c1aae6542e8f0ee77677a2"
+    },
+    {
+      "path": "assets/models/world-meshy/house.glb",
+      "bytes": 2651820,
+      "sha256": "ff90496b41288b97b89e68aa6ee7b19199057ed8a5c50bdaf173195a2092916d"
+    },
+    {
+      "path": "assets/models/world-meshy/lantern.glb",
+      "bytes": 1047472,
+      "sha256": "b2cf268e6389e734d0e0b441b716f0ce331b981da047d91ae5d06085b34cac68"
+    },
+    {
+      "path": "assets/models/world-meshy/manifest.json",
+      "bytes": 21133,
+      "sha256": "246e5328f6831a642039c369323a1b4c28d750f1a1d68f85aaab66eaa04c18e5"
+    },
+    {
+      "path": "assets/models/world-meshy/merchant_stall.glb",
+      "bytes": 1109264,
+      "sha256": "230783ff966a5d6baf413929f4dcdd73f246818e47747ca281317699ec9fd0ed"
+    },
+    {
+      "path": "assets/models/world-meshy/path_strip.glb",
+      "bytes": 1318164,
+      "sha256": "97b2255d496172a89a1ba7e9fe2e7b597b1bdc1c3c5290385b2bbb5f85259375"
+    },
+    {
+      "path": "assets/models/world-meshy/pillar.glb",
+      "bytes": 1004788,
+      "sha256": "7a9ea06f2506a7924dc70f23554153dc7d798f6c545b1b76a841e6797133fc97"
+    },
+    {
+      "path": "assets/models/world-meshy/puzzle.glb",
+      "bytes": 1054364,
+      "sha256": "0010a9b938932d87aa4527195e46ce1e4091ac3f2203feb88160de27d65ace9c"
+    },
+    {
+      "path": "assets/models/world-meshy/rock.glb",
+      "bytes": 985560,
+      "sha256": "ad23b13f6aea905f109504c6a1b66eedb6e1d13dadc78d4f3191b8237b8c2975"
+    },
+    {
+      "path": "assets/models/world-meshy/satchel.glb",
+      "bytes": 1085316,
+      "sha256": "df91fb9e56826c3900061ac3cb1fa81c64515e716bc86542f5a37a57bfb3a7cb"
+    },
+    {
+      "path": "assets/models/world-meshy/terrain_forest.glb",
+      "bytes": 2991128,
+      "sha256": "37cecf9e340b2a4a0187a369fe7b1d34664d4552a2bab99925cc546bae4306b9"
+    },
+    {
+      "path": "assets/models/world-meshy/terrain_marsh.glb",
+      "bytes": 3698528,
+      "sha256": "b8b55e698b3ae1e91a2c9014242f6fabec4f9ae76123ce8175a8cbcc65c60fd2"
+    },
+    {
+      "path": "assets/models/world-meshy/terrain_ruin.glb",
+      "bytes": 3512704,
+      "sha256": "63e67869d8b81677ab6285092e060df250211b4f242c320235f05c4d8a7c6a94"
+    },
+    {
+      "path": "assets/models/world-meshy/terrain_village.glb",
+      "bytes": 3899676,
+      "sha256": "dc98a64ca6542735e5cc487bf8a09bd97e115e0e0377ce50ff26be35cab59f22"
+    },
+    {
+      "path": "assets/models/world-meshy/tower.glb",
+      "bytes": 2892792,
+      "sha256": "6a7630af00dd789f0701f25dae328bdfad8de9776682c42b6990921fdbab2663"
+    },
+    {
+      "path": "assets/models/world-meshy/tree.glb",
+      "bytes": 2497860,
+      "sha256": "2155082bf5b9b712d3bb4107b808925bbd72f0b2b44996a4c6695902363d1261"
+    },
+    {
+      "path": "assets/models/world-meshy/wall.glb",
+      "bytes": 1152404,
+      "sha256": "71328e028cba9456764ab1ccf9fed6344893c75dc86f5d802c2ddcec660ffcdf"
+    },
+    {
+      "path": "assets/models/world-meshy/waterwheel.glb",
+      "bytes": 1010008,
+      "sha256": "2a51c6017d34ae69941af785e9de7eca7977e6fc2c9d0dba5c2897a896f458c2"
+    },
+    {
+      "path": "assets/models/world-meshy/water_strip.glb",
+      "bytes": 870520,
+      "sha256": "f67d60c2bd57c368a338a0c43dd07cec761ee11b7b6a59ddaedd5d50e6e03292"
+    },
+    {
+      "path": "assets/models/world-meshy/well.glb",
+      "bytes": 1138872,
+      "sha256": "54f645b1d07cd8173fedd2f4c315f26b4b809a7ba5c69b5e9e175cbc507c76b2"
+    },
+    {
+      "path": "assets/models/world-meshy/wheat.glb",
+      "bytes": 367648,
+      "sha256": "28957b423fc6fe8b476d141b8dbcf3b6cc9cefaf54e359ad72f70e899cca1c51"
+    },
+    {
+      "path": "assets/reference.png",
+      "bytes": 2422937,
+      "sha256": "78fe4d4095002633687ec1e61c94770eb42fba79f77b5e311e1c7f14f3238b08"
+    },
+    {
+      "path": "assets/vendor/BufferGeometryUtils.js",
+      "bytes": 39165,
+      "sha256": "319782169ed48af21fcaa251d839ecb8e58f14174aacbf68b74a437f3d6a3a98"
+    },
+    {
+      "path": "assets/vendor/GLTFLoader.js",
+      "bytes": 119859,
+      "sha256": "7bbda9f3af9b5acbd89a33cfc0aeb020f34d2d31a72829c79c0b354f9502c8e5"
+    },
+    {
+      "path": "assets/vendor/SkeletonUtils.js",
+      "bytes": 11547,
+      "sha256": "eedd768765d6553f8082953ab3882e2c86dacc2eb7d180a312d1d52e86bb35c5"
+    },
+    {
+      "path": "assets/vendor/THREE-LICENSE.txt",
+      "bytes": 1081,
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
+    },
+    {
+      "path": "assets/vendor/three.core.js",
+      "bytes": 1474799,
+      "sha256": "613e370f76638fdef83926642bf256dc9615684922de1ce1f63a8583e5d78578"
+    },
+    {
+      "path": "assets/vendor/three.module.js",
+      "bytes": 658900,
+      "sha256": "104f56145899722094556490d787aae0617cc2fc3382f31df02d724ea1aee341"
+    },
+    {
+      "path": "index.html",
+      "bytes": 1308,
+      "sha256": "e826108ca01431fbf5b82c69848c4e7c6102d971746fd7abd269247d856cf01b"
+    },
+    {
+      "path": "interface-windows.css",
+      "bytes": 5957,
+      "sha256": "67cd21230462a182dd807406953e42884d235d4f3947d4139db165e14dbf1f83"
+    },
+    {
+      "path": "legacy-level1.html",
+      "bytes": 7711,
+      "sha256": "7428e9ddacb890d1b0a262fb9ec78c952f40c4d6d9dd109ce4948be783729bd4"
+    },
+    {
+      "path": "navigation.css",
+      "bytes": 6189,
+      "sha256": "5d66b5d8e3585ccb11cb6d20e232b11180cb3c67ff44a050200633cafd5af956"
+    },
+    {
+      "path": "quest-arrow.css",
+      "bytes": 1982,
+      "sha256": "b6db467c36743d92d4e73eee98048e48239fb93198a9d191ccd9ae490a363b9e"
+    },
+    {
+      "path": "src/act1/battle-stage.js",
+      "bytes": 2283,
+      "sha256": "74952deb73af39fb47e768f2abefe38c5aec165e7282ba32cc714146d4289edd"
+    },
+    {
+      "path": "src/act1/bitmap.js",
+      "bytes": 7499,
+      "sha256": "b727ad345e0b23d3783201722f364cbdd7a8917f38e3f2cd99ce19d8aabf53ec"
+    },
+    {
+      "path": "src/act1/browser-performance.js",
+      "bytes": 6022,
+      "sha256": "bc243eb884d1e6fb73058a79ac3fe1b8e9c579c22e36254cb84c61e5b9dd46b2"
+    },
+    {
+      "path": "src/act1/cast-anchors.js",
+      "bytes": 1342,
+      "sha256": "ce07789613f150169328ec800a85620da8ba7c39dd44eaa231bf5edb89df62b5"
+    },
+    {
+      "path": "src/act1/character-animation.js",
+      "bytes": 16301,
+      "sha256": "8e33c284c118820ae3883e0e9357fd4dd426b84c007f6290ab67bde6abb8ed46"
+    },
+    {
+      "path": "src/act1/combat200-animation-policy.js",
+      "bytes": 1156,
+      "sha256": "378b2460a49d58302b00226fe1ffd8dd89fe25d772ddd9680c86c0fd643363da"
+    },
+    {
+      "path": "src/act1/combat200-vfx.js",
+      "bytes": 31603,
+      "sha256": "43fd293e2a35d0dec18312c5e0aeda1d7d7d67088fdcf94a147dab02f92f7055"
+    },
+    {
+      "path": "src/act1/content.js",
+      "bytes": 207798,
+      "sha256": "551275f080e70ea571ad6e647b421e406b8cd43e3dec04de20490730688d514b"
+    },
+    {
+      "path": "src/act1/data/ground-clearance.js",
+      "bytes": 2495,
+      "sha256": "a74f5ff8026b0b898fca9a5365f342dee8226a5eddbde3d35f0931321060350a"
+    },
+    {
+      "path": "src/act1/data/magic-profiles.js",
+      "bytes": 6399,
+      "sha256": "a542077ef8864c5ef3cb91b7728e0fcfc77830d252b7608019d5470b04313f6c"
+    },
+    {
+      "path": "src/act1/equipment-presentation.js",
+      "bytes": 1999,
+      "sha256": "ff5a13d887de4df456a49ae3e50e77542f2b7b67b52c6b8b8555af3c0e9cd526"
+    },
+    {
+      "path": "src/act1/graphics-refresh.js",
+      "bytes": 16690,
+      "sha256": "9cf7806d89074d140d084f9da49602f1174356f771ecc849ea35d7143790ef7d"
+    },
+    {
+      "path": "src/act1/hero-abilities.js",
+      "bytes": 3498,
+      "sha256": "26a484f633b2be3319b462997a0a2275c96b353f7f3777375e99fed2eaf57f3d"
+    },
+    {
+      "path": "src/act1/hud-presentation.js",
+      "bytes": 5755,
+      "sha256": "f79d43f3d7829718dd8fc76310669e33068c1a27a4ed44c281e08de3cfb27c62"
+    },
+    {
+      "path": "src/act1/input-policy.js",
+      "bytes": 1583,
+      "sha256": "9895a4264a69fb83048e135133f69af723e69f35ae8b0990d3c6abceb222823b"
+    },
+    {
+      "path": "src/act1/interface-100.js",
+      "bytes": 43124,
+      "sha256": "3b5c72e1af046ab848e5f6041d93c7f7bd5c5f8c63c8a9f68d0d8aac1757e623"
+    },
+    {
+      "path": "src/act1/interface-presentation.js",
+      "bytes": 1636,
+      "sha256": "74f2f052c24c615f6f86d7e447cf2587174ab26882c3e4a30d2c9ba9b245104c"
+    },
+    {
+      "path": "src/act1/magic-vfx.js",
+      "bytes": 51351,
+      "sha256": "26c6048f3072322c9ca109f74396c0d477275e6997ac7ff2e91b84b3b8517f89"
+    },
+    {
+      "path": "src/act1/main.js",
+      "bytes": 100003,
+      "sha256": "1b81f003f4198db87f613fef3b6c8d987e33982212744ed9244020c2e0d76eb3"
+    },
+    {
+      "path": "src/act1/meshy-world.js",
+      "bytes": 38956,
+      "sha256": "856e2693b67b77c93de0b7411e4162cc5dd205be026e5b9ecf888ebf93db8471"
+    },
+    {
+      "path": "src/act1/minimap.js",
+      "bytes": 12240,
+      "sha256": "bc572edc95edc617eab62d2fc8dbabbeb576e6a7367496760c89a5ae32da2d02"
+    },
+    {
+      "path": "src/act1/model.js",
+      "bytes": 108166,
+      "sha256": "b73244579b9792e2d0f90669ecb1f03051c4f799a6fc0453dcaf6573b256cec5"
+    },
+    {
+      "path": "src/act1/navigation.js",
+      "bytes": 14120,
+      "sha256": "bcaa2b0638335fc847b477e6000d545d0ceba70f0486f248df9659ff1b036812"
+    },
+    {
+      "path": "src/act1/party-motion.js",
+      "bytes": 5531,
+      "sha256": "c9a8753564e2011d5626f8d9f0b1c8d569aff1aafb3e55a59d5e38ed52ef2e4d"
+    },
+    {
+      "path": "src/act1/presentation-environment.js",
+      "bytes": 567,
+      "sha256": "904fff9ab20c9a0b804d646c61e1dd332d824ec9484fbc659604a99539619fb3"
+    },
+    {
+      "path": "src/act1/presentation-motion.js",
+      "bytes": 588,
+      "sha256": "ea97d3cfd4e729b6d4a96c5373a4daf82103ce5397a19a6b03acc092769df9f7"
+    },
+    {
+      "path": "src/act1/presentation-paths.js",
+      "bytes": 216,
+      "sha256": "81d7b5f2f603670751e3029581574d0c302cd383bda9d589ba538add0e2ee2aa"
+    },
+    {
+      "path": "src/act1/presentation-status.js",
+      "bytes": 1768,
+      "sha256": "84ef05cb03f86001cb3c354580f6d5be31c9272fa43a500c6ffe2a04f84b3e00"
+    },
+    {
+      "path": "src/act1/presentation-timing.js",
+      "bytes": 1673,
+      "sha256": "5b0a91cd6578e63871d52e185a2ce2f5971fa85df75a3b913c574e142cea4727"
+    },
+    {
+      "path": "src/act1/presentation-visibility.js",
+      "bytes": 196,
+      "sha256": "1cf502cf0b7cc6a2408a8c6bd180d700d03abebeac82c631eb472d08a55adf9d"
+    },
+    {
+      "path": "src/act1/quest-arrow-view.js",
+      "bytes": 14942,
+      "sha256": "a1bd3e4139ae431f8ba803c2fe0dafb141c4f9593d4c3fa3a9252943e9ac1dd8"
+    },
+    {
+      "path": "src/act1/quest-arrow.js",
+      "bytes": 14142,
+      "sha256": "c3d457f46fac14576dc20e601893b62123fcfa8d17851a63d55b3f598a371de7"
+    },
+    {
+      "path": "src/act1/resource-loader.js",
+      "bytes": 4383,
+      "sha256": "d106f86d70e289d7da8c5894b69d35c2ea7c652062d85bb80f84395c8fe5afc7"
+    },
+    {
+      "path": "src/act1/save.js",
+      "bytes": 13136,
+      "sha256": "7ada013fd985b1278b0ddcf0d83e23ef3bdee7ad56dadd97a7cc2f25cde5e5c6"
+    },
+    {
+      "path": "src/act1/source-facing.js",
+      "bytes": 4835,
+      "sha256": "03d395ae834072d3cf133e8c1267b7a6fd436b74d44463b879b24fb8e29780b0"
+    },
+    {
+      "path": "src/act1/terrain-material.js",
+      "bytes": 10296,
+      "sha256": "876a22f81ff74e665dc2e620a80d830c7d4dbee9294c3018e73002e9abf6e6c8"
+    },
+    {
+      "path": "src/act1/terrain-sampling.js",
+      "bytes": 8937,
+      "sha256": "ae9e0f5f2c6a23a18dae491c19b714eb9768f648fbad3b49342fe4004ef5117a"
+    },
+    {
+      "path": "src/act1/ui-feedback.js",
+      "bytes": 8280,
+      "sha256": "1e736a41b6dd8c0aa0281b46aa4a972582ed7548cf562691b05daa1b872d8ed8"
+    },
+    {
+      "path": "src/act1/ui-framing.js",
+      "bytes": 790,
+      "sha256": "6989b6d420b3090e7eee9e28875c11f9bff4580887c37162073ecb3973cf7428"
+    },
+    {
+      "path": "src/act1/water-fire.js",
+      "bytes": 14682,
+      "sha256": "56d78a596b49902ddf51c9285124c2b6855b384043b984805c7055a704398c97"
+    },
+    {
+      "path": "src/act1/world.js",
+      "bytes": 102433,
+      "sha256": "8dcb4076d4910e2360da2d7fb8a98c88721d087622c01ca7ff11449224814760"
+    },
+    {
+      "path": "src/act1/writer-session.js",
+      "bytes": 3043,
+      "sha256": "69eb1d1b21abc47e8dace8482d537b5cd9c9d3e567e8d0a38601e84837f33ecc"
+    },
+    {
+      "path": "src/audio.js",
+      "bytes": 2572,
+      "sha256": "731188b40bdecdfb95c7de0c9a597405e13762a5e7123573593388ddb5753c1b"
+    },
+    {
+      "path": "src/level.js",
+      "bytes": 2106,
+      "sha256": "240a4f13792886028bec165b7376ef8d1037ad1e1e3b480f3aa9c4e6971a504e"
+    },
+    {
+      "path": "src/main.js",
+      "bytes": 20290,
+      "sha256": "fd230c64fa4c29777822d706fa0d6fd682768f27fd94c37da19bde8d03a5cbd0"
+    },
+    {
+      "path": "src/model.js",
+      "bytes": 14028,
+      "sha256": "e990f84dc13c6eb52166f391f2846eadc89efc8da5e3c074f4bae4b777d7af36"
+    },
+    {
+      "path": "src/saves.js",
+      "bytes": 4790,
+      "sha256": "44dd011b7baa27301c1c21a79bac034fdd5981f1fd61888fe7a72abda8bc7f45"
+    },
+    {
+      "path": "src/strict-json.js",
+      "bytes": 1908,
+      "sha256": "060c8577be617aad7c4fd3aca8f577cc8c226b4cb4deefc4b7e9d2572bdc8818"
+    },
+    {
+      "path": "src/view.js",
+      "bytes": 21085,
+      "sha256": "a3e1424774e718cdbe2a4cd6d41f72b953e887624e9dc30fb8de659c42ee3a2d"
+    },
+    {
+      "path": "style.css",
+      "bytes": 13622,
+      "sha256": "879615f8dcf700f612c736e16a2da70d93b75a698f6fdf7c04a8f25242c881bb"
+    }
+  ]
+}

@@ -1,0 +1,304 @@
+{
+  "schema": 1,
+  "acquiredFromAuthorUpload": true,
+  "packZIP_SHA256": "163b839ba7f62f8a420da93a62beaa80013588d5d6b1eb30841e1a553635ad70",
+  "licenseFile": "LICENSE-Kenney.txt",
+  "licenseSHA256": "dabd7cc9f78caf9dd0e0c2dbf27eca9c22383bed5bf035bc26341a246b748cc6",
+  "officialPage": "https://kenney.nl/assets/particle-pack",
+  "authorUpload": "https://opengameart.org/content/particle-pack-80-sprites",
+  "unusedPacks": "Quaternius excluded due current license conflict",
+  "runtimeAssetBytes": 564013,
+  "budgetBytes": 31457280,
+  "assets": [
+    {
+      "file": "flame_01.png",
+      "bytes": 35189,
+      "sha256": "dc6b5decd0e7e99900b0493fa1496f80e34d272f5603081634d0e99235ea9d2b",
+      "license": "CC0-1.0",
+      "source": "https://opengameart.org/sites/default/files/kenney_particlePack.zip",
+      "author": "Kenney",
+      "usage": "Soft fire volume; wave fronts; phoenix and flame contacts",
+      "decoded": {
+        "width": 512,
+        "height": 512,
+        "depth": 8,
+        "type": 6,
+        "minAlpha": 255,
+        "maxAlpha": 255,
+        "minGreen": 0,
+        "maxGreen": 228,
+        "nonzeroAlphaPixels": 262144
+      },
+      "runtime": "alphaMap using RGB green/luminance, NoColorSpace; smoke always normal blended; analytic map fallback"
+    },
+    {
+      "file": "slash_02.png",
+      "bytes": 28122,
+      "sha256": "4c226fe5bcc428ad8859f49832c1a933e31450dc0bafca8ab33610d15d3ea876",
+      "license": "CC0-1.0",
+      "source": "https://opengameart.org/sites/default/files/kenney_particlePack.zip",
+      "author": "Kenney",
+      "usage": "Authored physical edge charge and contact crescents",
+      "decoded": {
+        "width": 512,
+        "height": 512,
+        "depth": 8,
+        "type": 6,
+        "minAlpha": 255,
+        "maxAlpha": 255,
+        "minGreen": 0,
+        "maxGreen": 232,
+        "nonzeroAlphaPixels": 262144
+      },
+      "runtime": "alphaMap using RGB green/luminance, NoColorSpace; smoke always normal blended; analytic map fallback"
+    },
+    {
+      "file": "smoke_05.png",
+      "bytes": 67943,
+      "sha256": "d45c9fb99de978e0558492e0a3517ca5f3d8fb4530724c22b1ede6c2f85b16b2",
+      "license": "CC0-1.0",
+      "source": "https://opengameart.org/sites/default/files/kenney_particlePack.zip",
+      "author": "Kenney",
+      "usage": "Normal-blended soot, breathing mist and hostile ash repair",
+      "decoded": {
+        "width": 512,
+        "height": 512,
+        "depth": 8,
+        "type": 6,
+        "minAlpha": 255,
+        "maxAlpha": 255,
+        "minGreen": 0,
+        "maxGreen": 214,
+        "nonzeroAlphaPixels": 262144
+      },
+      "runtime": "alphaMap using RGB green/luminance, NoColorSpace; smoke always normal blended; analytic map fallback"
+    },
+    {
+      "file": "magic_03.png",
+      "bytes": 43622,
+      "sha256": "d6d41342a586c223c057d0f4000725e639787d31d8ec9ec72c58948b58177c75",
+      "license": "CC0-1.0",
+      "source": "https://opengameart.org/sites/default/files/kenney_particlePack.zip",
+      "author": "Kenney",
+      "usage": "Rune stamps, oath crests and written-fire source characters",
+      "decoded": {
+        "width": 512,
+        "height": 512,
+        "depth": 8,
+        "type": 3,
+        "minAlpha": 255,
+        "maxAlpha": 255,
+        "minGreen": 0,
+        "maxGreen": 255,
+        "nonzeroAlphaPixels": 262144
+      },
+      "runtime": "alphaMap using RGB green/luminance, NoColorSpace; smoke always normal blended; analytic map fallback"
+    },
+    {
+      "file": "circle_05.png",
+      "bytes": 27583,
+      "sha256": "05e87b80ad4e65ddc0904f91f8520bb22059ca05c053ec7f5c780118e1294012",
+      "license": "CC0-1.0",
+      "source": "https://opengameart.org/sites/default/files/kenney_particlePack.zip",
+      "author": "Kenney",
+      "usage": "Ward/healing circuits, cold margins and thought lenses",
+      "decoded": {
+        "width": 512,
+        "height": 512,
+        "depth": 8,
+        "type": 3,
+        "minAlpha": 255,
+        "maxAlpha": 255,
+        "minGreen": 0,
+        "maxGreen": 242,
+        "nonzeroAlphaPixels": 262144
+      },
+      "runtime": "alphaMap using RGB green/luminance, NoColorSpace; smoke always normal blended; analytic map fallback"
+    },
+    {
+      "file": "light_03.png",
+      "bytes": 62268,
+      "sha256": "adbef8446fe55f8a5ad1fe8423e2683f8102bca792164c95f276ab77abefeb5f",
+      "license": "CC0-1.0",
+      "source": "https://opengameart.org/sites/default/files/kenney_particlePack.zip",
+      "author": "Kenney",
+      "usage": "Palm restoration, life columns and rally standards",
+      "decoded": {
+        "width": 512,
+        "height": 512,
+        "depth": 8,
+        "type": 6,
+        "minAlpha": 255,
+        "maxAlpha": 255,
+        "minGreen": 0,
+        "maxGreen": 241,
+        "nonzeroAlphaPixels": 262144
+      },
+      "runtime": "alphaMap using RGB green/luminance, NoColorSpace; smoke always normal blended; analytic map fallback"
+    },
+    {
+      "file": "spark_04.png",
+      "bytes": 77451,
+      "sha256": "542198dcb07aab51469cdb6211c87583ebc2516e6b03238fafbf92c6c8966707",
+      "license": "CC0-1.0",
+      "source": "https://opengameart.org/sites/default/files/kenney_particlePack.zip",
+      "author": "Kenney",
+      "usage": "Copper/chain charge, script orbit and thread needles",
+      "decoded": {
+        "width": 512,
+        "height": 512,
+        "depth": 8,
+        "type": 6,
+        "minAlpha": 255,
+        "maxAlpha": 255,
+        "minGreen": 0,
+        "maxGreen": 252,
+        "nonzeroAlphaPixels": 262144
+      },
+      "runtime": "alphaMap using RGB green/luminance, NoColorSpace; smoke always normal blended; analytic map fallback"
+    },
+    {
+      "file": "scorch_01.png",
+      "bytes": 59486,
+      "sha256": "bae15192478d1db2cf6da8bccc3e7fad43a87d4354725d66e7d8d33987b8802c",
+      "license": "CC0-1.0",
+      "source": "https://opengameart.org/sites/default/files/kenney_particlePack.zip",
+      "author": "Kenney",
+      "usage": "Fire ground contacts",
+      "decoded": {
+        "width": 512,
+        "height": 512,
+        "depth": 8,
+        "type": 3,
+        "minAlpha": 255,
+        "maxAlpha": 255,
+        "minGreen": 0,
+        "maxGreen": 255,
+        "nonzeroAlphaPixels": 262144
+      },
+      "runtime": "alphaMap using RGB green/luminance, NoColorSpace; smoke always normal blended; analytic map fallback"
+    },
+    {
+      "file": "blender-ember-atlas.png",
+      "bytes": 162349,
+      "sha256": "e8b204978f762b156ac49d5a679e99781b532a068d43daf12538e4a790a9a1ce",
+      "license": "Task-original procedural render",
+      "source": "production/animation/vfx-bake/ember-bake.py",
+      "blender": "5.2.3 LTS; CyclesCPU12samples;25actualframe renders",
+      "usage": "RGBA animated body of ember_script and enemy_fire; plus all new fire helper calls",
+      "decoded": {
+        "width": 640,
+        "height": 640,
+        "depth": 8,
+        "type": 6,
+        "minAlpha": 0,
+        "maxAlpha": 255,
+        "minGreen": 0,
+        "maxGreen": 255,
+        "nonzeroAlphaPixels": 30624
+      },
+      "frames": [
+        {
+          "frame": 0,
+          "nonzeroAlphaPixels": 622
+        },
+        {
+          "frame": 1,
+          "nonzeroAlphaPixels": 763
+        },
+        {
+          "frame": 2,
+          "nonzeroAlphaPixels": 942
+        },
+        {
+          "frame": 3,
+          "nonzeroAlphaPixels": 1153
+        },
+        {
+          "frame": 4,
+          "nonzeroAlphaPixels": 1344
+        },
+        {
+          "frame": 5,
+          "nonzeroAlphaPixels": 1522
+        },
+        {
+          "frame": 6,
+          "nonzeroAlphaPixels": 1686
+        },
+        {
+          "frame": 7,
+          "nonzeroAlphaPixels": 1779
+        },
+        {
+          "frame": 8,
+          "nonzeroAlphaPixels": 1806
+        },
+        {
+          "frame": 9,
+          "nonzeroAlphaPixels": 1858
+        },
+        {
+          "frame": 10,
+          "nonzeroAlphaPixels": 1897
+        },
+        {
+          "frame": 11,
+          "nonzeroAlphaPixels": 1889
+        },
+        {
+          "frame": 12,
+          "nonzeroAlphaPixels": 1839
+        },
+        {
+          "frame": 13,
+          "nonzeroAlphaPixels": 1733
+        },
+        {
+          "frame": 14,
+          "nonzeroAlphaPixels": 1584
+        },
+        {
+          "frame": 15,
+          "nonzeroAlphaPixels": 1388
+        },
+        {
+          "frame": 16,
+          "nonzeroAlphaPixels": 1145
+        },
+        {
+          "frame": 17,
+          "nonzeroAlphaPixels": 942
+        },
+        {
+          "frame": 18,
+          "nonzeroAlphaPixels": 785
+        },
+        {
+          "frame": 19,
+          "nonzeroAlphaPixels": 640
+        },
+        {
+          "frame": 20,
+          "nonzeroAlphaPixels": 990
+        },
+        {
+          "frame": 21,
+          "nonzeroAlphaPixels": 810
+        },
+        {
+          "frame": 22,
+          "nonzeroAlphaPixels": 647
+        },
+        {
+          "frame": 23,
+          "nonzeroAlphaPixels": 502
+        },
+        {
+          "frame": 24,
+          "nonzeroAlphaPixels": 358
+        }
+      ]
+    }
+  ]
+}

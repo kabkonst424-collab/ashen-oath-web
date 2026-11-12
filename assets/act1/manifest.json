@@ -1,0 +1,52 @@
+{
+  "reference": "Game demo knight art 2026-11-01 07_27_03",
+  "files": [
+    {
+      "id": "ui-kit",
+      "path": "assets/act1/ui-kit.png",
+      "bytes": 2351075,
+      "sha256": "37efb9740ab6d46e7f7c87bdb36afc385cca99336ab5080766b0a062c320d285",
+      "producer": "built-in ImageGen",
+      "brief": "docs/act1/art-brief-and-provenance.md"
+    },
+    {
+      "id": "title",
+      "path": "assets/act1/title.png",
+      "bytes": 2550008,
+      "sha256": "03c9bdfead7101474985940f42b68ac104d7843dee094978cbc95782a29f1811",
+      "producer": "built-in ImageGen",
+      "brief": "docs/poster-hilt-correction-20261105.json",
+      "width": 1671,
+      "height": 941
+    },
+    {
+      "id": "terrain-atlas",
+      "path": "assets/act1/terrain-atlas.png",
+      "bytes": 4332963,
+      "sha256": "41385d3b9bff980083c8f5a72a1730b91a4c6297bd27f8a935c98d39bd2006de",
+      "producer": "built-in ImageGen",
+      "brief": "docs/act1/art-brief-and-provenance.md"
+    },
+    {
+      "id": "portraits",
+      "path": "assets/act1/portraits.png",
+      "bytes": 3174484,
+      "sha256": "42c9f756e0b48b207d29847df864405de4c554d12013381e2678d58cc580e033",
+      "producer": "built-in ImageGen",
+      "brief": "docs/act1/art-brief-and-provenance.md"
+    },
+    {
+      "id": "item-icons",
+      "path": "assets/act1/item-icons.png",
+      "bytes": 2216043,
+      "sha256": "b70a8332323e9b7472ecf0317ce9b1a747d58d6c394dce0845ee32ccadc1ae66",
+      "producer": "built-in ImageGen",
+      "brief": "docs/act1/art-brief-and-provenance.md"
+    }
+  ],
+  "text_renderer": "src/act1/bitmap.js",
+  "visible_text": "PNG images with alt/ARIA semantics",
+  "paid_meshy_credits": 532,
+  "graphics_revision": "0.4.0",
+  "models_manifest": "assets/models/refresh-manifest.json"
+}

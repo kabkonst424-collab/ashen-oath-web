@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#121719"><title>Пепельная клятва · Уровень 1 — Авторская кузница</title><link rel="stylesheet" href="style.css"></head>
+<body class="greybox-build">
+<canvas id="world" aria-label="Трёхмерный мир игры"></canvas>
+<div id="prototypeBadge">УРОВЕНЬ 1 · ГРАФИКА-ЗАГЛУШКИ</div><div id="vignette"></div><div id="damageFlash"></div>
+<header id="topbar"><a href="/" id="forgeLink">✦ Авторская кузница</a><span class="chapter">УРОВЕНЬ 1 <i></i> <span id="zoneName">Южные ворота</span></span><button id="menuButton" class="round" aria-label="Открыть меню">☰</button></header>
+<aside id="quest" class="hud"><div class="eyebrow">ПЕПЕЛЬНАЯ КЛЯТВА</div><div id="levelStage" class="eyebrow">УРОВЕНЬ 1 · ЭТАП 1 / 5</div><h2>Первый рассвет</h2><p id="objective">Доберитесь до первой печати</p><p id="objectiveDetail" class="objective-detail">Начните путь у южных ворот.</p><div id="sealCount">◈ ◇ ◇ <span>0 / 3</span></div><small id="checkpointLabel">Возвращение: Южные ворота</small></aside>
+<aside id="mapPanel" class="hud"><div class="map-title">МОНАСТЫРЬ <span>◇</span></div><canvas id="minimap" width="176" height="204" aria-label="Карта уровня"></canvas><div class="map-legend">◆ вы <span>◇ печать</span></div></aside>
+<div id="bossBar" hidden><p>ВЕРХОВНЫЙ СУДЬЯ СОЛНЦА</p><div><i id="bossFill"></i></div><span id="bossPhase">ХРАНИТЕЛЬ ПОСЛЕДНЕГО РАССВЕТА</span></div>
+<div id="enemyLabels" aria-hidden="true"></div><div id="numbers" aria-hidden="true"></div>
+<div id="toast" role="status" aria-live="polite"></div><div id="interactPrompt" hidden><kbd>E</kbd> <span>Пробудить печать</span></div>
+<button id="exitLevelButton" class="exit-action" hidden>Завершить уровень <span>→</span></button>
+<div id="bottomHud" class="hud">
+ <div class="orb-side"><div class="orb-frame"><div class="orb health"><div id="hpLiquid" class="liquid"></div><span id="hpValue">180 / 180</span></div></div><div class="orb-label">ЖИЗНЬ</div></div>
+ <div id="centerHud"><div class="nameplate"><span>✦</span> <strong>ХРАНИТЕЛЬ КЛЯТВЫ</strong> <span id="level">I</span></div><div class="abilities">
+  <button data-action="heal" class="flask" title="Зелье · 1"><span class="skill-icon">⚱</span><kbd>1</kbd><small id="potions">5</small><span class="cooldown"></span></button>
+  <div class="ability-divider"></div>
+  <button data-action="slash" title="Удар клятвы · ЛКМ / J"><span class="skill-icon">⚔</span><kbd>ЛКМ / J</kbd><span class="cooldown"></span></button>
+  <button data-action="nova" title="Солнечный круг · Q · 30 маны"><span class="skill-icon sun">☀</span><kbd>Q</kbd><span class="cost">30</span><span class="cooldown"></span></button>
+  <button data-action="dash" title="Световой рывок · Space · 16 маны"><span class="skill-icon">➶</span><kbd>SPACE</kbd><span class="cost">16</span><span class="cooldown"></span></button>
+  <button data-action="block" title="Удерживать щит · ПКМ / K"><span class="skill-icon">⛨</span><kbd>ПКМ / K</kbd></button>
+  <div class="ability-divider"></div><button id="inventoryButton" title="Снаряжение · I"><span class="skill-icon">♜</span><kbd>I</kbd></button>
+ </div><div id="xpTrack"><i id="xpFill"></i></div><div class="hud-footer"><span id="gold">◈ 0</span><span id="saveStatus">Хранилище…</span><span id="fps"></span></div></div>
+ <div class="orb-side"><div class="orb-frame"><div class="orb mana"><div id="mpLiquid" class="liquid"></div><span id="mpValue">100 / 100</span></div></div><div class="orb-label">МАНА</div></div>
+</div>
+<div id="controlsHint">W A S D — движение <b>·</b> ЛКМ / J — удар <b>·</b> Q — солнечный круг <b>·</b> SPACE — рывок <b>·</b> E — взаимодействие</div>
+<dialog id="menu" aria-labelledby="menuTitle"><div class="menu-art"></div><div class="menu-content"><div class="eyebrow">АВТОРСКАЯ КУЗНИЦА · ПЕРВЫЙ УРОВЕНЬ</div><div class="ornament">✦</div><h1 id="menuTitle">Пепельная<br><em>клятва</em></h1><p class="intro">За стенами угасшего монастыря ждёт первый рассвет.<br>Освободите три печати, победите судью и доберитесь до выхода.</p><p id="loadingText" role="status">Подготовка мира…</p><div class="menu-actions"><button id="newGame" class="primary" disabled>Начать первый уровень <span>→</span></button><button id="continueGame" hidden>Продолжить</button><button id="resumeGame" hidden>Вернуться в игру</button><div class="two"><button id="exportSave">Экспорт прогресса</button><button id="importSave">Импорт прогресса</button></div><button id="retrySave" hidden>Повторить сохранение</button><button id="temporaryMode" hidden>Играть временно без сохранений</button></div><div class="settings"><label>Звук <input id="volume" type="range" min="0" max="1" step="0.05" value="0.35"></label><label>Качество <select id="quality"><option value="high">Высокое</option><option value="low">Низкое</option></select></label><label><input id="reducedMotion" type="checkbox"> Меньше вспышек</label><label>Текст <select id="textScale"><option value="1">100%</option><option value="1.35">135%</option><option value="2">200%</option></select></label></div><p class="save-note">Прогресс хранится в этом браузере. Экспортируйте файл для независимой резервной копии.</p><p class="menu-controls">WASD / стрелки · J / ЛКМ · Q · Space · K / ПКМ · E · Esc<br>Три печати → судья → выход. Золотое кольцо указывает текущую цель. Примитивы заменяют финальную графику.</p></div></dialog>
+<dialog id="inventory"><div class="eyebrow">ХРАНИТЕЛЬ КЛЯТВЫ</div><h2>Снаряжение</h2><div class="item-card"><span>⚔</span><div><h3 id="swordName">Клинок последнего света</h3><p id="swordStats">Урон: 27–33</p></div></div><div class="item-card"><span>⛨</span><div><h3>Щит солнечного ордена</h3><p>Удерживайте K / ПКМ: 78% снижения урона</p></div></div><p id="inventoryStats"></p><p>В боковой часовне спрятан сундук ордена.</p><button id="closeInventory" class="primary">Вернуться <kbd>I / ESC</kbd></button></dialog>
+<dialog id="result"><div class="ornament">☀</div><div class="eyebrow" id="resultEyebrow">КЛЯТВА ИСПОЛНЕНА</div><h2 id="resultTitle">Рассвет возвращён</h2><p id="resultText"></p><button id="resultAction" class="primary">Продолжить</button><button id="resultExport">Экспортировать путь</button></dialog>
+<input type="file" id="saveFile" accept=".json,.rpgsave.json" hidden>
+<script type="module" src="src/main.js"></script>
+</body></html>

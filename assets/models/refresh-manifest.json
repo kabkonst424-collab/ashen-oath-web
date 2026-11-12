@@ -1,0 +1,203 @@
+{
+  "models": [
+    {
+      "id": "alar_nocape",
+      "clips": [
+        "Attack",
+        "Idle",
+        "Run",
+        "Walk"
+      ],
+      "bytes": 9482284,
+      "triangles": 60000,
+      "sha256": "1ab69060e589c86c4b1e369e8fdcef9a13a063ed28e62a60b3c4a04f978f5868"
+    },
+    {
+      "id": "iona_nocape",
+      "clips": [
+        "Cast",
+        "Idle",
+        "Run",
+        "Walk"
+      ],
+      "bytes": 8851608,
+      "triangles": 60000,
+      "sha256": "1ead16b553484ccb4e765e24e7df8312ab49bfcedcc21992e87927c85ddf371c"
+    },
+    {
+      "id": "radan_nocape",
+      "clips": [
+        "Attack",
+        "Idle",
+        "Run",
+        "Walk"
+      ],
+      "bytes": 8962264,
+      "triangles": 60000,
+      "sha256": "5c270577811b089e675a87eaf0b106dacad747b15e964be7ddc8f41ab1edd660"
+    },
+    {
+      "id": "leia_nocape",
+      "clips": [
+        "Cast",
+        "Idle",
+        "Run",
+        "Walk"
+      ],
+      "bytes": 8964672,
+      "triangles": 60000,
+      "sha256": "aa4a303d228803787871c8714676fdb9232ba2c178af91598ada74b79e102a23"
+    },
+    {
+      "id": "townsman",
+      "clips": [
+        "Attack",
+        "Idle",
+        "Run",
+        "Walk"
+      ],
+      "bytes": 5388376,
+      "triangles": 14781,
+      "sha256": "bb4d47646d10fd69267412ea9ce63ef81ce166f4d310370052e1677593deea92"
+    },
+    {
+      "id": "townswoman",
+      "clips": [
+        "Attack",
+        "Idle",
+        "Run",
+        "Walk"
+      ],
+      "bytes": 5525996,
+      "triangles": 14304,
+      "sha256": "b7c13f05daf6e75d9bc9369a9f32c1425d16336e0545206649b3b0b21241368e"
+    },
+    {
+      "id": "ash_husk",
+      "clips": [
+        "Attack",
+        "Idle",
+        "Run",
+        "Walk"
+      ],
+      "bytes": 5825708,
+      "triangles": 12482,
+      "sha256": "c854d97d421936ada393fbc3212a574596064ac035eb0a322e2be266b66828d3"
+    },
+    {
+      "id": "ember_acolyte",
+      "clips": [
+        "Cast",
+        "Idle",
+        "Run",
+        "Walk"
+      ],
+      "bytes": 5189220,
+      "triangles": 13275,
+      "sha256": "f7f213c5addce5e967b23a33eeac15013349f1d5e24dd9ba3b83c2594429cee8"
+    },
+    {
+      "id": "bellkeeper",
+      "clips": [
+        "Attack",
+        "Idle",
+        "Run",
+        "Walk"
+      ],
+      "bytes": 9926252,
+      "triangles": 60000,
+      "sha256": "cd40181f7eddad323a8eb64dab7cf3ff38a78738b56728ef6d69ede5b4e9cb77"
+    },
+    {
+      "id": "root_keeper",
+      "clips": [
+        "Attack",
+        "Idle",
+        "Run",
+        "Walk"
+      ],
+      "bytes": 10187568,
+      "triangles": 60000,
+      "sha256": "a800e882326492c4ee90c2fa2f92d8f5a80f3cd277ae27a9859a2f8f9b67b870"
+    },
+    {
+      "id": "wolf",
+      "clips": [
+        "Attack",
+        "Death",
+        "Idle",
+        "Run"
+      ],
+      "bytes": 6245796,
+      "triangles": 15983,
+      "sha256": "7c6e8f935137a339040ce6fb56ae9486588826be361e5c921bd6f8136637a372",
+      "originalSha256": "d6c4cb4dd48012530d96896552a8ab96d2ab828e5ad049ed649de5b1f857a486",
+      "derivation": "Skin-influence-only repair; Meshy geometry/rest/bind/materials unchanged"
+    },
+    {
+      "id": "rat",
+      "clips": [
+        "Attack",
+        "Death",
+        "Idle",
+        "Run"
+      ],
+      "bytes": 5989736,
+      "triangles": 14813,
+      "sha256": "b44f3132dd4be6301da39fae78482fd10c2365beb4a31ce8c672555d12bb4af7",
+      "originalSha256": "1aa068c1bf9fe46f1b0d1c01a2432e623f9b2db19a945cd9772cbaf2edf00a2d",
+      "derivation": "Skin-influence-only repair; Meshy geometry/rest/bind/materials unchanged"
+    },
+    {
+      "id": "moth",
+      "clips": [
+        "Attack",
+        "Death",
+        "Idle",
+        "Run"
+      ],
+      "bytes": 6079780,
+      "triangles": 13648,
+      "sha256": "c7dd3a4f8d743673ed67aac2cb3acdd7318cb0830d0b07e3f5008d9982f1f870"
+    },
+    {
+      "id": "bird",
+      "clips": [
+        "Attack",
+        "Death",
+        "Idle",
+        "Run"
+      ],
+      "bytes": 4997872,
+      "triangles": 12507,
+      "sha256": "d43c54b72d2d3b87b831c3be5d4ec503a515a3f69ac90391a8b568f075d0de26"
+    }
+  ],
+  "roles": 14,
+  "enemies": 31,
+  "areas": 9,
+  "budget": {
+    "spent": 532,
+    "limit": 547
+  },
+  "props": {
+    "modules": 36,
+    "bytes": 5132260,
+    "sha256": "312f7e5e77ee97da7b1e8ab28ff0acf35fecb2136d019bde22a66128039bb6ac"
+  },
+  "checkedAt": "2026-11-01T13:46:08.530Z",
+  "status": "PASS_STRUCTURAL",
+  "limits": [
+    "Structural coverage and portable glTF checks; no full act playthrough or device performance certification."
+  ],
+  "source": "Meshy-generated characters; original Blender/MCP equipment and props",
+  "heroes_without_capes": [
+    "alar",
+    "iona",
+    "radan",
+    "leia"
+  ],
+  "third_party_benchmark_geometry_copied": false,
+  "humanoid_reactions": "Presentation fall/hit transform; creature Death is a baked Blender clip",
+  "variants": "14 bases serve 14 roles and31 enemy types through authored gear, color and scale variants"
+}

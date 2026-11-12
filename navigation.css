@@ -1,0 +1,98 @@
+/* Original generated panels and gold raster labels remain the UI vocabulary. */
+.nav50-minimap{position:absolute;right:14px;top:76px;width:244px;padding:8px;background:#0c1d22f5;border:1px solid #b79555;border-radius:8px;pointer-events:auto;z-index:12;max-height:calc(100dvh - 170px);overflow:auto;scrollbar-width:thin}
+.nav50-header{display:flex;gap:5px;align-items:center}.nav50-header>.nav50-caption{flex:1;min-width:0}.nav50-caption{min-width:0;margin:3px 0}.nav50-caption>.bitmap-text{max-width:100%;height:auto}.nav50-svg{display:block;width:100%;height:auto;overflow:hidden;background:#07151a;border-radius:5px;border:1px solid #8f783e}
+.nav50-controls{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}.nav50-control.paint-button{flex:1 1 90px;min-width:70px;min-height:44px;padding:5px}.nav50-body{min-width:0}.nav50-copy{margin-top:5px}
+@media(max-width:760px),(max-height:460px){.nav50-minimap{right:6px;top:66px;width:190px;max-height:calc(100dvh - 220px)}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.nav50-quest-list{display:flex;flex-direction:column;gap:4px;max-height:180px;overflow:auto;margin-top:5px}.nav50-quest-list .nav50-control{flex:none;width:100%}.nav50-quest-list [aria-pressed="true"]{outline:2px solid #ead18c;outline-offset:-2px}
+
+
+
+
+
+
+
+
+
+.nav50-header>.nav50-control{flex:0 0 86px;min-width:72px}.nav50-minimap.nav50-collapsed{width:132px;overflow:visible}.nav50-collapsed .nav50-area{display:none}.nav50-collapsed .nav50-header>.nav50-control{flex:1;min-width:112px}.nav50-control:focus-visible{outline:2px solid #9fe1d1;outline-offset:2px}.nav50-minimap [hidden]{display:none!important}
+
+
+
+.nav50-legend{padding:6px;border-top:1px solid #927b49;background:#10262a}.nav50-selection-hint,.nav50-route-reason{border-left:2px solid #c69c61;padding-left:5px}.nav50-arrival{border:1px solid #92c1a5;padding:4px}.nav50-step{border-bottom:1px solid #7aa98f}.nav50-control[aria-pressed="true"]{box-shadow:inset 0 0 0 2px #e5c782}
+
+/* Integration reflow: separate the new map from navigation controls and keep
+   the fourth companion reachable in the existing narrow-screen HUD. */
+@media(max-width:1000px),(max-height:460px){
+ #actHud[data-mode="explore"] .hud-top{display:contents}
+ #actHud[data-mode="explore"] .hud-controls{position:absolute;top:calc(4px + var(--safe-top));left:4px;right:4px;max-width:none;display:flex;flex-wrap:nowrap;justify-content:flex-start;height:48px;gap:4px;padding:1px;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
+ #actHud[data-mode="explore"] .hud-controls .paint-button{flex:0 0 100px;min-width:100px;height:44px;min-height:44px;padding:4px}
+ #actHud[data-mode="explore"] .hud-controls .paint-button:last-child{position:sticky;right:0;background-color:#172327;z-index:2}
+ #actHud[data-mode="explore"] .objective-panel{position:absolute;top:calc(60px + var(--safe-top));left:4px;width:calc(100% - 148px);max-height:min(220px,32dvh)!important;padding:12px;overflow:auto!important;pointer-events:auto;scrollbar-width:thin}
+ #actHud[data-mode="explore"] .party-strip{position:absolute;inset:auto;grid-column:auto;grid-row:auto;left:4px;right:4px;bottom:calc(4px + var(--safe-bottom));max-width:none;max-height:150px;gap:4px;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
+ #actHud[data-mode="explore"] .party-card{flex:0 0 116px;width:116px;min-width:116px;padding:8px;display:block}
+ #actHud[data-mode="explore"] .party-card .portraits{display:none}
+ #actHud[data-mode="explore"] .near-panel{position:absolute;inset:auto;grid-column:auto;grid-row:auto;align-self:auto;justify-self:auto;right:4px;bottom:calc(160px + var(--safe-bottom));width:min(290px,calc(100% - 152px));max-height:100px;padding:8px;overflow:auto;scrollbar-width:thin}
+ .nav50-minimap{top:calc(60px + var(--safe-top));right:4px;max-height:max(160px,calc(100dvh - 330px))}
+}
+@media(min-width:1001px) and (min-height:461px){
+ #actHud[data-mode="explore"] .near-panel{position:absolute;inset:auto;grid-column:auto;grid-row:auto;align-self:auto;justify-self:auto;right:270px;bottom:calc(156px + var(--safe-bottom));width:290px;max-height:120px;overflow:auto}
+}
+@media(max-height:460px){
+ .nav50-minimap:not(.nav50-collapsed){max-height:calc(100dvh - 68px)}
+ #actHud[data-mode="explore"] .near-panel{max-height:78px}
+}
+@media(max-height:460px) and (min-width:600px){
+ #actHud[data-mode="explore"] .objective-panel{width:calc(100% - 310px);max-height:max(76px,calc(100dvh - 222px))!important}
+}
+.nav50-skill-effects{border-left:2px solid #8ebba9;padding-left:5px;margin:5px 0}
+
+/* Device acceptance correction: retain a clear central view in phone landscape.
+   Details remain scrollable; each companion remains a 44px-or-larger target. */
+@media(max-height:460px) and (min-width:600px){
+ #actHud[data-mode="explore"] .objective-panel{width:min(330px,calc(100% - 155px));max-height:86px!important;padding:6px 9px}
+ #actHud[data-mode="explore"] .hud50-area{display:none}
+ #actHud[data-mode="explore"] .party-strip{right:auto;width:min(520px,calc(100% - 8px));height:72px;max-height:72px;align-items:stretch}
+ #actHud[data-mode="explore"] .party-card{flex:0 0 116px;min-height:44px;max-height:72px;display:flex;padding:4px 7px;overflow:hidden}
+ #actHud[data-mode="explore"] .party-values{display:grid;grid-template-columns:1fr 1fr;gap:0 3px;align-content:center}
+ #actHud[data-mode="explore"] .party-values>.bitmap-text{width:100%!important;max-height:18px;object-position:left center}
+ #actHud[data-mode="explore"] .party-values>.meter{grid-column:1/-1;width:100%;height:3px;margin:0}
+ #actHud[data-mode="explore"] .party-values>.meter+.bitmap-text{grid-column:1/-1;width:100%!important;max-height:18px}
+ #actHud[data-mode="explore"] .party-vital{grid-column:1/-1;display:flex;flex-direction:column-reverse;gap:0;align-items:stretch}
+ #actHud[data-mode="explore"] .party-vital>.bitmap-text{width:100%!important;max-height:20px;object-position:left center}
+ #actHud[data-mode="explore"] .party-vital>.meter{width:100%;height:3px;margin:0}
+ #actHud[data-mode="explore"] .near-panel{bottom:calc(82px + var(--safe-bottom));width:250px;max-height:78px;padding:5px}
+}
+
+
