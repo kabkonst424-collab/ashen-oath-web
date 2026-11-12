@@ -1,23 +1,26 @@
-/* One VK AdMarket banner while the Ashen Oath menu is visible. */
+/* VK AdMarket banners beside the Ashen Oath menu (game loading screen). */
 (function () {
   'use strict';
   const menu = document.getElementById('actMenu');
   const menuCard = document.getElementById('menuCard');
   if (!menu || !menuCard) return;
+
+  const SLOTS = ['2096994', '2108108', '2108110'];
   let active = false;
-  let cards = [];
+  let rail = null;
 
   function layout() {
-    const count = cards.filter(card => !card.hidden).length;
-    if (count) menu.dataset.loaderAds = 'one';
+    if (rail) menu.dataset.loaderAds = 'three';
     else delete menu.dataset.loaderAds;
   }
+
   function stop() {
     active = false;
-    for (const card of cards) card.remove();
-    cards = [];
+    if (rail) rail.remove();
+    rail = null;
     layout();
   }
+
   function placement(id) {
     const card = document.createElement('aside');
     card.className = 'ashen-loading-ad';
@@ -36,13 +39,16 @@
     card.appendChild(slot);
     return card;
   }
+
   function start() {
     if (active || menu.hidden) return;
     active = true;
-    const right = placement('2096994');
-    menu.appendChild(right);
-    cards = [right];
+    rail = document.createElement('div');
+    rail.className = 'ashen-loader-ads';
+    for (const id of SLOTS) rail.appendChild(placement(id));
+    menu.appendChild(rail);
     layout();
+
     window.MRGtag = window.MRGtag || [];
     window.MRGtag.push({});
     if (!document.getElementById('ashen-vk-ad-sdk')) {
@@ -54,6 +60,7 @@
       document.head.appendChild(sdk);
     }
   }
+
   // Model/animation readiness never controls advertising. Only menu visibility does.
   const observer = new MutationObserver(() => {
     if (menu.hidden) stop();
