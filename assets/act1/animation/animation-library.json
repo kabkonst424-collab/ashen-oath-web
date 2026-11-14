@@ -14,7 +14,12 @@
     "root_keeper": "a800e882326492c4ee90c2fa2f92d8f5a80f3cd277ae27a9859a2f8f9b67b870",
     "townsman": "bb4d47646d10fd69267412ea9ce63ef81ce166f4d310370052e1677593deea92",
     "townswoman": "b7c13f05daf6e75d9bc9369a9f32c1425d16336e0545206649b3b0b21241368e",
-    "wolf": "7c6e8f935137a339040ce6fb56ae9486588826be361e5c921bd6f8136637a372"
+    "wolf": "7c6e8f935137a339040ce6fb56ae9486588826be361e5c921bd6f8136637a372",
+    "forged_resin_lynx": "9037db7585d8dd0790df38228aaf2659d000e9fbf83dbe59777e1991d2df8e73",
+    "forged_slag_golem": "7c395d410804c074a76de9e44ba3290efe26a23fed2652de093770b54dd528a6",
+    "forged_fen_weaver": "2a9240e50831ac0ae47dc31dcb8e5b3dd71eed4bf8589479ca9542fd3ed059f2",
+    "forged_mill_wisp": "fe9d213b272325179846e5c957aba6b0c1d917b8ef77b02cfb935b8f61327159",
+    "forged_rivet_guard": "79940637bbc382ab7b6bc1b524a98bcf924e926a6a75727c80c6f8decbcb8b6f"
   },
   "frontYawByBase": {
     "alar_nocape": 0,
@@ -30,7 +35,12 @@
     "root_keeper": 0,
     "townsman": 0,
     "townswoman": 0,
-    "wolf": 0
+    "wolf": 0,
+    "forged_resin_lynx": 0,
+    "forged_slag_golem": 0,
+    "forged_fen_weaver": 0,
+    "forged_mill_wisp": 0,
+    "forged_rivet_guard": 0
   },
   "profiles": {
     "party:alar": {
@@ -1364,6 +1374,139 @@
       "rootMotion": false,
       "deathHeldEndNormalized": 0.82,
       "acceptedCycle": 50
+    },
+    "enemy:forged_resin_lynx": {
+      "base": "forged_resin_lynx",
+      "file": "profiles/enemy-forged_resin_lynx.json",
+      "sha256": "809cb828a5e59b4e62d1c540451dd07a56e587360b2a82a690f7740f8c7be990",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "Death",
+        "Hit",
+        "CastEnemyClaw",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_claw": "CastEnemyClaw",
+        "forged_lynx_lunge": "Attack"
+      },
+      "sourceHash": "9037db7585d8dd0790df38228aaf2659d000e9fbf83dbe59777e1991d2df8e73",
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:forged_slag_golem": {
+      "base": "forged_slag_golem",
+      "file": "profiles/enemy-forged_slag_golem.json",
+      "sha256": "1b5ebf7cdeb1078a2b43f6b393f5c31e6800465049893c5681b78130b80f82aa",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastEnemyRing",
+        "CastNova",
+        "Death",
+        "Hit",
+        "CastEnemyClaw",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_claw": "CastEnemyClaw",
+        "enemy_ring": "CastEnemyRing",
+        "forged_slag_shell": "CastEnemyRing",
+        "forged_slag_eruption": "CastNova"
+      },
+      "sourceHash": "7c395d410804c074a76de9e44ba3290efe26a23fed2652de093770b54dd528a6",
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:forged_fen_weaver": {
+      "base": "forged_fen_weaver",
+      "file": "profiles/enemy-forged_fen_weaver.json",
+      "sha256": "4e485dc9b09cbe2a084abf92b5cd41f4396c2e102edf0b4ab9d3697c7cd5838d",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastEnemyMend",
+        "CastFire",
+        "CastMend",
+        "Death",
+        "Hit",
+        "CastEnemyFire",
+        "CastHeavy",
+        "CastFrost"
+      ],
+      "skillClips": {
+        "enemy_fire": "CastEnemyFire",
+        "enemy_mend": "CastEnemyMend",
+        "forged_weaver_needle": "CastFrost",
+        "forged_weaver_mend": "CastMend"
+      },
+      "sourceHash": "2a9240e50831ac0ae47dc31dcb8e5b3dd71eed4bf8589479ca9542fd3ed059f2",
+      "castHands": {
+        "CastHeavy": "RightHand",
+        "CastFrost": "RightHand"
+      }
+    },
+    "enemy:forged_mill_wisp": {
+      "base": "forged_mill_wisp",
+      "file": "profiles/enemy-forged_mill_wisp.json",
+      "sha256": "bc53d2d713865befa0b8bdb464574b7fd865e1bf6f69c694b61bc46d9909b796",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastFire",
+        "Death",
+        "Hit",
+        "CastEnemyFire",
+        "CastHeavy",
+        "CastLightning"
+      ],
+      "skillClips": {
+        "enemy_fire": "CastEnemyFire",
+        "forged_wisp_spark": "CastLightning",
+        "forged_wisp_discharge": "CastLightning"
+      },
+      "sourceHash": "fe9d213b272325179846e5c957aba6b0c1d917b8ef77b02cfb935b8f61327159",
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
+    },
+    "enemy:forged_rivet_guard": {
+      "base": "forged_rivet_guard",
+      "file": "profiles/enemy-forged_rivet_guard.json",
+      "sha256": "827b86e913f1f9606d90b6ce14d16f366cc924d6dda23440680434d8dde296c2",
+      "clips": [
+        "Idle",
+        "Walk",
+        "Run",
+        "Attack",
+        "CastEnemyGuard",
+        "CastWard",
+        "Death",
+        "Hit",
+        "CastEnemyClaw",
+        "CastHeavy"
+      ],
+      "skillClips": {
+        "enemy_claw": "CastEnemyClaw",
+        "enemy_guard": "CastEnemyGuard",
+        "forged_guard_stand": "CastWard",
+        "forged_guard_rivet": "CastHeavy"
+      },
+      "sourceHash": "79940637bbc382ab7b6bc1b524a98bcf924e926a6a75727c80c6f8decbcb8b6f",
+      "castHands": {
+        "CastHeavy": "RightHand"
+      }
     }
   },
   "loopClips": [

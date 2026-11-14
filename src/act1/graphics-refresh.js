@@ -1,10 +1,10 @@
 import {addRoadAccent} from './road-actor-looks.js?v=roads-018';
-import {addForgedOutfit} from './forged-enemy-looks.js?v=forged-019';
 import * as T from '../../assets/vendor/three.module.js';
 import {GLTFLoader} from '../../assets/vendor/GLTFLoader.js';
 import {groundClearanceLift,flightBaseline,mirrorWingDelta} from './party-motion.js?v=0.16.0-demo';
+import {SOURCE_BASES} from './source-facing.js?v=forged-meshy-0191';
 
-export const BASE_MODELS=['alar_nocape','iona_nocape','radan_nocape','leia_nocape','townsman','townswoman','ash_husk','ember_acolyte','bellkeeper','root_keeper','wolf','rat','moth','bird'];
+export const BASE_MODELS=SOURCE_BASES;
 const v=(base,gear=[],extra={})=>({base,gear,...extra});
 export const ROLE_VISUALS={
  alar:v('alar_nocape',['Sword','Shield']),iona:v('iona_nocape',['Staff'],{back:'Book'}),radan:v('radan_nocape',['Spear','Shield']),leia:v('leia_nocape',['Censer']),
@@ -14,6 +14,13 @@ export const ENEMY_VISUALS={
  ash_husk:v('ash_husk',['Sword']),ember_acolyte:v('ember_acolyte',['Staff']),iron_sentinel:v('radan_nocape',['Sword','Shield'],{tint:0x98a5ac}),broken_reliquary:v('bellkeeper',[],{scale:1.10,tint:0xc5c6b8}),road_extorter:v('townsman',['Sword'],{tint:0xb9aa9b}),thorn_wolf:v('wolf'),resin_moth:v('moth'),thorn_keeper:v('root_keeper'),iron_rat:v('rat'),tithe_guard:v('radan_nocape',['Spear'],{tint:0xc5b694}),quarry_overseer:v('townsman',['Hammer'],{scale:1.15,tint:0xab9c88}),quarry_echo:v('root_keeper',[],{tint:0xa3a9b7,scale:1.08}),drowned:v('ash_husk',[],{tint:0x94c1cc}),wick_light:v('moth',[],{scale:.7,tint:0xffa951,glow:.2}),reed_stalker:v('townsman',[],{back:'Bow',tint:0xa6c2a0}),ferry_echo:v('ember_acolyte',['Oar'],{tint:0x91b4d5,opacity:.75,scale:1.15}),paper_swarm:v('moth',[],{tint:0xe0e2c8,scale:.88}),ink_guard:v('radan_nocape',['Spear'],{tint:0x777b8e}),hush_acolyte:v('ember_acolyte',[],{tint:0xb6b6c8}),catalogue_warden:v('bellkeeper',[],{back:'Book',tint:0xb9c0a8}),hollow_reaper:v('ash_husk',['Spear'],{tint:0xb3ad83}),cinder_bird:v('bird'),harvest_engine:v('root_keeper',[],{tint:0xd8ba71,scale:1.15}),fortress_archer:v('radan_nocape',['Crossbow'],{tint:0xc1c7b0}),warden_hound:v('wolf',[],{tint:0xb8c0ca,scale:1.12}),dagan:ROLE_VISUALS.dagan,oath_knight:v('alar_nocape',['Sword','Shield'],{tint:0x979aaa}),silent_choir:v('ember_acolyte',[],{tint:0xe4d0a0,scale:1.1}),oathshade:v('ash_husk',[],{tint:0x8593c5,opacity:.77}),mute_abbot:v('ember_acolyte',['Censer'],{scale:1.4,tint:0xa9aaac}),bellkeeper:v('bellkeeper')
 };
 const FALLBACK={hero:ROLE_VISUALS.alar,acolyte:ENEMY_VISUALS.ember_acolyte,husk:ENEMY_VISUALS.ash_husk,sentinel:ENEMY_VISUALS.iron_sentinel,boss:ENEMY_VISUALS.bellkeeper};
+const FORGED_VISUALS={
+ forged_resin_lynx:v('forged_resin_lynx',[],{height:1.78}),
+ forged_slag_golem:v('forged_slag_golem',[],{height:3.92}),
+ forged_fen_weaver:v('forged_fen_weaver',[],{height:3.10}),
+ forged_mill_wisp:v('forged_mill_wisp',[],{height:1.28,hover:.86}),
+ forged_rivet_guard:v('forged_rivet_guard',['Hammer','Shield'],{height:3.28}),
+};
 export function installRefresh(World){
  const P=World.prototype,create=P.createActor,play=P.play,dispose=P.dispose;
  P.dispose=function(...args){if(this.disposed)return;const owned=new Set();for(const item of this.refreshInstances?.values()||[])for(const part of item.parts)owned.add(part.geometry);const result=dispose.apply(this,args);for(const geometry of owned)geometry.dispose();this.refreshInstances?.clear();return result;};
@@ -31,7 +38,7 @@ export function installRefresh(World){
  P.createActor=function(id,type,options={}){
   if(this.actors.has(id))return this.actors.get(id);
   const role=String(options.npc&&options.animationSource||options.role||'').split('_')[0];
-  const visual=options.enemyId?ENEMY_VISUALS[options.animationSource||options.enemyId]:ROLE_VISUALS[role];
+  const visual=options.enemyId?(FORGED_VISUALS[options.enemyId]||ENEMY_VISUALS[options.animationSource||options.enemyId]):ROLE_VISUALS[role];
   const source=visual||FALLBACK[type]||ROLE_VISUALS.alar;
   const accent=options.visual;
   const look=accent?{...source,tint:accent.color??source.tint,scale:(source.scale||1)*(accent.scale||1),gear:accent.gear??source.gear}:source;
@@ -39,14 +46,13 @@ export function installRefresh(World){
   this.characterAnimations?.bindActor(actor);
   if(!options.role)this.accessories(actor,'',false);
   this.characterAnimations?.equipPresentation?.(actor);
-  actor.root.updateMatrixWorld(true);const box=new T.Box3();actor.root.traverse(o=>{if(o.isSkinnedMesh){o.computeBoundingBox();box.union(o.boundingBox.clone().applyMatrix4(o.matrixWorld));}});const height=box.max.y-box.min.y;const desired=['wolf','rat'].includes(look.base)?1.65:look.base==='bird'||look.base==='moth'?1.45:['bellkeeper','root_keeper'].includes(look.base)?4.0:2.8;
+  actor.root.updateMatrixWorld(true);const box=new T.Box3();actor.root.traverse(o=>{if(o.isSkinnedMesh){o.computeBoundingBox();box.union(o.boundingBox.clone().applyMatrix4(o.matrixWorld));}});const height=box.max.y-box.min.y;const desired=look.height||(['wolf','rat'].includes(look.base)?1.65:look.base==='bird'||look.base==='moth'?1.45:['bellkeeper','root_keeper'].includes(look.base)?4.0:2.8);
   const factor=desired/Math.max(.1,height)*(look.scale||1);actor.wrapper.scale.multiplyScalar(factor);actor.refreshHeight=desired*(look.scale||1);
-  actor.flightBaseline=flightBaseline(look.base);actor.refreshRootBaseY=actor.root.position.y+actor.flightBaseline;
+  actor.flightBaseline=look.hover==null?flightBaseline(look.base):look.hover/factor;actor.refreshRootBaseY=actor.root.position.y+actor.flightBaseline;
   actor.presentationHeight=actor.refreshHeight+actor.flightBaseline*Math.abs(actor.wrapper.scale.y);actor.root.position.y=actor.refreshRootBaseY;
   if(['moth','bird'].includes(look.base)){const bone=actor.root.getObjectByName('WingR');if(bone)actor.wingCorrection={bone,rest:bone.quaternion.clone(),scratch:new T.Quaternion()};}
   if(look.tint||look.opacity||look.glow)actor.root.traverse(o=>{if(!o.isMesh)return;for(const m of Array.isArray(o.material)?o.material:[o.material]){if(look.tint)m.color.multiply(new T.Color(look.tint));if(look.opacity){m.transparent=true;m.opacity=look.opacity;m.depthWrite=false;}if(look.glow){m.emissive.setHex(look.tint||0xffa040);m.emissiveIntensity=look.glow;}}});
   addRoadAccent(this,actor,accent);
-  addForgedOutfit(this,actor,accent?.outfit);
   return actor;
  };
  P.accessories=function(actor,role,npc){

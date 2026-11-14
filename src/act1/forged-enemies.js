@@ -17,25 +17,20 @@ const skills = [
   strike('forged_guard_rivet', 'Клёпаный замах', 'enemy', 1.65, 'physical', 'Клёпаный замах · тяжёлый удар в одного героя. Можно сбить', 'heavy'),
 ];
 
-const type = (id, name, kind, animationSource, stats, xp, gold, skills, weakness, visual) =>
-  ({ id, name, kind, animationSource, stats: { ...stats, mp: 99 }, skills, weakness, visual, rewards: { xp, gold, items: [] } });
+const type = (id, name, kind, stats, xp, gold, skills, weakness) =>
+  ({ id, name, kind, stats: { ...stats, mp: 99 }, skills, weakness, rewards: { xp, gold, items: [] } });
 
 const types = [
-  type('forged_resin_lynx', 'Смоляная рысь', 'husk', 'thorn_wolf',
-    { hp: 100, atk: 26, def: 9, speed: 18 }, 38, 18, ['forged_lynx_lunge', 'enemy_claw'], 'fire',
-    { outfit: 'resin-lynx', scale: .98, color: 0xd99f5d }),
-  type('forged_slag_golem', 'Шлаковый голем', 'sentinel', 'harvest_engine',
-    { hp: 182, atk: 31, def: 18, speed: 9 }, 55, 25, ['forged_slag_shell', 'forged_slag_eruption', 'enemy_claw'], 'ice',
-    { outfit: 'slag-golem', scale: .98, color: 0x859396 }),
-  type('forged_fen_weaver', 'Камышовый шептун', 'acolyte', 'hush_acolyte',
-    { hp: 135, atk: 31, def: 11, speed: 17 }, 48, 24, ['forged_weaver_needle', 'forged_weaver_mend'], 'fire',
-    { outfit: 'fen-weaver', scale: 1.04, color: 0x90b294 }),
-  type('forged_mill_wisp', 'Мельничный огонёк', 'acolyte', 'resin_moth',
-    { hp: 132, atk: 34, def: 11, speed: 20 }, 54, 27, ['forged_wisp_spark', 'forged_wisp_discharge'], 'ice',
-    { outfit: 'mill-wisp', scale: .94, color: 0x7cdbc3 }),
-  type('forged_rivet_guard', 'Клёпаный караульный', 'sentinel', 'tithe_guard',
-    { hp: 205, atk: 39, def: 21, speed: 11 }, 64, 32, ['enemy_claw', 'forged_guard_stand', 'forged_guard_rivet'], 'light',
-    { outfit: 'rivet-guard', scale: 1.17, color: 0xa8b9b4, gear: ['Hammer', 'Shield'] }),
+  type('forged_resin_lynx', 'Смоляная рысь', 'husk',
+    { hp: 100, atk: 26, def: 9, speed: 18 }, 38, 18, ['forged_lynx_lunge', 'enemy_claw'], 'fire'),
+  type('forged_slag_golem', 'Шлаковый голем', 'sentinel',
+    { hp: 182, atk: 31, def: 18, speed: 9 }, 55, 25, ['forged_slag_shell', 'forged_slag_eruption', 'enemy_claw'], 'ice'),
+  type('forged_fen_weaver', 'Камышовый шептун', 'acolyte',
+    { hp: 135, atk: 31, def: 11, speed: 17 }, 48, 24, ['forged_weaver_needle', 'forged_weaver_mend'], 'fire'),
+  type('forged_mill_wisp', 'Мельничный огонёк', 'acolyte',
+    { hp: 132, atk: 34, def: 11, speed: 20 }, 54, 27, ['forged_wisp_spark', 'forged_wisp_discharge'], 'ice'),
+  type('forged_rivet_guard', 'Клёпаный караульный', 'sentinel',
+    { hp: 205, atk: 39, def: 21, speed: 11 }, 64, 32, ['enemy_claw', 'forged_guard_stand', 'forged_guard_rivet'], 'light'),
 ];
 
 const patrols = [

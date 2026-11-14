@@ -1,20 +1,20 @@
-import {installRefresh} from './graphics-refresh.js?v=forged-019';
-import {installMeshyWorld} from './meshy-world.js?v=forged-019';
-import {WorldElements,installWorldElements} from './water-fire.js?v=forged-019';
+import {installRefresh} from './graphics-refresh.js?v=forged-meshy-0191';
+import {installMeshyWorld} from './meshy-world.js?v=forged-meshy-0191';
+import {WorldElements,installWorldElements} from './water-fire.js?v=forged-meshy-0191';
 import {MagicVfx} from './magic-vfx.js?v=forged-019';
 import {advancePaintedPose, orientPaintedActors, paintedActionAge, resetPaintedPose} from './painted-motion.js?v=painted-20261114-r2';
-import {CharacterAnimationLibrary} from './character-animation.js?v=forged-019';
+import {CharacterAnimationLibrary} from './character-animation.js?v=forged-meshy-0191';
 import {installBrowserPerformance} from './browser-performance.js?v=0.16.0-demo';
 import * as T from '../../assets/vendor/three.module.js';
 import { GLTFLoader } from '../../assets/vendor/GLTFLoader.js';
 import { clone as cloneSkeleton } from '../../assets/vendor/SkeletonUtils.js';
-import * as Content from './content.js?v=forged-019';
+import * as Content from './content.js?v=forged-meshy-0191';
 import { battleFormation, fitBattleCamera, facingToward, oppositionFacing, wrapFacing } from './battle-stage.js?v=0.16.0-demo';
 import { combatMotionPolicy, actionLunge } from './presentation-motion.js?v=forged-019';
 import { actionTimeline, actionClipPhase } from './presentation-timing.js?v=forged-019';
 import { reactionPhase, contactReaction, transitionBlend, hasUnsettledDeath } from './combat200-animation-policy.js?v=0.16.0-demo';
 import { PartyTrail, loopTiming, COMBAT_MOTION, combatPlaybackRate } from './party-motion.js?v=0.16.0-demo';
-import { walkable } from './model.js?v=forged-019';
+import { walkable } from './model.js?v=forged-meshy-0191';
 import { BattleLayoutCache } from './ui-framing.js?v=0.16.0-demo';
 import { paintGildedLine } from './bitmap.js?v=painted-20261114-r2';
 

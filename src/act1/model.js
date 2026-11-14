@@ -1,9 +1,9 @@
 import {AREA_GEOMETRY_REVISION, legacyPosition, migratePosition, nearestLand, returnArrival, walkableLayout} from './area-geometry.js?v=rivers-0181';
 import {roleCatalog} from './hero-abilities.js';
-import * as CONTENT from './content.js?v=forged-019';
+import * as CONTENT from './content.js?v=forged-meshy-0191';
 import {chestLoot,encounterLoot,enemyLoot,rollLoot} from './loot-tables.js?v=forged-019';
 
-export const VERSION='0.19.0-demo-act1';
+export const VERSION='0.19.1-demo-act1';
 export const SCHEMA=2;
 export const BAG_SIZE=30;
 const list=value=>Array.isArray(value)?value:Object.values(value||{});

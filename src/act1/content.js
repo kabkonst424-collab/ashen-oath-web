@@ -1,7 +1,7 @@
 import { AREA_LAYOUTS } from './area-layouts.js?v=rivers-0181';
 import { applyAreaLayouts } from './area-geometry.js?v=rivers-0181';
-import { extendRoadsContent } from './roads-content.js?v=forged-019';
-import { extendForgedEncounters } from './forged-enemies.js?v=forged-019';
+import { extendRoadsContent } from './roads-content.js?v=forged-meshy-0191';
+import { extendForgedEncounters } from './forged-enemies.js?v=forged-meshy-0191';
 import { addSmithies } from './forged-smiths.js?v=forged-019';
 import { FORGE_ITEMS } from './loot-tables.js?v=forged-019';
 

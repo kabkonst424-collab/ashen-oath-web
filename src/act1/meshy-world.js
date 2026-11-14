@@ -1,6 +1,6 @@
 import * as T from '../../assets/vendor/three.module.js';
 import {GLTFLoader} from '../../assets/vendor/GLTFLoader.js';
-import {BASE_MODELS} from './graphics-refresh.js?v=forged-019';
+import {BASE_MODELS} from './graphics-refresh.js?v=forged-meshy-0191';
 import {mergeGeometries} from '../../assets/vendor/BufferGeometryUtils.js';
 import {TerrainMaterials} from './terrain-material.js?v=painted-20261114-r2';
 import {paintMeshes} from './painted-material.js?v=painted-20261114-r2';

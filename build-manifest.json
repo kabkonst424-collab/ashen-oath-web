@@ -1,6 +1,6 @@
 {
   "id": "ashen-oath",
-  "version": "0.19.0-demo",
+  "version": "0.19.1-demo",
   "releaseStatus": "demo",
   "demo": true,
   "posterArtRevision": {
@@ -14,10 +14,10 @@
     "baselineAuthoredBlenderActions": 314,
     "baselineCompatibilityAliases": 45,
     "independentlyReviewedProfiles": 49,
-    "animatedProfiles": 49,
-    "profileClips": 437,
+    "animatedProfiles": 54,
+    "profileClips": 487,
     "skillProfiles": 30,
-    "enemyVariants": 31,
+    "enemyVariants": 36,
     "posesPerClip": 25,
     "surface": "Authored terrain perimeter, sloped river banks, standalone ponds, roads and usable bridges.",
     "water": "Five continuous channels with directional water shading and clipped river outlines on both maps.",
@@ -2121,7 +2121,7 @@
     "status": "DESIGN_ESTIMATE_NOT_MEASURED"
   },
   "platform": "WebGL2",
-  "builtAt": "2026-11-14T13:33:57.546Z",
+  "builtAt": "2026-11-14T14:09:44.683Z",
   "files": [
     {
       "path": "act1.css",
@@ -2130,13 +2130,13 @@
     },
     {
       "path": "act1.html",
-      "bytes": 1526,
-      "sha256": "6872509c4d1530d06ae6ed6ad2ef69e74084b3b1fb1055ca7e1b7c3015ef002b"
+      "bytes": 1533,
+      "sha256": "b95c8968f80bc25bd4002bc8c73f1599d81006b23032e67285dc131e1ffb92c6"
     },
     {
       "path": "assets/act1/animation/animation-library.json",
-      "bytes": 42342,
-      "sha256": "9a9525aeb3c57ac386d403efa0ebbe91b98a9f5060d8014d6e8f44f8e39fb447"
+      "bytes": 46724,
+      "sha256": "938fe89ccf5995d7b3a1342ad0ab8484a9e414ff8bd61e9d42144418204e0055"
     },
     {
       "path": "assets/act1/animation/profiles/enemy-ash_husk.json",
@@ -2182,6 +2182,31 @@
       "path": "assets/act1/animation/profiles/enemy-ferry_echo.json",
       "bytes": 548658,
       "sha256": "85a24fa7f42e52a43d1ef93bf30d7bcb9d1f3c10e3a874a3f4d05d21707256ff"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-forged_fen_weaver.json",
+      "bytes": 576423,
+      "sha256": "4e485dc9b09cbe2a084abf92b5cd41f4396c2e102edf0b4ab9d3697c7cd5838d"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-forged_mill_wisp.json",
+      "bytes": 201719,
+      "sha256": "bc53d2d713865befa0b8bdb464574b7fd865e1bf6f69c694b61bc46d9909b796"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-forged_resin_lynx.json",
+      "bytes": 339681,
+      "sha256": "809cb828a5e59b4e62d1c540451dd07a56e587360b2a82a690f7740f8c7be990"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-forged_rivet_guard.json",
+      "bytes": 513911,
+      "sha256": "827b86e913f1f9606d90b6ce14d16f366cc924d6dda23440680434d8dde296c2"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-forged_slag_golem.json",
+      "bytes": 879045,
+      "sha256": "1b5ebf7cdeb1078a2b43f6b393f5c31e6800465049893c5681b78130b80f82aa"
     },
     {
       "path": "assets/act1/animation/profiles/enemy-fortress_archer.json",
@@ -2685,8 +2710,8 @@
     },
     {
       "path": "assets/models/refresh-manifest.json",
-      "bytes": 5114,
-      "sha256": "b9cbc9c81e17852dd135dba32bc9c6693f89d90488473f41663cf7168a56bc47"
+      "bytes": 9603,
+      "sha256": "ec6c9deafde0f33c385418df66e4e5a9d6e5112ced69112f6a1fd2b81f1aa8f1"
     },
     {
       "path": "assets/models/refresh-props.glb",
@@ -2717,6 +2742,31 @@
       "path": "assets/models/refresh/ember_acolyte.glb",
       "bytes": 5189220,
       "sha256": "f7f213c5addce5e967b23a33eeac15013349f1d5e24dd9ba3b83c2594429cee8"
+    },
+    {
+      "path": "assets/models/refresh/forged_fen_weaver.glb",
+      "bytes": 1098472,
+      "sha256": "2a9240e50831ac0ae47dc31dcb8e5b3dd71eed4bf8589479ca9542fd3ed059f2"
+    },
+    {
+      "path": "assets/models/refresh/forged_mill_wisp.glb",
+      "bytes": 1139068,
+      "sha256": "fe9d213b272325179846e5c957aba6b0c1d917b8ef77b02cfb935b8f61327159"
+    },
+    {
+      "path": "assets/models/refresh/forged_resin_lynx.glb",
+      "bytes": 1397872,
+      "sha256": "9037db7585d8dd0790df38228aaf2659d000e9fbf83dbe59777e1991d2df8e73"
+    },
+    {
+      "path": "assets/models/refresh/forged_rivet_guard.glb",
+      "bytes": 1001344,
+      "sha256": "79940637bbc382ab7b6bc1b524a98bcf924e926a6a75727c80c6f8decbcb8b6f"
+    },
+    {
+      "path": "assets/models/refresh/forged_slag_golem.glb",
+      "bytes": 1029200,
+      "sha256": "7c395d410804c074a76de9e44ba3290efe26a23fed2652de093770b54dd528a6"
     },
     {
       "path": "assets/models/refresh/iona_nocape.glb",
@@ -2985,8 +3035,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 1526,
-      "sha256": "6872509c4d1530d06ae6ed6ad2ef69e74084b3b1fb1055ca7e1b7c3015ef002b"
+      "bytes": 1533,
+      "sha256": "b95c8968f80bc25bd4002bc8c73f1599d81006b23032e67285dc131e1ffb92c6"
     },
     {
       "path": "interface-windows.css",
@@ -3070,8 +3120,8 @@
     },
     {
       "path": "src/act1/character-animation.js",
-      "bytes": 16376,
-      "sha256": "72b9d979ad894d888af84359a1d47fd8c52811b517a0b31a110cdb3401238f93"
+      "bytes": 16389,
+      "sha256": "0a6c47f20ccb7c85fd2f29c973fa5c0ccdcf9d05bdf56f3412a6a09e1b33d097"
     },
     {
       "path": "src/act1/combat200-animation-policy.js",
@@ -3085,8 +3135,8 @@
     },
     {
       "path": "src/act1/content.js",
-      "bytes": 208654,
-      "sha256": "2edaf2c58432fe6c0cffbfe61106f90d213d1496be2a3f432fcb5dd6a12156a0"
+      "bytes": 208668,
+      "sha256": "6be11d078d1d54fc1feae0107064135f60cbfb58f955d668663597d1f6c3ec11"
     },
     {
       "path": "src/act1/data/ground-clearance.js",
@@ -3105,8 +3155,8 @@
     },
     {
       "path": "src/act1/forged-enemies.js",
-      "bytes": 5335,
-      "sha256": "a06d4b4a85b6ae934e8a7d29fec3f8f371e9ed2e157621f1f3ab970cac561ead"
+      "bytes": 4883,
+      "sha256": "55f9e473351ce8c72a463a3121f7414f62e9067bfea4cf0893acd947a49f009c"
     },
     {
       "path": "src/act1/forged-enemy-looks.js",
@@ -3125,8 +3175,8 @@
     },
     {
       "path": "src/act1/graphics-refresh.js",
-      "bytes": 17233,
-      "sha256": "864cebb7f1bc78575f318cc1fb83a6093e789c9cea303c7028ed7661e0386120"
+      "bytes": 17479,
+      "sha256": "4c007c87d438e72f1e28747cece1f972013dc80622fbd625b2d33cc111d65647"
     },
     {
       "path": "src/act1/hero-abilities.js",
@@ -3165,28 +3215,28 @@
     },
     {
       "path": "src/act1/main.js",
-      "bytes": 106743,
-      "sha256": "ddb4563c766436f4a2db5cb2c6b7519ec987a86125bb1163f8961ebf341594ec"
+      "bytes": 106785,
+      "sha256": "bf9bd95b9766ce70b6c47a7c06340703dd203033a04b594be9fe700da4bbf63a"
     },
     {
       "path": "src/act1/meshy-world.js",
-      "bytes": 40250,
-      "sha256": "0d055f7170379ed57b3a1cc2bffbaf288c8e37a116145d0e2c453f62801e2e15"
+      "bytes": 40257,
+      "sha256": "1e1d0c019ab051e69bda516767c55ba3eadfaa02d5a2a56664f1e9f463acd628"
     },
     {
       "path": "src/act1/minimap.js",
-      "bytes": 13645,
-      "sha256": "e7069727d1c28561c843e97f16b5677f04d9a0e53abe49ea9c4547eae805bbac"
+      "bytes": 13652,
+      "sha256": "20ef3db3e44d22dca80504bc5b553e913b9f979d4363c517facee40dd5a07a64"
     },
     {
       "path": "src/act1/model.js",
-      "bytes": 116181,
-      "sha256": "a52dddff093b5e7ab1c141191c98a786552ac3b327e401662a1a77d1f800f86b"
+      "bytes": 116188,
+      "sha256": "cfbf98858718859d394eeb49a253b8cd9eef1700cbdb510038e92a9c81901c98"
     },
     {
       "path": "src/act1/navigation.js",
-      "bytes": 15874,
-      "sha256": "cb59d37037f7b1462449849202da541a3bdc127c15208d21fcb3e66649447d01"
+      "bytes": 15888,
+      "sha256": "c60bca898a1a44236632adff141a751ed3d875d80fffe1a4c78b0ad6e4bbd45e"
     },
     {
       "path": "src/act1/painted-material.js",
@@ -3265,13 +3315,13 @@
     },
     {
       "path": "src/act1/save.js",
-      "bytes": 13269,
-      "sha256": "c8d52cabf5125de9612e1043807ab6fc93d9953746f2d63c31f27ea3d38b3ece"
+      "bytes": 13283,
+      "sha256": "41da816e443a178d49962ac24c8dcaf03c4195ff478dfa699a1f43624ca0a0d9"
     },
     {
       "path": "src/act1/source-facing.js",
-      "bytes": 4835,
-      "sha256": "03d395ae834072d3cf133e8c1267b7a6fd436b74d44463b879b24fb8e29780b0"
+      "bytes": 4938,
+      "sha256": "56fd60f91170d1effb53d1d611e7ea8b20b130a6d8f0f248d9d953444e15e99d"
     },
     {
       "path": "src/act1/terrain-material.js",
@@ -3295,13 +3345,13 @@
     },
     {
       "path": "src/act1/water-fire.js",
-      "bytes": 15786,
-      "sha256": "06fb32772ed4e181f9800416aa209fc898fab7c937969f05b135503f0653d136"
+      "bytes": 15793,
+      "sha256": "3dde9eda93448545882265199fd196ba04db6ac1c14096a5e57b4e4e22e5e32a"
     },
     {
       "path": "src/act1/world.js",
-      "bytes": 104602,
-      "sha256": "144d745ef333d63265f8e116c6edc0e9d932c6c285a0f22d36ac67297df16c64"
+      "bytes": 104644,
+      "sha256": "0c94c4fe26d2691a819fd6b9fa4dd0f274346f9e96194068edf9a251d1593cda"
     },
     {
       "path": "src/act1/writer-session.js",
@@ -3404,5 +3454,42 @@
     "mapRevision": 2,
     "cover": "assets/act1/painted/forge-cover.webp",
     "saveMigration": "Legacy gear starts at full durability; combat and loot RNG are independent."
+  },
+  "forgedMeshyRevision": {
+    "id": "forged-meshy-0191",
+    "baseCommit": "7440371e3330fc13e5116438591f38e7bbe42306",
+    "animationLibrarySHA256": "938fe89ccf5995d7b3a1342ad0ab8484a9e414ff8bd61e9d42144418204e0055",
+    "characterManifestSHA256": "ec6c9deafde0f33c385418df66e4e5a9d6e5112ced69112f6a1fd2b81f1aa8f1",
+    "assetBytes": 5665956,
+    "consumedMeshyCredits": 75,
+    "saveSchema": 2,
+    "skillChecks": 9,
+    "models": [
+      {
+        "id": "forged_resin_lynx",
+        "taskId": "01a1da53-7acf-717d-ab8e-bc61808d55f4",
+        "triangles": 11203
+      },
+      {
+        "id": "forged_slag_golem",
+        "taskId": "01a1da53-7bbc-7732-84a1-ce393951334a",
+        "triangles": 11045
+      },
+      {
+        "id": "forged_fen_weaver",
+        "taskId": "01a1da53-7d47-7015-817b-72ec406b328a",
+        "triangles": 9572
+      },
+      {
+        "id": "forged_mill_wisp",
+        "taskId": "01a1da53-7b6b-75ee-9f35-96efb2879018",
+        "triangles": 10975
+      },
+      {
+        "id": "forged_rivet_guard",
+        "taskId": "01a1da53-7c0d-74fd-93d6-07df2502f76e",
+        "triangles": 10989
+      }
+    ]
   }
 }

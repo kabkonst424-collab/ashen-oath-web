@@ -1,13 +1,13 @@
 import * as T from '../../assets/vendor/three.module.js';
-import { PARTY } from './content.js?v=forged-019';
+import { PARTY } from './content.js?v=forged-meshy-0191';
 import { fetchBytes } from './resource-loader.js?v=0.16.0-demo';
 import { validateCastHands } from './cast-anchors.js?v=forged-019';
-import { SOURCE_BASES, SOURCE_FRONT_YAW, resolveBaseFrontYaw, resolveProfileFrontYaw, actorSourceBase, isSourceBase, sourceValue, normalizeSourceHash, normalizeSourceYaw, sourceFacingBasis, applySourceFacing } from './source-facing.js?v=0.16.0-demo';
+import { SOURCE_BASES, SOURCE_FRONT_YAW, resolveBaseFrontYaw, resolveProfileFrontYaw, actorSourceBase, isSourceBase, sourceValue, normalizeSourceHash, normalizeSourceYaw, sourceFacingBasis, applySourceFacing } from './source-facing.js?v=forged-meshy-0191';
 
 import { normalizeBattleEquipment, applyBattleEquipment } from './equipment-presentation.js?v=0.16.0-demo';
 
 const ROOT = new URL('../../assets/act1/animation/', import.meta.url);
-const RELEASE_INDEX_SHA256 = '9a9525aeb3c57ac386d403efa0ebbe91b98a9f5060d8014d6e8f44f8e39fb447';
+const RELEASE_INDEX_SHA256 = '938fe89ccf5995d7b3a1342ad0ab8484a9e414ff8bd61e9d42144418204e0055';
 const LOOPS = new Set(['Idle', 'Walk', 'Run']);
 const BASIC = ['Idle', 'Walk', 'Run', 'Attack', 'Death'];
 const CLIP_NAME = /^(?:Idle|Walk|Run|Attack|Death|Hit|Block|Cast[A-Za-z0-9_]+)$/;
