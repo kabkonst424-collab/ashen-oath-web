@@ -16,6 +16,16 @@ const VEGETATION = {
   grass:    { step: .89,  density: .88, height: 1.20, grass: [0x6b792f, 0xb1a24d], weed: 0x89924c },
   fortress: { step: 1.56, density: .20, height: .66, grass: [0x616e43, 0x8c8b55], weed: 0x788650 },
   abbey:    { step: 1.52, density: .23, height: .79, grass: [0x586c47, 0x8d8f59], weed: 0x788955 },
+  coast:    { step: 1.25, density: .52, height: .87, grass: [0x6c7445, 0xa7a073], weed: 0x7a8d61 },
+  reef:     { step: 1.44, density: .30, height: .81, grass: [0x5e775c, 0x788c5c], weed: 0x71907b },
+  snow:     { step: 1.75, density: .20, height: .58, grass: [0x72746d, 0xc6c6ac], weed: 0x9ea995 },
+  crystal:  { step: 1.78, density: .12, height: .52, grass: [0x677e86, 0x9fa7ae], weed: 0x93a59e },
+  slag:     { step: 1.62, density: .18, height: .65, grass: [0x706047, 0xac9062], weed: 0x8c764e },
+  forge:    { step: 1.94, density: .10, height: .55, grass: [0x796046, 0xab895d], weed: 0x9c7c4d },
+  orchard:  { step: .98, density: .76, height: 1.13, grass: [0x4f7547, 0xabb360], weed: 0x7caa68 },
+  glass:    { step: 1.41, density: .33, height: .76, grass: [0x60816e, 0xadc587], weed: 0x8dba96 },
+  moor:     { step: 1.06, density: .74, height: 1.08, grass: [0x63774e, 0xa7a66a], weed: 0x909973 },
+  amphitheatre:{step:1.57,density:.23,height:.68,grass:[0x767152,0xaba96f],weed:0x9b9b71},
 };
 
 const cellKey = (i, j) => `${i}:${j}`;
@@ -162,7 +172,7 @@ function fillChunk(chunk, options) {
       else if (forage && wet && damp > .61 && choice > .94) species = 'reed';
       else if (forage && world.theme === 'forest' && damp > .57 && choice > .91) species = 'fern';
       else if (forage && choice > .922) species = 'plantain';
-      else if (forage && (world.theme === 'grass' || world.theme === 'village' || world.theme === 'forest') && clump > .61 && choice < .054) species = 'wildflower';
+      else if (forage && ['grass','village','forest','orchard','moor'].includes(world.theme) && clump > .61 && choice < .054) species = 'wildflower';
 
       const variation = sample(i, j, seed + 295);
       const height = config.height * (.63 + .55 * variation + .29 * clump);

@@ -39,7 +39,14 @@ export function intentCopy(info,names={}){if(!info)return 'Намерение н
 feature(27,'hud',(root,d)=>{if(!d.state.battle)return;const intel=q(root,'.battle-intel');for(const e of d.state.battle.enemies.filter(alive)){const v=d.M.enemyIntentInfo(d.state,e.uid);intel?.append(line(d,(d.enemyDefs[e.kind]?.name||e.kind)+' · '+intentCopy(v,actorNames(d)),'ui100-intent',280));}});
 
 
-export function bossPhaseCopy(info){return !info?.boss?null:'Фаза '+info.activePhase+' · '+(info.transitionPending?'Смена фазы: в следующем раунде':info.activePhase===1&&Number.isFinite(info.threshold)?'Порог смены: строго ниже '+Math.round(info.threshold*100)+'% HP · проверка в следующем раунде':'Текущая фаза')+' · Множитель урона ×'+info.damageMultiplier;}
+export function bossPhaseCopy(info){
+ if(!info?.boss)return null;
+ const imminent=info.transitionPending?'Следующий раунд: фаза '+(info.nextPhase??info.activePhase+1):null;
+ const threshold=Number.isFinite(info.nextThreshold)?'Следующая фаза ниже '+Math.round(info.nextThreshold*100)+'% HP':null;
+ const initiative=info.resistsWeaknessBreak?'Инициатива '+info.initiative+(info.nextInitiative?' → '+info.nextInitiative:''):null;
+ const power=Math.round(info.damageMultiplier*100)/100;
+ return ['Фаза '+info.activePhase,info.phaseLabel,imminent||threshold,'Урон ×'+power,initiative,info.resistsWeaknessBreak?'Стойкость к сбиванию от стихии':null].filter(Boolean).join(' · ');
+}
 feature(28,'hud',(root,d)=>{if(!d.state.battle)return;for(const e of d.state.battle.enemies.filter(alive)){const copy=bossPhaseCopy(d.M.bossPhaseInfo(d.state,e.uid));if(copy)q(root,'.battle-intel')?.append(line(d,copy,'ui100-boss-phase',280));}});
 
 
@@ -150,8 +157,61 @@ export function revivalSupplyLines(info,names={}){if(!info)return [];return ['С
 for(const surface of ['inventory','shop'])feature(53,surface,(root,d)=>root.append(rows(d,'Запас возрождения',revivalSupplyLines(d.M.revivalSupplyInfo(d.state),d.partyDefs),'ui100-summary ui100-revival-supply')));
 
 
-export function areaMapView(state,defs,completion){const areas=Object.values(defs),nodes=areas.map((a,i)=>{const known=completion(state,a.id)?.known||a.id===state.areaId,row=Math.floor(i/3),column=row%2?2-i%3:i%3;return {id:a.id,label:known?a.title:'Неизвестная область',known,current:a.id===state.areaId,x:15+column*35,y:17+row*33};}),byId=Object.fromEntries(nodes.map(n=>[n.id,n])),edges=[];for(const area of areas)for(const exit of area.exits||[]){if(!byId[exit.target]||!byId[area.id].known||!byId[exit.target].known)continue;const open=!(exit.requiresFlags||[]).some(f=>!state.flags[f])&&!(exit.forbidFlags||[]).some(f=>state.flags[f]);edges.push({from:area.id,to:exit.target,open});}return {nodes,edges};}
-feature(54,'map',(root,d)=>{const graph=areaMapView(d.state,d.areaDefs,d.M.areaCompletion),box=d.el('div','ui100-act-map');box.role='group';box.ariaLabel='Граф девяти областей первого акта';const svg=d.document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 100 100');svg.setAttribute('preserveAspectRatio','none');svg.setAttribute('aria-hidden','true');svg.classList.add('ui100-map-edges');for(const edge of graph.edges){const a=graph.nodes.find(n=>n.id===edge.from),b=graph.nodes.find(n=>n.id===edge.to),path=d.document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d','M '+a.x+' '+a.y+' L '+b.x+' '+b.y);path.dataset.from=edge.from;path.dataset.to=edge.to;path.classList.add(edge.open?'ui100-edge-open':'ui100-edge-closed');svg.append(path);}box.append(svg);for(const n of graph.nodes){const selected=d.ui.mapAreaId===n.id,b=d.button((n.current?'Здесь · ':selected?'Выбрано · ':'')+n.label,()=>{d.ui.mapAreaId=n.id;saveUIPreferences(d.storage,d.state.runId,d.ui);d.renderModal();},{small:true,width:230,focusKey:'map-area:'+n.id,ariaLabel:n.label+(n.current?' · текущая область':'')});b.dataset.areaId=n.id;b.classList.add('ui100-map-node');b.classList.toggle('unknown',!n.known);b.style.left=n.x+'%';b.style.top=n.y+'%';b.setAttribute('aria-pressed',String(selected));box.append(b);}root.append(box,line(d,'Сплошная линия — известный открытый путь · Пунктир — известный закрытый путь. Неизвестные области скрывают имя и содержимое. Карта не перемещает отряд.','ui100-map-legend',880));});
+export function areaMapView(state, defs, completion) {
+  const areas = Object.values(defs), rows = Math.ceil(areas.length / 3);
+  const nodes = areas.map((area, index) => {
+    const known = completion(state, area.id)?.known || area.id === state.areaId;
+    const row = Math.floor(index / 3), column = row % 2 ? 2 - index % 3 : index % 3;
+    return { id: area.id, label: known ? area.title : 'Неизвестная область', known,
+      current: area.id === state.areaId, x: 17 + column * 33, y: (row + .5) * 100 / rows };
+  });
+  const byId = Object.fromEntries(nodes.map(node => [node.id, node])), edges = [];
+  for (const area of areas) for (const exit of area.exits || []) {
+    if (!byId[exit.target]?.known || !byId[area.id].known) continue;
+    const open = (exit.requiresFlags || []).every(flag => state.flags[flag]) &&
+      !(exit.forbidFlags || []).some(flag => state.flags[flag]);
+    edges.push({ from: area.id, to: exit.target, open });
+  }
+  return { nodes, edges, rows };
+}
+feature(54, 'map', (root, d) => {
+  const graph = areaMapView(d.state, d.areaDefs, d.M.areaCompletion);
+  const box = d.el('div', 'ui100-act-map');
+  box.role = 'group';
+  box.ariaLabel = 'Карта связей между областями кампании';
+  box.style.minHeight = graph.rows * 100 + 'px';
+  const svg = d.document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 100 100');
+  svg.setAttribute('preserveAspectRatio', 'none');
+  svg.setAttribute('aria-hidden', 'true');
+  svg.classList.add('ui100-map-edges');
+  for (const edge of graph.edges) {
+    const a = graph.nodes.find(node => node.id === edge.from), b = graph.nodes.find(node => node.id === edge.to);
+    const path = d.document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', 'M ' + a.x + ' ' + a.y + ' L ' + b.x + ' ' + b.y);
+    path.dataset.from = edge.from;
+    path.dataset.to = edge.to;
+    path.classList.add(edge.open ? 'ui100-edge-open' : 'ui100-edge-closed');
+    svg.append(path);
+  }
+  box.append(svg);
+  for (const node of graph.nodes) {
+    const selected = d.ui.mapAreaId === node.id;
+    const button = d.button((node.current ? 'Здесь · ' : selected ? 'Выбрано · ' : '') + node.label, () => {
+      d.ui.mapAreaId = node.id;
+      saveUIPreferences(d.storage, d.state.runId, d.ui);
+      d.renderModal();
+    }, { small: true, width: 230, focusKey: 'map-area:' + node.id, ariaLabel: node.label + (node.current ? ' · текущая область' : '') });
+    button.dataset.areaId = node.id;
+    button.classList.add('ui100-map-node');
+    button.classList.toggle('unknown', !node.known);
+    button.style.left = node.x + '%';
+    button.style.top = node.y + '%';
+    button.setAttribute('aria-pressed', String(selected));
+    box.append(button);
+  }
+  root.append(box, line(d, 'Сплошная линия показывает открытый путь. Пунктир показывает закрытый. Исследуйте незнакомые области, чтобы открыть их на карте.', 'ui100-map-legend', 880));
+});
 
 
 export function knownAreaPath(graph,from,to){if(!graph.nodes.some(n=>n.id===to&&n.known))return [];const queue=[[from]],seen=new Set([from]);while(queue.length){const path=queue.shift(),last=path.at(-1);if(last===to)return path;for(const e of graph.edges.filter(e=>e.open&&e.from===last)){const next=e.from===last?e.to:e.from;if(!seen.has(next)){seen.add(next);queue.push([...path,next]);}}}return [];}
@@ -186,11 +246,19 @@ export function milestoneLines(m){if(!m)return [];return m.nextUnlockLevel?['Б�
 feature(62,'party',(root,d)=>{for(const h of d.state.party)root.append(rows(d,'Следующее умение · '+d.partyDefs[h.id].name,milestoneLines(d.M.skillMilestone(d.state,h.id)),'ui100-summary ui100-milestone'));});
 
 
-export function initiativeBreakdownCopy(info){if(!info)return '';const v=info.initiative;return 'Инициатива: база '+v.base+' + рост '+v.level+' + снаряжение '+v.gear+' = '+v.total+(v.roundingDelta?' · округление '+v.roundingDelta:'')+' · Порядок хода определяется инициативой.';}
+export function initiativeBreakdownCopy(info){if(!info)return '';const v=info.initiative;return 'Инициатива: база '+v.base+' + рост '+v.level+' + снаряжение '+v.gear+(v.talent?' + таланты '+v.talent:'')+' = '+v.total+(v.roundingDelta?' · округление '+v.roundingDelta:'')+' · Порядок хода определяется инициативой.';}
 feature(63,'party',(root,d)=>{for(const h of d.state.party)root.append(rows(d,'Инициатива · '+d.partyDefs[h.id].name,[initiativeBreakdownCopy(d.M.statBreakdown(d.state,h.id))],'ui100-summary ui100-initiative-breakdown'));});
 
 
-export function statBreakdownLines(info){if(!info)return [];return ['maxHp','maxMp','atk','def'].filter(k=>info.totals[k]!==undefined).map(k=>{const basicKey=k==='maxHp'?'hp':k==='maxMp'?'mp':k,label={maxHp:'HP',maxMp:'MP',atk:'Атака',def:'Защита'}[k];return label+': база '+(info.base[k]??info.base[basicKey]??0)+' + рост '+(info.levelBonus[k]??info.levelBonus[basicKey]??0)+' + снаряжение '+(info.gearTotal[k]??info.gearTotal[basicKey]??0)+' = '+info.totals[k];});}
+export function statBreakdownLines(info){
+ if(!info)return [];
+ const labels={maxHp:'HP',maxMp:'MP',atk:'Атака',def:'Защита'};
+ return Object.keys(labels).filter(key=>info.totals[key]!==undefined).map(key=>{
+  const short={maxHp:'hp',maxMp:'mp'}[key]||key,value=source=>source?.[key]??source?.[short]??0;
+  const talents=value(info.talents);
+  return labels[key]+': база '+value(info.base)+' + рост '+value(info.levelBonus)+' + снаряжение '+value(info.gearTotal)+(talents?' + таланты '+talents:'')+' = '+info.totals[key];
+ });
+}
 feature(64,'party',(root,d)=>{for(const h of d.state.party){const box=d.el('details','window-disclosure ui100-stat-breakdown'),summary=d.el('summary','',d.text('Источники характеристик · '+d.partyDefs[h.id].name,700,16,'#e9ca91',true));box.dataset.disclosure='ui100-stats:'+h.id;box.append(summary,...statBreakdownLines(d.M.statBreakdown(d.state,h.id)).map(s=>line(d,s)));root.append(box);}});
 
 

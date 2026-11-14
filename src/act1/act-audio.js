@@ -1,3 +1,5 @@
+import {CampaignAudio,resolveCampaignAudio} from './campaign-audio.js?v=campaign-v1';
+
 const EPSILON = .0001;
 const LOOK_AHEAD = .42;
 const EFFECT_LIMIT = 46;
@@ -12,6 +14,7 @@ const LANDSCAPE = {
 };
 const STEPS = {
   stone:[1720,1.05,106,.077], soil:[740,.68,89,.11], wood:[1160,.85,143,.10], mud:[520,.78,79,.14],
+  snow:[1950,1.22,86,.17],
 };
 const FOLEY = ['boot-a','boot-b','boot-c','boot-d','steel','latch','chest-hinge','smith','coins'];
 const FOLEY_ROOT = new URL('../../assets/act1/audio/',import.meta.url);
@@ -162,7 +165,7 @@ export class Audio {
     this.mix={music:.8,sfx:.92,ambience:.72};
     this.context=null;
     this.playing=false;
-    this.scene={mode:'menu',areaId:'',boss:false};
+    this.scene={mode:'menu',areaId:'',biome:'',story:'',boss:false};
     this.waterProximity=0;
     this.effects=new Set();
     this.waves=new Map();
@@ -171,6 +174,7 @@ export class Audio {
     this.random=randomStream(81029);
     this.lastStep=-Infinity;
     this.lastEffect=new Map();
+    this.campaign=new CampaignAudio(this);
   }
 
   makeContext() {
@@ -242,11 +246,13 @@ export class Audio {
       this.mix[key]=next;
       if (this.context) target(this[key].gain,this.mix[key],this.context.currentTime);
     }
+    if (this.playing) this.wakeCampaignMix();
   }
 
-  setScene({mode='menu',areaId='',boss=false}={}) {
-    if (this.scene.mode===mode && this.scene.areaId===areaId && this.scene.boss===boss) return;
-    this.scene={mode,areaId,boss};
+  setScene({mode='menu',areaId='',biome='',story='',boss=false}={}) {
+    if (this.scene.mode===mode && this.scene.areaId===areaId && this.scene.biome===biome &&
+        this.scene.story===story && this.scene.boss===boss) return;
+    this.scene={mode,areaId,biome,story,boss};
     if (this.playing) this.applyScene();
   }
 
@@ -282,14 +288,20 @@ export class Audio {
 
   applyScene() {
     const {mode,areaId,boss}=this.scene, now=this.context.currentTime;
-    const key = mode==='menu' ? 'menu' : mode==='complete' ? 'complete' :
+    const profile=resolveCampaignAudio(this.scene);
+    const key = mode==='menu' ? 'menu' : mode==='complete' || (mode==='comic' && !profile) ? 'complete' :
       mode==='battle' ? (boss?'boss':'battle') : (REGIONS[areaId]||'ruins');
     if (mode!=='menu') this.prepareFoley();
     this.setScoreLevel(now);
     const [air,hz] = LANDSCAPE[areaId]||[.019,700];
-    target(this.air.gain, mode==='battle' ? air*.32 : mode==='menu' ? .013 : air, now,.35);
-    target(this.air.low,hz,now,.22);
+    const airLevel=mode==='battle' ? air*.32 : mode==='menu' ? .013 : air;
+    target(this.air.gain,profile?.air??airLevel,now,.35);
+    target(this.air.low,profile?.filter??hz,now,.22);
     target(this.water.gain,this.waterAmount(),now,.23);
+    if (profile) this.campaign.desired=profile;
+    else this.campaign.select(null);
+    this.wakeCampaignMix();
+    if (profile && this.campaign.score) return;
     if (this.track?.key===key) return;
     const old=this.track;
     if (old) this.retireTrack(old,now);
@@ -300,6 +312,20 @@ export class Audio {
     this.track={key,bus,voices:new Set(),bar:0,next:now+.035};
     this.nextDetail=now+5+this.random()*4;
     this.pump();
+  }
+
+  wakeCampaignMix() {
+    if (!this.campaign.desired) return;
+    this.campaign.select(this.campaign.desired);
+    this.campaign.prepareEffects();
+    if (this.scene.biome==='snow'||this.scene.biome==='crystal') this.campaign.prepareSteps('snow');
+  }
+
+  useRecordedScore() {
+    if (!this.track) return;
+    const track=this.track;
+    this.track=null;
+    this.retireTrack(track,this.context.currentTime);
   }
 
   retireTrack(track,time) {
@@ -513,6 +539,7 @@ export class Audio {
     const t=this.context.currentTime;
     if (t-this.lastStep<.145) return;
     this.lastStep=t;
+    if (surface==='snow' && this.campaign.snowFootstep(t)) return;
     const [frequency,q,pitch,duration]=STEPS[surface]||STEPS.stone;
     const change=.87+this.random()*.26;
     const level=surface==='wood'?.095:.118;
@@ -529,6 +556,7 @@ export class Audio {
     const t=this.context.currentTime;
     if (t-(this.lastEffect.get(kind)??-Infinity)<.075) return;
     this.lastEffect.set(kind,t);
+    if (this.campaign.playEffect(kind,t)) return;
     const bus=this.sfx;
     const tone=(duration,hz,end,level,options)=>this.tone(bus,t,duration,hz,end,level,options);
     const burst=(duration,level,options)=>this.burst(bus,t,duration,level,options);
@@ -569,6 +597,7 @@ export class Audio {
         this.chime([85,90,78],t,{spacing:.035,level:.14,duration:.43});
         break;
       case 'lightning':
+      case 'thunder':
         burst(.143,.54,{frequency:2640,end:1710,Q:.62,attack:.003});
         tone(.21,961,86,.18,{type:'triangle',attack:.006});
         this.drum(bus,t+.027,.18,74);
@@ -589,6 +618,14 @@ export class Audio {
         break;
       case 'revive':
         this.chime([57,64,69,74,81],t,{spacing:.104,level:.18,duration:.68});
+        break;
+      case 'chapter':
+      case 'relic':
+      case 'finale':
+        this.chime([62,69,74,77,81],t,{spacing:.116,level:.168,timbre:'lute',duration:.74});
+        break;
+      case 'ward':
+        this.chime([53,60,65,69],t,{spacing:.083,level:.144,timbre:'horn'});
         break;
       case 'victory':
         this.chime([62,66,69,74,78],t,{spacing:.126,level:.23,timbre:'horn',duration:.74});
@@ -636,7 +673,7 @@ export class Audio {
   }
 
   setScoreLevel(time) {
-    const rest=this.scene.mode==='dialogue'?.48:1;
+    const rest=this.scene.mode==='dialogue'?.48:this.scene.mode==='comic'?.79:1;
     const gain=this.scoreLevel.gain, duck=this.duck;
     if (duck?.until>time) {
       target(gain,duck.depth*rest,time,.07);

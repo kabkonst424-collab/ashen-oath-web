@@ -1,5 +1,6 @@
 import * as T from '../../assets/vendor/three.module.js';
 import {safeAtlasDomain,TERRAIN_GLSL,ATLAS_LINEAR_LUMINANCE} from './terrain-sampling.js?v=0.16.0-demo';
+import {CHAPTER_BIOMES} from './campaign-visuals.js?v=campaign-v1';
 
 // Three-support stochastic atlas sampling; bounded luminance compensation, not full histogram synthesis.
 // Paint the ground with one shared atlas. Source materials remain available for tools.
@@ -79,10 +80,12 @@ export class TerrainMaterials {
     if(!source?.isMeshStandardMaterial)throw new TypeError('Terrain surfaces require a MeshStandardMaterial');
     if(source.normalMap&&source.normalMapType===T.ObjectSpaceNormalMap)throw new TypeError('Terrain atlas normals must use tangent space');
     if(['bumpMap','displacementMap','lightMap','alphaMap','emissiveMap','clearcoatNormalMap'].some(key=>source[key]))throw new TypeError('Terrain surfaces require the supported base-color/normal/ORM map contract');
-    const key=`${source.uuid}:${id}:${path?'path':groundcover?'groundcover':'ground'}`;
+    const biome=CHAPTER_BIOMES[this.world.theme];
+    const themed=biome&&this.world.campaignTerrain;
+    const key=`${source.uuid}:${id}:${path?'path':groundcover?'groundcover':'ground'}:${themed?this.world.theme:''}`;
     if(this.cache.has(key))return this.cache.get(key);
     const settings=BIOMES[id]||BIOMES.terrain_ruin,material=source.clone();
-    const painted = this.world.paintedTerrain;
+    const painted = themed || this.world.paintedTerrain;
     const bindings = ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap'];
     const sourceTexture = key => painted ? (key === 'map' ? painted : null) : source[key];
     for(const key of bindings) material[key]=this._sampler(sourceTexture(key));
@@ -96,8 +99,16 @@ export class TerrainMaterials {
       material.roughness = .97;
       material.metalness = 0;
     }
-    const scale = painted && !path ? (id === 'terrain_forest' ? .23 : settings.scale * 1.13) : settings.scale;
-    const turf=groundcover ? {terrain_forest:.82,terrain_marsh:.61,terrain_village:.53,terrain_ruin:.15}[id] || 0 : 0;
+    if(themed){
+      const quadrant=biome.atlas;
+      domain=[(quadrant%2)*.5+PAINTED_INSET, (quadrant<2?.5:0)+PAINTED_INSET, .5-2*PAINTED_INSET, .5-2*PAINTED_INSET];
+      mean=[.21,.48,.056,.25][quadrant];
+      material.color.setHex(biome.color);
+      if(path){material.color.multiplyScalar(quadrant===2?1.47:.74);material.roughness=.9;}
+    }
+    const scale = themed ? (path?.21:.18) : painted && !path ? (id === 'terrain_forest' ? .23 : settings.scale * 1.13) : settings.scale;
+    const turf=groundcover ? (themed ? (['orchard','moor'].includes(this.world.theme)?.42:.06) :
+      {terrain_forest:.82,terrain_marsh:.61,terrain_village:.53,terrain_ruin:.15}[id] || 0) : 0;
     const uniforms={terrainMean:{value:mean},terrainRect:{value:new T.Vector4(...domain)},terrainScale:{value:scale},terrainMacro:{value:settings.macro},terrainDetail:{value:this.qualityLevel==='low'?0:1},terrainRoughness:{value:settings.roughness},terrainTurf:{value:turf}};
     material.name=`${source.name||'Meshy'}_continuous_${id}`;
     material.userData={...material.userData,terrainSource:source.uuid,terrainSampling:painted?'ImageGen atlas; world XZ; 3 mirrored stochastic samples':'Original embedded PBR; world XZ; 3 continuous stochastic samples'};

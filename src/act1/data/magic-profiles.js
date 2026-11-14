@@ -45,6 +45,33 @@ export const MAGIC_PROFILES = Object.freeze({
   forged_wisp_discharge: profile('lightning', 'CastLightning', 0x5edfcf, { style: 'chain', core: 0xebfff3, scale: 1.12 }),
   forged_guard_stand: profile('ward', 'CastWard', 0x9cb7c1, { style: 'iron', fallback: 'Block' }),
   forged_guard_rivet: profile('physical', 'Attack', 0xc99c65, { style: 'hammer', scale: 1.13 }),
+  trail_mark: profile('physical','Attack',0xd8d994,{style:'arrow',projectile:true}),
+  brush_guard: profile('ward','CastWard',0xadc477,{style:'oath'}),
+  briar_shot: profile('physical','Attack',0xd7a55c,{style:'arrow',projectile:true}),
+  trail_breath: profile('ward','CastWard',0x8fc7a4,{style:'breath'}),
+  crossfire: profile('physical','Attack',0xccbb78,{style:'arrow',projectile:true,scale:.92}),
+  fox_step: profile('physical','Attack',0xffd17e,{style:'arrow',projectile:true}),
+  salt_bolt: profile('lightning','CastLightning',0x70c9ff,{style:'copper',core:0xffffff}),
+  frost_mirror: profile('ice','CastFrost',0x91d8ff,{style:'shards',projectile:true}),
+  ward_circuit: profile('ward','CastWard',0x8bded5,{style:'link',scale:1.15}),
+  pale_mend: profile('heal','CastMend',0xabecd3,{style:'thread'}),
+  echo_burst: profile('fire','CastNova',0xff9048,{style:'wave',scale:1.2}),
+  counterseal: profile('runes','CastRunes',0xe4c0ff,{style:'constellation'}),
+  c2_breaker_wave: profile('nova','CastNova',0x8bd5d0,{style:'wave',scale:1.5}),
+  c2_salvage: profile('physical','Attack',0xcdad76,{style:'blade'}),
+  c2_drown: profile('ice','CastFrost',0x8dc5d8,{style:'memory',projectile:true}),
+  c3_whiteout: profile('nova','CastNova',0xccedf9,{style:'frost',scale:1.45}),
+  c3_glasshorn: profile('physical','Attack',0xf3d9ac,{style:'thrust'}),
+  c3_stitch: profile('heal','CastMend',0x91cafc,{style:'thread'}),
+  c4_furnace: profile('fire','CastNova',0xff783c,{style:'wave',scale:1.65}),
+  c4_cinders: profile('fire','CastFire',0xffb350,{style:'embers',projectile:true}),
+  c4_bellows: profile('ward','CastWard',0xc89772,{style:'iron'}),
+  c5_prism: profile('nova','CastNova',0xb7e9d9,{style:'bell',scale:1.44}),
+  c5_refract: profile('runes','CastRunes',0xafaef7,{style:'constellation'}),
+  c5_reflection: profile('ward','CastWard',0xdbe9eb,{style:'link'}),
+  c6_final_chord: profile('nova','CastNova',0xffbd78,{style:'bell',scale:1.64}),
+  c6_copper_voice: profile('lightning','CastLightning',0xffc881,{style:'copper',core:0xffffff}),
+  c6_register: profile('physical','Attack',0xdd8b60,{style:'thrust',scale:1.11}),
 });
 
 const enemy = (color, theme, extra = {}) => Object.freeze({ color, theme, ...extra });
@@ -87,6 +114,12 @@ export function magicProfile(event = {}, actor) {
   const hostile = !!actor?.options?.hostile || String(actor?.id || '').startsWith('enemy:');
   const skillId = event.skillId || (event.kind === 'defend' ? 'enemy_guard' : event.kind === 'attack' ? 'enemy_claw' : null);
   let selected = MAGIC_PROFILES[skillId];
+  if (skillId === 'cinder_wave' && event.element === 'light') {
+    selected = { ...selected, family: 'nova', style: 'dawn', color: 0xffe0a0, core: 0xfffae9 };
+  }
+  if (skillId === 'lightning_chain' && event.runeId === 'seal_lightning') {
+    selected = { ...selected, color: 0x63e7f0, core: 0xffffff };
+  }
   if (!selected && event.kind === 'item') selected = profile('heal', 'CastMend', 0xc1e6b5, { style: 'item' });
   if (!selected) selected = MAGIC_PROFILES.enemy_claw;
   // Conventional Attack/Block clips keep physical creatures and weapon users grounded.

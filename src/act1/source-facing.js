@@ -1,9 +1,12 @@
+import { NEW_CHARACTERS } from './campaign-visuals.js?v=campaign-v1';
+
 // Source mesh basis is independent of target/world heading (R07, R09).
 const TURN = Math.PI * 2;
 export const SOURCE_BASES = Object.freeze([
   'alar_nocape','iona_nocape','radan_nocape','leia_nocape','townsman','townswoman',
   'ash_husk','ember_acolyte','bellkeeper','root_keeper','wolf','rat','moth','bird',
   'forged_resin_lynx','forged_slag_golem','forged_fen_weaver','forged_mill_wisp','forged_rivet_guard',
+  ...NEW_CHARACTERS,
 ]);
 const BASES = new Set(SOURCE_BASES);
 export const isSourceBase = base => typeof base === 'string' && BASES.has(base);

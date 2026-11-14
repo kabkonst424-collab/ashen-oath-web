@@ -1,12 +1,13 @@
 import * as T from '../../assets/vendor/three.module.js';
 import {GLTFLoader} from '../../assets/vendor/GLTFLoader.js';
-import {BASE_MODELS} from './graphics-refresh.js?v=forged-meshy-0191';
+import {BASE_MODELS} from './graphics-refresh.js?v=campaign-v1';
 import {mergeGeometries} from '../../assets/vendor/BufferGeometryUtils.js';
-import {TerrainMaterials} from './terrain-material.js?v=groundcover-0192';
+import {TerrainMaterials} from './terrain-material.js?v=campaign-v1';
 import {paintMeshes} from './painted-material.js?v=painted-20261114-r2';
 import {fetchBytes} from './resource-loader.js?v=0.16.0-demo';
 
-import { buildAuthoredGround, buildAuthoredLandscape } from './authored-landscape.js?v=groundcover-0192';
+import { buildAuthoredGround, buildAuthoredLandscape } from './authored-landscape.js?v=campaign-v1';
+import { CHAPTER_BIOMES, NEW_CHARACTERS, STARTING_MODELS, campaignModelsForArea } from './campaign-visuals.js?v=campaign-v1';
 
 // This module is installed after graphics-refresh. It changes presentation only;
 // authoritative movement and campaign state stay in model.js.
@@ -237,6 +238,47 @@ function prepareParts(gltf,entry){
 function releaseUnadopted(gltf){const geometries=new Set(),materials=new Set(),textures=new Set();gltf?.scene?.traverse(object=>{if(!object.isMesh)return;geometries.add(object.geometry);for(const material of Array.isArray(object.material)?object.material:[object.material])if(material){materials.add(material);for(const value of Object.values(material))if(value?.isTexture)textures.add(value);}});for(const geometry of geometries)geometry.dispose();for(const material of materials)material.dispose();for(const texture of textures)texture.dispose();}
 function decodeWorldAtlas(bytes,signal){const url=URL.createObjectURL(new Blob([bytes],{type:'image/webp'})),image=new Image();let completed=false;const decoding=new Promise((resolve,reject)=>{image.onload=()=>resolve(image);image.onerror=()=>reject(Error('Не удалось декодировать атлас поверхностей'));image.src=url;});return worldStage(decoding,signal).then(value=>new T.Texture(value)).then(texture=>{texture.needsUpdate=true;completed=true;return texture;}).finally(()=>{URL.revokeObjectURL(url);if(!completed){image.onload=null;image.onerror=null;image.src='';}});}
 function worldStage(promise,signal,late=()=>{}){return new Promise((resolve,reject)=>{let settled=false;const finish=(callback,value)=>{if(settled)return false;settled=true;clearTimeout(timer);signal.removeEventListener('abort',aborted);callback(value);return true;},aborted=()=>finish(reject,signal.reason||new DOMException('World load cancelled','AbortError')),timer=setTimeout(()=>finish(reject,Object.assign(Error('Модель не завершила декодирование за 30 секунд'),{name:'TimeoutError'})),30000);signal.addEventListener('abort',aborted,{once:true});if(signal.aborted)aborted();Promise.resolve(promise).then(value=>{if(!finish(resolve,value))late(value);},error=>finish(reject,error));});}
+const campaignURL = file => new URL(`../../assets/campaign/${file}`, import.meta.url);
+const jsonBytes = bytes => JSON.parse(new TextDecoder().decode(bytes));
+const sha256 = async buffer => Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',buffer)), n=>n.toString(16).padStart(2,'0')).join('');
+
+function campaignManifest(rows) {
+ const map = new Map((rows || []).map(row=>[row.id,row]));
+ if(map.size!==NEW_CHARACTERS.length||!NEW_CHARACTERS.every(id=>{
+  const row=map.get(id);
+  return row?.taskId&&/^[a-f0-9]{64}$/.test(row.modelSha256)&&/^[a-f0-9]{64}$/.test(row.motionSha256)&&
+    /^(party|npc|enemy):[a-z0-9_]+$/.test(row.profile);
+ }))throw Error('Повреждён список моделей кампании');
+ return map;
+}
+
+async function loadCampaignCharacter(world, id, row, signal) {
+ const url = campaignURL(`actors/${id}.glb`), motionURL=campaignURL(`actors/${id}.json`);
+ url.searchParams.set('sha256',row.modelSha256);motionURL.searchParams.set('sha256',row.motionSha256);
+ const request = destination=>fetchBytes(destination,{...world.assetRequestOptions,signal});
+ const [bytes, motion] = await Promise.all([request(url), request(motionURL)]);
+ const [modelHash, motionHash] = await Promise.all([sha256(bytes), sha256(motion)]);
+ const profile = jsonBytes(motion);
+ if(profile.sourceHash!==modelHash||modelHash!==row.modelSha256||motionHash!==row.motionSha256)throw Error(`Хеш модели или движений не совпадает: ${id}`);
+ const asset = await worldStage(new GLTFLoader().parseAsync(bytes,new URL('./',url).href),signal,releaseUnadopted);
+ world.loadedAssetHashes.set(id,modelHash);
+ try {await world.characterAnimations.loadCampaignProfile(id,row.profile,profile);}
+ catch(error){world.loadedAssetHashes.delete(id);world.characterAnimations.releaseCampaignProfile(row.profile,id);releaseUnadopted(asset);throw error;}
+ if(signal.aborted){world.loadedAssetHashes.delete(id);world.characterAnimations.releaseCampaignProfile(row.profile,id);releaseUnadopted(asset);throw signal.reason;}
+ asset.scene.traverse(object=>{
+  if(object.isMesh)world.meshyCharacterGeometry.set(object.geometry,{kind:'meshy-character',base:id,
+    source:url.pathname,sourceSha256:modelHash,taskId:row.taskId});
+ });
+ world.assets[id]=asset;
+}
+
+function releaseCampaignCharacter(world,id){
+ const asset=world.assets[id];if(!asset)return;
+ asset.scene.traverse(object=>{if(object.isMesh)world.meshyCharacterGeometry.delete(object.geometry);});
+ world.characterAnimations.releaseCampaignProfile(world.campaignCharacters.get(id).profile,id);
+ world.loadedAssetHashes.delete(id);delete world.assets[id];releaseUnadopted(asset);
+}
+
 export function installMeshyWorld(World){
  const P=World.prototype,oldProp=P.prop,oldActor=P.createActor,oldInteractions=P.buildInteractions,oldPerimeter=P.perimeter,oldDispose=P.dispose,oldClearStage=P.clearBattleStage;
  const loadWorldAssets=async function(onProgress){
@@ -263,9 +305,11 @@ export function installMeshyWorld(World){
   let next=0;workers=Array.from({length:4},async()=>{try{while(next<jobs.length&&!signal.aborted)await jobs[next++]();}catch(error){controller.abort(error);throw error;}});await Promise.all(workers);assertActive();
   Object.assign(this.assets,{hero:this.assets.alar_nocape,husk:this.assets.ash_husk,acolyte:this.assets.ember_acolyte,sentinel:this.assets.radan_nocape,boss:this.assets.bellkeeper});
    const artURL = new URL('../../assets/act1/painted/', import.meta.url);
-   const [terrainBytes, pigmentBytes] = await Promise.all(
-    ['terrain.webp', 'materials.webp'].map(file => request(new URL(file + '?v=painted-20261114-r2', artURL).href))
-   );
+   const [terrainBytes, pigmentBytes, actorsBytes] = await Promise.all([
+    ...['terrain.webp', 'materials.webp'].map(file => request(new URL(file + '?v=painted-20261114-r2', artURL).href)),
+    request(campaignURL('actors/manifest.json?v=campaign-v1')),
+   ]);
+   this.campaignCharacters=campaignManifest(jsonBytes(actorsBytes).actors);
    const atlas = await decodeWorldAtlas(terrainBytes, signal);
    try { assertActive(); } catch (error) { atlas.dispose(); throw error; }
    atlas.colorSpace = T.SRGBColorSpace;
@@ -282,6 +326,28 @@ export function installMeshyWorld(World){
  };
  // A second caller joins the same load; it never replaces partially adopted sources.
  P.loadAssets=function(onProgress){if(this.loaded)return Promise.resolve(this);if(this.meshyLoadPromise)return this.meshyLoadPromise;const pending=loadWorldAssets.call(this,onProgress).finally(()=>{if(this.meshyLoadPromise===pending)this.meshyLoadPromise=null;});this.meshyLoadPromise=pending;return pending;};
+ P.prepareCampaignArea=function(area){
+  if(!this.campaignCharacters||!area)return null;
+  const ids=campaignModelsForArea(area),needsTexture=!!CHAPTER_BIOMES[area.biome];
+  if(!this.campaignStartersReady)ids.unshift(...STARTING_MODELS);
+  const missing=ids.filter(id=>!this.assets[id]);
+  if(!missing.length&&(!needsTexture||this.campaignTerrain))return null;
+  if(this.campaignPending?.id===area.id)return this.campaignPending.promise;
+  if(this.campaignPending)return this.campaignPending.promise.catch(()=>{}).then(()=>this.prepareCampaignArea(area));
+  const controller=this.meshyLoadController,signal=controller.signal;
+  const wait=Promise.allSettled([
+   ...missing.map(id=>loadCampaignCharacter(this,id,this.campaignCharacters.get(id),signal)),
+   ...(needsTexture&&!this.campaignTerrain?[fetchBytes(campaignURL('terrain.webp?v=campaign-v1'),{...this.assetRequestOptions,signal})
+     .then(bytes=>decodeWorldAtlas(bytes,signal)).then(texture=>{texture.colorSpace=T.SRGBColorSpace;this.campaignTerrain=texture;})]:[]),
+  ]).then(results=>{const failure=results.find(result=>result.status==='rejected');if(failure)throw failure.reason;this.campaignStartersReady=true;})
+    .finally(()=>{if(this.campaignPending?.promise===wait)this.campaignPending=null;});
+  this.campaignPending={id:area.id,promise:wait};
+  return wait;
+ };
+ P.dropOtherCampaignModels=function(area){
+  const keep=new Set([...STARTING_MODELS,...campaignModelsForArea(area)]);
+  for(const id of NEW_CHARACTERS)if(!keep.has(id))releaseCampaignCharacter(this,id);
+ };
  P.meshyParts=function(id){const item=this.meshyLibrary?.get(id);if(!item)throw new Error('Required Meshy model is not loaded: '+id);return item;};
  P.meshyProp=function(id,parent=this.areaGroup,position=[0,0,0],scale=1){
   const source=this.meshyParts(id),group=new T.Group();group.name='Meshy_'+id;group.position.set(...position);group.scale.setScalar(scale);group.userData.meshyFootprint={halfWidth:source.halfWidth,halfDepth:source.halfDepth};parent.add(group);
@@ -320,7 +386,7 @@ export function installMeshyWorld(World){
   for(const [key,chunk] of chunks)for(const part of source.parts){const mesh=new T.InstancedMesh(part.geometry,part.material,chunk.length);chunk.forEach((t,index)=>{object.position.set(t.x,t.y,t.z);object.rotation.set(t.rx||0,t.ry||0,t.rz||0);object.scale.set(t.sx??t.scale??1,t.sy??t.scale??1,t.sz??t.scale??1);object.updateMatrix();mesh.setMatrixAt(index,object.matrix);});mesh.name=`Meshy_${id}_chunk_${key}`;mesh.instanceMatrix.setUsage(T.StaticDrawUsage);mesh.instanceMatrix.needsUpdate=true;mesh.castShadow=!NO_CAST_SHADOW.has(id);mesh.receiveShadow=true;mesh.userData.modelOrigin=provenance(source.entry);mesh.computeBoundingBox();mesh.computeBoundingSphere();group.add(mesh);}
   return group;
  };
- P.meshyTerrainId=function(){return ({village:'terrain_village',forest:'terrain_forest',marsh:'terrain_marsh',abbey:'terrain_ruin'})[this.biome]||'terrain_ruin';};
+ P.meshyTerrainId=function(){return CHAPTER_BIOMES[this.theme]?.surface||({village:'terrain_village',forest:'terrain_forest',marsh:'terrain_marsh',abbey:'terrain_ruin'})[this.biome]||'terrain_ruin';};
  P.meshySurface=function(id,options,parent=this.areaGroup,stage=false){
   const source=this.meshyParts(id),group=new T.Group();group.name='Meshy_surface_'+id;parent.add(group);
   this.terrainMaterials??=new TerrainMaterials(this);
@@ -393,5 +459,5 @@ export function installMeshyWorld(World){
   }
  };
  P.auditMeshyCoverage=function(){return auditMeshyCoverage(this.scene);};
- P.dispose=function(){this.meshyLoadController?.abort(new DOMException('World disposed','AbortError'));const baked=new Set();for(const item of this.meshyLibrary?.values()||[])for(const part of item.parts)baked.add(part.geometry);oldDispose.call(this);this.terrainMaterials?.dispose();for(const geometry of baked)geometry.dispose();this.meshyLibrary?.clear();};
+ P.dispose=function(){this.meshyLoadController?.abort(new DOMException('World disposed','AbortError'));const baked=new Set();for(const item of this.meshyLibrary?.values()||[])for(const part of item.parts)baked.add(part.geometry);oldDispose.call(this);this.terrainMaterials?.dispose();this.campaignTerrain?.dispose();for(const geometry of baked)geometry.dispose();this.meshyLibrary?.clear();};
 }

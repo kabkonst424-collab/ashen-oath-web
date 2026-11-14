@@ -1,7 +1,8 @@
 import * as T from '../../assets/vendor/three.module.js';
 import { bridgeAt, nearRiverBank, obstacleOutline, riverAt, riverSections, segmentDistance, walkableLayout } from './area-geometry.js?v=rivers-0181';
 import { buildRiverBridges, riverGeometry } from './river-crossings.js?v=rivers-0181';
-import { TerrainMaterials } from './terrain-material.js?v=groundcover-0192';
+import { TerrainMaterials } from './terrain-material.js?v=campaign-v1';
+import { CHAPTER_BIOMES } from './campaign-visuals.js?v=campaign-v1';
 
 export function buildAuthoredRoad(world, road) {
   const layout = world.area.layout;
@@ -142,11 +143,11 @@ function authoredGroundMaterial(world, id, { path = false, groundcover = false }
 
 export function buildAuthoredOcean(world) {
   const rx = world.radiusX + 120, rz = world.radiusZ + 120;
-  const coast = new Set(['fen','fortress']);
-  if (!coast.has(world.areaId)) {
+  const coastal = world.area.layout?.coastal || ['fen','fortress'].includes(world.areaId);
+  if (!coastal) {
     const surrounding = new T.PlaneGeometry(2 * rx, 2 * rz, 32, 32).rotateX(-Math.PI / 2);
     const positions = surrounding.attributes.position;
-    const texture = world.areaId === 'sunfields' || world.areaId === 'briarwood' ? 'terrain_forest' : 'terrain_marsh';
+    const texture = CHAPTER_BIOMES[world.theme]?.surface || (world.areaId === 'sunfields' || world.areaId === 'briarwood' ? 'terrain_forest' : 'terrain_marsh');
     for (let i = 0; i < positions.count; i++) {
       const x = positions.getX(i), z = positions.getZ(i);
       positions.setY(i, -1.4 + .47 * Math.sin(x * .054) * Math.cos(z * .037));
@@ -251,8 +252,8 @@ export function buildAuthoredLandscape(world) {
         scale, world.rng() * 6.28, [scale * 1.7, scale * 1.5, scale]);
     }
   }
-  const biomeTrees = world.area.id === 'briarwood' ? 114 : world.area.id === 'sunfields' ? 24 :
-    world.biome === 'marsh' ? 60 : world.biome === 'village' ? 60 : 44;
+  const biomeTrees = CHAPTER_BIOMES[world.theme]?.trees ?? (world.area.id === 'briarwood' ? 114 : world.area.id === 'sunfields' ? 24 :
+    world.biome === 'marsh' ? 60 : world.biome === 'village' ? 60 : 44);
   // Keep the seeded rock and crop transforms from the shipped layouts.
   const wanted = [['tree', biomeTrees, 4], ['grass', 410, .8], ['rock', 112, 1.8]];
   const forests = layout.groves || [];

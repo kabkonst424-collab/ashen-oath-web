@@ -1,5 +1,5 @@
 import {createTerrainClip,drawAreaSchematic,markerShape,terrainShapes} from './area-schematic.js?v=forged-019';
-import {areaMapMarkers,createNavigationService} from './navigation.js?v=forged-meshy-0191';
+import {areaMapMarkers,createNavigationService} from './navigation.js?v=campaign-v1';
 const INITIALIZERS=[],RENDERERS=[];
 const initialize=run=>INITIALIZERS.push(run),renderer=(order,run)=>RENDERERS.push({order,run});
 const NS='http://www.w3.org/2000/svg';

@@ -4,6 +4,9 @@ import { extendRoadsContent } from './roads-content.js?v=forged-meshy-0191';
 import { extendForgedEncounters } from './forged-enemies.js?v=forged-meshy-0191';
 import { addSmithies } from './forged-smiths.js?v=forged-019';
 import { FORGE_ITEMS } from './loot-tables.js?v=forged-019';
+import { addStartingHeroes } from './campaign-starters.js?v=campaign-v1';
+import { extendCampaign } from './campaign-content.js?v=campaign-v1';
+export { CAMPAIGN_ACTS, CAMPAIGN_COMICS, CAMPAIGN_ENDINGS } from './campaign-content.js?v=campaign-v1';
 
 // Ashen Oath — original first act. Immutable authored data; runtime owns all state.
 export const CONTENT_VERSION = '1.0.0';
@@ -1415,8 +1418,10 @@ export const QUEST_TARGETS = {
   ]
 };
 
+addStartingHeroes(PARTY, SKILLS, ITEMS);
 addSmithies(AREAS, AREA_LAYOUTS);
 extendForgedEncounters({ENEMIES,SKILLS,AREAS,AREA_LAYOUTS});
+extendCampaign({ areas:AREAS, layouts:AREA_LAYOUTS, quests:QUESTS, dialogues:DIALOGUES, targets:QUEST_TARGETS, enemies:ENEMIES, skills:SKILLS, items:ITEMS, actInfo:ACT_INFO });
 applyAreaLayouts(AREAS, AREA_LAYOUTS);
 extendRoadsContent({areas:AREAS,quests:QUESTS,dialogues:DIALOGUES,targets:QUEST_TARGETS,enemies:ENEMIES});
 ACT_INFO.optionalQuestCount = QUESTS.filter(quest => quest.optional).length;

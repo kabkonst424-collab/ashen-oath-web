@@ -1,0 +1,750 @@
+{
+  "sampleLibrary": {
+    "name": "VSCO 2 CE",
+    "ref": "440300901dfe9275fd84e0b7763af1f8443ae62e",
+    "license": "CC0-1.0",
+    "takes": [
+      {
+        "patch": "harp",
+        "source": "Strings/Harp/KSHarp_C3_mf.wav",
+        "midi": 48,
+        "sha256": "e5d232771704e140959819de8cf2a3e0ba49d021ca77354c42664ce4fce6d9f3"
+      },
+      {
+        "patch": "harp",
+        "source": "Strings/Harp/KSHarp_A4_mf.wav",
+        "midi": 69,
+        "sha256": "3665f3975cad4a33f46784aa4f896f4b4319ba2b7831e892d975bc38c9f09f23"
+      },
+      {
+        "patch": "harp",
+        "source": "Strings/Harp/KSHarp_C5_mf.wav",
+        "midi": 72,
+        "sha256": "7c8b862f6fd3f1442ed87537af976d84bda8c05a5b4900e8907d570b5202a517"
+      },
+      {
+        "patch": "harp",
+        "source": "Strings/Harp/KSHarp_B5_mf.wav",
+        "midi": 83,
+        "sha256": "f2757b674c6b7301bed52e17a1ae3e3d34d628b3f7edc5773ebb25798d2541f7"
+      },
+      {
+        "patch": "harp",
+        "source": "Strings/Harp/KSHarp_A6_mf.wav",
+        "midi": 93,
+        "sha256": "4605355d22fae6f58190bf0d033d2ebdd745d63e2e43204d6f41ad27e4f09af0"
+      },
+      {
+        "patch": "clarinet",
+        "source": "Woodwinds/Clarinet/susLong/DCClar_susLong_A#2_v2_rr1_sum.wav",
+        "midi": 58,
+        "sha256": "82be872b7915c833e06910846e3398b55591f69bfe6474c39dd4051742db2700"
+      },
+      {
+        "patch": "clarinet",
+        "source": "Woodwinds/Clarinet/susLong/DCClar_susLong_D3_v2_rr1_sum.wav",
+        "midi": 62,
+        "sha256": "30e686ffc58caa48bbfae309a06f1c27c75b192fb653729ffdf8586cbd9b8405"
+      },
+      {
+        "patch": "clarinet",
+        "source": "Woodwinds/Clarinet/susLong/DCClar_susLong_A#3_v2_rr1_sum.wav",
+        "midi": 70,
+        "sha256": "779e2cad84f6f5103272f17cb4637a94d8e9c533a5811233595960cad61b391f"
+      },
+      {
+        "patch": "clarinet",
+        "source": "Woodwinds/Clarinet/susLong/DCClar_susLong_A#4_v2_rr1_sum.wav",
+        "midi": 82,
+        "sha256": "569e902693e7d04ecd20507f0a3dd0be92a7a3cdf14ab685d89aefacff2a34cb"
+      },
+      {
+        "patch": "clarinet",
+        "source": "Woodwinds/Clarinet/susLong/DCClar_susLong_F4_v2_rr1_sum.wav",
+        "midi": 77,
+        "sha256": "9988142d8fd2856af4217e3983316a42ef1d91b6381afd9fa138072d91122c2e"
+      },
+      {
+        "patch": "flute",
+        "source": "Woodwinds/Flute/susvib/LDFlute_susvib_A3_v1_1.wav",
+        "midi": 69,
+        "sha256": "4ea04a7a2ba152752e1b475798619a62f2546f54972caa6ddcd88f29a2046c81"
+      },
+      {
+        "patch": "flute",
+        "source": "Woodwinds/Flute/susvib/LDFlute_susvib_C4_v1_1.wav",
+        "midi": 72,
+        "sha256": "e88a0ff35e6b8c29fd88bc778a4c817d955b2c3a2934def97a7d093b72e2ae97"
+      },
+      {
+        "patch": "flute",
+        "source": "Woodwinds/Flute/susvib/LDFlute_susvib_C5_v1_1.wav",
+        "midi": 84,
+        "sha256": "ecb78c59069866ea7c3327594851827cd2f50c5d411aad422269a88e53614fbe"
+      },
+      {
+        "patch": "flute",
+        "source": "Woodwinds/Flute/susvib/LDFlute_susvib_E5_v1_2.wav",
+        "midi": 88,
+        "sha256": "87aa10af26ddb9cfbfda1f93831c7031d2f4564f260b71209796a7bc485ec6d4"
+      },
+      {
+        "patch": "cello",
+        "source": "Strings/Cello Section/susvib/susvib_C1_v1_1.wav",
+        "midi": 36,
+        "sha256": "abdcea431f384e135c469b0f3e4ac2a437f282f521dc5bcbe22abc221536e8de"
+      },
+      {
+        "patch": "cello",
+        "source": "Strings/Cello Section/susvib/susvib_A2_v1_1.wav",
+        "midi": 57,
+        "sha256": "c97a003184fdcb153d6b6c0bae8d82a90592a1b04b06bd7caaeda8b9776d5284"
+      },
+      {
+        "patch": "cello",
+        "source": "Strings/Cello Section/susvib/susvib_C3_v1_1.wav",
+        "midi": 60,
+        "sha256": "a614ee7ca821b44660236e47b89620cf914ec6ad27a99bc0d9764f47dbe512e1"
+      },
+      {
+        "patch": "cello",
+        "source": "Strings/Cello Section/susvib/susvib_G3_v1_1.wav",
+        "midi": 67,
+        "sha256": "8d658346b8d2054fd534b3222b5d7a23196d22a83a68c3a04ffb76b21853a3db"
+      },
+      {
+        "patch": "cello",
+        "source": "Strings/Cello Section/susvib/susvib_D4_v1_1.wav",
+        "midi": 74,
+        "sha256": "b4aa3a7fec1f0e783fa560f493868c17045feb271738e3d6834d1b00594b1c38"
+      },
+      {
+        "patch": "viola",
+        "source": "Strings/Viola Section/susvib/ViolaEns_susvib_C2_v1_1.wav",
+        "midi": 60,
+        "sha256": "8b4e0e0985d245ac9ddc39cdd06cec5bd74fa80056c074736d6eb38fdccfe636"
+      },
+      {
+        "patch": "viola",
+        "source": "Strings/Viola Section/susvib/ViolaEns_susvib_A3_v1_1.wav",
+        "midi": 69,
+        "sha256": "7cea6482a8f67536e3108f01b688d54d198e5820ffcd0ac5a49652d38f6ec065"
+      },
+      {
+        "patch": "viola",
+        "source": "Strings/Viola Section/susvib/ViolaEns_susvib_C4_v1_1.wav",
+        "midi": 72,
+        "sha256": "144ec7666be1b3b4da50937db4b1fc3675ca34bc2e871264707d83b8a0d526e6"
+      },
+      {
+        "patch": "viola",
+        "source": "Strings/Viola Section/susvib/ViolaEns_susvib_G4_v1_1.wav",
+        "midi": 79,
+        "sha256": "624a70ef842744cb7847a07fba3115ace5689746a107da91f237bf2534d42b03"
+      },
+      {
+        "patch": "strings",
+        "source": "Strings/Violin Section/susVib/VlnEns_susVib_A2_v1.wav",
+        "midi": 69,
+        "sha256": "5b3ff9f991642a6dc2fdad56a7d94f581077d2c4082cc1ed89156737716ff22c"
+      },
+      {
+        "patch": "strings",
+        "source": "Strings/Violin Section/susVib/VlnEns_susVib_A3_v1.wav",
+        "midi": 69,
+        "sha256": "72817a53dfd2eb61eca94658c14e1cab6017629ca2f27bab8e394c6675bfaad7"
+      },
+      {
+        "patch": "strings",
+        "source": "Strings/Violin Section/susVib/VlnEns_susVib_C4_v1.wav",
+        "midi": 72,
+        "sha256": "c07edd5b2119fa1da2207aba996961b50dd616f69bbcf2300ab271bc6c16239f"
+      },
+      {
+        "patch": "strings",
+        "source": "Strings/Violin Section/susVib/VlnEns_susVib_G4_v1.wav",
+        "midi": 79,
+        "sha256": "ed2a89cf254432d2af073699fa43ebfa16cfbc5552c7fc964a184fc434eaaa39"
+      },
+      {
+        "patch": "pizz",
+        "source": "Strings/Cello Section/pizzT/pizzT_A2_v1_RR1.wav",
+        "midi": 57,
+        "sha256": "3ef328e9c07e58797bb65831edef89b1fc946013a736826b6e380776c91b1f83"
+      },
+      {
+        "patch": "pizz",
+        "source": "Strings/Cello Section/pizzT/pizzT_C3_v1_RR1.wav",
+        "midi": 60,
+        "sha256": "63353870ad00cebe9882b96abcceae12480d37b78b62ded6228fb638871e8a81"
+      },
+      {
+        "patch": "pizz",
+        "source": "Strings/Cello Section/pizzT/pizzT_G3_v1_RR1.wav",
+        "midi": 67,
+        "sha256": "e97f815fbeea50ad5dab06ac6f6f435e7df8981556a38a9a69194900ff2c2b5b"
+      },
+      {
+        "patch": "horn",
+        "source": "Brass/F Horn/sus/MOHorn_sus_A#1_v2_1.wav",
+        "midi": 58,
+        "sha256": "1a65415731a0be8a1a51ce31f7989180fde674173821acceaceef0f3511d5f35"
+      },
+      {
+        "patch": "horn",
+        "source": "Brass/F Horn/sus/MOHorn_sus_A2_v2_1.wav",
+        "midi": 57,
+        "sha256": "8fab29daee8570e8a272b373e7ad906bbe6b4845c1994897e45112e71233c708"
+      },
+      {
+        "patch": "horn",
+        "source": "Brass/F Horn/sus/MOHorn_sus_C3_v2_1.wav",
+        "midi": 60,
+        "sha256": "c0c0b157dcde094c4417b7c165d645897cde9ea6d74247bbab0c0e75355e78c3"
+      },
+      {
+        "patch": "horn",
+        "source": "Brass/F Horn/sus/MOHorn_sus_C3_v3_1.wav",
+        "midi": 60,
+        "sha256": "75156ce041d9c60e4de0099b4c6d81cafffd34f45be7bca3e6fa7ebff0eadb80"
+      },
+      {
+        "patch": "glock",
+        "source": "Percussion/Glock/glock_medium_G4.wav",
+        "midi": 67,
+        "sha256": "6c4649b13e24fa01e4634edad8fe8edf18aef33facc5d49fe53097b376bac4da"
+      },
+      {
+        "patch": "glock",
+        "source": "Percussion/Glock/glock_medium_C5.wav",
+        "midi": 72,
+        "sha256": "635f898e0bcb6975b96b18efd9c896f6f1b97ff12174a339ada4814e49675660"
+      },
+      {
+        "patch": "glock",
+        "source": "Percussion/Glock/glock_medium_G5.wav",
+        "midi": 79,
+        "sha256": "7045c0ef7260e2f1ad11a64406cf7575ed898d1207a91104d33d78caefac63e4"
+      },
+      {
+        "patch": "glock",
+        "source": "Percussion/Glock/glock_medium_C6.wav",
+        "midi": 84,
+        "sha256": "e942cbf502cf6731df2925945fe3234c876cb63f047d91007b6929887f9e4904"
+      },
+      {
+        "patch": "glock",
+        "source": "Percussion/Glock/glock_medium_C7.wav",
+        "midi": 96,
+        "sha256": "b2ecbe0e60c983bbfaa49a1f45f8a11559f7dba27b8c8a032eb2cb7366a36910"
+      },
+      {
+        "patch": "marimba",
+        "source": "Percussion/Marimba/Marimba_hit_Outrigger_C2_loud_01.wav",
+        "midi": 36,
+        "sha256": "bfad3b0e57d04c31e6079aba11fb0a6c5c84627fd4bc46e4e0923663586c460c"
+      },
+      {
+        "patch": "marimba",
+        "source": "Percussion/Marimba/Marimba_hit_Outrigger_C4_loud_01.wav",
+        "midi": 60,
+        "sha256": "4af539d47a452d7fad26e171b1c8adcca272cee97191f040d192680462c880b8"
+      },
+      {
+        "patch": "marimba",
+        "source": "Percussion/Marimba/Marimba_hit_Outrigger_F5_loud_01.wav",
+        "midi": 77,
+        "sha256": "a434c15978b2ea4b8921feeb3fd1f177447324d06c177801e0e46c12a97abc86"
+      },
+      {
+        "patch": "drum",
+        "source": "VSCO 1 Percussion/drums/bass/bdrum3_mp_1.wav",
+        "sha256": "a8e08ac626c084c84ca70f3248e5d575468065e59f510d2555c61c5597a68cb6"
+      },
+      {
+        "patch": "timp",
+        "source": "Percussion/Timpani/Timpani2_Hit_v3_rr1_Sum.wav",
+        "sha256": "69e5d604effd3f29c86117d22ad2335f73e43f5d47868dc57d8fa593975ee241"
+      },
+      {
+        "patch": "timp_soft",
+        "source": "Percussion/Timpani/Timpani3_Hit_v1_rr1_Sum.wav",
+        "sha256": "00319863ade67b49ec64566eecc801ac7c95e101860b7bb3263f25c7d6757392"
+      },
+      {
+        "patch": "roll",
+        "source": "Percussion/Timpani/Rolls/Timpani3_Roll_v3_rr1_Sum.wav",
+        "sha256": "5d41045533f0163be7ca264cf9c18b3a4e898ecba334c49c0786f14d04665d3a"
+      }
+    ]
+  },
+  "bytes": 10482856,
+  "lyrics": false,
+  "tracks": [
+    {
+      "path": "coast.ogg",
+      "mode": "explore",
+      "seconds": 39.452,
+      "bytes": 387740,
+      "sha256": "bf48524587e8a2db321f8f2084e906198637623b5b140a16c1e9fe99e8769421",
+      "peak": 0.4385,
+      "rmsDb": -24.29
+    },
+    {
+      "path": "reef.ogg",
+      "mode": "explore",
+      "seconds": 46.452,
+      "bytes": 442073,
+      "sha256": "589041d6124a04dc184e92b2ec18a9a69a02bfa344228d0a44a5be81b8ec66db",
+      "peak": 0.30045,
+      "rmsDb": -24.29
+    },
+    {
+      "path": "snow.ogg",
+      "mode": "explore",
+      "seconds": 45.0,
+      "bytes": 465313,
+      "sha256": "ef8022c9401d06148c344c0a06ba08df9a7872db12529249e07811c40dc7a4a9",
+      "peak": 0.48736,
+      "rmsDb": -24.29
+    },
+    {
+      "path": "crystal.ogg",
+      "mode": "explore",
+      "seconds": 42.985,
+      "bytes": 488462,
+      "sha256": "45b3bccf393cf8b0f6894b22a5a9bc6783327ce60e6bbc3f39a3e257fb37c322",
+      "peak": 0.69418,
+      "rmsDb": -24.29
+    },
+    {
+      "path": "slag.ogg",
+      "mode": "explore",
+      "seconds": 40.563,
+      "bytes": 348553,
+      "sha256": "29398bcc5a5661eb4e15517572916dfb8c3205affb4ed4618fc4b91a1eb54cea",
+      "peak": 0.31912,
+      "rmsDb": -24.29
+    },
+    {
+      "path": "forge.ogg",
+      "mode": "explore",
+      "seconds": 32.0,
+      "bytes": 274347,
+      "sha256": "785d9665e6d7a47a19e1abf8e02b477e32af92d31fe1a9c4b5da98110176b2ff",
+      "peak": 0.30827,
+      "rmsDb": -24.29
+    },
+    {
+      "path": "orchard.ogg",
+      "mode": "explore",
+      "seconds": 36.456,
+      "bytes": 362314,
+      "sha256": "a05f3a1670d9c200e5fb9d4e11ab8e1a01675a35371c4a62f0eeca7bb984abb3",
+      "peak": 0.41848,
+      "rmsDb": -24.29
+    },
+    {
+      "path": "glass.ogg",
+      "mode": "explore",
+      "seconds": 38.4,
+      "bytes": 374225,
+      "sha256": "f4b656a0f4dbebc2e5e98d6b51eed474f653e921910b478dbf09f6186a0ecaaa",
+      "peak": 0.59207,
+      "rmsDb": -24.29
+    },
+    {
+      "path": "moor.ogg",
+      "mode": "explore",
+      "seconds": 37.895,
+      "bytes": 373021,
+      "sha256": "7c49957f645d95375167e2cabafbfb91f4d79923e777ce90c91a6d72ee219104",
+      "peak": 0.45108,
+      "rmsDb": -24.29
+    },
+    {
+      "path": "amphitheatre.ogg",
+      "mode": "explore",
+      "seconds": 36.0,
+      "bytes": 320200,
+      "sha256": "f4494850d7295487a43202bee6127c5450aa46e87e05e5abb3d2575f10d5e5ef",
+      "peak": 0.38316,
+      "rmsDb": -24.29
+    },
+    {
+      "path": "final_return.ogg",
+      "mode": "ending",
+      "seconds": 29.538,
+      "bytes": 290506,
+      "sha256": "0bce63e6610b30b243ad3c906faffb72e9e5fa77b25a545f11a5be0be2f43ec7",
+      "peak": 0.52695,
+      "rmsDb": -22.85
+    },
+    {
+      "path": "final_council.ogg",
+      "mode": "ending",
+      "seconds": 27.429,
+      "bytes": 283364,
+      "sha256": "faae5675ac6a4128c2e8d00a6170623fe0ff5a8fb81d8d96ebc00d639b56232e",
+      "peak": 0.53255,
+      "rmsDb": -22.85
+    },
+    {
+      "path": "salt_battle.ogg",
+      "mode": "battle",
+      "seconds": 50.906,
+      "bytes": 492727,
+      "sha256": "acc0f36e843a596fa359bff6af5d027e5a9a703a97b3cb86c5d53ad4e30fb9bc",
+      "peak": 0.71132,
+      "rmsDb": -21.31
+    },
+    {
+      "path": "salt_boss.ogg",
+      "mode": "boss",
+      "seconds": 59.326,
+      "bytes": 557677,
+      "sha256": "9275b4262272ca5a1805c8a471312236bc71fc1fb512d47a3716daee5295c8c6",
+      "peak": 0.80716,
+      "rmsDb": -21.31
+    },
+    {
+      "path": "winter_battle.ogg",
+      "mode": "battle",
+      "seconds": 29.032,
+      "bytes": 298002,
+      "sha256": "07b18e73535b6e08a4de521854b4e75dc78e228df38afb37925ace58aa6431ec",
+      "peak": 0.72455,
+      "rmsDb": -21.31
+    },
+    {
+      "path": "winter_boss.ogg",
+      "mode": "boss",
+      "seconds": 33.835,
+      "bytes": 333209,
+      "sha256": "5e1a18cb082723029214b7aae0e747aa3f76ccb14ab5db0930d212454660c5ab",
+      "peak": 0.81587,
+      "rmsDb": -21.31
+    },
+    {
+      "path": "iron_battle.ogg",
+      "mode": "battle",
+      "seconds": 27.527,
+      "bytes": 225080,
+      "sha256": "693f0d8455e8d7c12f3c3a115aef640545093715fa960c9339b699ad57fa5756",
+      "peak": 0.66602,
+      "rmsDb": -21.31
+    },
+    {
+      "path": "iron_boss.ogg",
+      "mode": "boss",
+      "seconds": 32.08,
+      "bytes": 261843,
+      "sha256": "43a53ddd02ba16e5eac2ac18291924ef7218cc7f7e3868e7b6e7172d85e6decf",
+      "peak": 0.77541,
+      "rmsDb": -21.31
+    },
+    {
+      "path": "glass_battle.ogg",
+      "mode": "battle",
+      "seconds": 33.032,
+      "bytes": 328280,
+      "sha256": "518e1b0f769e1a6e98d43fbc7578f35f6f45d5db30315822ee3e7105b9d1467a",
+      "peak": 0.77006,
+      "rmsDb": -21.31
+    },
+    {
+      "path": "glass_boss.ogg",
+      "mode": "boss",
+      "seconds": 38.496,
+      "bytes": 377696,
+      "sha256": "7e48c3e61b07eff0ef60114acfec9ed683240a144f891420441615d7b4d3be61",
+      "peak": 0.81389,
+      "rmsDb": -21.31
+    },
+    {
+      "path": "oath_battle.ogg",
+      "mode": "battle",
+      "seconds": 30.968,
+      "bytes": 269601,
+      "sha256": "e40a6f96c600a55ebb3733e6a9951c7f5fcdd7956d41a3b5bae163b41fe2d583",
+      "peak": 0.75923,
+      "rmsDb": -21.31
+    },
+    {
+      "path": "oath_boss.ogg",
+      "mode": "boss",
+      "seconds": 36.09,
+      "bytes": 312259,
+      "sha256": "1c56ad5054f49d2ab19d9bb7d878588ddb4d5db22e5bb137a15020aedaf4b486",
+      "peak": 0.80048,
+      "rmsDb": -21.31
+    },
+    {
+      "path": "act2_arrival.ogg",
+      "mode": "chapter",
+      "seconds": 39.851,
+      "bytes": 385288,
+      "sha256": "95c860ac9f283433a77568a2c5f1bf9d21ea3b9b8f26ac6ce81e677c652cd4c2",
+      "peak": 0.39238,
+      "rmsDb": -24.29
+    },
+    {
+      "path": "act3_arrival.ogg",
+      "mode": "chapter",
+      "seconds": 22.727,
+      "bytes": 231010,
+      "sha256": "fb7f5977678500fe783a903948107555d04ab7b6c669bc09366ec151c43ad26d",
+      "peak": 0.54265,
+      "rmsDb": -24.29
+    },
+    {
+      "path": "act4_arrival.ogg",
+      "mode": "chapter",
+      "seconds": 27.315,
+      "bytes": 237515,
+      "sha256": "a977be75ce93e6c437e423b14006ade34532891bdf7063ff7aaf7e23f1afe8cf",
+      "peak": 0.30172,
+      "rmsDb": -24.29
+    },
+    {
+      "path": "act5_arrival.ogg",
+      "mode": "chapter",
+      "seconds": 18.412,
+      "bytes": 181500,
+      "sha256": "4c5b9b9359aae95e3353ab6a89873ec2ff436a26b3e14b1f885bfc08bd639bd7",
+      "peak": 0.34609,
+      "rmsDb": -24.29
+    },
+    {
+      "path": "act6_arrival.ogg",
+      "mode": "chapter",
+      "seconds": 38.278,
+      "bytes": 374104,
+      "sha256": "de2f16d2bc098041f5cc5c55a676fb61919d6fa93e93d6bf6146a7b693b39c37",
+      "peak": 0.41957,
+      "rmsDb": -24.29
+    },
+    {
+      "path": "sfx_shatter.ogg",
+      "mode": "effect",
+      "seconds": 0.9,
+      "bytes": 13311,
+      "sha256": "e24746c2babda795e0d78feadd63cf32f0d3f42f109d97ce330bdf7072a3662c",
+      "peak": 0.76,
+      "rmsDb": -18.66
+    },
+    {
+      "path": "sfx_relic.ogg",
+      "mode": "effect",
+      "seconds": 1.42,
+      "bytes": 18503,
+      "sha256": "87f800d394ba54c37982bfb8fe7b39e042e7f232f0c88645c58e09c989614d02",
+      "peak": 0.72009,
+      "rmsDb": -17.81
+    },
+    {
+      "path": "sfx_ward.ogg",
+      "mode": "effect",
+      "seconds": 1.42,
+      "bytes": 14025,
+      "sha256": "8e14da58fc4acd8a11eba8e5324e966eb9409da4064fbb73d332acb48ad64e10",
+      "peak": 0.44736,
+      "rmsDb": -23.06
+    },
+    {
+      "path": "sfx_thunder.ogg",
+      "mode": "effect",
+      "seconds": 1.42,
+      "bytes": 8535,
+      "sha256": "728236ff15b5cd3214de589b9b69ca23c44e5063a036f9edbbbd1b88f481fc3e",
+      "peak": 0.76,
+      "rmsDb": -13.28
+    },
+    {
+      "path": "sfx_impact.ogg",
+      "mode": "effect",
+      "seconds": 0.9,
+      "bytes": 6810,
+      "sha256": "eacd55b1842f3262b08581ea60998a38d458bfcc309c58d03f7b921241a776f4",
+      "peak": 0.76,
+      "rmsDb": -14.52
+    },
+    {
+      "path": "sfx_forge.ogg",
+      "mode": "effect",
+      "seconds": 0.9,
+      "bytes": 13906,
+      "sha256": "1480e55a044687e903b693bc61b98cdb3511e6b5bb3ecb1f891d5f07e535e648",
+      "peak": 0.76,
+      "rmsDb": -16.16
+    },
+    {
+      "path": "env_surf.ogg",
+      "mode": "ambience",
+      "seconds": 27.5,
+      "bytes": 233990,
+      "sha256": "3fc99935d41f1d8260eaaa79612d3a37a92eda9353d6f3c87b2c69c1a67de3ab",
+      "peak": 0.73304,
+      "rmsDb": -19.62
+    },
+    {
+      "path": "env_reef.ogg",
+      "mode": "ambience",
+      "seconds": 25.0,
+      "bytes": 253768,
+      "sha256": "666d7bb20d410e0e1c265d0507b437f75de6020814d59e2b33720e9fb74af343",
+      "peak": 0.50315,
+      "rmsDb": -20.57
+    },
+    {
+      "path": "env_wind.ogg",
+      "mode": "ambience",
+      "seconds": 21.0,
+      "bytes": 196881,
+      "sha256": "27819510d3cad644ec117cb1af94b07a0bd86df6a2a8ad0e4c5ae53c9fe68880",
+      "peak": 0.76,
+      "rmsDb": -20.88
+    },
+    {
+      "path": "env_forge.ogg",
+      "mode": "ambience",
+      "seconds": 14.0,
+      "bytes": 152607,
+      "sha256": "d6bfc7642b1374daa64fb4396ed1a094b351f8d21ccc751304561918e8316934",
+      "peak": 0.46085,
+      "rmsDb": -21.78
+    },
+    {
+      "path": "env_orchard.ogg",
+      "mode": "ambience",
+      "seconds": 29.0,
+      "bytes": 276499,
+      "sha256": "6906dbb10325a4b189503cb75daf58bd52a25777108d63406bdac909efb2e628",
+      "peak": 0.25408,
+      "rmsDb": -37.77
+    },
+    {
+      "path": "env_boot_snow_1.ogg",
+      "mode": "field",
+      "seconds": 0.41,
+      "bytes": 4698,
+      "sha256": "a75ae08ee15ca25dd0ad2cf4b7a3f3f993c19b596b714fb79062ead278f9e379",
+      "peak": 0.64,
+      "rmsDb": -23.37
+    },
+    {
+      "path": "env_boot_snow_2.ogg",
+      "mode": "field",
+      "seconds": 0.41,
+      "bytes": 4482,
+      "sha256": "979ed782f4290e711a95a570762acc225c907c6db406e93f5abfaa05005416c6",
+      "peak": 0.64,
+      "rmsDb": -20.8
+    },
+    {
+      "path": "env_boot_snow_3.ogg",
+      "mode": "field",
+      "seconds": 0.41,
+      "bytes": 4356,
+      "sha256": "e2846a8635ae41d23bb1efeb263ee2148eb56129e293ee47a842a74e2359b221",
+      "peak": 0.64,
+      "rmsDb": -22.34
+    },
+    {
+      "path": "env_boot_snow_4.ogg",
+      "mode": "field",
+      "seconds": 0.41,
+      "bytes": 4576,
+      "sha256": "4646eaf122c6d084defbf584f2f6232c1452624bdb15b8a9911c13b08f9465ad",
+      "peak": 0.64,
+      "rmsDb": -21.96
+    }
+  ],
+  "fieldRecordings": [
+    {
+      "source": "https://freesound.org/people/YevgVerh/sounds/827530/",
+      "title": "Ocean_coast_04_092025_0659AM",
+      "author": "YevgVerh",
+      "license": "CC0-1.0",
+      "captureSha256": "55702e7b43f31f53f8f350163589a5d761fa4587cfe9442f0d8d7847f8967767",
+      "asset": "env_surf.ogg",
+      "operation": "excerpt, seamless loop, gain adjustment"
+    },
+    {
+      "source": "https://freesound.org/people/richardemoore/sounds/260263/",
+      "title": "WavesOnTheShore.wav",
+      "author": "richardemoore",
+      "license": "CC0-1.0",
+      "captureSha256": "7adb52777919034dcf4a5af1dd95556181eb021a9368b39b5cc1e52508725560",
+      "asset": "env_reef.ogg",
+      "operation": "excerpt, seamless loop, gain adjustment"
+    },
+    {
+      "source": "https://freesound.org/people/Sadiquecat/sounds/770281/",
+      "title": "Wind whistle 2",
+      "author": "Sadiquecat",
+      "license": "CC0-1.0",
+      "captureSha256": "0e846e1138f4fc0d30b0b635a4917bd55c06d527ddae988f3f21c072b83f8af3",
+      "asset": "env_wind.ogg",
+      "operation": "excerpt, seamless loop, gain adjustment"
+    },
+    {
+      "source": "https://freesound.org/people/LarsErikErtzgaardRingen/sounds/609757/",
+      "title": "Blacksmith.wav",
+      "author": "LarsErikErtzgaardRingen",
+      "license": "CC0-1.0",
+      "captureSha256": "7f2d6de2b604506f735d872abeee426989b93cf2af648553c8a7b11cdf80bf68",
+      "asset": "env_forge.ogg",
+      "operation": "excerpt, seamless loop, gain adjustment"
+    },
+    {
+      "source": "https://freesound.org/people/Sandermotions/sounds/275989/",
+      "title": "Morning birds 1.WAV",
+      "author": "Sandermotions",
+      "license": "CC0-1.0",
+      "captureSha256": "2c0d3e50a5f35f46d84bc3d7cb6f2c9f88fcde43c5061487d40d58854e52956e",
+      "asset": "env_orchard.ogg",
+      "operation": "excerpt, seamless loop, gain adjustment"
+    },
+    {
+      "source": "https://freesound.org/people/SoundsLikeYukon/sounds/732880/",
+      "title": "Footsteps on frozen lake",
+      "author": "SoundsLikeYukon",
+      "license": "CC0-1.0",
+      "captureSha256": "fe0973b1633d18efdcb84afd669175979b87fd6e4ee7c0002a670b29710865c5",
+      "asset": "env_boot_snow_1.ogg",
+      "operation": "single footfall, normalized, fades",
+      "secondsFrom": 1.024
+    },
+    {
+      "source": "https://freesound.org/people/SoundsLikeYukon/sounds/732880/",
+      "title": "Footsteps on frozen lake",
+      "author": "SoundsLikeYukon",
+      "license": "CC0-1.0",
+      "captureSha256": "fe0973b1633d18efdcb84afd669175979b87fd6e4ee7c0002a670b29710865c5",
+      "asset": "env_boot_snow_2.ogg",
+      "operation": "single footfall, normalized, fades",
+      "secondsFrom": 3.074
+    },
+    {
+      "source": "https://freesound.org/people/SoundsLikeYukon/sounds/732880/",
+      "title": "Footsteps on frozen lake",
+      "author": "SoundsLikeYukon",
+      "license": "CC0-1.0",
+      "captureSha256": "fe0973b1633d18efdcb84afd669175979b87fd6e4ee7c0002a670b29710865c5",
+      "asset": "env_boot_snow_3.ogg",
+      "operation": "single footfall, normalized, fades",
+      "secondsFrom": 4.348
+    },
+    {
+      "source": "https://freesound.org/people/SoundsLikeYukon/sounds/732880/",
+      "title": "Footsteps on frozen lake",
+      "author": "SoundsLikeYukon",
+      "license": "CC0-1.0",
+      "captureSha256": "fe0973b1633d18efdcb84afd669175979b87fd6e4ee7c0002a670b29710865c5",
+      "asset": "env_boot_snow_4.ogg",
+      "operation": "single footfall, normalized, fades",
+      "secondsFrom": 7.721
+    }
+  ]
+}

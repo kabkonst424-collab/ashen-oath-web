@@ -1,15 +1,17 @@
 {
   "id": "ashen-oath",
-  "version": "0.19.2-demo",
-  "releaseStatus": "demo",
-  "demo": true,
+  "version": "1.0.0",
+  "releaseStatus": "release",
+  "demo": false,
   "posterArtRevision": {
-    "id": "painted-20261114",
-    "menuSHA256": "9b31aeeb7e3c1f820e4dda8b225a0c7b75e183f0753a4fcae719ea79c7b22967",
-    "coverSHA256": "e7f492f4d6d5fc4c90316ffbe52d75bd3d9441ce5dda0910cfeda68721bbea95"
+    "id": "campaign-v1",
+    "menu": "assets/campaign/menu.webp",
+    "cover": "assets/campaign/cover.webp",
+    "menuSHA256": "64d3399a9720d72db3bf1f4483d4bf25af47f4030f0c07147223499df35b8bf4",
+    "coverSHA256": "f924a7c3a14cc7cec2b2adb1405c223060e9de9bb00a56482e6291521524d883"
   },
-  "level": "act1",
-  "graphics": "Authored Act I terrain, continuous flowing rivers, usable timber and stone bridges, and proportional scenery",
+  "level": "campaign",
+  "graphics": "Authored layouts across six acts, ten new biome profiles, ImageGen illustrations and Meshy 3D actors.",
   "presentation": {
     "baselineAuthoredBlenderActions": 314,
     "baselineCompatibilityAliases": 45,
@@ -2110,19 +2112,27 @@
     "finalVerification": "animation50/evidence/final-verification.json"
   },
   "content": {
-    "areas": 9,
-    "party": 4,
-    "mainQuests": 35,
-    "sideQuests": 8,
-    "encounters": 34
+    "acts": 6,
+    "areas": 19,
+    "party": 6,
+    "mainQuests": 65,
+    "sideQuests": 20,
+    "encounters": 59,
+    "comics": 12,
+    "endings": 2
   },
   "playtime": {
-    "targetMinutes": 180,
-    "status": "DESIGN_ESTIMATE_NOT_MEASURED"
+    "status": "No timed human completion for the six-act campaign",
+    "act1PriorDesignTargetMinutes": 180
   },
   "platform": "WebGL2",
-  "builtAt": "2026-11-14T15:01:36.752Z",
+  "builtAt": "2026-11-14T16:20:10.315Z",
   "files": [
+    {
+      "path": "README.md",
+      "bytes": 1620,
+      "sha256": "190b99cce0c8a077f25b1c1aa5c0c2e6c83da6c285e1646e9c52d2119ad57de9"
+    },
     {
       "path": "act1.css",
       "bytes": 44857,
@@ -2130,8 +2140,8 @@
     },
     {
       "path": "act1.html",
-      "bytes": 1532,
-      "sha256": "231d47115545284659f757b0451c608660e4e9ae5f2e4320e620c2899cf8be53"
+      "bytes": 1575,
+      "sha256": "17d5af7358a6fc6c5da2b5ec2fabb49310f332de435c26b08ecac10837b30a4e"
     },
     {
       "path": "assets/act1/animation/animation-library.json",
@@ -2679,6 +2689,656 @@
       "sha256": "37efb9740ab6d46e7f7c87bdb36afc385cca99336ab5080766b0a062c320d285"
     },
     {
+      "path": "assets/campaign/actors/alar_unhelmed.glb",
+      "bytes": 1214320,
+      "sha256": "c38206dfe2a34d9a8b679ec97355196727c31a6b88f29d53aa478199a77a3a26"
+    },
+    {
+      "path": "assets/campaign/actors/alar_unhelmed.json",
+      "bytes": 515270,
+      "sha256": "02ece0b369ac051bbcb2fb000676408565d9accd97c5306f07cef3ac8c6e1200"
+    },
+    {
+      "path": "assets/campaign/actors/c2_boss.glb",
+      "bytes": 1291288,
+      "sha256": "2f4f20ae8daa884736016723126c51b19ae4882a8a9610c0aae6ef5cd4bcca32"
+    },
+    {
+      "path": "assets/campaign/actors/c2_boss.json",
+      "bytes": 1228939,
+      "sha256": "79247d4cdb7e805b69b65de3cc1b6fd7fdcfc1789c6ba5521787c8afcddbe78d"
+    },
+    {
+      "path": "assets/campaign/actors/c2_mob_a.glb",
+      "bytes": 827324,
+      "sha256": "e6c3f987590622de900d9ba5f54927bffcc73b75e0d29ad30a08fffd35707d7f"
+    },
+    {
+      "path": "assets/campaign/actors/c2_mob_a.json",
+      "bytes": 614863,
+      "sha256": "877e44e72294735938a8c4a6a75a69f31258f192c1969604099784f9c6f1e5f7"
+    },
+    {
+      "path": "assets/campaign/actors/c2_mob_b.glb",
+      "bytes": 882712,
+      "sha256": "58def9ef95e5b344a7755956e4b48ded0467df8a3b2e418eb7ee4164654440a3"
+    },
+    {
+      "path": "assets/campaign/actors/c2_mob_b.json",
+      "bytes": 614458,
+      "sha256": "35c83b6add6aa033b9c4e64cb49b9417a7b7fa5c2b5d60853cdc6e4dbb032e7a"
+    },
+    {
+      "path": "assets/campaign/actors/c2_npc_a.glb",
+      "bytes": 714404,
+      "sha256": "c49568f4726e34d230e4d807bbec8a6e8f080cd19ab494fc35b884678c5b74b2"
+    },
+    {
+      "path": "assets/campaign/actors/c2_npc_a.json",
+      "bytes": 334281,
+      "sha256": "80a54f76fe2654851448c4d5f73dbabb3d5419f2c3dbbd169c3296ebddff6938"
+    },
+    {
+      "path": "assets/campaign/actors/c2_npc_b.glb",
+      "bytes": 678972,
+      "sha256": "9b43356f8c84d0a3e40ad804b648359c99b7fbbc6f51fb55a5d598de670b982d"
+    },
+    {
+      "path": "assets/campaign/actors/c2_npc_b.json",
+      "bytes": 334403,
+      "sha256": "0ae2b0e1b70b65f127027b835724bfd7741768aa502263957d15fba8fe55320d"
+    },
+    {
+      "path": "assets/campaign/actors/c3_boss.glb",
+      "bytes": 1266056,
+      "sha256": "4073bb0183ab83018753b49ed6f9da0a23e64fa41e696c69cfca142f87becd80"
+    },
+    {
+      "path": "assets/campaign/actors/c3_boss.json",
+      "bytes": 613051,
+      "sha256": "37392a883b09c61cc9aa3e8255a3a66db51f56acea0b586bd89ac9d1835c4487"
+    },
+    {
+      "path": "assets/campaign/actors/c3_mob_a.glb",
+      "bytes": 1062780,
+      "sha256": "c92e1d4f4d311b3c3274e065f8d9f69e7a948e3d28ef732def97cd17f0cb7aa1"
+    },
+    {
+      "path": "assets/campaign/actors/c3_mob_a.json",
+      "bytes": 615116,
+      "sha256": "b9142e0699cf65a4ed7fee0d81d082ef7656053329d37a352b048ff0fd0fa92c"
+    },
+    {
+      "path": "assets/campaign/actors/c3_mob_b.glb",
+      "bytes": 842284,
+      "sha256": "ae820ae36e32debd29d76cafc269ca08c061df05bc6f4ae8bded1550f09fff1f"
+    },
+    {
+      "path": "assets/campaign/actors/c3_mob_b.json",
+      "bytes": 613010,
+      "sha256": "ad154f3de4643f0dc3043a715dbb191db124567ce4f6ee94bb1ce6bc6bd40c09"
+    },
+    {
+      "path": "assets/campaign/actors/c3_npc_a.glb",
+      "bytes": 766532,
+      "sha256": "07dee56a6e786ff04c592b4b0b193f51a37e71a4f4252cae04d07e4ede12cc18"
+    },
+    {
+      "path": "assets/campaign/actors/c3_npc_a.json",
+      "bytes": 334390,
+      "sha256": "9b073d5fb5042c6dc307f9a280f1a720ae49a635799dbdfc10d58bda44a84790"
+    },
+    {
+      "path": "assets/campaign/actors/c3_npc_b.glb",
+      "bytes": 707104,
+      "sha256": "b7f6b08b0c3fbcde3a1d2b9fed080ae83f37ff869b9407b901dca55036e57dfb"
+    },
+    {
+      "path": "assets/campaign/actors/c3_npc_b.json",
+      "bytes": 333934,
+      "sha256": "e2abe9128e200a4141d5cb4be46e36488285c7269fc3ffb91f21541ef4859ec0"
+    },
+    {
+      "path": "assets/campaign/actors/c4_boss.glb",
+      "bytes": 1164088,
+      "sha256": "532fbbbf286d9d1cf343b9ea24b6350e77e28b33918bdff049b106a334a03b81"
+    },
+    {
+      "path": "assets/campaign/actors/c4_boss.json",
+      "bytes": 1228088,
+      "sha256": "80ddf02feef631a9e804ca64110b13777c46ae7b85ecd412d3c5e74df27a70aa"
+    },
+    {
+      "path": "assets/campaign/actors/c4_mob_a.glb",
+      "bytes": 729772,
+      "sha256": "3176b0c3054df5082e7327097da2b99f47e1360ac45de0b1836aa5575053f9bb"
+    },
+    {
+      "path": "assets/campaign/actors/c4_mob_a.json",
+      "bytes": 615207,
+      "sha256": "c0c90ad7f0378e88c4cd65ffb958f6f5487b8e15104e74d446c47340a5caeae7"
+    },
+    {
+      "path": "assets/campaign/actors/c4_mob_b.glb",
+      "bytes": 767176,
+      "sha256": "b56ac55d3b4feb2d2c36febd1854dfe5d28e2630f8de3213e1997b29bb7a51c3"
+    },
+    {
+      "path": "assets/campaign/actors/c4_mob_b.json",
+      "bytes": 614476,
+      "sha256": "5d8753309be8122d97304e9d3197414e960f47ad9ae02494202e4a9351c64ca5"
+    },
+    {
+      "path": "assets/campaign/actors/c4_npc_a.glb",
+      "bytes": 656948,
+      "sha256": "6bfa2708391e8d9b0888931b94ce031a73249866aadc1047d46f848e80251bb4"
+    },
+    {
+      "path": "assets/campaign/actors/c4_npc_a.json",
+      "bytes": 333933,
+      "sha256": "27e00ed92de8edd17df823a9b625c33e38ebf1e4f23412753862dd6ff866c2f6"
+    },
+    {
+      "path": "assets/campaign/actors/c4_npc_b.glb",
+      "bytes": 706160,
+      "sha256": "4e0caa0e1333becfd149cb78726dc73b81f8ae590880c4c1143b3c1ae0ecf011"
+    },
+    {
+      "path": "assets/campaign/actors/c4_npc_b.json",
+      "bytes": 333991,
+      "sha256": "cf2d2b2cba7a0b573455cd02ec286d41fa54505f9eb64e6ab87e74bffc43f78a"
+    },
+    {
+      "path": "assets/campaign/actors/c5_boss.glb",
+      "bytes": 1208488,
+      "sha256": "f8c8b4267e2b864e9625f098ef11a9fb59ca42995d680c2b8d5357c06e185a49"
+    },
+    {
+      "path": "assets/campaign/actors/c5_boss.json",
+      "bytes": 613270,
+      "sha256": "63b231c9e88159116304674e9cf8d6317c4460bf1e251cbd9db03b7fcc7ba884"
+    },
+    {
+      "path": "assets/campaign/actors/c5_mob_a.glb",
+      "bytes": 836264,
+      "sha256": "35ed215cb71377b2cf74d4adf9b864e52d0696acf55c6d8448776bac6aab2cd2"
+    },
+    {
+      "path": "assets/campaign/actors/c5_mob_a.json",
+      "bytes": 614905,
+      "sha256": "5d723aa0a467ae6459774bf561ad6b7968ad74c1c6a735a4b2c7c718ec3e1857"
+    },
+    {
+      "path": "assets/campaign/actors/c5_mob_b.glb",
+      "bytes": 782560,
+      "sha256": "d5512c3e354e7a4d4e260c6822ffe16dd6c1d929fa8a862d949fd3eb2b706990"
+    },
+    {
+      "path": "assets/campaign/actors/c5_mob_b.json",
+      "bytes": 613264,
+      "sha256": "77aa98fa916a2fc7a38a8db761bab8bd9ff315b4159f9208a06ad0dfeb7c8fd6"
+    },
+    {
+      "path": "assets/campaign/actors/c5_npc_a.glb",
+      "bytes": 645076,
+      "sha256": "155c285f225a5918befbbcd9dea5017c61538899cf9a78e9d3a543d8d7d1d385"
+    },
+    {
+      "path": "assets/campaign/actors/c5_npc_a.json",
+      "bytes": 333996,
+      "sha256": "ff47c87fc0cfaa8f62ab36e5f0658b2e96627a7cda8bd44bf4715d989582af41"
+    },
+    {
+      "path": "assets/campaign/actors/c5_npc_b.glb",
+      "bytes": 632748,
+      "sha256": "05f0f95524de81c5969651b761e1d360977fb42e38c3b701041c2b3111c1a8c5"
+    },
+    {
+      "path": "assets/campaign/actors/c5_npc_b.json",
+      "bytes": 334435,
+      "sha256": "4d696900f114a1069c056a7f50e18c7ceb8a7a97a5adaabc24f1c1ac0ede50fc"
+    },
+    {
+      "path": "assets/campaign/actors/c6_boss.glb",
+      "bytes": 1252892,
+      "sha256": "036b4ec1768de4b93352bb540c6a51645ef4d06595a7f1eab43ae09f877f758a"
+    },
+    {
+      "path": "assets/campaign/actors/c6_boss.json",
+      "bytes": 613256,
+      "sha256": "26167fea2055e9d86f9db323ae1ccdbd1a870dbf47fd9efc861f0f52d9307fcd"
+    },
+    {
+      "path": "assets/campaign/actors/c6_mob_a.glb",
+      "bytes": 842728,
+      "sha256": "a765a30db047a5dcb1fd1952bdb862928998d0a8d0f76dec3e8fd8dabc03c1dc"
+    },
+    {
+      "path": "assets/campaign/actors/c6_mob_a.json",
+      "bytes": 613264,
+      "sha256": "1946f56e2dca27348c1aa04fb2ccd1934efd9510e449f57fe2a8312d8545d213"
+    },
+    {
+      "path": "assets/campaign/actors/c6_mob_b.glb",
+      "bytes": 911156,
+      "sha256": "50df7eb0d1ecfd9ff171c5991e83470f1b4d111842acad00629dd5fedda7f330"
+    },
+    {
+      "path": "assets/campaign/actors/c6_mob_b.json",
+      "bytes": 614907,
+      "sha256": "c626820e8fbd41d40c334e94566cdbff2d4b180392fe09855d90ffde4e76efd3"
+    },
+    {
+      "path": "assets/campaign/actors/c6_npc_a.glb",
+      "bytes": 716288,
+      "sha256": "040d62897f97b56d83ff6dea144434542425d632c4a362fa034d9d0620d87da6"
+    },
+    {
+      "path": "assets/campaign/actors/c6_npc_a.json",
+      "bytes": 334548,
+      "sha256": "2b7003fad18c53033de16411fea85465d4ad5e640bb6afbdd04cf89b79bfe281"
+    },
+    {
+      "path": "assets/campaign/actors/c6_npc_b.glb",
+      "bytes": 688772,
+      "sha256": "38601fea2ef6c448ecc27067e50eafd12226a8d58c8ce302d2aa51d9990839f0"
+    },
+    {
+      "path": "assets/campaign/actors/c6_npc_b.json",
+      "bytes": 334410,
+      "sha256": "bdce002a254853200a7d352097d02730b3882fe61af3807e587d3184b98361da"
+    },
+    {
+      "path": "assets/campaign/actors/elian.glb",
+      "bytes": 1284780,
+      "sha256": "76dea1203030c1842671e85658ef7e043ca8e65cca615b1610f886e600e511c3"
+    },
+    {
+      "path": "assets/campaign/actors/elian.json",
+      "bytes": 638445,
+      "sha256": "850ea8763613ced906dc67156660089206ac03abfeb2738bfeabf9d1346cdc45"
+    },
+    {
+      "path": "assets/campaign/actors/manifest.json",
+      "bytes": 14378,
+      "sha256": "bde727bca611f657d6613fdc79920ade67ff905ace7e71059c12e3093bf4a925"
+    },
+    {
+      "path": "assets/campaign/actors/myrt.glb",
+      "bytes": 1295092,
+      "sha256": "cc6198ec8732812487ea01c5e23668bd0f8f97e55d3027499f41c9f8eb92f426"
+    },
+    {
+      "path": "assets/campaign/actors/myrt.json",
+      "bytes": 451800,
+      "sha256": "61b800c0a7dfb1c49892bf02352fe8814943fef433c3af6ebc6d9ac1b3eb1fbe"
+    },
+    {
+      "path": "assets/campaign/audio/LICENSE-CC0.txt",
+      "bytes": 6555,
+      "sha256": "36ffd9dc085d529a7e60e1276d73ae5a030b020313e6c5408593a6ae2af39673"
+    },
+    {
+      "path": "assets/campaign/audio/README.md",
+      "bytes": 3908,
+      "sha256": "4ef001729b18e44e937aef6f78e669f482b36330e4d0db575ef9a2a84d91c92b"
+    },
+    {
+      "path": "assets/campaign/audio/act2_arrival.ogg",
+      "bytes": 385288,
+      "sha256": "95c860ac9f283433a77568a2c5f1bf9d21ea3b9b8f26ac6ce81e677c652cd4c2"
+    },
+    {
+      "path": "assets/campaign/audio/act3_arrival.ogg",
+      "bytes": 231010,
+      "sha256": "fb7f5977678500fe783a903948107555d04ab7b6c669bc09366ec151c43ad26d"
+    },
+    {
+      "path": "assets/campaign/audio/act4_arrival.ogg",
+      "bytes": 237515,
+      "sha256": "a977be75ce93e6c437e423b14006ade34532891bdf7063ff7aaf7e23f1afe8cf"
+    },
+    {
+      "path": "assets/campaign/audio/act5_arrival.ogg",
+      "bytes": 181500,
+      "sha256": "4c5b9b9359aae95e3353ab6a89873ec2ff436a26b3e14b1f885bfc08bd639bd7"
+    },
+    {
+      "path": "assets/campaign/audio/act6_arrival.ogg",
+      "bytes": 374104,
+      "sha256": "de2f16d2bc098041f5cc5c55a676fb61919d6fa93e93d6bf6146a7b693b39c37"
+    },
+    {
+      "path": "assets/campaign/audio/amphitheatre.ogg",
+      "bytes": 320200,
+      "sha256": "f4494850d7295487a43202bee6127c5450aa46e87e05e5abb3d2575f10d5e5ef"
+    },
+    {
+      "path": "assets/campaign/audio/coast.ogg",
+      "bytes": 387740,
+      "sha256": "bf48524587e8a2db321f8f2084e906198637623b5b140a16c1e9fe99e8769421"
+    },
+    {
+      "path": "assets/campaign/audio/crystal.ogg",
+      "bytes": 488462,
+      "sha256": "45b3bccf393cf8b0f6894b22a5a9bc6783327ce60e6bbc3f39a3e257fb37c322"
+    },
+    {
+      "path": "assets/campaign/audio/env_boot_snow_1.ogg",
+      "bytes": 4698,
+      "sha256": "a75ae08ee15ca25dd0ad2cf4b7a3f3f993c19b596b714fb79062ead278f9e379"
+    },
+    {
+      "path": "assets/campaign/audio/env_boot_snow_2.ogg",
+      "bytes": 4482,
+      "sha256": "979ed782f4290e711a95a570762acc225c907c6db406e93f5abfaa05005416c6"
+    },
+    {
+      "path": "assets/campaign/audio/env_boot_snow_3.ogg",
+      "bytes": 4356,
+      "sha256": "e2846a8635ae41d23bb1efeb263ee2148eb56129e293ee47a842a74e2359b221"
+    },
+    {
+      "path": "assets/campaign/audio/env_boot_snow_4.ogg",
+      "bytes": 4576,
+      "sha256": "4646eaf122c6d084defbf584f2f6232c1452624bdb15b8a9911c13b08f9465ad"
+    },
+    {
+      "path": "assets/campaign/audio/env_forge.ogg",
+      "bytes": 152607,
+      "sha256": "d6bfc7642b1374daa64fb4396ed1a094b351f8d21ccc751304561918e8316934"
+    },
+    {
+      "path": "assets/campaign/audio/env_orchard.ogg",
+      "bytes": 276499,
+      "sha256": "6906dbb10325a4b189503cb75daf58bd52a25777108d63406bdac909efb2e628"
+    },
+    {
+      "path": "assets/campaign/audio/env_reef.ogg",
+      "bytes": 253768,
+      "sha256": "666d7bb20d410e0e1c265d0507b437f75de6020814d59e2b33720e9fb74af343"
+    },
+    {
+      "path": "assets/campaign/audio/env_surf.ogg",
+      "bytes": 233990,
+      "sha256": "3fc99935d41f1d8260eaaa79612d3a37a92eda9353d6f3c87b2c69c1a67de3ab"
+    },
+    {
+      "path": "assets/campaign/audio/env_wind.ogg",
+      "bytes": 196881,
+      "sha256": "27819510d3cad644ec117cb1af94b07a0bd86df6a2a8ad0e4c5ae53c9fe68880"
+    },
+    {
+      "path": "assets/campaign/audio/final_council.ogg",
+      "bytes": 283364,
+      "sha256": "faae5675ac6a4128c2e8d00a6170623fe0ff5a8fb81d8d96ebc00d639b56232e"
+    },
+    {
+      "path": "assets/campaign/audio/final_return.ogg",
+      "bytes": 290506,
+      "sha256": "0bce63e6610b30b243ad3c906faffb72e9e5fa77b25a545f11a5be0be2f43ec7"
+    },
+    {
+      "path": "assets/campaign/audio/forge.ogg",
+      "bytes": 274347,
+      "sha256": "785d9665e6d7a47a19e1abf8e02b477e32af92d31fe1a9c4b5da98110176b2ff"
+    },
+    {
+      "path": "assets/campaign/audio/glass.ogg",
+      "bytes": 374225,
+      "sha256": "f4b656a0f4dbebc2e5e98d6b51eed474f653e921910b478dbf09f6186a0ecaaa"
+    },
+    {
+      "path": "assets/campaign/audio/glass_battle.ogg",
+      "bytes": 328280,
+      "sha256": "518e1b0f769e1a6e98d43fbc7578f35f6f45d5db30315822ee3e7105b9d1467a"
+    },
+    {
+      "path": "assets/campaign/audio/glass_boss.ogg",
+      "bytes": 377696,
+      "sha256": "7e48c3e61b07eff0ef60114acfec9ed683240a144f891420441615d7b4d3be61"
+    },
+    {
+      "path": "assets/campaign/audio/iron_battle.ogg",
+      "bytes": 225080,
+      "sha256": "693f0d8455e8d7c12f3c3a115aef640545093715fa960c9339b699ad57fa5756"
+    },
+    {
+      "path": "assets/campaign/audio/iron_boss.ogg",
+      "bytes": 261843,
+      "sha256": "43a53ddd02ba16e5eac2ac18291924ef7218cc7f7e3868e7b6e7172d85e6decf"
+    },
+    {
+      "path": "assets/campaign/audio/manifest.json",
+      "bytes": 24646,
+      "sha256": "2da3c5af5ead8ba0bc6d1fa9421d8fd8574cb57fd63026db2dfd757a9ea4fc54"
+    },
+    {
+      "path": "assets/campaign/audio/moor.ogg",
+      "bytes": 373021,
+      "sha256": "7c49957f645d95375167e2cabafbfb91f4d79923e777ce90c91a6d72ee219104"
+    },
+    {
+      "path": "assets/campaign/audio/oath_battle.ogg",
+      "bytes": 269601,
+      "sha256": "e40a6f96c600a55ebb3733e6a9951c7f5fcdd7956d41a3b5bae163b41fe2d583"
+    },
+    {
+      "path": "assets/campaign/audio/oath_boss.ogg",
+      "bytes": 312259,
+      "sha256": "1c56ad5054f49d2ab19d9bb7d878588ddb4d5db22e5bb137a15020aedaf4b486"
+    },
+    {
+      "path": "assets/campaign/audio/orchard.ogg",
+      "bytes": 362314,
+      "sha256": "a05f3a1670d9c200e5fb9d4e11ab8e1a01675a35371c4a62f0eeca7bb984abb3"
+    },
+    {
+      "path": "assets/campaign/audio/reef.ogg",
+      "bytes": 442073,
+      "sha256": "589041d6124a04dc184e92b2ec18a9a69a02bfa344228d0a44a5be81b8ec66db"
+    },
+    {
+      "path": "assets/campaign/audio/salt_battle.ogg",
+      "bytes": 492727,
+      "sha256": "acc0f36e843a596fa359bff6af5d027e5a9a703a97b3cb86c5d53ad4e30fb9bc"
+    },
+    {
+      "path": "assets/campaign/audio/salt_boss.ogg",
+      "bytes": 557677,
+      "sha256": "9275b4262272ca5a1805c8a471312236bc71fc1fb512d47a3716daee5295c8c6"
+    },
+    {
+      "path": "assets/campaign/audio/sfx_forge.ogg",
+      "bytes": 13906,
+      "sha256": "1480e55a044687e903b693bc61b98cdb3511e6b5bb3ecb1f891d5f07e535e648"
+    },
+    {
+      "path": "assets/campaign/audio/sfx_impact.ogg",
+      "bytes": 6810,
+      "sha256": "eacd55b1842f3262b08581ea60998a38d458bfcc309c58d03f7b921241a776f4"
+    },
+    {
+      "path": "assets/campaign/audio/sfx_relic.ogg",
+      "bytes": 18503,
+      "sha256": "87f800d394ba54c37982bfb8fe7b39e042e7f232f0c88645c58e09c989614d02"
+    },
+    {
+      "path": "assets/campaign/audio/sfx_shatter.ogg",
+      "bytes": 13311,
+      "sha256": "e24746c2babda795e0d78feadd63cf32f0d3f42f109d97ce330bdf7072a3662c"
+    },
+    {
+      "path": "assets/campaign/audio/sfx_thunder.ogg",
+      "bytes": 8535,
+      "sha256": "728236ff15b5cd3214de589b9b69ca23c44e5063a036f9edbbbd1b88f481fc3e"
+    },
+    {
+      "path": "assets/campaign/audio/sfx_ward.ogg",
+      "bytes": 14025,
+      "sha256": "8e14da58fc4acd8a11eba8e5324e966eb9409da4064fbb73d332acb48ad64e10"
+    },
+    {
+      "path": "assets/campaign/audio/slag.ogg",
+      "bytes": 348553,
+      "sha256": "29398bcc5a5661eb4e15517572916dfb8c3205affb4ed4618fc4b91a1eb54cea"
+    },
+    {
+      "path": "assets/campaign/audio/snow.ogg",
+      "bytes": 465313,
+      "sha256": "ef8022c9401d06148c344c0a06ba08df9a7872db12529249e07811c40dc7a4a9"
+    },
+    {
+      "path": "assets/campaign/audio/winter_battle.ogg",
+      "bytes": 298002,
+      "sha256": "07b18e73535b6e08a4de521854b4e75dc78e228df38afb37925ace58aa6431ec"
+    },
+    {
+      "path": "assets/campaign/audio/winter_boss.ogg",
+      "bytes": 333209,
+      "sha256": "5e1a18cb082723029214b7aae0e747aa3f76ccb14ab5db0930d212454660c5ab"
+    },
+    {
+      "path": "assets/campaign/comics/act2_arrival.webp",
+      "bytes": 78326,
+      "sha256": "56311a389fd375d4c31f9bdeb95e6d11a0d25483ca30e83ef4cb5f6d174a9de1"
+    },
+    {
+      "path": "assets/campaign/comics/act2_depths.webp",
+      "bytes": 89788,
+      "sha256": "cee8a8372164c9474397c5ef730757ed9175d417fffa656483780ef7b7f2b879"
+    },
+    {
+      "path": "assets/campaign/comics/act3_arrival.webp",
+      "bytes": 86080,
+      "sha256": "655763b91d4998991254ccca0fa2872e7c0c8e8b20ea97a4842c136e14457ba1"
+    },
+    {
+      "path": "assets/campaign/comics/act3_depths.webp",
+      "bytes": 95890,
+      "sha256": "f55568f0a28a80e518d5c466bc7e34a0941a8abe91f7850e11eb3727e5bc6a19"
+    },
+    {
+      "path": "assets/campaign/comics/act4_arrival.webp",
+      "bytes": 76700,
+      "sha256": "fa0f236e1161ba03d0a86f7c535e518f84936be0f21a793bb7c98c709aa1e8d0"
+    },
+    {
+      "path": "assets/campaign/comics/act4_depths.webp",
+      "bytes": 70920,
+      "sha256": "cdd023739b37f51fdb2f371dcabbfc7f41b0515513cd872ad172d46582909502"
+    },
+    {
+      "path": "assets/campaign/comics/act5_arrival.webp",
+      "bytes": 104674,
+      "sha256": "3af54ba8e1f8244d3e4ba41dc34586e29b74faab150783731dd440ba63aa4435"
+    },
+    {
+      "path": "assets/campaign/comics/act5_depths.webp",
+      "bytes": 88186,
+      "sha256": "c7a9968ba9074e3f6f6d55a3d7ad16c544dcd8e6b47a6ff8020ebe2cbb6d2b97"
+    },
+    {
+      "path": "assets/campaign/comics/act6_arrival.webp",
+      "bytes": 95358,
+      "sha256": "a6226458ea9577d6431866e7c90cf06df852c51083e2ad02f96bae6831181bcf"
+    },
+    {
+      "path": "assets/campaign/comics/act6_depths.webp",
+      "bytes": 74138,
+      "sha256": "2662d2632f492e3f4ffdbf84505d02593c6137769cea772371b4e4451ac3e1cd"
+    },
+    {
+      "path": "assets/campaign/comics/final_council.webp",
+      "bytes": 248644,
+      "sha256": "6131568d33ba360c7d3dbb376b97def5d53d17664d1369296daf1275c22ad255"
+    },
+    {
+      "path": "assets/campaign/comics/final_return.webp",
+      "bytes": 208870,
+      "sha256": "6003b9aa1f02a07af78837426c0403bf7a01705699629c94a30f0b8b7597267b"
+    },
+    {
+      "path": "assets/campaign/cover.webp",
+      "bytes": 125644,
+      "sha256": "f924a7c3a14cc7cec2b2adb1405c223060e9de9bb00a56482e6291521524d883"
+    },
+    {
+      "path": "assets/campaign/menu.webp",
+      "bytes": 168894,
+      "sha256": "64d3399a9720d72db3bf1f4483d4bf25af47f4030f0c07147223499df35b8bf4"
+    },
+    {
+      "path": "assets/campaign/portraits/alar.webp",
+      "bytes": 12284,
+      "sha256": "7ab0b6eaa63d701b25e31d060059c81edbaad7e8d98474b4d7945abd17f7e47e"
+    },
+    {
+      "path": "assets/campaign/portraits/c2_npc_a.webp",
+      "bytes": 6412,
+      "sha256": "c61c8a985215db2732ac9ff5ea77d6349547e595f5ad0f955d68ec2996d102e4"
+    },
+    {
+      "path": "assets/campaign/portraits/c2_npc_b.webp",
+      "bytes": 6242,
+      "sha256": "702b2983248c975a633b9eb4cb7058cb76e5878f96857083ef3ae77fd9eb1df1"
+    },
+    {
+      "path": "assets/campaign/portraits/c3_npc_a.webp",
+      "bytes": 6438,
+      "sha256": "da32e23636c518517b13e79af9709e9044d8efa06907fc16b918c8e0648e5c9c"
+    },
+    {
+      "path": "assets/campaign/portraits/c3_npc_b.webp",
+      "bytes": 7212,
+      "sha256": "f07573fc5424b15024ab00edaaa3b2be1c29841afc1def0d853b8fab55624f11"
+    },
+    {
+      "path": "assets/campaign/portraits/c4_npc_a.webp",
+      "bytes": 5426,
+      "sha256": "e90198a6388cefa6e4740c7a70169eeb7ce8df17fd76e4278745161d82116494"
+    },
+    {
+      "path": "assets/campaign/portraits/c4_npc_b.webp",
+      "bytes": 6636,
+      "sha256": "9224b1354267067d5b39a5829cf5823e3fcd49721018852f8a4c61b48ce71ad1"
+    },
+    {
+      "path": "assets/campaign/portraits/c5_npc_a.webp",
+      "bytes": 5870,
+      "sha256": "3f6f511c8545c60a5dc171a140018c36bdb06c81fb88766079d13573d959a785"
+    },
+    {
+      "path": "assets/campaign/portraits/c5_npc_b.webp",
+      "bytes": 4862,
+      "sha256": "4f56e8831fb5ef254b9a2c9a6c9a6323e255e171c5da0afe53086922f7fe19e1"
+    },
+    {
+      "path": "assets/campaign/portraits/c6_npc_a.webp",
+      "bytes": 6260,
+      "sha256": "798828424e309fa0cf989de9db8778b54d822a0dfd38d8f51342fcd0bc719b49"
+    },
+    {
+      "path": "assets/campaign/portraits/c6_npc_b.webp",
+      "bytes": 4300,
+      "sha256": "f11ec41a0ebf3e419a205bf9fb96b8eb554975ca3c98a110672e71368b1ed51c"
+    },
+    {
+      "path": "assets/campaign/portraits/elian.webp",
+      "bytes": 12292,
+      "sha256": "af17fea6ea284b3857ade8e0f63892ee5c042af340aa8fc8b85a7990a90de020"
+    },
+    {
+      "path": "assets/campaign/portraits/myrt.webp",
+      "bytes": 10914,
+      "sha256": "5d6337975dc7ee3da1754787e9a2136197cec6ded4b3d3c099fa4b3ffbe6e98d"
+    },
+    {
+      "path": "assets/campaign/terrain.webp",
+      "bytes": 364322,
+      "sha256": "79e6681d63283d46ee4ebfd2f29acc9d1519ad644b80a2df192183e6035233d3"
+    },
+    {
       "path": "assets/cover.png",
       "bytes": 1448137,
       "sha256": "e7f492f4d6d5fc4c90316ffbe52d75bd3d9441ce5dda0910cfeda68721bbea95"
@@ -3029,14 +3689,19 @@
       "sha256": "104f56145899722094556490d787aae0617cc2fc3382f31df02d724ea1aee341"
     },
     {
+      "path": "campaign.css",
+      "bytes": 3225,
+      "sha256": "b1c7d89eaa242e2607a0966d98d14b54d64aa465c0ac9edcf76ace43051fccc2"
+    },
+    {
       "path": "forged.css",
       "bytes": 1343,
       "sha256": "60cd819b0a9da5c4926210079ca722a90fb179e7a65ff8c1453003cd2b268a4a"
     },
     {
       "path": "index.html",
-      "bytes": 1532,
-      "sha256": "231d47115545284659f757b0451c608660e4e9ae5f2e4320e620c2899cf8be53"
+      "bytes": 1575,
+      "sha256": "17d5af7358a6fc6c5da2b5ec2fabb49310f332de435c26b08ecac10837b30a4e"
     },
     {
       "path": "interface-windows.css",
@@ -3075,8 +3740,8 @@
     },
     {
       "path": "src/act1/act-audio.js",
-      "bytes": 26050,
-      "sha256": "858eba8dbb7d404da607818d18779f5b1e2e45f4d5930f444ba340e6993d0b47"
+      "bytes": 27532,
+      "sha256": "bfd75afb1da51c3a33e05c25c655bc952fac6aabb161b8f03442368ffb2103ae"
     },
     {
       "path": "src/act1/area-geometry.js",
@@ -3095,8 +3760,8 @@
     },
     {
       "path": "src/act1/authored-landscape.js",
-      "bytes": 15377,
-      "sha256": "e3d6cf7289d0dd5d7f93129a17a6dfc13b23f26003e0c05e432d4bd0d2b644ac"
+      "bytes": 15554,
+      "sha256": "c460b661b883d92383c644bd4208a66c1b8a2b4da6998e2e127387d3fa2666b2"
     },
     {
       "path": "src/act1/battle-stage.js",
@@ -3114,14 +3779,54 @@
       "sha256": "bc243eb884d1e6fb73058a79ac3fe1b8e9c579c22e36254cb84c61e5b9dd46b2"
     },
     {
+      "path": "src/act1/campaign-acts/chapters.js",
+      "bytes": 36841,
+      "sha256": "33c09ce90c121849872d616367dd87045ac22b55ab8ffc51663982c328335fe8"
+    },
+    {
+      "path": "src/act1/campaign-audio.js",
+      "bytes": 7823,
+      "sha256": "f06c3f03c10a1bd25e0dadf1a2a758bef075f4227b469f0c15a52d4a0d2ea3ac"
+    },
+    {
+      "path": "src/act1/campaign-content.js",
+      "bytes": 26211,
+      "sha256": "e661295a88fabcc28e20077167db088aa9d67c52f51cc05404024574d7d96891"
+    },
+    {
+      "path": "src/act1/campaign-layouts.js",
+      "bytes": 16171,
+      "sha256": "9fb5de9f714032d0da71a32778726bc1fecdb4b32a4df4197a7f8738d3d9d91e"
+    },
+    {
+      "path": "src/act1/campaign-progression.js",
+      "bytes": 12421,
+      "sha256": "98d38bf491b4d0ad9d165c5092eaebf74aa39b6a6fdb3790d4a64340fcdf5de9"
+    },
+    {
+      "path": "src/act1/campaign-starters.js",
+      "bytes": 5552,
+      "sha256": "033390e4dc040e9caf161a1299c4ac290b7d7da3c23029750c9858ce5360dcf4"
+    },
+    {
+      "path": "src/act1/campaign-ui.js",
+      "bytes": 4861,
+      "sha256": "4caff2df32018929192ede11a0060710da1b74cd48c07aa266861eea7cc8f99c"
+    },
+    {
+      "path": "src/act1/campaign-visuals.js",
+      "bytes": 3321,
+      "sha256": "3d5be46f932e38954c212cd0a3764e070b761cd52aadd209a1d2e3c827f57d71"
+    },
+    {
       "path": "src/act1/cast-anchors.js",
       "bytes": 1342,
       "sha256": "ce07789613f150169328ec800a85620da8ba7c39dd44eaa231bf5edb89df62b5"
     },
     {
       "path": "src/act1/character-animation.js",
-      "bytes": 16389,
-      "sha256": "0a6c47f20ccb7c85fd2f29c973fa5c0ccdcf9d05bdf56f3412a6a09e1b33d097"
+      "bytes": 16916,
+      "sha256": "f7690714a043e4ab689c080d1092b3b1287288e3d72fb888aa63ce5664e6ef20"
     },
     {
       "path": "src/act1/combat200-animation-policy.js",
@@ -3135,8 +3840,8 @@
     },
     {
       "path": "src/act1/content.js",
-      "bytes": 208668,
-      "sha256": "6be11d078d1d54fc1feae0107064135f60cbfb58f955d668663597d1f6c3ec11"
+      "bytes": 209139,
+      "sha256": "120f8b1ed93090247523d6ee4164bf7246550b9a5f8a89b6ae75bd2c0f084e7c"
     },
     {
       "path": "src/act1/data/ground-clearance.js",
@@ -3145,8 +3850,8 @@
     },
     {
       "path": "src/act1/data/magic-profiles.js",
-      "bytes": 7385,
-      "sha256": "3ff1e6b2145991835bb1a8b4af9c4fd3d821149021866823726caeee6211c9f2"
+      "bytes": 9813,
+      "sha256": "96caddedaaa77c70049aefbd8e53f28ff6091a08c949daf3a02304650fe94088"
     },
     {
       "path": "src/act1/equipment-presentation.js",
@@ -3175,8 +3880,8 @@
     },
     {
       "path": "src/act1/graphics-refresh.js",
-      "bytes": 17479,
-      "sha256": "4c007c87d438e72f1e28747cece1f972013dc80622fbd625b2d33cc111d65647"
+      "bytes": 17787,
+      "sha256": "e29898354282d81cf03169cd55ee82cd4a5dedf9570dbb7a9674f0fc6f8434e1"
     },
     {
       "path": "src/act1/groundcover-plants.js",
@@ -3185,13 +3890,13 @@
     },
     {
       "path": "src/act1/groundcover.js",
-      "bytes": 17727,
-      "sha256": "98806ebc445492f6e251ea6ce935c59e68860249e675b780f2db6d60a59522a3"
+      "bytes": 18704,
+      "sha256": "5aa9dadebc61a2d0eb156349887c258db394c6796ffdea423d836f64097628fd"
     },
     {
       "path": "src/act1/hero-abilities.js",
-      "bytes": 3498,
-      "sha256": "26a484f633b2be3319b462997a0a2275c96b353f7f3777375e99fed2eaf57f3d"
+      "bytes": 4666,
+      "sha256": "ccf352d0faa0b26560766443272bf51afba6afeccb71006e23d3b0cef4424ddb"
     },
     {
       "path": "src/act1/hud-presentation.js",
@@ -3205,8 +3910,8 @@
     },
     {
       "path": "src/act1/interface-100.js",
-      "bytes": 43137,
-      "sha256": "5862e25b76a5171b8fdd8213aed0301fc42e54e112d067c22eed628605c4f132"
+      "bytes": 44207,
+      "sha256": "f673bf8bb55bae77dcc77251733a6fe706ebca60675d86b4de85b0ad128da0c6"
     },
     {
       "path": "src/act1/interface-presentation.js",
@@ -3220,33 +3925,33 @@
     },
     {
       "path": "src/act1/magic-vfx.js",
-      "bytes": 51581,
-      "sha256": "fd18a25c5ad6d83135668459a81e205c47ac59116adae560105822adec088486"
+      "bytes": 51582,
+      "sha256": "9e67bca67ba4359538863ed68c32b63bbcfdb2ff47b6a11cc2b1673ba526651a"
     },
     {
       "path": "src/act1/main.js",
-      "bytes": 106784,
-      "sha256": "8e8430ab0de3a156a5c309fd5c65901bb256fd8ed9033e4b60c5f900d9e2e408"
+      "bytes": 112475,
+      "sha256": "08331f9d8f73a4de30564c9383f3df72dd7fc7414cbf5b59d47636604ddba137"
     },
     {
       "path": "src/act1/meshy-world.js",
-      "bytes": 40145,
-      "sha256": "a9cdba10cb71e7c2c70fceb1bd2d2d0407b3e4f7238181c7fffff2c9cbfa6694"
+      "bytes": 44758,
+      "sha256": "8d810191eefca44133aebe873aa653fa95329aa42bafcefd45457db6213618d7"
     },
     {
       "path": "src/act1/minimap.js",
-      "bytes": 13652,
-      "sha256": "20ef3db3e44d22dca80504bc5b553e913b9f979d4363c517facee40dd5a07a64"
+      "bytes": 13646,
+      "sha256": "c881d74ecd4e8b77b816337cca2c22b6d73d4fdcba25c321b84b3cb98672a990"
     },
     {
       "path": "src/act1/model.js",
-      "bytes": 116188,
-      "sha256": "cfbf98858718859d394eeb49a253b8cd9eef1700cbdb510038e92a9c81901c98"
+      "bytes": 123587,
+      "sha256": "c7b2855d27acbb43541afb2204fca61daf915c1d23058f7f3bd756d245c0ec09"
     },
     {
       "path": "src/act1/navigation.js",
-      "bytes": 15888,
-      "sha256": "c60bca898a1a44236632adff141a751ed3d875d80fffe1a4c78b0ad6e4bbd45e"
+      "bytes": 15876,
+      "sha256": "9216d6e3498ce8401f1c95b5033f5e542c4de42463eca6c68ff1f6bde1cda06c"
     },
     {
       "path": "src/act1/painted-material.js",
@@ -3325,18 +4030,18 @@
     },
     {
       "path": "src/act1/save.js",
-      "bytes": 13283,
-      "sha256": "41da816e443a178d49962ac24c8dcaf03c4195ff478dfa699a1f43624ca0a0d9"
+      "bytes": 13294,
+      "sha256": "9a10349596541ff51ceea76a6517981df0ffca4bd207f8e018676e8137d01435"
     },
     {
       "path": "src/act1/source-facing.js",
-      "bytes": 4938,
-      "sha256": "56fd60f91170d1effb53d1d611e7ea8b20b130a6d8f0f248d9d953444e15e99d"
+      "bytes": 5030,
+      "sha256": "1fa3313714b042ed4326128ba70d77b7c29fa25626a7edad2897c6932e9ea8b5"
     },
     {
       "path": "src/act1/terrain-material.js",
-      "bytes": 12102,
-      "sha256": "01d0da1d0366d97cbf83bef320b8bf2cc609d48bfec2525dd425b39e0c319a63"
+      "bytes": 12774,
+      "sha256": "df5c1e7e988ab3646856b5457212145c1bd57f14e7d9eb4680e8c2dc646a4095"
     },
     {
       "path": "src/act1/terrain-sampling.js",
@@ -3345,8 +4050,8 @@
     },
     {
       "path": "src/act1/ui-feedback.js",
-      "bytes": 8410,
-      "sha256": "4b435a7a60429a257f22c3e665b9667206c13f0075e9e721a2c1502d0d67571b"
+      "bytes": 8443,
+      "sha256": "a327ba3d247af8d9dd1c482436cb7172ecb06d101366f1f071e38bd2db5dff9f"
     },
     {
       "path": "src/act1/ui-framing.js",
@@ -3355,13 +4060,13 @@
     },
     {
       "path": "src/act1/water-fire.js",
-      "bytes": 15798,
-      "sha256": "214645726c40212649e5478aece24d70c25d6243e908fc4c8ed8e2c7d8d1fb7a"
+      "bytes": 15788,
+      "sha256": "e93e2553a3168738fd9fcf9660d419de22f722611391d3b44022ff2fd11786e6"
     },
     {
       "path": "src/act1/world.js",
-      "bytes": 104892,
-      "sha256": "538cf5f76dd816a6f7f719915664d682c1d14db892beadeeb951fd991ace5beb"
+      "bytes": 105175,
+      "sha256": "70047cbd6f4ed92d60dc254c2a4ba5bde83526c512bdd0ef41275a0c59b67fe7"
     },
     {
       "path": "src/act1/writer-session.js",
@@ -3519,6 +4224,34 @@
     ],
     "rendering": "Instanced opaque leaves, frustum culled and streamed by spatial batches, distance falloff and a lighter quality tier.",
     "accessibility": "Reduced Motion freezes grass and disables bending around the party.",
+    "saveSchema": 2
+  },
+  "campaignRevision": {
+    "id": "campaign-v1",
+    "baseCommit": "3240de8ca08aaa3212e2812e078eec557af7901f",
+    "additionalActs": 5,
+    "additionalMaps": 10,
+    "additionalMainQuests": 30,
+    "additionalSideQuests": 5,
+    "additionalNpcs": 10,
+    "additionalEnemyArchetypes": 10,
+    "additionalBosses": 5,
+    "starterIds": [
+      "alar",
+      "myrt",
+      "elian"
+    ],
+    "talentBranches": 12,
+    "talentNodes": 36,
+    "skillRunes": 24,
+    "actorManifest": "assets/campaign/actors/manifest.json",
+    "meshCreditConsumption": 420,
+    "actorAssetBytes": 40762674,
+    "actorCount": 28,
+    "audioFileCount": 42,
+    "audioBytes": 10482856,
+    "musicCues": 27,
+    "delivery": "GitHub Pages WebGL 2, streamed models and audio",
     "saveSchema": 2
   }
 }

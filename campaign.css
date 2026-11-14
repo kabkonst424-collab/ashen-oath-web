@@ -1,0 +1,140 @@
+#actMenu {
+  background-image: linear-gradient(90deg, #081619c9, #08161933 52%, #0816190d), url('assets/campaign/menu.webp?v=campaign-v1');
+  background-position: center;
+}
+
+.campaign-portrait {
+  object-fit: cover;
+  border: 1px solid #a18559;
+  border-radius: 8px;
+  background: #202829;
+}
+
+.sprite.campaign-portrait {
+  width: 76px;
+  height: 76px;
+}
+
+.party-card .sprite.campaign-portrait {
+  width: 48px;
+  height: 56px;
+}
+
+.party-card.fallen .campaign-portrait {
+  filter: grayscale(.85);
+  opacity: .75;
+}
+
+#actHud[data-mode="battle"] .party-card .sprite.campaign-portrait {
+  position: absolute;
+  inset: 4px 4px auto auto;
+  width: 25px;
+  height: 30px;
+}
+
+.revival-heading .sprite.campaign-portrait {
+  width: 75px;
+  height: 100px;
+}
+
+.campaign-starter-grid,
+.campaign-talents-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 12px 0;
+}
+
+.campaign-starter-card,
+.campaign-talent-branch,
+.campaign-talent {
+  border: 1px solid #ab885450;
+  border-radius: 10px;
+  background: #101f24;
+  padding: 12px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.campaign-starter-card.selected,
+.campaign-talent.learned {
+  background: #16342f;
+  border-color: #dfba72;
+}
+
+.sprite.campaign-starter-portrait {
+  width: min(100%, 156px);
+  height: auto;
+  aspect-ratio: 1;
+  align-self: center;
+}
+
+.campaign-starter-card > button { margin-top: auto; }
+.campaign-talents-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.campaign-talent { padding: 10px; }
+
+.campaign-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: end;
+  gap: 8px;
+  margin: 12px 0 4px;
+}
+
+.campaign-actions > button,
+.campaign-talent > button,
+.campaign-starter-card > button { min-height: 44px; }
+
+.campaign-comic {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(230px, .86fr);
+  align-items: center;
+  gap: 18px;
+  padding: 6px 0;
+}
+
+.campaign-comic-art {
+  display: block;
+  width: 100%;
+  max-height: min(50vh, 480px);
+  object-fit: contain;
+  background: #0c191d;
+  border: 1px solid #957744;
+  border-radius: 7px;
+}
+
+.campaign-comic-copy { display: grid; gap: 13px; }
+.campaign-chapters { display: grid; gap: 10px; margin-block: 12px; }
+
+.campaign-loading-region {
+  position: fixed;
+  inset: auto 50% 24%;
+  transform: translateX(-50%);
+  width: min(88vw, 440px);
+  padding: 12px 16px;
+  text-align: center;
+  z-index: 35;
+  border: 1px solid #a98c51;
+  border-radius: 8px;
+  background: #0e2025;
+  color: #ead4a1;
+}
+
+@media (max-width: 690px) {
+  .campaign-starter-grid,
+  .campaign-comic { grid-template-columns: minmax(0, 1fr); }
+  .campaign-comic-art { max-height: 38vh; }
+  .sprite.campaign-starter-portrait { width: min(100%, 126px); }
+  .campaign-starter-card { padding: 12px; }
+  .party-card .sprite.campaign-portrait { width: 35px; height: 44px; }
+  .revival-heading .sprite.campaign-portrait { width: 54px; height: 72px; }
+}
+
+@media (max-width: 535px) {
+  .campaign-talents-grid { grid-template-columns: minmax(0, 1fr); }
+  #actHud[data-mode="battle"] .party-card .sprite.campaign-portrait { display: none; }
+  .inventory-layout > .column:first-child > .sprite.campaign-portrait { display: none; }
+}

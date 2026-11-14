@@ -1,8 +1,8 @@
 import * as T from '../../assets/vendor/three.module.js';
-import { PARTY } from './content.js?v=forged-meshy-0191';
+import { PARTY } from './content.js?v=campaign-v1';
 import { fetchBytes } from './resource-loader.js?v=0.16.0-demo';
 import { validateCastHands } from './cast-anchors.js?v=forged-019';
-import { SOURCE_BASES, SOURCE_FRONT_YAW, resolveBaseFrontYaw, resolveProfileFrontYaw, actorSourceBase, isSourceBase, sourceValue, normalizeSourceHash, normalizeSourceYaw, sourceFacingBasis, applySourceFacing } from './source-facing.js?v=forged-meshy-0191';
+import { SOURCE_BASES, SOURCE_FRONT_YAW, resolveBaseFrontYaw, resolveProfileFrontYaw, actorSourceBase, isSourceBase, sourceValue, normalizeSourceHash, normalizeSourceYaw, sourceFacingBasis, applySourceFacing } from './source-facing.js?v=campaign-v1';
 
 import { normalizeBattleEquipment, applyBattleEquipment } from './equipment-presentation.js?v=0.16.0-demo';
 
@@ -143,9 +143,9 @@ export class CharacterAnimationLibrary {
     if (this.profilePromises.has(key)) return this.profilePromises.get(key);
     const promise = (async () => {
       this.assertActive();
-      if (!/^(?:party|enemy|npc):[a-z0-9_]+$/i.test(key) || !/^(?:profiles\/)?[a-z0-9_-]+\.json$/i.test(descriptor.file || '')) throw new Error('Invalid profile path');
+      if (!/^(?:party|enemy|npc):[a-z0-9_]+$/i.test(key) || (!descriptor.data && !/^(?:profiles\/)?[a-z0-9_-]+\.json$/i.test(descriptor.file || ''))) throw new Error('Invalid profile path');
       await this.verifyBase(descriptor.base);
-      const data = await this.read(descriptor.file, descriptor.sha256, `${key} (${descriptor.file})`);
+      const data = descriptor.data || await this.read(descriptor.file, descriptor.sha256, `${key} (${descriptor.file})`);
       this.assertActive();
       if (data.schema !== 1 || data.profile !== key || data.base !== descriptor.base || !Array.isArray(data.clips)) throw new Error('Profile identity mismatch');
       const clips = new Map();
@@ -172,6 +172,20 @@ export class CharacterAnimationLibrary {
     })();
     this.profilePromises.set(key, promise);
     return promise;
+  }
+
+  loadCampaignProfile(base, key, data) {
+    // The area loader verified both asset bytes before publishing the GLB hash.
+    this.manifest.sourceHashes[base] = data.sourceHash;
+    this.manifest.frontYawByBase[base] = data.frontYaw;
+    return this.preloadProfile(key, { base, data });
+  }
+
+  releaseCampaignProfile(key, base) {
+    this.profiles.delete(key);
+    this.profilePromises.delete(key);
+    this.basePromises.delete(base);
+    this.verifiedSourceHashes.delete(base);
   }
 
   equipPresentation(actor) {

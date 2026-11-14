@@ -2,9 +2,10 @@ import {addRoadAccent} from './road-actor-looks.js?v=roads-018';
 import * as T from '../../assets/vendor/three.module.js';
 import {GLTFLoader} from '../../assets/vendor/GLTFLoader.js';
 import {groundClearanceLift,flightBaseline,mirrorWingDelta} from './party-motion.js?v=0.16.0-demo';
-import {SOURCE_BASES} from './source-facing.js?v=forged-meshy-0191';
+import {SOURCE_BASES} from './source-facing.js?v=campaign-v1';
+import {isCampaignModel,campaignActor} from './campaign-visuals.js?v=campaign-v1';
 
-export const BASE_MODELS=SOURCE_BASES;
+export const BASE_MODELS=SOURCE_BASES.filter(id=>!isCampaignModel(id));
 const v=(base,gear=[],extra={})=>({base,gear,...extra});
 export const ROLE_VISUALS={
  alar:v('alar_nocape',['Sword','Shield']),iona:v('iona_nocape',['Staff'],{back:'Book'}),radan:v('radan_nocape',['Spear','Shield']),leia:v('leia_nocape',['Censer']),
@@ -38,7 +39,9 @@ export function installRefresh(World){
  P.createActor=function(id,type,options={}){
   if(this.actors.has(id))return this.actors.get(id);
   const role=String(options.npc&&options.animationSource||options.role||'').split('_')[0];
-  const visual=options.enemyId?(FORGED_VISUALS[options.enemyId]||ENEMY_VISUALS[options.animationSource||options.enemyId]):ROLE_VISUALS[role];
+  const campaignBase=options.enemyId||options.model||(options.party&&role==='alar'?'alar_unhelmed':role);
+  const campaign=this.assets[campaignBase]?campaignActor(campaignBase):null;
+  const visual=campaign||(options.enemyId?(FORGED_VISUALS[options.enemyId]||ENEMY_VISUALS[options.animationSource||options.enemyId]):ROLE_VISUALS[role]);
   const source=visual||FALLBACK[type]||ROLE_VISUALS.alar;
   const accent=options.visual;
   const look=accent?{...source,tint:accent.color??source.tint,scale:(source.scale||1)*(accent.scale||1),gear:accent.gear??source.gear}:source;

@@ -1,26 +1,27 @@
-import {installRefresh} from './graphics-refresh.js?v=forged-meshy-0191';
-import {installMeshyWorld} from './meshy-world.js?v=groundcover-0192';
-import {WorldElements,installWorldElements} from './water-fire.js?v=groundcover-0192';
-import {MagicVfx} from './magic-vfx.js?v=forged-019';
+import {installRefresh} from './graphics-refresh.js?v=campaign-v1';
+import {installMeshyWorld} from './meshy-world.js?v=campaign-v1';
+import {WorldElements,installWorldElements} from './water-fire.js?v=campaign-v1';
+import {MagicVfx} from './magic-vfx.js?v=campaign-v1';
 import {advancePaintedPose, orientPaintedActors, paintedActionAge, resetPaintedPose} from './painted-motion.js?v=painted-20261114-r2';
-import {CharacterAnimationLibrary} from './character-animation.js?v=forged-meshy-0191';
+import {CharacterAnimationLibrary} from './character-animation.js?v=campaign-v1';
 import {installBrowserPerformance} from './browser-performance.js?v=0.16.0-demo';
 import * as T from '../../assets/vendor/three.module.js';
 import { GLTFLoader } from '../../assets/vendor/GLTFLoader.js';
 import { clone as cloneSkeleton } from '../../assets/vendor/SkeletonUtils.js';
-import * as Content from './content.js?v=forged-meshy-0191';
+import * as Content from './content.js?v=campaign-v1';
 import { battleFormation, fitBattleCamera, facingToward, oppositionFacing, wrapFacing } from './battle-stage.js?v=0.16.0-demo';
 import { combatMotionPolicy, actionLunge } from './presentation-motion.js?v=forged-019';
 import { actionTimeline, actionClipPhase } from './presentation-timing.js?v=forged-019';
 import { reactionPhase, contactReaction, transitionBlend, hasUnsettledDeath } from './combat200-animation-policy.js?v=0.16.0-demo';
 import { PartyTrail, loopTiming, COMBAT_MOTION, combatPlaybackRate } from './party-motion.js?v=0.16.0-demo';
-import { walkable } from './model.js?v=forged-meshy-0191';
+import { walkable } from './model.js?v=campaign-v1';
 import { BattleLayoutCache } from './ui-framing.js?v=0.16.0-demo';
 import { paintGildedLine } from './bitmap.js?v=painted-20261114-r2';
 
-import { buildAuthoredRoad } from './authored-landscape.js?v=groundcover-0192';
+import { buildAuthoredRoad } from './authored-landscape.js?v=campaign-v1';
 import { bridgeAt, bridgeHeight, nearestLand, terrainElevation } from './area-geometry.js?v=rivers-0181';
-import { Groundcover } from './groundcover.js?v=groundcover-0192';
+import { Groundcover } from './groundcover.js?v=campaign-v1';
+import { CHAPTER_BIOMES } from './campaign-visuals.js?v=campaign-v1';
 
 const UP = new T.Vector3(0, 1, 0);
 const TAU = Math.PI * 2;
@@ -71,6 +72,7 @@ function visible(state, entity) {
 }
 function biome(area) {
   const s = String(area.biome || area.theme || area.id || '').toLowerCase();
+  if (CHAPTER_BIOMES[s]) return ({coast:'marsh',reef:'marsh',orchard:'forest',moor:'forest'})[s] || 'abbey';
   if (/marsh|swamp|bog|mire|flood|болот/.test(s)) return 'marsh';
   if (/abbey|crypt|ruin|cathedral|sanct|chapel|vault|dungeon|monastery|archive|fortress|quarry|аббат|склеп/.test(s)) return 'abbey';
   if (/village|town|hamlet|market|camp|haven|settlement|crossroad|деревн|лагер/.test(s)) return 'village';
@@ -282,6 +284,7 @@ export class World {
     const areas = values(Content.AREAS);
     this.area = areas.find(area => area.id === id) || areas[0];
     if (!this.area) return;
+    this.dropOtherCampaignModels?.(this.area);
     this.areaId = this.area.id;
     this.seedPhase = hash(this.areaId) % 1000 / 73;
     this.rng = random(hash(this.areaId));
@@ -289,13 +292,13 @@ export class World {
     this.radiusZ = Number(this.area.radiusZ || this.area.radius?.z || this.area.height / 2 || 26);
     this.biome = biome(this.area);
     this.theme = this.area.biome || this.biome;
-    const palette = PALETTES[this.biome];
+    const palette = CHAPTER_BIOMES[this.theme] || PALETTES[this.biome];
     this.terrainTile = palette.tile;
     this.scene.background.set(palette.sky);
     this.scene.fog.color.set(palette.fog);
-    this.scene.fog.density = this.biome === 'marsh' ? 0.015 : 0.011;
+    this.scene.fog.density = palette.density ?? (this.biome === 'marsh' ? 0.015 : 0.011);
     this.sun.color.set(palette.light);
-    this.sun.intensity = this.biome === 'abbey' ? 2.5 : 3.1;
+    this.sun.intensity = palette.exposure ?? (this.biome === 'abbey' ? 2.5 : 3.1);
     this.materials.get('leaves').color.set(palette.foliage);
     this.materials.get('cliff').color.set(palette.earth).multiplyScalar(0.62);
     this.paths = [];
@@ -867,7 +870,7 @@ export class World {
     for (const definition of values(this.area.npcs)) {
       const partyId = values(Content.PARTY).find(member => definition.id.startsWith(member.id + '_'))?.id;
       const role = partyId || definition.id;
-      const actor = this.createActor(`npc:${definition.id}`, roleLook(role)?.model || 'acolyte', { role, npc: true, portrait: definition.portrait, animationSource: definition.animationSource, visual: definition.visual });
+      const actor = this.createActor(`npc:${definition.id}`, roleLook(role)?.model || 'acolyte', { role, npc: true, model:definition.model, portrait: definition.portrait, animationSource: definition.animationSource, visual: definition.visual });
       actor.wrapper.position.set(definition.x, this.height(definition.x, definition.z), definition.z);
       actor.wrapper.rotation.y = Math.atan2(-definition.x, -definition.z) - (actor.sourceFrontYaw || 0);
       actor.definition = definition;
