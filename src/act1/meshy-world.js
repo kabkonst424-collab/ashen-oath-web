@@ -1,19 +1,20 @@
 import * as T from '../../assets/vendor/three.module.js';
 import {GLTFLoader} from '../../assets/vendor/GLTFLoader.js';
-import {BASE_MODELS} from './graphics-refresh.js?v=campaign-v1';
+import {BASE_MODELS} from './graphics-refresh.js?v=motion-110';
 import {mergeGeometries} from '../../assets/vendor/BufferGeometryUtils.js';
 import {TerrainMaterials} from './terrain-material.js?v=campaign-v1';
 import {paintMeshes} from './painted-material.js?v=painted-20261114-r2';
 import {fetchBytes} from './resource-loader.js?v=0.16.0-demo';
 
 import { buildAuthoredGround, buildAuthoredLandscape } from './authored-landscape.js?v=campaign-v1';
-import { CHAPTER_BIOMES, NEW_CHARACTERS, STARTING_MODELS, campaignModelsForArea } from './campaign-visuals.js?v=campaign-v1';
+import { NEW_CHARACTERS } from './campaign-visuals.js?v=campaign-v1';
+import { PROP_SLOTS, areaAssetPlan, terrainSlot } from './area-asset-plan.js?v=motion-110';
 
 // This module is installed after graphics-refresh. It changes presentation only;
 // authoritative movement and campaign state stay in model.js.
 export const WORLD_SLOTS=Object.freeze(['tree','rock','grass','wheat','house','tower','wall','pillar','arch','altar_inspect','brazier','well','chest','crate','barrel','camp','puzzle','bookshelf_book','merchant_stall','bridge','cart','crane','waterwheel','banner','satchel','basket','lantern','terrain_village','terrain_forest','terrain_marsh','terrain_ruin','path_strip','water_strip']);
 export const EXEMPT_WEAPONS=Object.freeze(['Sword','Shield','Staff','Spear','Censer','Hammer','Bow','Crossbow','Oar']);
-export const PROP_SLOTS=Object.freeze({Rock:'rock',House:'house',Tower:'tower',Wall:'wall',Pillar:'pillar',Arch:'arch',Altar:'altar_inspect',Inspect:'altar_inspect',Brazier:'brazier',Well:'well',Chest:'chest',Crate:'crate',Barrel:'barrel',Camp:'camp',Puzzle:'puzzle',Bookshelf:'bookshelf_book',Book:'book',Stall:'merchant_stall',Bridge:'bridge',Cart:'cart',Crane:'crane',Waterwheel:'waterwheel',BannerFrame:'banner',Satchel:'satchel',Basket:'basket',Lantern:'lantern',Tree:'tree',Grass:'grass',Wheat:'wheat'});
+export { PROP_SLOTS };
 // Props read against a standing humanoid (about 2.8 world units).
 const HEIGHT = {
   tree:8.1, rock:1, grass:.78, wheat:1.2, house:8.1, tower:12.8, wall:3.9, pillar:4.3, arch:5.45,
@@ -235,12 +236,89 @@ function prepareParts(gltf,entry){
 }
 
 
-function releaseUnadopted(gltf){const geometries=new Set(),materials=new Set(),textures=new Set();gltf?.scene?.traverse(object=>{if(!object.isMesh)return;geometries.add(object.geometry);for(const material of Array.isArray(object.material)?object.material:[object.material])if(material){materials.add(material);for(const value of Object.values(material))if(value?.isTexture)textures.add(value);}});for(const geometry of geometries)geometry.dispose();for(const material of materials)material.dispose();for(const texture of textures)texture.dispose();}
+function releaseUnadopted(gltf) {
+ const geometries=new Set(), materials=new Set(), textures=new Set(), skeletons=new Set();
+ gltf?.scene?.traverse(object=>{
+  if(!object.isMesh)return;
+  geometries.add(object.geometry);
+  if(object.skeleton)skeletons.add(object.skeleton);
+  for(const material of Array.isArray(object.material)?object.material:[object.material])if(material){
+   materials.add(material);
+   for(const value of Object.values(material))if(value?.isTexture)textures.add(value);
+  }
+ });
+ const bitmaps=new Set();
+ for(const texture of textures){
+  if(typeof texture.image?.close==='function')bitmaps.add(texture.image);
+  texture.dispose();
+ }
+ for(const geometry of geometries)geometry.dispose();
+ for(const material of materials)material.dispose();
+ for(const skeleton of skeletons)skeleton.dispose();
+ for(const bitmap of bitmaps)bitmap.close();
+}
 function decodeWorldAtlas(bytes,signal){const url=URL.createObjectURL(new Blob([bytes],{type:'image/webp'})),image=new Image();let completed=false;const decoding=new Promise((resolve,reject)=>{image.onload=()=>resolve(image);image.onerror=()=>reject(Error('Не удалось декодировать атлас поверхностей'));image.src=url;});return worldStage(decoding,signal).then(value=>new T.Texture(value)).then(texture=>{texture.needsUpdate=true;completed=true;return texture;}).finally(()=>{URL.revokeObjectURL(url);if(!completed){image.onload=null;image.onerror=null;image.src='';}});}
 function worldStage(promise,signal,late=()=>{}){return new Promise((resolve,reject)=>{let settled=false;const finish=(callback,value)=>{if(settled)return false;settled=true;clearTimeout(timer);signal.removeEventListener('abort',aborted);callback(value);return true;},aborted=()=>finish(reject,signal.reason||new DOMException('World load cancelled','AbortError')),timer=setTimeout(()=>finish(reject,Object.assign(Error('Модель не завершила декодирование за 30 секунд'),{name:'TimeoutError'})),30000);signal.addEventListener('abort',aborted,{once:true});if(signal.aborted)aborted();Promise.resolve(promise).then(value=>{if(!finish(resolve,value))late(value);},error=>finish(reject,error));});}
 const campaignURL = file => new URL(`../../assets/campaign/${file}`, import.meta.url);
 const jsonBytes = bytes => JSON.parse(new TextDecoder().decode(bytes));
 const sha256 = async buffer => Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',buffer)), n=>n.toString(16).padStart(2,'0')).join('');
+const assertActive = signal => { if(signal.aborted)throw signal.reason; };
+
+async function runAssetJobs(jobs, controller, onDone) {
+ let cursor=0;
+ const workers=Array.from({length:Math.min(3,jobs.length)},async()=>{
+  try {
+   while(cursor<jobs.length){
+    assertActive(controller.signal);
+    await jobs[cursor++]();
+    onDone();
+   }
+  } catch(error) {controller.abort(error);throw error;}
+ });
+ await Promise.allSettled(workers);
+ assertActive(controller.signal);
+}
+
+function assetRequest(world, url, signal) {
+ return fetchBytes(url, {...world.assetRequestOptions,signal});
+}
+
+async function loadVerifiedGLB(world,file,expectedHash,signal) {
+ const url=new URL(sourceURL(file));
+ url.searchParams.set('sha256',expectedHash);
+ const bytes=await assetRequest(world,url,signal);
+ if(await sha256(bytes)!==expectedHash)throw new Error('Asset SHA256 mismatch: '+file);
+ assertActive(signal);
+ return worldStage(new GLTFLoader().parseAsync(bytes,new URL('./',url).href),signal,releaseUnadopted);
+}
+
+async function loadLegacyAsset(world,id,signal) {
+ const expectedHash=world.legacyCharacters.get(id).sha256;
+ const file=id==='refreshProps'?'refresh-props.glb':`refresh/${id}.glb`;
+ const gltf=await loadVerifiedGLB(world,file,expectedHash,signal);
+ if(signal.aborted){releaseUnadopted(gltf);throw signal.reason;}
+ gltf.scene.traverse(object=>{
+  if(!object.isMesh)return;
+  object.castShadow=object.receiveShadow=true;
+  if(id!=='refreshProps')world.meshyCharacterGeometry.set(object.geometry,{kind:'meshy-character',base:id,
+   source:'assets/models/'+file,sourceSha256:expectedHash});
+ });
+ world.assets[id]=gltf;
+ world.loadedAssetHashes.set(id,expectedHash);
+ if(id==='refreshProps')world.exemptWeaponSourceSha256=expectedHash;
+}
+
+async function loadLocationProp(world,id,signal) {
+ const row=world.locationPropEntries.get(id);
+ const gltf=await loadVerifiedGLB(world,'world-meshy/'+row.file,row.sha256,signal);
+ if(signal.aborted){releaseUnadopted(gltf);throw signal.reason;}
+ try {
+  if(!id.startsWith('terrain_')&&!id.endsWith('_strip'))paintMeshes(gltf.scene);
+  world.meshyLibrary.set(id,prepareParts(gltf,row));
+  world.assets['world:'+id]=gltf;
+  world.loadedAssetHashes.set(id,row.sha256);
+ } catch(error) {releaseUnadopted(gltf);throw error;}
+}
 
 function campaignManifest(rows) {
  const map = new Map((rows || []).map(row=>[row.id,row]));
@@ -255,14 +333,16 @@ function campaignManifest(rows) {
 async function loadCampaignCharacter(world, id, row, signal) {
  const url = campaignURL(`actors/${id}.glb`), motionURL=campaignURL(`actors/${id}.json`);
  url.searchParams.set('sha256',row.modelSha256);motionURL.searchParams.set('sha256',row.motionSha256);
- const request = destination=>fetchBytes(destination,{...world.assetRequestOptions,signal});
+ const request = destination=>assetRequest(world,destination,signal);
  const [bytes, motion] = await Promise.all([request(url), request(motionURL)]);
  const [modelHash, motionHash] = await Promise.all([sha256(bytes), sha256(motion)]);
  const profile = jsonBytes(motion);
  if(profile.sourceHash!==modelHash||modelHash!==row.modelSha256||motionHash!==row.motionSha256)throw Error(`Хеш модели или движений не совпадает: ${id}`);
+ assertActive(signal);
  const asset = await worldStage(new GLTFLoader().parseAsync(bytes,new URL('./',url).href),signal,releaseUnadopted);
+ if(signal.aborted){releaseUnadopted(asset);throw signal.reason;}
  world.loadedAssetHashes.set(id,modelHash);
- try {await world.characterAnimations.loadCampaignProfile(id,row.profile,profile);}
+ try {await world.characterAnimations.loadCampaignProfile(id,row.profile,profile,row.motionSha256,signal);}
  catch(error){world.loadedAssetHashes.delete(id);world.characterAnimations.releaseCampaignProfile(row.profile,id);releaseUnadopted(asset);throw error;}
  if(signal.aborted){world.loadedAssetHashes.delete(id);world.characterAnimations.releaseCampaignProfile(row.profile,id);releaseUnadopted(asset);throw signal.reason;}
  asset.scene.traverse(object=>{
@@ -272,81 +352,126 @@ async function loadCampaignCharacter(world, id, row, signal) {
  world.assets[id]=asset;
 }
 
-function releaseCampaignCharacter(world,id){
+function releaseCharacter(world,id){
  const asset=world.assets[id];if(!asset)return;
  asset.scene.traverse(object=>{if(object.isMesh)world.meshyCharacterGeometry.delete(object.geometry);});
- world.characterAnimations.releaseCampaignProfile(world.campaignCharacters.get(id).profile,id);
+ const campaign=world.campaignCharacters.get(id);
+ if(campaign)world.characterAnimations.releaseCampaignProfile(campaign.profile,id);
  world.loadedAssetHashes.delete(id);delete world.assets[id];releaseUnadopted(asset);
+}
+
+function releaseLocationProp(world,id) {
+ const prop=world.meshyLibrary.get(id);
+ for(const part of prop.parts)part.geometry.dispose();
+ const key='world:'+id;
+ releaseUnadopted(world.assets[key]);
+ delete world.assets[key];world.meshyLibrary.delete(id);world.loadedAssetHashes.delete(id);
+}
+
+function retainAreaAssets(world, plan) {
+ const retain=new Set([...(plan?.models||[]),...(plan?.campaignModels||[])]);
+ for(const id of [...BASE_MODELS,...NEW_CHARACTERS])if(!retain.has(id))releaseCharacter(world,id);
+ for(const id of world.meshyLibrary.keys())if(!plan?.slots.has(id))releaseLocationProp(world,id);
+ const profiles=new Set(plan?.profiles);
+ for(const id of plan?.campaignModels||[])profiles.add(world.campaignCharacters.get(id).profile);
+ world.characterAnimations.releaseProfiles(profiles);
+ if(!plan?.campaignTerrain){world.campaignTerrain?.dispose();world.campaignTerrain=null;}
+}
+
+function missingAreaAssets(world, plan) {
+ const jobs=[];
+ for(const id of plan.models)if(!world.assets[id])jobs.push(signal=>loadLegacyAsset(world,id,signal));
+ for(const id of plan.campaignModels)if(!world.assets[id])jobs.push(signal=>loadCampaignCharacter(world,id,world.campaignCharacters.get(id),signal));
+ for(const slot of plan.slots)if(!world.meshyLibrary.has(slot))jobs.push(signal=>loadLocationProp(world,slot,signal));
+ if(plan.campaignTerrain&&!world.campaignTerrain)jobs.push(async signal=>{
+  const texture=await decodeWorldAtlas(await assetRequest(world,campaignURL('terrain.webp?v=campaign-v1'),signal),signal);
+  if(signal.aborted){texture.dispose();throw signal.reason;}
+  texture.colorSpace=T.SRGBColorSpace;
+  world.campaignTerrain=texture;
+ });
+ return jobs;
 }
 
 export function installMeshyWorld(World){
  const P=World.prototype,oldProp=P.prop,oldActor=P.createActor,oldInteractions=P.buildInteractions,oldPerimeter=P.perimeter,oldDispose=P.dispose,oldClearStage=P.clearBattleStage;
  const loadWorldAssets=async function(onProgress){
-  this.meshyLoadController?.abort();const controller=new AbortController();this.meshyLoadController=controller;const signal=controller.signal,assertActive=()=>{if(signal.aborted||this.meshyLoadController!==controller)throw signal.reason||new DOMException('World load superseded','AbortError');};let workers=[];try{
-  const request=async url=>fetchBytes(url,{...this.assetRequestOptions,signal,onRetry:notice=>{this.assetRequestOptions?.onRetry?.(notice);onProgress?.('Повтор загрузки ресурса · попытка '+notice.nextAttempt);}}),readJSON=async url=>JSON.parse(new TextDecoder().decode(await request(url)));
-  const [manifest,characterManifest]=await Promise.all([readJSON(sourceURL('world-meshy/manifest.json')),readJSON(sourceURL('refresh-manifest.json'))].map(operation=>operation.catch(error=>{controller.abort(error);throw error;}))),entries=assertWorldManifest(manifest);assertActive();this.meshyManifest=manifest;this.meshyLibrary=new Map();this.loadedAssetHashes=new Map();
-  const characters=assertCharacterManifest(characterManifest);this.meshyCharacterGeometry=new Map();
-  const loader=new GLTFLoader();let completed=0;
-  const jobs=[...BASE_MODELS.map(id=>({file:'refresh/'+id+'.glb',key:id})),{file:'refresh-props.glb',key:'refreshProps'},...entries.values()].map(item=>async()=>{
-   const physical=entries.get(item.id),file=physical?'world-meshy/'+item.file:item.file,cacheURL=new URL(sourceURL(file)),expectedHash=physical?item.sha256:characters.get(item.key)?.sha256;if(expectedHash)cacheURL.searchParams.set('sha256',expectedHash);const url=cacheURL.href;
-   const bytes=await request(url);
-   const digest=await crypto.subtle.digest('SHA-256',bytes),sha=Array.from(new Uint8Array(digest),n=>n.toString(16).padStart(2,'0')).join('');assertActive();
-   if(physical&&sha!==item.sha256)throw new Error('Meshy asset hash mismatch: '+item.id);
-   if(item.key&&sha!==characters.get(item.key)?.sha256)throw new Error('Retained Meshy character hash mismatch: '+item.key);
-   this.loadedAssetHashes.set(item.key||item.id,sha);
-   assertActive();const gltf=await worldStage(loader.parseAsync(bytes,url.slice(0,url.lastIndexOf('/')+1)),signal,releaseUnadopted);if(signal.aborted){releaseUnadopted(gltf);throw signal.reason;}
-    gltf.scene.traverse(o=>{if(o.isMesh)o.castShadow=o.receiveShadow=true;});
-    if(physical && !item.id.startsWith('terrain_') && !item.id.endsWith('_strip')) paintMeshes(gltf.scene);
-   this.assets[physical?'world:'+item.id:item.key]=gltf;if(physical)this.meshyLibrary.set(item.id,prepareParts(gltf,item));
-   if(BASE_MODELS.includes(item.key))gltf.scene.traverse(object=>{if(object.isMesh)this.meshyCharacterGeometry.set(object.geometry,{kind:'meshy-character',base:item.key,source:'assets/models/'+item.file,sourceSha256:sha});});
-   if(item.key==='refreshProps')this.exemptWeaponSourceSha256=sha;
-   onProgress?.('Модели Meshy · '+(++completed)+' / '+jobs.length);
-  });
-  let next=0;workers=Array.from({length:4},async()=>{try{while(next<jobs.length&&!signal.aborted)await jobs[next++]();}catch(error){controller.abort(error);throw error;}});await Promise.all(workers);assertActive();
-  Object.assign(this.assets,{hero:this.assets.alar_nocape,husk:this.assets.ash_husk,acolyte:this.assets.ember_acolyte,sentinel:this.assets.radan_nocape,boss:this.assets.bellkeeper});
-   const artURL = new URL('../../assets/act1/painted/', import.meta.url);
-   const [terrainBytes, pigmentBytes, actorsBytes] = await Promise.all([
-    ...['terrain.webp', 'materials.webp'].map(file => request(new URL(file + '?v=painted-20261114-r2', artURL).href)),
-    request(campaignURL('actors/manifest.json?v=campaign-v1')),
-   ]);
-   this.campaignCharacters=campaignManifest(jsonBytes(actorsBytes).actors);
-   const atlas = await decodeWorldAtlas(terrainBytes, signal);
-   try { assertActive(); } catch (error) { atlas.dispose(); throw error; }
-   atlas.colorSpace = T.SRGBColorSpace;
-   this.atlas = atlas;
-   this.paintedTerrain = atlas;
-   const pigments = await decodeWorldAtlas(pigmentBytes, signal);
-   try { assertActive(); } catch (error) { pigments.dispose(); throw error; }
-   pigments.colorSpace = T.SRGBColorSpace;
-   pigments.generateMipmaps = false;
-   pigments.minFilter = pigments.magFilter = T.LinearFilter;
-   this.paintedPigments = pigments;
-  this.makeMaterials();this.loaded=true;onProgress?.('Мир Meshy готов');return this;
-  }catch(error){controller.abort(error);await Promise.allSettled(workers);if(this.meshyLoadController===controller){this.loaded=false;try{this.dispose();}catch(disposeError){console.warn('Partial world cleanup:',disposeError);}}throw error;}
+  const controller=new AbortController(),signal=controller.signal;
+  this.meshyLoadController=controller;
+  this.meshyLibrary=new Map();this.loadedAssetHashes=new Map();this.meshyCharacterGeometry=new Map();
+  const readJSON=async url=>jsonBytes(await assetRequest(this,url,signal));
+  const artURL=new URL('../../assets/act1/painted/',import.meta.url);
+  const loadAtlas=async file=>{
+   const url=new URL(file+'?v=painted-20261114-r2',artURL);
+   const texture=await decodeWorldAtlas(await assetRequest(this,url,signal),signal);
+   if(signal.aborted){texture.dispose();throw signal.reason;}
+   texture.colorSpace=T.SRGBColorSpace;
+   return texture;
+  };
+  const jobs=[
+   async()=>{this.meshyManifest=await readJSON(sourceURL('world-meshy/manifest.json'));this.locationPropEntries=assertWorldManifest(this.meshyManifest);},
+   async()=>{this.legacyCharacters=assertCharacterManifest(await readJSON(sourceURL('refresh-manifest.json')));await loadLegacyAsset(this,'refreshProps',signal);},
+   async()=>{this.campaignCharacters=campaignManifest((await readJSON(campaignURL('actors/manifest.json?v=campaign-v1'))).actors);},
+   async()=>{this.paintedTerrain=this.atlas=await loadAtlas('terrain.webp');},
+   async()=>{const texture=await loadAtlas('materials.webp');texture.generateMipmaps=false;texture.minFilter=texture.magFilter=T.LinearFilter;this.paintedPigments=texture;},
+  ];
+  let complete=0;
+  try {
+   onProgress?.(0);
+   await runAssetJobs(jobs,controller,()=>onProgress?.(++complete/(jobs.length+1)));
+   this.makeMaterials();
+   this.sharedAssetsReady=true;
+   onProgress?.(1);
+   return this;
+  } catch(error) {this.dispose();throw error;}
  };
- // A second caller joins the same load; it never replaces partially adopted sources.
- P.loadAssets=function(onProgress){if(this.loaded)return Promise.resolve(this);if(this.meshyLoadPromise)return this.meshyLoadPromise;const pending=loadWorldAssets.call(this,onProgress).finally(()=>{if(this.meshyLoadPromise===pending)this.meshyLoadPromise=null;});this.meshyLoadPromise=pending;return pending;};
- P.prepareCampaignArea=function(area){
-  if(!this.campaignCharacters||!area)return null;
-  const ids=campaignModelsForArea(area),needsTexture=!!CHAPTER_BIOMES[area.biome];
-  if(!this.campaignStartersReady)ids.unshift(...STARTING_MODELS);
-  const missing=ids.filter(id=>!this.assets[id]);
-  if(!missing.length&&(!needsTexture||this.campaignTerrain))return null;
-  if(this.campaignPending?.id===area.id)return this.campaignPending.promise;
-  if(this.campaignPending)return this.campaignPending.promise.catch(()=>{}).then(()=>this.prepareCampaignArea(area));
-  const controller=this.meshyLoadController,signal=controller.signal;
-  const wait=Promise.allSettled([
-   ...missing.map(id=>loadCampaignCharacter(this,id,this.campaignCharacters.get(id),signal)),
-   ...(needsTexture&&!this.campaignTerrain?[fetchBytes(campaignURL('terrain.webp?v=campaign-v1'),{...this.assetRequestOptions,signal})
-     .then(bytes=>decodeWorldAtlas(bytes,signal)).then(texture=>{texture.colorSpace=T.SRGBColorSpace;this.campaignTerrain=texture;})]:[]),
-  ]).then(results=>{const failure=results.find(result=>result.status==='rejected');if(failure)throw failure.reason;this.campaignStartersReady=true;})
-    .finally(()=>{if(this.campaignPending?.promise===wait)this.campaignPending=null;});
-  this.campaignPending={id:area.id,promise:wait};
-  return wait;
+ P.loadAssets=function(onProgress){
+  if(this.sharedAssetsReady)return Promise.resolve(this);
+  if(!this.meshyLoadPromise)this.meshyLoadPromise=loadWorldAssets.call(this,onProgress).finally(()=>{this.meshyLoadPromise=null;});
+  return this.meshyLoadPromise;
  };
- P.dropOtherCampaignModels=function(area){
-  const keep=new Set([...STARTING_MODELS,...campaignModelsForArea(area)]);
-  for(const id of NEW_CHARACTERS)if(!keep.has(id))releaseCampaignCharacter(this,id);
+ P.prepareCampaignArea=function(area,state,onProgress){
+  if(this.disposed||!this.sharedAssetsReady||!this.characterAnimations?.manifest)return Promise.reject(new Error('World catalog is not ready'));
+  const plan=areaAssetPlan(area,state,this.characterAnimations.manifest.profiles,this.locationPropEntries);
+  const signature=JSON.stringify([area.id,...[plan.models,plan.campaignModels,plan.profiles,plan.slots].map(set=>[...set].sort())]);
+  const pending=this.areaAssetPending;
+  if(pending?.signature===signature){
+   if(onProgress){pending.listeners.add(onProgress);onProgress(pending.progress);}
+   return pending.promise;
+  }
+  if(pending){
+   pending.controller.abort(new DOMException('Area load superseded','AbortError'));
+   return pending.promise.catch(()=>{}).then(()=>this.prepareCampaignArea(area,state,onProgress));
+  }
+  const jobs=missingAreaAssets(this,plan);
+  const profiles=[...plan.profiles].filter(key=>!this.characterAnimations.hasProfile(key));
+  this.preparedAreaAssets=null;
+  if(!jobs.length&&!profiles.length){this.preparedAreaAssets=plan;onProgress?.(1);return null;}
+  const controller=new AbortController(),listeners=new Set(onProgress?[onProgress]:[]),total=jobs.length+profiles.length;
+  const request={signature,controller,listeners,progress:0};
+  let complete=0;
+  const onDone=()=>{request.progress=++complete/total;for(const listener of listeners)listener(request.progress);};
+  request.promise=(async()=>{
+   for(const listener of listeners)listener(0);
+   await runAssetJobs(jobs.map(job=>()=>job(controller.signal)),controller,onDone);
+   await this.characterAnimations.prepareProfiles(profiles,onDone,controller.signal);
+   assertActive(controller.signal);
+   this.preparedAreaAssets=plan;
+  })().catch(error=>{
+   if(!this.disposed)retainAreaAssets(this,this.residentAreaAssets);
+   throw error;
+  }).finally(()=>{if(this.areaAssetPending===request)this.areaAssetPending=null;});
+  this.areaAssetPending=request;
+  return request.promise;
+ };
+ P.dropOtherCampaignModels=function(area,state){
+  const plan=this.preparedAreaAssets?.areaId===area.id?this.preparedAreaAssets:
+   this.residentAreaAssets?.areaId===area.id?this.residentAreaAssets:
+   areaAssetPlan(area,state,this.characterAnimations.manifest.profiles,this.locationPropEntries);
+  this.preparedAreaAssets=null;
+  this.residentAreaAssets=plan;
+  // Scene geometry is already cleared. Its materials borrow the prop textures.
+  this.terrainMaterials?.dispose();this.terrainMaterials=null;
+  retainAreaAssets(this,plan);
  };
  P.meshyParts=function(id){const item=this.meshyLibrary?.get(id);if(!item)throw new Error('Required Meshy model is not loaded: '+id);return item;};
  P.meshyProp=function(id,parent=this.areaGroup,position=[0,0,0],scale=1){
@@ -386,7 +511,7 @@ export function installMeshyWorld(World){
   for(const [key,chunk] of chunks)for(const part of source.parts){const mesh=new T.InstancedMesh(part.geometry,part.material,chunk.length);chunk.forEach((t,index)=>{object.position.set(t.x,t.y,t.z);object.rotation.set(t.rx||0,t.ry||0,t.rz||0);object.scale.set(t.sx??t.scale??1,t.sy??t.scale??1,t.sz??t.scale??1);object.updateMatrix();mesh.setMatrixAt(index,object.matrix);});mesh.name=`Meshy_${id}_chunk_${key}`;mesh.instanceMatrix.setUsage(T.StaticDrawUsage);mesh.instanceMatrix.needsUpdate=true;mesh.castShadow=!NO_CAST_SHADOW.has(id);mesh.receiveShadow=true;mesh.userData.modelOrigin=provenance(source.entry);mesh.computeBoundingBox();mesh.computeBoundingSphere();group.add(mesh);}
   return group;
  };
- P.meshyTerrainId=function(){return CHAPTER_BIOMES[this.theme]?.surface||({village:'terrain_village',forest:'terrain_forest',marsh:'terrain_marsh',abbey:'terrain_ruin'})[this.biome]||'terrain_ruin';};
+ P.meshyTerrainId=function(){return terrainSlot(this.theme,this.biome);};
  P.meshySurface=function(id,options,parent=this.areaGroup,stage=false){
   const source=this.meshyParts(id),group=new T.Group();group.name='Meshy_surface_'+id;parent.add(group);
   this.terrainMaterials??=new TerrainMaterials(this);
@@ -459,5 +584,17 @@ export function installMeshyWorld(World){
   }
  };
  P.auditMeshyCoverage=function(){return auditMeshyCoverage(this.scene);};
- P.dispose=function(){this.meshyLoadController?.abort(new DOMException('World disposed','AbortError'));const baked=new Set();for(const item of this.meshyLibrary?.values()||[])for(const part of item.parts)baked.add(part.geometry);oldDispose.call(this);this.terrainMaterials?.dispose();this.campaignTerrain?.dispose();for(const geometry of baked)geometry.dispose();this.meshyLibrary?.clear();};
+ P.dispose=function(){
+  if(this.disposed)return;
+  const abort=new DOMException('World disposed','AbortError');
+  this.meshyLoadController?.abort(abort);this.areaAssetPending?.controller.abort(abort);
+  const sources=new Set(Object.values(this.assets));
+  this.assets={};
+  try {oldDispose.call(this);}finally {
+   this.terrainMaterials?.dispose();this.campaignTerrain?.dispose();
+   for(const item of this.meshyLibrary?.values()||[])for(const part of item.parts)part.geometry.dispose();
+   for(const asset of sources)releaseUnadopted(asset);
+   this.meshyLibrary?.clear();this.meshyCharacterGeometry?.clear();this.loadedAssetHashes?.clear();
+  }
+ };
 }

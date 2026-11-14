@@ -18,7 +18,7 @@ const approach=(value,target,amount)=>value<target?Math.min(target,value+amount)
 // A deterministic presentation contract; this does not change model action or RNG timing.
 export const COMBAT_MOTION=Object.freeze({duration:.92,impact:.46,spacing:1.05,reaction:.28,finishPad:.12});
 export function combatPlaybackRate(name,clipDuration,timing=COMBAT_MOTION){
-  return (name==='Attack'||name==='Cast'||/^Cast[A-Za-z0-9_]+$/.test(name))&&Number.isFinite(clipDuration)&&clipDuration>0?clipDuration/(timing?.duration||COMBAT_MOTION.duration):1;
+  return (name==='Attack'||name==='ShootBow'||/^Cast[A-Za-z0-9_]*$/.test(name))&&Number.isFinite(clipDuration)&&clipDuration>0?clipDuration/(timing?.body?.duration||timing?.duration||COMBAT_MOTION.duration):1;
 }
 export const flightBaseline=base=>base==='moth'?.17:0;
 export function mirrorWingDelta(quaternion,rest,scratch){

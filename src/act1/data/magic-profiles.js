@@ -75,6 +75,9 @@ export const MAGIC_PROFILES = Object.freeze({
 });
 
 const enemy = (color, theme, extra = {}) => Object.freeze({ color, theme, ...extra });
+const BASIC_BOW = profile('physical', 'ShootBow', 0xdfc786, { style: 'arrow' });
+const BASIC_BLADE = profile('physical', 'Attack', 0xf6d38c, { style: 'blade' });
+const BASIC_SPEAR = profile('physical', 'Attack', 0xe4cc9e, { style: 'thrust' });
 /** All 31 enemy variants retain their original skill/element semantics. */
 export const ENEMY_MAGIC_OVERRIDES = Object.freeze({
   ash_husk: enemy(0xf1b98c, 'ash', { physical: 'blade' }),
@@ -112,8 +115,12 @@ export const ENEMY_MAGIC_OVERRIDES = Object.freeze({
 
 export function magicProfile(event = {}, actor) {
   const hostile = !!actor?.options?.hostile || String(actor?.id || '').startsWith('enemy:');
-  const skillId = event.skillId || (event.kind === 'defend' ? 'enemy_guard' : event.kind === 'attack' ? 'enemy_claw' : null);
+  const skillId = event.skillId || (event.kind === 'defend' ? 'enemy_guard' : null);
   let selected = MAGIC_PROFILES[skillId];
+  if (!selected && event.kind === 'attack') {
+    const role = actor?.options?.role || event.actorId;
+    selected = hostile ? MAGIC_PROFILES.enemy_claw : role === 'myrt' ? BASIC_BOW : role === 'radan' ? BASIC_SPEAR : BASIC_BLADE;
+  }
   if (skillId === 'cinder_wave' && event.element === 'light') {
     selected = { ...selected, family: 'nova', style: 'dawn', color: 0xffe0a0, core: 0xfffae9 };
   }
@@ -123,7 +130,12 @@ export function magicProfile(event = {}, actor) {
   if (!selected && event.kind === 'item') selected = profile('heal', 'CastMend', 0xc1e6b5, { style: 'item' });
   if (!selected) selected = MAGIC_PROFILES.enemy_claw;
   // Conventional Attack/Block clips keep physical creatures and weapon users grounded.
-  if (!hostile) return { ...selected, skillId, hostile: false };
+  if (!hostile) {
+    if (selected.style === 'arrow' && (actor?.options?.role || event.actorId) === 'myrt') {
+      return { ...selected, projectile: false, animation: 'ShootBow', skillId, hostile: false };
+    }
+    return { ...selected, skillId, hostile: false };
+  }
   const override = ENEMY_MAGIC_OVERRIDES[actor?.options?.enemyId] || {};
   const color = selected.family === 'ice' ? selected.color : override.color ?? selected.color;
   return { ...selected, ...override, color, skillId, hostile: true,

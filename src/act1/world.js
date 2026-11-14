@@ -1,20 +1,24 @@
-import {installRefresh} from './graphics-refresh.js?v=campaign-v1';
-import {installMeshyWorld} from './meshy-world.js?v=campaign-v1';
-import {WorldElements,installWorldElements} from './water-fire.js?v=campaign-v1';
-import {MagicVfx} from './magic-vfx.js?v=campaign-v1';
-import {advancePaintedPose, orientPaintedActors, paintedActionAge, resetPaintedPose} from './painted-motion.js?v=painted-20261114-r2';
-import {CharacterAnimationLibrary} from './character-animation.js?v=campaign-v1';
+import {installRefresh} from './graphics-refresh.js?v=motion-110';
+import {installMeshyWorld} from './meshy-world.js?v=motion-110';
+import {areaBiome} from './area-asset-plan.js?v=motion-110';
+import {WorldElements,installWorldElements} from './water-fire.js?v=motion-110';
+import {MagicVfx} from './magic-vfx.js?v=motion-110';
+import {advancePaintedPose, orientPaintedActors, paintedActionAge, resetPaintedPose} from './painted-motion.js?v=motion-110';
+import {CharacterAnimationLibrary} from './character-animation.js?v=motion-110';
 import {installBrowserPerformance} from './browser-performance.js?v=0.16.0-demo';
 import * as T from '../../assets/vendor/three.module.js';
 import { GLTFLoader } from '../../assets/vendor/GLTFLoader.js';
 import { clone as cloneSkeleton } from '../../assets/vendor/SkeletonUtils.js';
 import * as Content from './content.js?v=campaign-v1';
 import { battleFormation, fitBattleCamera, facingToward, oppositionFacing, wrapFacing } from './battle-stage.js?v=0.16.0-demo';
-import { combatMotionPolicy, actionLunge } from './presentation-motion.js?v=forged-019';
-import { actionTimeline, actionClipPhase } from './presentation-timing.js?v=forged-019';
+import { combatMotionPolicy, actionLunge, impactRecoil, meleeTiming, meleeTravel } from './presentation-motion.js?v=motion-110';
+import { actionTimeline, actionClipPhase } from './presentation-timing.js?v=motion-110';
 import { reactionPhase, contactReaction, transitionBlend, hasUnsettledDeath } from './combat200-animation-policy.js?v=0.16.0-demo';
-import { PartyTrail, loopTiming, COMBAT_MOTION, combatPlaybackRate } from './party-motion.js?v=0.16.0-demo';
-import { walkable } from './model.js?v=campaign-v1';
+import { PartyTrail, loopTiming, COMBAT_MOTION, combatPlaybackRate } from './party-motion.js?v=motion-110';
+import { walkable } from './model.js?v=motion-110';
+import { gaitForSpeed, gaitRate, gaitEntryPhase } from './actor-locomotion.js?v=motion-110';
+import { applyFootContact, resetFootContact } from './foot-contact.js?v=motion-110';
+import { updateBow, disposeBow } from './bow-presentation.js?v=motion-110';
 import { BattleLayoutCache } from './ui-framing.js?v=0.16.0-demo';
 import { paintGildedLine } from './bitmap.js?v=painted-20261114-r2';
 
@@ -69,14 +73,6 @@ function visible(state, entity) {
   return condition(state, entity.visibleWhen ?? entity.requiresFlag ?? entity.requiresFlags ?? entity.requires)
     && !(entity.hideWhen && condition(state, entity.hideWhen))
     && !(entity.hiddenByFlag && flag(state, entity.hiddenByFlag));
-}
-function biome(area) {
-  const s = String(area.biome || area.theme || area.id || '').toLowerCase();
-  if (CHAPTER_BIOMES[s]) return ({coast:'marsh',reef:'marsh',orchard:'forest',moor:'forest'})[s] || 'abbey';
-  if (/marsh|swamp|bog|mire|flood|болот/.test(s)) return 'marsh';
-  if (/abbey|crypt|ruin|cathedral|sanct|chapel|vault|dungeon|monastery|archive|fortress|quarry|аббат|склеп/.test(s)) return 'abbey';
-  if (/village|town|hamlet|market|camp|haven|settlement|crossroad|деревн|лагер/.test(s)) return 'village';
-  return 'forest';
 }
 
 /** Read-only Three.js presentation. All movement, flags and combat belong to the model. */
@@ -144,20 +140,20 @@ export class World {
   async load(onProgress) {
     if (this.loadPromise) return this.loadPromise;
     this.loadPromise = (async () => {
-      await this.loadAssets(onProgress);
+      await this.loadAssets(value => onProgress?.(value * .62));
       // Keep render/loadArea behind the complete presentation initialization.
       this.loaded = false;
       if (this.disposed) return this;
-      this.characterAnimations = new CharacterAnimationLibrary(this);
-      await this.characterAnimations.load(onProgress);
+      this.characterAnimations = new CharacterAnimationLibrary(this, {requestOptions: this.assetRequestOptions});
+      await this.characterAnimations.load();
       if (this.disposed) return this;
-      onProgress?.('Заклинания, огонь и вода…');
+      onProgress?.(.76);
       this.magicVfx = new MagicVfx(this);
       await this.magicVfx.load();
       if (this.disposed) return this;
       this.worldElements = new WorldElements(this);
       this.loaded = true;
-      onProgress?.('Мир первого акта готов');
+      onProgress?.(1);
       return this;
     })();
     return this.loadPromise;
@@ -284,13 +280,13 @@ export class World {
     const areas = values(Content.AREAS);
     this.area = areas.find(area => area.id === id) || areas[0];
     if (!this.area) return;
-    this.dropOtherCampaignModels?.(this.area);
+    this.dropOtherCampaignModels?.(this.area,state);
     this.areaId = this.area.id;
     this.seedPhase = hash(this.areaId) % 1000 / 73;
     this.rng = random(hash(this.areaId));
     this.radiusX = Number(this.area.radiusX || this.area.radius?.x || this.area.width / 2 || 30);
     this.radiusZ = Number(this.area.radiusZ || this.area.radius?.z || this.area.height / 2 || 26);
-    this.biome = biome(this.area);
+    this.biome = areaBiome(this.area);
     this.theme = this.area.biome || this.biome;
     const palette = CHAPTER_BIOMES[this.theme] || PALETTES[this.biome];
     this.terrainTile = palette.tile;
@@ -885,7 +881,8 @@ export class World {
       this.areaGroup.add(group);
       const item = this.addProxy(group, definition, 'encounter', definition.boss ? 1.9 : 1.5, definition.boss ? 3.7 : 2.4);
       item.marker = this.ring(group, true, definition.boss ? 1.85 : 1.4);
-      const enemyId = typeof definition.enemies?.[0] === 'string' ? definition.enemies[0] : definition.enemies?.[0]?.id;
+      const first = definition.enemies?.[0];
+      const enemyId = typeof first === 'string' ? first : first?.kind || first?.id;
       const enemy = Content.ENEMIES?.[enemyId] || values(Content.ENEMIES).find(e => e.id === enemyId);
       const actor = this.createActor(`encounter:${definition.id}`, enemy?.kind || (definition.boss ? 'boss' : 'husk'), { hostile: true, enemyId, animationSource: enemy?.animationSource, visual: enemy?.visual });
       actor.wrapper.position.copy(group.position);
@@ -919,13 +916,15 @@ export class World {
   animatePatrol(actor, dt) {
     const patrol = actor.stroll, { definition: d, target } = patrol;
     patrol.time += dt;
-    const [dx, dz, period] = d.stroll;
+    const [dx, dz, requestedPeriod] = d.stroll;
+    const period = requestedPeriod > 0 ? requestedPeriod : 6.4 + (hash(d.id) % 28) * .1;
     const phase = TAU * patrol.time / period;
     const x = d.x + dx * Math.sin(phase), z = d.z + dz * Math.sin(phase), speed = Math.cos(phase);
     const safe = walkable(this.areaId, x, z), moving = Math.abs(speed) > .23 && safe;
     const yaw = moving ? Math.atan2(dx * speed, dz * speed) :
       actor.wrapper.rotation.y + (actor.sourceFrontYaw || 0);
-    target.set(safe ? x : d.x, this.height(safe ? x : d.x, safe ? z : d.z), safe ? z : d.z);
+    if (safe) target.set(x, this.walkHeight(x,z), z);
+    else target.copy(actor.wrapper.position);
     actor.motionSpeed = moving ? Math.hypot(dx, dz) * TAU / period * Math.abs(speed) : 0;
     this.animate(actor, target, yaw, moving ? 'Walk' : 'Idle', 1, dt, this.justEnteredArea);
   }
@@ -1057,14 +1056,15 @@ export class World {
     const action = actor.actions[name];
     if (!action) return;
     const previousAction = actor.actions[actor.current];
-    const gaitPhase = ['Walk','Run'].includes(name) && ['Walk','Run'].includes(actor.current) && previousAction?.getClip ? (previousAction.time / previousAction.getClip().duration) % 1 : null;
+    const gaitPhase = ['Walk','Run'].includes(actor.current) && previousAction?.getClip ? (previousAction.time / previousAction.getClip().duration) % 1 : null;
     const looping = ['Idle','Walk','Run'].includes(name);
-    const blend = transitionBlend(actor.current, name);
+    const blend = name==='Idle'&&gaitPhase!==null ? .16 : transitionBlend(actor.current, name);
     actor.actions[actor.current]?.fadeOut(blend);
     action.reset();
     if (looping) {
       const timing=loopTiming(actor.id,name,action.getClip().duration,this.time,actor.motionSpeed||0);
-      action.time=gaitPhase == null ? timing.phase : gaitPhase * action.getClip().duration; action.setEffectiveTimeScale(timing.rate);
+      action.time=gaitEntryPhase(actor,name,actor.current,gaitPhase,timing.phase/action.getClip().duration)*action.getClip().duration;
+      action.setEffectiveTimeScale(gaitRate(actor,name,action.getClip().duration,timing.rate));
     } else action.setEffectiveTimeScale(combatPlaybackRate(name,action.getClip().duration,actor.presentationTiming));
     action.fadeIn(blend).play();
     actor.current = name;
@@ -1080,20 +1080,37 @@ export class World {
     if (!dying) { actor.deathFacingYaw = null; actor.deathPosition = null; actor.restoredCorpse = false; }
     else if (!Number.isFinite(actor.deathFacingYaw)) actor.deathFacingYaw = actor.initialized ? actor.wrapper.rotation.y : angle - (actor.sourceFrontYaw || 0);
     if (dying && actor.initialized && !actor.deathPosition) actor.deathPosition = actor.wrapper.position.clone();
+    const timing = actor.presentationTiming;
+    const age = this.time - actor.actionAt;
+    const travel = !dying && this.time < actor.lungeUntil ? meleeTravel(age,timing) : null;
+    if ((travel==='back'||travel==='turn')&&actor.lungeDirection) {
+      angle=Math.atan2(-actor.lungeDirection.x,-actor.lungeDirection.z);
+    }
     const placement = dying && actor.deathPosition ? actor.deathPosition : target;
     const yaw = dying ? actor.deathFacingYaw : wrapFacing(angle - (actor.sourceFrontYaw || 0));
     if (!actor.initialized || snap) { actor.wrapper.position.copy(placement); actor.wrapper.rotation.y = yaw; actor.initialized = true; }
     else {
       if(actor.followControlled || actor.battleControlled || dying)actor.wrapper.position.copy(placement);
       else actor.wrapper.position.lerp(placement, 1 - Math.exp(-dt * 11));
-      const delta = wrapFacing(yaw - actor.wrapper.rotation.y), turnRate = activeAim ? 12 : 5.5;
+      const delta = wrapFacing(yaw - actor.wrapper.rotation.y), turnRate = travel==='turn'||activeAim ? 12 : 5.5;
       actor.wrapper.rotation.y = dying ? yaw : wrapFacing(actor.wrapper.rotation.y + T.MathUtils.clamp(delta, -dt * turnRate, dt * turnRate));
     }
     if (!dying && this.time < actor.lungeUntil && actor.lungeDirection) {
-      const timing = actor.presentationTiming || actionTimeline();
-      actor.wrapper.position.addScaledVector(actor.lungeDirection, actionLunge(this.time - actor.lungeStart, timing, actor.lungeDistance ?? .42));
+      const distance=actionLunge(age,timing,actor.lungeDistance);
+      actor.wrapper.position.addScaledVector(actor.lungeDirection,distance);
+      if(travel&&travel!=='turn'){
+        const priorDistance=actionLunge(age-Math.max(dt,.01),timing,actor.lungeDistance);
+        actor.motionSpeed=Math.abs(distance-priorDistance)/Math.max(dt,.01);
+      }
     }
-    const animation = dying ? 'Death' : this.time < actor.reactionUntil ? 'Hit' : this.time < actor.pulseUntil ? actor.pulseAnimation : desiredAnimation;
+    if (!dying && actor.battleControlled && this.time < actor.reactionUntil && actor.recoil) {
+      actor.wrapper.position.addScaledVector(actor.recoil,
+        this.reducedMotion ? 0 : impactRecoil(this.time - actor.reactionAt, actor.reactionUntil - actor.reactionAt, actor.recoilStrength));
+    }
+    if (!dying && actor.battleControlled) actor.wrapper.position.y = this.height(actor.wrapper.position.x, actor.wrapper.position.z);
+    const animation = dying ? 'Death' : this.time < actor.reactionUntil ? 'Hit' :
+      travel ? (travel==='turn' ? 'Idle' : gaitForSpeed(actor.motionSpeed,actor.current)) :
+      this.time < actor.pulseUntil ? actor.pulseAnimation : desiredAnimation;
     if (dying && !actor.deathPosition) actor.deathPosition = actor.wrapper.position.clone();
     this.play(actor, animation);
     if (restoredCorpse && actor.current === 'Death') {
@@ -1109,9 +1126,10 @@ export class World {
     actor.presentedDead = presentedDead;
     if(['Idle','Walk','Run'].includes(actor.current)) {
       const action=actor.actions[actor.current],timing=loopTiming(actor.id,actor.current,action.getClip().duration,this.time,actor.motionSpeed||0);
-      action.setEffectiveTimeScale(timing.rate);
+      action.setEffectiveTimeScale(gaitRate(actor,actor.current,action.getClip().duration,timing.rate));
     }
     const sampleTime = advancePaintedPose(actor, dt, this.time);
+    actor.poseSampled = sampleTime !== null;
     if (sampleTime !== null && actor.current === 'Hit' && Number.isFinite(actor.reactionAt)) {
       const action = actor.actions.Hit;
       if (action?.getClip) { action.time = reactionPhase(sampleTime, actor.reactionAt, COMBAT_MOTION.reaction) * action.getClip().duration; actor.mixer.update(0); }
@@ -1151,7 +1169,7 @@ export class World {
       const member = party[index];
       const actor = this.createActor(`party:${member.id}`, roleLook(member.id)?.model || 'hero', { role: member.id, party: true });
       actor.wrapper.visible = true;
-      let x = position.x, z = position.z, facing = angle,animation=leaderSpeed>.12?'Run':'Idle';
+      let x = position.x, z = position.z, facing = angle,animation=gaitForSpeed(leaderSpeed, actor.current);
       actor.followControlled=!battle&&index>0;
       actor.battleControlled=!!battle;
       actor.motionSpeed=battle?0:leaderSpeed;
@@ -1355,10 +1373,12 @@ export class World {
     const actionsBySource = new Map();
     const scheduleAction = (event, source) => {
       const start = Math.max(this.time, this.timeline || 0);
-      const timing = actionTimeline(event, source);
+      const target=this.eventActor(event.targetId);
+      const motion=combatMotionPolicy(event,source,target);
+      const timing=meleeTiming(actionTimeline(event,source),motion);
       this.timeline = start + timing.spacing;
       this.lastActionStart = start;
-      const cue = { at: start, timing, kind: 'action', actor: source, event, targets: [], animation: event.kind === 'defend' ? 'Block' : event.kind === 'skill' || event.kind === 'item' ? 'Cast' : 'Attack' };
+      const cue = { at: start, timing, motion, kind: 'action', actor: source, event, targets: [], animation: event.kind === 'defend' ? 'Block' : event.kind === 'skill' || event.kind === 'item' ? 'Cast' : 'Attack' };
       // Guard skills intentionally emit no result events. Read their authored
       // targeting rule rather than inventing hit targets for damaging skills.
       const skill = Content.SKILLS[event.skillId];
@@ -1432,19 +1452,21 @@ export class World {
         actor.presentationTiming = timing; actor.actionAt = cue.at;
         actor.pulseUntil = cue.at + timing.duration;
         actor.pulseAnimation = animation;
-        const skill = Content.SKILLS[cue.event?.skillId];
-        const motion = combatMotionPolicy(cue.event, actor);
+        const motion = cue.motion;
         actor.lungeDistance = motion.distance;
         actor.lungeUntil = 0;
-        if (!motion.planted) {
+        if (!motion.planted && motion.distance > 0) {
           actor.lungeStart = cue.at; actor.lungeUntil = cue.at + timing.duration;
           const heading = aimed ? facingToward(actor.wrapper.position, aimed.wrapper.position, actor.wrapper.rotation.y + (actor.sourceFrontYaw || 0)) : actor.wrapper.rotation.y + (actor.sourceFrontYaw || 0);
           actor.lungeDirection ||= new T.Vector3();
           actor.lungeDirection.set(Math.sin(heading), 0, Math.cos(heading));
         }
-        this.play(actor, animation, true);
-        const action = actor.actions[animation];
-        if (action && this.time > cue.at) action.time = actionClipPhase(this.time - cue.at, timing) * action.getClip().duration;
+        const age=this.time-cue.at;
+        if(!meleeTravel(age,timing)){
+          this.play(actor,animation,true);
+          const action=actor.actions[animation];
+          if(action&&age>0)action.time=actionClipPhase(age,timing)*action.getClip().duration;
+        }
       } else if (cue.kind === 'hit' || cue.kind === 'heal' || cue.kind === 'revive') {
         if (cue.kind === 'revive') {
           this.pendingReviveActors?.delete(actor.id);
@@ -1457,6 +1479,13 @@ export class World {
         }
         if (cue.kind === 'hit' && contactReaction(cue.event)) {
           actor.reactionAt = cue.at; actor.reactionUntil = cue.at + COMBAT_MOTION.reaction;
+          const source = cue.source || cue.actionCue?.actor;
+          actor.recoil ||= new T.Vector3();
+          actor.recoil.set(0,0,0);
+          if (source && source !== actor) {
+            actor.recoil.subVectors(actor.wrapper.position,source.wrapper.position).setY(0).normalize();
+          }
+          actor.recoilStrength = cue.event?.amount > 0 ? (cue.actionCue?.event?.heavy ? .16 : .09) : 0;
           if (!actor.presentedDead && this.time < actor.reactionUntil) this.play(actor, 'Hit', true);
         } else if (cue.kind !== 'hit') actor.reactionUntil = 0;
         if (cue.kind === 'hit' && cue.event?.absorbed > 0) this.magicVfx?.barrierAbsorb?.(actor, cue.event.absorbed, cue.at);
@@ -1514,7 +1543,7 @@ export class World {
 
   presentationPending() { return this.cues.length > 0 || this.time < (this.timeline || 0) + COMBAT_MOTION.finishPad || !!(this.visualBattle && !this.state?.battle); }
 
-  clearPresentation() { this.pendingCombatHover=null;this.hoverCombatTarget=null;this.magicVfx?.clear(); this.browserPerformance?.resetTiming(); this.partyTrail=null;this.motionContext=null;this.combatSelection={};this.pendingReviveActors=new Set();this.cues.length = 0; this.timeline = this.time - 1; this.lastActionStart = 0; this.previousEvents = null; this.visualBattle = null; this.visualBattleSource = null; for (const actor of this.actors.values()) { resetPaintedPose(actor); actor.pulseUntil = 0; actor.lungeUntil = 0; actor.actionTargetId = null; actor.deathFacingYaw = null; actor.deathPosition=null;actor.restoredCorpse=false;actor.reactionAt=null; actor.reactionUntil = 0; actor.deathAt = 0; actor.clearanceLift=0; if(actor.refreshRootBaseY!=null)actor.root.position.y=actor.refreshRootBaseY; } for (const effect of this.effects) { effect.mesh.material.dispose(); this.fxGroup.remove(effect.mesh); } this.effects.length = 0; }
+  clearPresentation() { this.pendingCombatHover=null;this.hoverCombatTarget=null;this.magicVfx?.clear(); this.browserPerformance?.resetTiming(); this.partyTrail=null;this.motionContext=null;this.combatSelection={};this.pendingReviveActors=new Set();this.cues.length = 0; this.timeline = this.time - 1; this.lastActionStart = 0; this.previousEvents = null; this.visualBattle = null; this.visualBattleSource = null; for (const actor of this.actors.values()) { resetPaintedPose(actor); resetFootContact(actor); actor.pulseUntil = 0; actor.lungeUntil = 0; actor.actionTargetId = null; actor.deathFacingYaw = null; actor.deathPosition=null;actor.restoredCorpse=false;actor.reactionAt=null; actor.reactionUntil = 0; actor.deathAt = 0; actor.clearanceLift=0; if(actor.refreshRootBaseY!=null)actor.root.position.y=actor.refreshRootBaseY; } for (const effect of this.effects) { effect.mesh.material.dispose(); this.fxGroup.remove(effect.mesh); } this.effects.length = 0; }
 
   render(state, dt = 0) {
     if (this.disposed || !this.loaded || !state) return;
@@ -1564,7 +1593,7 @@ export class World {
         if (actorDelta > 0 || this.justEnteredArea) this.animatePatrol(actor, actorDelta);
       } else {
         if (actor.stroll && this.reducedMotion) this.play(actor, 'Idle');
-        advancePaintedPose(actor, actorDelta, this.time);
+        actor.poseSampled = advancePaintedPose(actor, actorDelta, this.time) !== null;
       }
     }
     this.updateEffects(animationDelta);
@@ -1639,7 +1668,13 @@ export class World {
     this.sun.target.position.copy(this.focus);
     this.sun.target.updateMatrixWorld();
     this.activeCamera.updateMatrixWorld();
-    orientPaintedActors(this.actors.values(), this.activeCamera);
+    orientPaintedActors(this.actors.values(), this.activeCamera, dt);
+    this.footSurface ||= (x,z) => this.battleStage.visible ? this.height(x,z) : this.walkHeight(x,z);
+    for (const actor of this.actors.values()) {
+      if (actor.wrapper.visible && actor.poseSampled) applyFootContact(actor,this.footSurface,this.justEnteredArea||this.enteringBattle);
+      if (actor.wrapper.visible) updateBow(actor,this);
+      actor.poseSampled=false;
+    }
     this.magicVfx?.update(animationDelta);
     this.worldElements?.update();
     this.groundcover.update(inBattle, animationDelta);
@@ -1750,6 +1785,7 @@ export class World {
 
   destroyActor(actor) {
     resetPaintedPose(actor);
+    disposeBow(actor);
     this.magicVfx?.retireActor?.(actor);
     actor.mixer.stopAllAction();
     actor.mixer.uncacheRoot(actor.root);

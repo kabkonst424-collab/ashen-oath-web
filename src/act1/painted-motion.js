@@ -10,6 +10,7 @@ const clocks = new WeakMap();
 const facings = new WeakMap();
 const cameraVector = new T.Vector3();
 const actorPosition = new T.Vector3();
+const CONTINUOUS_TURN = 10.5;
 
 const wrap = angle => Math.atan2(Math.sin(angle), Math.cos(angle));
 
@@ -66,7 +67,7 @@ function rotateVisualRoot(pivot, scale, correction) {
   pivot.matrixWorldNeedsUpdate = true;
 }
 
-export function orientPaintedActors(actors, camera) {
+export function orientPaintedActors(actors, camera, delta = 0) {
   if (camera.isOrthographicCamera) camera.getWorldDirection(cameraVector).negate();
   else camera.getWorldPosition(cameraVector);
   for (const actor of actors) {
@@ -92,7 +93,12 @@ export function orientPaintedActors(actors, camera) {
       const cameraYaw = Math.hypot(actorPosition.x, actorPosition.z) > EPSILON
         ? Math.atan2(actorPosition.x, actorPosition.z) : heading;
       facing.direction = selectPaintedDirection(heading, cameraYaw, cameraChanged || facing.dead ? undefined : facing.direction);
-      facing.yaw = wrap(cameraYaw + facing.direction * SECTOR);
+      // Keep sector metadata for eight-direction presentation while easing the
+      // rendered 3D rig towards its anatomical heading, independent of the camera.
+      const turn = wrap(heading - (facing.yaw ?? heading));
+      const maximumTurn = CONTINUOUS_TURN * Math.max(delta, PAINTED_POSE_STEP);
+      facing.yaw = facing.yaw === undefined || cameraChanged || facing.dead
+        ? heading : wrap(facing.yaw + T.MathUtils.clamp(turn, -maximumTurn, maximumTurn));
     }
     facing.tick = clock?.tick;
     facing.dead = !!actor.presentedDead;

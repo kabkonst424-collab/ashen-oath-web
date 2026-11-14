@@ -1,7 +1,6 @@
 import {addRoadAccent} from './road-actor-looks.js?v=roads-018';
 import * as T from '../../assets/vendor/three.module.js';
-import {GLTFLoader} from '../../assets/vendor/GLTFLoader.js';
-import {groundClearanceLift,flightBaseline,mirrorWingDelta} from './party-motion.js?v=0.16.0-demo';
+import {groundClearanceLift,flightBaseline,mirrorWingDelta} from './party-motion.js?v=motion-110';
 import {SOURCE_BASES} from './source-facing.js?v=campaign-v1';
 import {isCampaignModel,campaignActor} from './campaign-visuals.js?v=campaign-v1';
 
@@ -22,29 +21,37 @@ const FORGED_VISUALS={
  forged_mill_wisp:v('forged_mill_wisp',[],{height:1.28,hover:.86}),
  forged_rivet_guard:v('forged_rivet_guard',['Hammer','Shield'],{height:3.28}),
 };
+
+export function resolveActorVisual(type, options = {}) {
+ const role=String(options.npc&&options.animationSource||options.role||'').split('_')[0];
+ const campaignBase=options.enemyId||options.model||(options.party&&role==='alar'?'alar_unhelmed':role);
+ const campaign=campaignActor(campaignBase);
+ const visual=campaign||(options.enemyId?(FORGED_VISUALS[options.enemyId]||ENEMY_VISUALS[options.animationSource||options.enemyId]):ROLE_VISUALS[role]);
+ const source=visual||FALLBACK[type]||ROLE_VISUALS.alar;
+ const accent=options.visual;
+ return accent?{...source,tint:accent.color??source.tint,scale:(source.scale||1)*(accent.scale||1),gear:accent.gear??source.gear}:source;
+}
+
+export function actorAnimationIdentity(id, options = {}) {
+ if(options.party)return 'party:'+String(options.role||id.split(':')[1]).split('_')[0];
+ if(options.hostile&&options.enemyId)return 'enemy:'+(options.animationSource||options.enemyId);
+ if(options.npc){
+  const role=options.animationSource||(id.startsWith('npc:')?id.slice(4):options.role);
+  return 'npc:'+(role==='orin'?'orin_village':role);
+ }
+ return String(options.animationProfile||id);
+}
+
 export function installRefresh(World){
  const P=World.prototype,create=P.createActor,play=P.play,dispose=P.dispose;
  P.dispose=function(...args){if(this.disposed)return;const owned=new Set();for(const item of this.refreshInstances?.values()||[])for(const part of item.parts)owned.add(part.geometry);const result=dispose.apply(this,args);for(const geometry of owned)geometry.dispose();this.refreshInstances?.clear();return result;};
- P.loadAssets=async function(onProgress){
-  const loader=new GLTFLoader();let done=0;
-  await Promise.all([...BASE_MODELS.map(id=>['refresh/'+id,id]),['environment','environment'],['refresh-props','refreshProps']].map(async([file,key])=>{
-   const gltf=await loader.loadAsync(new URL('../../assets/models/'+file+'.glb',import.meta.url).href);gltf.scene.traverse(o=>{if(o.isMesh)o.castShadow=o.receiveShadow=true;});this.assets[key]=gltf;onProgress?.(`Персонажи и мир · ${++done} / ${BASE_MODELS.length+2}`);
-  }));
-  this.assets.hero=this.assets.alar_nocape;this.assets.husk=this.assets.ash_husk;this.assets.acolyte=this.assets.ember_acolyte;this.assets.sentinel=this.assets.radan_nocape;this.assets.boss=this.assets.bellkeeper;
-  this.atlas=await new T.TextureLoader().loadAsync(new URL('../../assets/act1/terrain-atlas.png',import.meta.url).href);this.atlas.colorSpace=T.SRGBColorSpace;this.atlas.wrapS=this.atlas.wrapT=T.ClampToEdgeWrapping;this.atlas.anisotropy=Math.min(8,this.renderer.capabilities.getMaxAnisotropy());this.atlas.generateMipmaps=true;this.makeMaterials();this.loaded=true;onProgress?.('Мир первого акта готов');return this;
- };
  P.prop=function(name,parent=this.areaGroup,position=[0,0,0],scale=1){
   const source=this.assets.refreshProps?.scene.getObjectByName(name);if(!source)throw new Error('Missing Blender prop '+name);const o=source.clone(true);o.position.set(...position);o.scale.setScalar(scale);parent.add(o);return o;
  };
  P.createActor=function(id,type,options={}){
   if(this.actors.has(id))return this.actors.get(id);
-  const role=String(options.npc&&options.animationSource||options.role||'').split('_')[0];
-  const campaignBase=options.enemyId||options.model||(options.party&&role==='alar'?'alar_unhelmed':role);
-  const campaign=this.assets[campaignBase]?campaignActor(campaignBase):null;
-  const visual=campaign||(options.enemyId?(FORGED_VISUALS[options.enemyId]||ENEMY_VISUALS[options.animationSource||options.enemyId]):ROLE_VISUALS[role]);
-  const source=visual||FALLBACK[type]||ROLE_VISUALS.alar;
-  const accent=options.visual;
-  const look=accent?{...source,tint:accent.color??source.tint,scale:(source.scale||1)*(accent.scale||1),gear:accent.gear??source.gear}:source;
+  const look=resolveActorVisual(type,options);
+  if(!this.assets[look.base])throw new Error('Actor model is not prepared: '+look.base);
   const actor=create.call(this,id,look.base,{...options,refreshVisual:look});actor.type=type;actor.refreshVisual=look;
   this.characterAnimations?.bindActor(actor);
   if(!options.role)this.accessories(actor,'',false);
@@ -55,7 +62,7 @@ export function installRefresh(World){
   actor.presentationHeight=actor.refreshHeight+actor.flightBaseline*Math.abs(actor.wrapper.scale.y);actor.root.position.y=actor.refreshRootBaseY;
   if(['moth','bird'].includes(look.base)){const bone=actor.root.getObjectByName('WingR');if(bone)actor.wingCorrection={bone,rest:bone.quaternion.clone(),scratch:new T.Quaternion()};}
   if(look.tint||look.opacity||look.glow)actor.root.traverse(o=>{if(!o.isMesh)return;for(const m of Array.isArray(o.material)?o.material:[o.material]){if(look.tint)m.color.multiply(new T.Color(look.tint));if(look.opacity){m.transparent=true;m.opacity=look.opacity;m.depthWrite=false;}if(look.glow){m.emissive.setHex(look.tint||0xffa040);m.emissiveIntensity=look.glow;}}});
-  addRoadAccent(this,actor,accent);
+  addRoadAccent(this,actor,options.visual);
   return actor;
  };
  P.accessories=function(actor,role,npc){
@@ -70,6 +77,7 @@ export function installRefresh(World){
   if(look.back){
    actor.root.updateMatrixWorld(true);const anchor=actor.root.getObjectByName('Spine2')||actor.root.getObjectByName('Spine')||actor.root;const ws=anchor.getWorldScale(new T.Vector3());const s=1/Math.max(.001,Math.abs(ws.x));
    const prop=this.prop(look.back,anchor,[0,0,0],s*.8);prop.position.set(0,.13*s,-.20*s);if(look.back==='Bow'||look.back==='Oar')prop.rotation.z=.35;
+   if(look.back==='Bow')actor.stowedBow=prop;
   }
  };
  P.play=function(actor,name,restart=false){if(name==='Attack'&&!actor.actions.Attack&&actor.actions.Cast)name='Cast';if(name==='Cast'&&!actor.actions.Cast&&actor.actions.Attack)name='Attack';return play.call(this,actor,name,restart);};

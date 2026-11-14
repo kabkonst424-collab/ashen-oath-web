@@ -4,6 +4,9 @@ import { fetchBytes } from './resource-loader.js?v=0.16.0-demo';
 import { validateCastHands } from './cast-anchors.js?v=forged-019';
 import { SOURCE_BASES, SOURCE_FRONT_YAW, resolveBaseFrontYaw, resolveProfileFrontYaw, actorSourceBase, isSourceBase, sourceValue, normalizeSourceHash, normalizeSourceYaw, sourceFacingBasis, applySourceFacing } from './source-facing.js?v=campaign-v1';
 
+import { actorAnimationIdentity } from './graphics-refresh.js?v=motion-110';
+import { motionPatchDescriptor, applyMotionPatch } from './motion-clip-corrections.js?v=motion-110';
+import { bowClip } from './bow-presentation.js?v=motion-110';
 import { normalizeBattleEquipment, applyBattleEquipment } from './equipment-presentation.js?v=0.16.0-demo';
 
 const ROOT = new URL('../../assets/act1/animation/', import.meta.url);
@@ -19,8 +22,8 @@ export class CharacterAnimationLibrary {
   constructor(world, { requestOptions = {} } = {}) {
     this.world = world;
     this.profiles = new Map();
+    this.profilesBySource = new Map();
     this.profilePromises = new Map();
-    this.basePromises = new Map();
     this.bound = new WeakMap();
     this.sourceActions = new WeakMap();
     this.issues = [];
@@ -32,31 +35,30 @@ export class CharacterAnimationLibrary {
     this.loaded = false;
     this.requestOptions = requestOptions;
     this.retryNotices = [];
-    this.progress = { completed: 0, total: 0, failed: 0 };
   }
 
   assertActive() {
     if (this.disposed || this.controller.signal.aborted) throw this.controller.signal.reason || new DOMException('Animation load cancelled', 'AbortError');
   }
 
-  async fetchResource(url, options, context) {
+  async fetchResource(url, options, context, signal) {
     this.assertActive();
     return fetchBytes(url, {
-      ...this.requestOptions, ...options, signal: this.controller.signal,
+      ...this.requestOptions, ...options,
+      signal: signal ? AbortSignal.any([this.controller.signal, signal]) : this.controller.signal,
       onRetry: notice => {
         if (this.disposed) return;
         this.retryNotices.push({ ...notice, context });
-        this.onProgress?.(`Повтор загрузки движения · ${context} · попытка ${notice.nextAttempt}`);
         this.requestOptions.onRetry?.(notice);
       },
     });
   }
 
-  async read(file, expectedHash = null, context = file) {
+  async read(file, expectedHash = null, context = file, signal) {
     const resourceUrl = new URL(file, ROOT);
-    resourceUrl.searchParams.set('v', '0.16.0-demo');
+    resourceUrl.searchParams.set('v', file.startsWith('motion/') ? 'motion-110' : '0.16.0-demo');
     if (expectedHash) resourceUrl.searchParams.set('sha256', expectedHash);
-    const bytes = await this.fetchResource(resourceUrl, { cache: 'no-store' }, context);
+    const bytes = await this.fetchResource(resourceUrl, { cache: expectedHash ? 'force-cache' : 'no-cache' }, context, signal);
     this.assertActive();
     if (expectedHash) {
       const expected = String(expectedHash).toLowerCase().replace(/^sha256:/, '');
@@ -70,83 +72,64 @@ export class CharacterAnimationLibrary {
     return JSON.parse(new TextDecoder().decode(bytes));
   }
 
-  async load(onProgress) {
+  async load() {
     if (this.loadPromise) return this.loadPromise;
-    this.onProgress = onProgress;
     this.loadPromise = (async () => {
-      try {
-        const manifest = await this.read('animation-library.json', RELEASE_INDEX_SHA256);
-        if (manifest.schema !== 1 || !manifest.profiles || !manifest.sourceHashes) throw new Error('Unsupported character animation library');
-        if (this.disposed) return this;
-        this.manifest = manifest;
-        for (const base of SOURCE_BASES) this.frontYawByBase[base] = resolveBaseFrontYaw(base, this.world.loadedAssetHashes?.get(base), manifest.frontYawByBase);
-        let completed = 0;
-        const entries = Object.entries(manifest.profiles);
-        this.progress.total = entries.length;
-        // Load each authored profile once before actors are instantiated. No actor
-        // creation, quality change or save reload can trigger another fetch/hash.
-        let cursor = 0;
-        await Promise.all(Array.from({ length: Math.min(6, entries.length) }, async () => {
-          while (cursor < entries.length && !this.disposed) {
-            const [key, descriptor] = entries[cursor++];
-            let failed = false;
-            try { await this.preloadProfile(key, descriptor); }
-            catch (error) {
-              if (this.disposed) return;
-              failed = true;
-              this.progress.failed++;
-              this.issues.push(`${key} (${descriptor.file}): ${error.message}`);
-            }
-            if (this.disposed) return;
-            this.progress.completed = ++completed;
-            onProgress?.(`Движения персонажей · ${completed} / ${entries.length}${failed ? ` · резерв GLB: ${key}` : ''}`);
-          }
-        }));
-      } catch (error) { if (!this.disposed) this.issues.push(`animation-library.json: ${error.message}`); }
-      if (!this.disposed) this.loaded = true;
+      const manifest = await this.read('animation-library.json', RELEASE_INDEX_SHA256);
+      if (manifest.schema !== 1 || !manifest.profiles || !manifest.sourceHashes) throw Error('Unsupported character animation library');
+      this.assertActive();
+      this.manifest = manifest;
+      this.loaded = true;
       return this;
     })();
     return this.loadPromise;
   }
 
-  verifyBase(base) {
-    if (this.basePromises.has(base)) return this.basePromises.get(base);
-    const promise = (async () => {
-      this.assertActive();
-      const expected = normalizeSourceHash(sourceValue(this.manifest?.sourceHashes, base));
-      if (!isSourceBase(base) || !expected) throw new Error('Original model SHA256 unavailable');
-      const loaded = this.world.loadedAssetHashes?.get(base);
-      if (loaded) {
-        if (normalizeSourceHash(loaded) !== expected) throw new Error('Loaded model SHA256 mismatch');
-        this.verifiedSourceHashes.set(base, expected);
-        this.frontYawByBase[base] = resolveBaseFrontYaw(base, expected, this.manifest.frontYawByBase);
-        return true;
-      }
-      if (!globalThis.crypto?.subtle) throw new Error('Original model SHA256 unavailable');
-      const originalModelUrl = new URL(`../../assets/models/refresh/${base}.glb`, import.meta.url);
-      if (this.manifest.sourceVariants?.[base]) originalModelUrl.searchParams.set('sha256', expected);
-      const bytes = await this.fetchResource(originalModelUrl, { cache: 'force-cache' }, `source:${base}`);
-      this.assertActive();
-      const digest = await globalThis.crypto.subtle.digest('SHA-256', bytes);
-      this.assertActive();
-      const actual = [...new Uint8Array(digest)].map(value => value.toString(16).padStart(2, '0')).join('');
-      if (actual !== expected) throw new Error('Original model SHA256 mismatch');
-      this.verifiedSourceHashes.set(base, actual);
-      this.frontYawByBase[base] = resolveBaseFrontYaw(base, actual, this.manifest.frontYawByBase);
-      return true;
-    })();
-    this.basePromises.set(base, promise);
-    return promise;
+  hasProfile(key) {
+    const base = this.manifest?.profiles[key]?.base;
+    return !!base && this.profilesBySource.has(base + '/' + key);
   }
 
-  preloadProfile(key, descriptor) {
-    if (this.profilePromises.has(key)) return this.profilePromises.get(key);
+  async prepareProfiles(keys, onDone, signal) {
+    let cursor = 0, failure;
+    await Promise.all(Array.from({length: Math.min(4, keys.length)}, async () => {
+      while (!failure && !signal?.aborted && cursor < keys.length) {
+        const key = keys[cursor++], descriptor = this.manifest.profiles[key];
+        try {
+          await this.preloadProfile(key, descriptor, signal);
+          if (!signal?.aborted) onDone?.(key);
+        } catch (error) { failure ||= error; }
+      }
+    }));
+    if (signal?.aborted) throw signal.reason;
+    if (failure) throw failure;
+  }
+
+  verifyBase(base, explicitHash) {
+    const expected = normalizeSourceHash(explicitHash || sourceValue(this.manifest?.sourceHashes, base));
+    if (!isSourceBase(base) || !expected) throw Error('Original model SHA256 unavailable');
+    const loaded = this.world.loadedAssetHashes?.get(base);
+    if (normalizeSourceHash(loaded) !== expected) throw Error('Loaded model SHA256 mismatch');
+    this.verifiedSourceHashes.set(base, expected);
+    this.frontYawByBase[base] = resolveBaseFrontYaw(base, expected, this.manifest.frontYawByBase);
+  }
+
+  preloadProfile(key, descriptor, signal) {
+    if (!descriptor) return Promise.reject(Error('Unknown animation profile: ' + key));
+    const sourceKey = descriptor.base + '/' + key;
+    if (this.profilePromises.has(sourceKey)) return this.profilePromises.get(sourceKey);
     const promise = (async () => {
       this.assertActive();
       if (!/^(?:party|enemy|npc):[a-z0-9_]+$/i.test(key) || (!descriptor.data && !/^(?:profiles\/)?[a-z0-9_-]+\.json$/i.test(descriptor.file || ''))) throw new Error('Invalid profile path');
-      await this.verifyBase(descriptor.base);
-      const data = descriptor.data || await this.read(descriptor.file, descriptor.sha256, `${key} (${descriptor.file})`);
+      this.verifyBase(descriptor.base, descriptor.sourceHash);
+      const patch = motionPatchDescriptor(descriptor.base, key);
+      const [data, correction] = await Promise.all([
+        descriptor.data || this.read(descriptor.file, descriptor.sha256, key, signal),
+        patch ? this.read(patch.file, patch.sha256, key, signal) : null,
+      ]);
       this.assertActive();
+      if (signal?.aborted) throw signal.reason;
+      if (correction) applyMotionPatch(data, correction, descriptor.sha256);
       if (data.schema !== 1 || data.profile !== key || data.base !== descriptor.base || !Array.isArray(data.clips)) throw new Error('Profile identity mismatch');
       const clips = new Map();
       for (const json of data.clips) {
@@ -159,44 +142,55 @@ export class CharacterAnimationLibrary {
         clips.set(clip.name, clip);
       }
       if (!BASIC.every(name => clips.has(name))) throw new Error('Profile is missing a base movement');
+      if (key==='party:myrt') clips.set('ShootBow',bowClip(clips.get('Idle')));
       const skillClips = { ...(descriptor.skillClips || {}), ...(data.skillClips || {}) };
       for (const name of Object.values(skillClips)) if (!clips.has(name)) throw new Error('Skill references a missing clip');
       const castHands = Object.freeze({ ...validateCastHands(descriptor.castHands, clips), ...validateCastHands(data.castHands, clips) });
       const profile = { key, base: data.base, clips, castHands, skillClips: Object.freeze(skillClips), frontYaw: resolveProfileFrontYaw(data, this.frontYawByBase[data.base]), frontYawExplicit: Object.hasOwn(data, 'frontYaw') && normalizeSourceYaw(data.frontYaw) !== undefined };
       profile.battleEquipment = normalizeBattleEquipment(data.battleEquipment);
+      profile.locomotion = data.locomotion || null;
+      profile.releasePose = data.castReleaseNormalized;
+      profile.contactPose = data.physicalImpactNormalized;
       // Shared profile identity/basis must stay paired after integrity checks.
       // Three's clips/actions remain mutable objects owned by their usual cache.
       Object.freeze(profile);
-      if (!this.disposed) this.profiles.set(key, profile);
+      this.profilesBySource.set(sourceKey, profile);
+      this.profiles.set(key, profile);
       return profile;
-    })();
-    this.profilePromises.set(key, promise);
+    })().catch(error => {
+      this.profilePromises.delete(sourceKey);
+      throw error;
+    });
+    this.profilePromises.set(sourceKey, promise);
     return promise;
   }
 
-  loadCampaignProfile(base, key, data) {
-    // The area loader verified both asset bytes before publishing the GLB hash.
-    this.manifest.sourceHashes[base] = data.sourceHash;
+  loadCampaignProfile(base, key, data, sha256, signal) {
     this.manifest.frontYawByBase[base] = data.frontYaw;
-    return this.preloadProfile(key, { base, data });
+    return this.preloadProfile(key, { base, data, sha256, sourceHash: data.sourceHash }, signal);
   }
 
   releaseCampaignProfile(key, base) {
-    this.profiles.delete(key);
-    this.profilePromises.delete(key);
-    this.basePromises.delete(base);
+    const sourceKey = base + '/' + key;
+    this.profilesBySource.delete(sourceKey);
+    this.profilePromises.delete(sourceKey);
+    if (this.profiles.get(key)?.base === base) this.profiles.delete(key);
     this.verifiedSourceHashes.delete(base);
   }
 
+  releaseProfiles(keep) {
+    for (const profile of this.profilesBySource.values()) {
+      if (!keep.has(profile.key)) this.releaseCampaignProfile(profile.key, profile.base);
+    }
+    this.fallbacks.clear();
+  }
+
   equipPresentation(actor) {
-    return applyBattleEquipment(actor, this.profiles.get(actor.animationProfile)?.battleEquipment);
+    return applyBattleEquipment(actor, actor.motionProfile?.battleEquipment);
   }
 
   identity(actor) {
-    if (actor.options?.party) return `party:${String(actor.options.role || actor.id.split(':')[1]).split('_')[0]}`;
-    if (actor.options?.hostile && actor.options.enemyId) return `enemy:${actor.options.animationSource || actor.options.enemyId}`;
-    if (actor.options?.npc) return `npc:${actor.options.animationSource || (actor.id.startsWith('npc:') ? actor.id.slice(4) : actor.options.role)}`;
-    return String(actor.options?.animationProfile || actor.id);
+    return actorAnimationIdentity(actor.id, actor.options);
   }
 
   frontYawForBase(base) {
@@ -220,7 +214,7 @@ export class CharacterAnimationLibrary {
     const name = actor.current, paused = old?.paused;
     for (const key of actor.profileActions) { actor.actions[key]?.stop?.(); delete actor.actions[key]; }
     Object.assign(actor.actions, this.sourceActions.get(actor) || {});
-    actor.profileActions.clear(); actor.skillClips = {}; actor.castHands = {};
+    actor.profileActions.clear(); actor.skillClips = {}; actor.castHands = {}; actor.motionProfile = null;
     const source = actor.actions[name];
     if (source?.getClip) { source.reset().play(); source.time = Math.max(0, Math.min(1, phase)) * source.getClip().duration; source.paused = !!paused; }
     else actor.current = null;
@@ -231,12 +225,12 @@ export class CharacterAnimationLibrary {
     if (!this.sourceActions.has(actor)) this.sourceActions.set(actor, { ...actor.actions });
     const requested = this.identity(actor), base = actorSourceBase(actor);
     actor.animationProfile = requested;
-    let profile = this.profiles.get(requested);
+    let profile = this.profilesBySource.get(base + '/' + requested);
     let reason = 'profile-unavailable';
     if (!profile && actor.options?.npc) {
       const hero = String(actor.options.role || '').split('_')[0];
       if (PARTY.some(member => member.id === hero)) {
-        profile = this.profiles.get(`party:${hero}`);
+        profile = this.profilesBySource.get(base + '/party:' + hero);
         reason = 'recruit-uses-party-profile';
       }
     }
@@ -290,6 +284,7 @@ export class CharacterAnimationLibrary {
       actor.mixer.update(0);
     }
     actor.animationProfile = profile.key;
+    actor.motionProfile = profile;
     actor.skillClips = profile.skillClips;
     actor.castHands = profile.castHands;
     this.bindFacing(actor, base, profile);
@@ -307,11 +302,10 @@ export class CharacterAnimationLibrary {
 
   dispose() {
     this.disposed = true;
-    this.onProgress = null;
     this.controller.abort();
     this.profiles.clear();
     this.profilePromises.clear();
-    this.basePromises.clear();
+    this.profilesBySource.clear();
     this.verifiedSourceHashes.clear();
     this.fallbacks.clear();
     this.bound = new WeakMap();

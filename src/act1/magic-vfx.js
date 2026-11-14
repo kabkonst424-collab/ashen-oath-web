@@ -2,9 +2,10 @@ import * as T from '../../assets/vendor/three.module.js';
 import { STATUS_KINDS, statusRows, statusParts } from './presentation-status.js?v=0.16.0-demo';
 import { reducedFlash } from './presentation-visibility.js?v=0.16.0-demo';
 import { arcPoint } from './presentation-paths.js?v=0.16.0-demo';
-import { actionTimeline } from './presentation-timing.js?v=forged-019';
-import { COMBAT_MOTION } from './party-motion.js?v=0.16.0-demo';
-import { magicProfile } from './data/magic-profiles.js?v=campaign-v1';
+import { actionTimeline } from './presentation-timing.js?v=motion-110';
+import { COMBAT_MOTION } from './party-motion.js?v=motion-110';
+import { magicProfile } from './data/magic-profiles.js?v=motion-110';
+import { bowNock } from './bow-presentation.js?v=motion-110';
 import { fetchBytes } from './resource-loader.js?v=0.16.0-demo';
 import { resolveCastAnchor } from './cast-anchors.js?v=forged-019';
 import { heavyAnimation } from './combat200-animation-policy.js?v=0.16.0-demo';
@@ -213,6 +214,7 @@ export class MagicVfx {
     const heavy = heavyAnimation(actor, event);
     if (heavy) return heavy;
     const p = magicProfile(event, actor);
+    if (p.style==='arrow'&&actor?.actions?.ShootBow) return 'ShootBow';
     const authored = actor?.skillClips?.[event.skillId];
     if (authored && actor.actions[authored]) return authored;
     // Creatures retain their authored attack; a weapon hit is never a cast gesture.
@@ -339,7 +341,7 @@ export class MagicVfx {
 
   hand(actor, target = this.scratch.hand, animation = actor.current) {
     actor.root.updateWorldMatrix(true, true);
-    const anchor = resolveCastAnchor(actor, animation);
+    const anchor = animation==='ShootBow'&&bowNock(actor) || resolveCastAnchor(actor, animation);
     anchor.getWorldPosition(target);
     if (anchor === actor.root) this.point(actor, target, .65);
     return target;
@@ -705,6 +707,10 @@ export class MagicVfx {
 
   physical(source, target, p, start, rng, animation = source.current) {
     const position = this.point(target, new T.Vector3(), .52);
+    if(p.style==='arrow'){
+      this.sparks(position,p,start,.19,rng,4);
+      return;
+    }
     const from = this.hand(source, new T.Vector3(), animation);
     const count = p.style === 'claw' ? 3 : p.style === 'sweep' ? 2 : 1;
     const forward = new T.Vector3().subVectors(position, from); if (forward.lengthSq() < .0001) forward.set(0, 0, 1); forward.normalize();

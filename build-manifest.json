@@ -1,6 +1,6 @@
 {
   "id": "ashen-oath",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "releaseStatus": "release",
   "demo": false,
   "posterArtRevision": {
@@ -2126,12 +2126,12 @@
     "act1PriorDesignTargetMinutes": 180
   },
   "platform": "WebGL2",
-  "builtAt": "2026-11-14T16:20:10.315Z",
+  "builtAt": "2026-11-14T17:46:49.593Z",
   "files": [
     {
       "path": "README.md",
-      "bytes": 1620,
-      "sha256": "190b99cce0c8a077f25b1c1aa5c0c2e6c83da6c285e1646e9c52d2119ad57de9"
+      "bytes": 1834,
+      "sha256": "098d03cbee1045b47ac7a9a62e0b40196fc53b49c8b2be7576fe39f682afe59d"
     },
     {
       "path": "act1.css",
@@ -2140,13 +2140,343 @@
     },
     {
       "path": "act1.html",
-      "bytes": 1575,
-      "sha256": "17d5af7358a6fc6c5da2b5ec2fabb49310f332de435c26b08ecac10837b30a4e"
+      "bytes": 1726,
+      "sha256": "2aca73e7a9ba0f36ab425c1b30ca7916d0e518e3a2189260d1396fa423cb82a9"
     },
     {
       "path": "assets/act1/animation/animation-library.json",
       "bytes": 46724,
       "sha256": "938fe89ccf5995d7b3a1342ad0ab8484a9e414ff8bd61e9d42144418204e0055"
+    },
+    {
+      "path": "assets/act1/animation/motion/alar_nocape--enemy-oath_knight.json",
+      "bytes": 1302,
+      "sha256": "a6da8e45c5a811069bf425da356324a2e6b1f600013c29b54f6e2465b35a2fe9"
+    },
+    {
+      "path": "assets/act1/animation/motion/alar_unhelmed--party-alar.json",
+      "bytes": 2017,
+      "sha256": "c5fed15f2d49cf2c0b24f9ee4fd4d2d359aeb7380594c31abb11a00b2bffce13"
+    },
+    {
+      "path": "assets/act1/animation/motion/ash_husk--enemy-ash_husk.json",
+      "bytes": 1034,
+      "sha256": "47b8140c3c69aca83cec8cd92ecfa4fd242e8fb31c9b6f21b33ca7bbd74a5ee0"
+    },
+    {
+      "path": "assets/act1/animation/motion/ash_husk--enemy-drowned.json",
+      "bytes": 1437,
+      "sha256": "362fefd116457a8c5e4e746184712dc88fe1174f9176f413144c104f720b1e8c"
+    },
+    {
+      "path": "assets/act1/animation/motion/ash_husk--enemy-hollow_reaper.json",
+      "bytes": 979,
+      "sha256": "445868ec6f7e375a6b6491a7acd43f76f8dee4d35717fed458dcbfce2725ec89"
+    },
+    {
+      "path": "assets/act1/animation/motion/ash_husk--enemy-oathshade.json",
+      "bytes": 1581,
+      "sha256": "1d29f1aade949e2bf5b97065a34a3c6b39f301b6931e22d3d6d7d9163fac35a8"
+    },
+    {
+      "path": "assets/act1/animation/motion/bellkeeper--enemy-bellkeeper.json",
+      "bytes": 1393,
+      "sha256": "029ec8edbd209e0fdf0869c3f538e3626f4126f4354dc63b5aa4877ae216f388"
+    },
+    {
+      "path": "assets/act1/animation/motion/bellkeeper--enemy-broken_reliquary.json",
+      "bytes": 993,
+      "sha256": "ea339e4c2bd1fcb5caf91afc4e01c972002cecd88637fa2e391c95e8203c0634"
+    },
+    {
+      "path": "assets/act1/animation/motion/bellkeeper--enemy-catalogue_warden.json",
+      "bytes": 1186,
+      "sha256": "98e12ff7466575e6c977f22fc57a6664e91cbb46a1dde6ca5f31855096287544"
+    },
+    {
+      "path": "assets/act1/animation/motion/bird--enemy-cinder_bird.json",
+      "bytes": 1135,
+      "sha256": "9d63e180111fc1923b1829e6684413a3eb1a4c430ad03aa9a436c853ecd6914a"
+    },
+    {
+      "path": "assets/act1/animation/motion/c2_boss--enemy-c2_boss.json",
+      "bytes": 1293,
+      "sha256": "50f1c2372bef8f2f7953ec9ab0b14f630d72f9d1d3884e072b7076c2e250b8cb"
+    },
+    {
+      "path": "assets/act1/animation/motion/c2_mob_a--enemy-c2_mob_a.json",
+      "bytes": 2557,
+      "sha256": "1f06d8c2efb6c90d76ed830acc553f19604d4dafe82a253d35f9e0aeb353345c"
+    },
+    {
+      "path": "assets/act1/animation/motion/c2_mob_b--enemy-c2_mob_b.json",
+      "bytes": 2490,
+      "sha256": "fa782e5b51f61ec521217518df273ea1c6f2949856ad8804f8a4fc522461cae4"
+    },
+    {
+      "path": "assets/act1/animation/motion/c2_npc_a--npc-c2_npc_a.json",
+      "bytes": 212,
+      "sha256": "5b47a73e9fcbc47c72fad330d7e9188a5953b501384b641186d7cf16160fa946"
+    },
+    {
+      "path": "assets/act1/animation/motion/c3_boss--enemy-c3_boss.json",
+      "bytes": 2482,
+      "sha256": "664c9e3e944119c0c0c18283dc2ba99f3ab293c241cf5751e2a6a79d58682ffb"
+    },
+    {
+      "path": "assets/act1/animation/motion/c3_mob_a--enemy-c3_mob_a.json",
+      "bytes": 2556,
+      "sha256": "299ff8899879a3f28db7f335be8e9a1b1636ab7003053b42da07cc4a986d13f9"
+    },
+    {
+      "path": "assets/act1/animation/motion/c3_mob_b--enemy-c3_mob_b.json",
+      "bytes": 2441,
+      "sha256": "8a19146a7cae9eb0a827821ecdef8bee5585400aa1742ff993824608f277bd97"
+    },
+    {
+      "path": "assets/act1/animation/motion/c3_npc_b--npc-c3_npc_b.json",
+      "bytes": 213,
+      "sha256": "af18e4fc88573962c7357997ffa386f978c8e3337697336f50fa0bc002c63707"
+    },
+    {
+      "path": "assets/act1/animation/motion/c4_boss--enemy-c4_boss.json",
+      "bytes": 1293,
+      "sha256": "dbedf1f951dc7f899d7cef6bf971b90ce217cb51bd6891e18676af143e65bdba"
+    },
+    {
+      "path": "assets/act1/animation/motion/c4_mob_a--enemy-c4_mob_a.json",
+      "bytes": 2562,
+      "sha256": "5a1d62df6028ffcd526ac889ed6dae8aca50d7c1ff62bfdcd569308eb90eaa2e"
+    },
+    {
+      "path": "assets/act1/animation/motion/c4_mob_b--enemy-c4_mob_b.json",
+      "bytes": 2425,
+      "sha256": "cdc53b2c625a3bd9c0d746c1ef328d6e14ba8141928570d797f2cee2ef50cdf0"
+    },
+    {
+      "path": "assets/act1/animation/motion/c4_npc_a--npc-c4_npc_a.json",
+      "bytes": 213,
+      "sha256": "5dc00e19536175b7ddf95ec6d00e222db7323adcd5c03abf2d922b14ecacc8cd"
+    },
+    {
+      "path": "assets/act1/animation/motion/c5_boss--enemy-c5_boss.json",
+      "bytes": 2482,
+      "sha256": "76157a258b78e46f1c2260e9a26a8f2950a2db700cd8e02fdf251cebadafde8a"
+    },
+    {
+      "path": "assets/act1/animation/motion/c5_mob_a--enemy-c5_mob_a.json",
+      "bytes": 2556,
+      "sha256": "4e56e4a8783ab44f39e602071c02466cf6d6a15af4149e161adda8a1d2079e33"
+    },
+    {
+      "path": "assets/act1/animation/motion/c5_mob_b--enemy-c5_mob_b.json",
+      "bytes": 2441,
+      "sha256": "1377816efbb67d849b0b189163fcea23d1a501f67cf1cec7caf2da59d914b56c"
+    },
+    {
+      "path": "assets/act1/animation/motion/c5_npc_b--npc-c5_npc_b.json",
+      "bytes": 212,
+      "sha256": "cdefe6390976ae3a370dcc337db5e9f7d2705f92af72c05191bb8019ffddcb14"
+    },
+    {
+      "path": "assets/act1/animation/motion/c6_boss--enemy-c6_boss.json",
+      "bytes": 2482,
+      "sha256": "350b4864c052a2eb9acf8c7ed0feb50ac0018394f631e86ad2833b9625b23354"
+    },
+    {
+      "path": "assets/act1/animation/motion/c6_mob_a--enemy-c6_mob_a.json",
+      "bytes": 2572,
+      "sha256": "1feb117a57b539f792ec67b0aa3ec08183ae4a5a44429febc2b53dde64c075f2"
+    },
+    {
+      "path": "assets/act1/animation/motion/c6_mob_b--enemy-c6_mob_b.json",
+      "bytes": 2490,
+      "sha256": "4e81134532d5e7f5a148461377f21fb3d2e66c6329dcd3262d06f955d2c40227"
+    },
+    {
+      "path": "assets/act1/animation/motion/c6_npc_a--npc-c6_npc_a.json",
+      "bytes": 212,
+      "sha256": "c5590accb0ebbff40657513586eccb697eb00034fc90cd51abd1a84c5ad4b6ee"
+    },
+    {
+      "path": "assets/act1/animation/motion/elian--party-elian.json",
+      "bytes": 2588,
+      "sha256": "5247c49a03dbb101a17efea27f58fdedb3e76859654ce9c4866d9440da4fd3fc"
+    },
+    {
+      "path": "assets/act1/animation/motion/ember_acolyte--enemy-ember_acolyte.json",
+      "bytes": 1458,
+      "sha256": "491c1e954931a68949c05d7671af91df9d091152b3e16fa66a8d804e02e7e7da"
+    },
+    {
+      "path": "assets/act1/animation/motion/ember_acolyte--enemy-ferry_echo.json",
+      "bytes": 1595,
+      "sha256": "79dc3b7bdae8431b81a32d4eebc6125e5dcf3b1e3087ca850185c2d10cdb6c77"
+    },
+    {
+      "path": "assets/act1/animation/motion/ember_acolyte--enemy-hush_acolyte.json",
+      "bytes": 1713,
+      "sha256": "5226314561eb57dca8a3d34f30d8310b16a0ba96f55f0eb961fa59cc0f44167c"
+    },
+    {
+      "path": "assets/act1/animation/motion/ember_acolyte--enemy-mute_abbot.json",
+      "bytes": 2029,
+      "sha256": "060fdb2924260a874fff7d5493d9da7c233aa521bb9722ac8c62f87548df593b"
+    },
+    {
+      "path": "assets/act1/animation/motion/ember_acolyte--enemy-silent_choir.json",
+      "bytes": 1711,
+      "sha256": "c5de1ea4e5a526ee45385c8cf2a89cd1d584aba0a969b702029dd5d356e035ee"
+    },
+    {
+      "path": "assets/act1/animation/motion/forged_fen_weaver--enemy-forged_fen_weaver.json",
+      "bytes": 2112,
+      "sha256": "31dd4027c1623eb4d60b3586cb78be0ae4863ead8f62208a09122731f49209dd"
+    },
+    {
+      "path": "assets/act1/animation/motion/forged_mill_wisp--enemy-forged_mill_wisp.json",
+      "bytes": 435,
+      "sha256": "a8b9fe19a894ce429f373e6d2308f7452215a99d98a46ce66821cdf27b88581a"
+    },
+    {
+      "path": "assets/act1/animation/motion/forged_resin_lynx--enemy-forged_resin_lynx.json",
+      "bytes": 442,
+      "sha256": "d7a3aa110d58ace073e3184eac0a4c5782e2882db2229ab0d142183dc85cc465"
+    },
+    {
+      "path": "assets/act1/animation/motion/forged_rivet_guard--enemy-forged_rivet_guard.json",
+      "bytes": 1843,
+      "sha256": "794b0af07fb613a604841d21d3a1d1e242b0b1ac5912ece6ff4064e80d158b35"
+    },
+    {
+      "path": "assets/act1/animation/motion/forged_slag_golem--enemy-forged_slag_golem.json",
+      "bytes": 931,
+      "sha256": "ca67a5e4eb14f4b7cbbee15e1ece53030685bada1d88cdb26db26fb06a916abc"
+    },
+    {
+      "path": "assets/act1/animation/motion/iona_nocape--npc-iona_monastery.json",
+      "bytes": 222,
+      "sha256": "6abb8fb955b16b05aa51373d2fecb390ce8cb4a4e3f7b02d30993e01c180edc2"
+    },
+    {
+      "path": "assets/act1/animation/motion/iona_nocape--party-iona.json",
+      "bytes": 1726,
+      "sha256": "efbecc132fc4b6c0751a30145d237ab97f035063437692ee9e8a4614f0b87165"
+    },
+    {
+      "path": "assets/act1/animation/motion/leia_nocape--npc-elda_abbey.json",
+      "bytes": 217,
+      "sha256": "4d0f6d5b8e118dcaea66a01578567069f6275bec3b412ab75dd278c93e7853f9"
+    },
+    {
+      "path": "assets/act1/animation/motion/leia_nocape--party-leia.json",
+      "bytes": 1622,
+      "sha256": "5380f2c0ec828e4cddaa8e59af719ca2866b8cdcc3af1d17f967ef7541072241"
+    },
+    {
+      "path": "assets/act1/animation/motion/moth--enemy-paper_swarm.json",
+      "bytes": 422,
+      "sha256": "241d3bf8f2d3185376daaefafafb383f1045f26dda3c165e795753bb132996bf"
+    },
+    {
+      "path": "assets/act1/animation/motion/moth--enemy-resin_moth.json",
+      "bytes": 417,
+      "sha256": "392673b0c6cc65351aae24d4fd4696b262e5b588fb45ae92ed9336289cd5fe4d"
+    },
+    {
+      "path": "assets/act1/animation/motion/moth--enemy-wick_light.json",
+      "bytes": 414,
+      "sha256": "7354d918175fee0cc9d8c8014031c59db3da42bf9e68e6307fd683845f6602c1"
+    },
+    {
+      "path": "assets/act1/animation/motion/myrt--party-myrt.json",
+      "bytes": 1706,
+      "sha256": "dc60749a898ce8d53c971acfb3375b26875a4081987afc0099c9fa56fda58a78"
+    },
+    {
+      "path": "assets/act1/animation/motion/radan_nocape--enemy-dagan.json",
+      "bytes": 1544,
+      "sha256": "0537b1fbbdbcc530b005bec9e78dc966266e725dc5f8350a5403b11a5ad7ad46"
+    },
+    {
+      "path": "assets/act1/animation/motion/radan_nocape--enemy-fortress_archer.json",
+      "bytes": 1452,
+      "sha256": "a1774e40029c6f1025e69612e1ec1a38d9397ad698887e1ab9defdcb78e18801"
+    },
+    {
+      "path": "assets/act1/animation/motion/radan_nocape--enemy-ink_guard.json",
+      "bytes": 1762,
+      "sha256": "86858b471f5ab89ee4493e9391c4c18a50a69e5a4ff0d9b671030fd2e68c4d76"
+    },
+    {
+      "path": "assets/act1/animation/motion/radan_nocape--enemy-iron_sentinel.json",
+      "bytes": 1301,
+      "sha256": "a7830c9f86072a2f6e9605fb8f4d0ebf8a04f9245f3247ad118098b3dbc67c26"
+    },
+    {
+      "path": "assets/act1/animation/motion/radan_nocape--enemy-tithe_guard.json",
+      "bytes": 1764,
+      "sha256": "41cbfa5bff4ac831ca93a80c992fc3b29a90a4df45b3cadb3fd0393dd9f9239a"
+    },
+    {
+      "path": "assets/act1/animation/motion/radan_nocape--party-radan.json",
+      "bytes": 1646,
+      "sha256": "653c96c43661cbbe20c2d1b18fbab054232079f488396cb9de9f976bd46bc2fc"
+    },
+    {
+      "path": "assets/act1/animation/motion/rat--enemy-iron_rat.json",
+      "bytes": 420,
+      "sha256": "f861afc2d639554b383f399182b89923dc3e3b434b92ed445f39f3ae01f5975b"
+    },
+    {
+      "path": "assets/act1/animation/motion/root_keeper--enemy-harvest_engine.json",
+      "bytes": 922,
+      "sha256": "073f53d37a39ca3a252c544862bcda26072a3730c3a39b8459ccb7774aed7ba0"
+    },
+    {
+      "path": "assets/act1/animation/motion/root_keeper--enemy-quarry_echo.json",
+      "bytes": 1463,
+      "sha256": "1395774c0b0757d9badeea1f59ec37479cb0f1fe057d3e9446d5e8a71fecef45"
+    },
+    {
+      "path": "assets/act1/animation/motion/root_keeper--enemy-thorn_keeper.json",
+      "bytes": 919,
+      "sha256": "40e24b0f3be859c609afb869e6c22ffee001ceab43c84a6e1e7f9f71383f38b9"
+    },
+    {
+      "path": "assets/act1/animation/motion/townsman--enemy-quarry_overseer.json",
+      "bytes": 1836,
+      "sha256": "a0f6a33f164038935090c789d9273e5b3fc11269a98a1b1adc2b0ed0a55d1a14"
+    },
+    {
+      "path": "assets/act1/animation/motion/townsman--enemy-reed_stalker.json",
+      "bytes": 1114,
+      "sha256": "94dafad4e65df0584fe445cc42a4f438f3629f4cd8bd79665b15e0f04f228248"
+    },
+    {
+      "path": "assets/act1/animation/motion/townsman--enemy-road_extorter.json",
+      "bytes": 1036,
+      "sha256": "927855b00a96794d9b3921e980c9735f0d615ff15d590e969f92165b8ffd2424"
+    },
+    {
+      "path": "assets/act1/animation/motion/townsman--npc-orin_village.json",
+      "bytes": 216,
+      "sha256": "75739f6d5ab024ab55b0a8ca97b5f8c3af9bc3f1ddedcc24c3789beb6e6c9aca"
+    },
+    {
+      "path": "assets/act1/animation/motion/townswoman--npc-velda_village.json",
+      "bytes": 220,
+      "sha256": "531edafd5e226aab7aba73d9757449266be4074c11df6bf9beeb91f4f47cf184"
+    },
+    {
+      "path": "assets/act1/animation/motion/wolf--enemy-thorn_wolf.json",
+      "bytes": 422,
+      "sha256": "1d2414259acab59f0cc9d24862ac20b32579914da45731966be602e78c7ba71c"
+    },
+    {
+      "path": "assets/act1/animation/motion/wolf--enemy-warden_hound.json",
+      "bytes": 427,
+      "sha256": "32382ba1cd43127a6461404b5e8a9eeeebfbf3e17371e67d6ee754e21e011896"
     },
     {
       "path": "assets/act1/animation/profiles/enemy-ash_husk.json",
@@ -3690,8 +4020,8 @@
     },
     {
       "path": "campaign.css",
-      "bytes": 3225,
-      "sha256": "b1c7d89eaa242e2607a0966d98d14b54d64aa465c0ac9edcf76ace43051fccc2"
+      "bytes": 3656,
+      "sha256": "b738b588295e10c6df735c36cfd14172e21ea48f1d42fb1e0fbc59f45103d750"
     },
     {
       "path": "forged.css",
@@ -3700,8 +4030,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 1575,
-      "sha256": "17d5af7358a6fc6c5da2b5ec2fabb49310f332de435c26b08ecac10837b30a4e"
+      "bytes": 1726,
+      "sha256": "2aca73e7a9ba0f36ab425c1b30ca7916d0e518e3a2189260d1396fa423cb82a9"
     },
     {
       "path": "interface-windows.css",
@@ -3744,6 +4074,16 @@
       "sha256": "bfd75afb1da51c3a33e05c25c655bc952fac6aabb161b8f03442368ffb2103ae"
     },
     {
+      "path": "src/act1/actor-locomotion.js",
+      "bytes": 1488,
+      "sha256": "4d927bb27b6cfd7308b0b05a2bab35e7f32773879dcbbaa6360176bb27df11b4"
+    },
+    {
+      "path": "src/act1/area-asset-plan.js",
+      "bytes": 6053,
+      "sha256": "2d6d2601a2cfd4f5b52226508a39fa317538fe96ee7e70942b41ceba287b73e6"
+    },
+    {
       "path": "src/act1/area-geometry.js",
       "bytes": 11374,
       "sha256": "6c834a105a2748a009ce5bb54c43e5cdc1de91d172627108d7da02148d23312e"
@@ -3772,6 +4112,11 @@
       "path": "src/act1/bitmap.js",
       "bytes": 7093,
       "sha256": "923438f42fa977f0503231c1cc6c66366585f5712975dcc8c51e2d8ba95525ca"
+    },
+    {
+      "path": "src/act1/bow-presentation.js",
+      "bytes": 6000,
+      "sha256": "07c67157749233f4f51c36076c24096ce6720da162b780430f69bfee5c5b9308"
     },
     {
       "path": "src/act1/browser-performance.js",
@@ -3811,7 +4156,7 @@
     {
       "path": "src/act1/campaign-ui.js",
       "bytes": 4861,
-      "sha256": "4caff2df32018929192ede11a0060710da1b74cd48c07aa266861eea7cc8f99c"
+      "sha256": "531e51857d2e1bc5d89d5c4cf2ff28c128a3eab92ad59befb55b88ed03fc8a64"
     },
     {
       "path": "src/act1/campaign-visuals.js",
@@ -3825,8 +4170,8 @@
     },
     {
       "path": "src/act1/character-animation.js",
-      "bytes": 16916,
-      "sha256": "f7690714a043e4ab689c080d1092b3b1287288e3d72fb888aa63ce5664e6ef20"
+      "bytes": 15942,
+      "sha256": "b1354084e5f96f659b9e2a4c54e84336dcef10af62d4cdbd4c1b7ea78cdc71ec"
     },
     {
       "path": "src/act1/combat200-animation-policy.js",
@@ -3850,13 +4195,18 @@
     },
     {
       "path": "src/act1/data/magic-profiles.js",
-      "bytes": 9813,
-      "sha256": "96caddedaaa77c70049aefbd8e53f28ff6091a08c949daf3a02304650fe94088"
+      "bytes": 10456,
+      "sha256": "8311461cfd2cd3a4c0617fd7846663fd64ba11566d95f9acb161da05ced0a245"
     },
     {
       "path": "src/act1/equipment-presentation.js",
       "bytes": 1999,
       "sha256": "ff5a13d887de4df456a49ae3e50e77542f2b7b67b52c6b8b8555af3c0e9cd526"
+    },
+    {
+      "path": "src/act1/foot-contact.js",
+      "bytes": 5257,
+      "sha256": "a339874a6fc6fd6dbc4e934a05079f98d4a185a8bd2121a781a499912a08f653"
     },
     {
       "path": "src/act1/forged-enemies.js",
@@ -3880,8 +4230,8 @@
     },
     {
       "path": "src/act1/graphics-refresh.js",
-      "bytes": 17787,
-      "sha256": "e29898354282d81cf03169cd55ee82cd4a5dedf9570dbb7a9674f0fc6f8434e1"
+      "bytes": 17213,
+      "sha256": "02416bd5ad6124f4caa928bece0344898819b6268b48e16f8097927f5eaf6630"
     },
     {
       "path": "src/act1/groundcover-plants.js",
@@ -3919,24 +4269,29 @@
       "sha256": "f7f3cc971ce0bccb580b989cd8f174aeaf0f672f38a4fd393edd0e9f83ba244e"
     },
     {
+      "path": "src/act1/limb-ik.js",
+      "bytes": 1907,
+      "sha256": "8e261ce2e71c991eae7fddcab363d55add7eec507867872e5b5ac52c74fdf7ae"
+    },
+    {
       "path": "src/act1/loot-tables.js",
       "bytes": 6093,
       "sha256": "7dcf5d399bbab1b76631d447deac8b23626a7288e4e478a7e676ad8957581ac6"
     },
     {
       "path": "src/act1/magic-vfx.js",
-      "bytes": 51582,
-      "sha256": "9e67bca67ba4359538863ed68c32b63bbcfdb2ff47b6a11cc2b1673ba526651a"
+      "bytes": 51856,
+      "sha256": "98f8ad5c3763bc98af0cc9cb2ba35b5817e4960dd75a9d043090f01d1c555be7"
     },
     {
       "path": "src/act1/main.js",
-      "bytes": 112475,
-      "sha256": "08331f9d8f73a4de30564c9383f3df72dd7fc7414cbf5b59d47636604ddba137"
+      "bytes": 113470,
+      "sha256": "9811bc0db0e4d8b6438f4fb9cb6e788bbd80a33a1f98a11f2aad61c76390eda4"
     },
     {
       "path": "src/act1/meshy-world.js",
-      "bytes": 44758,
-      "sha256": "8d810191eefca44133aebe873aa653fa95329aa42bafcefd45457db6213618d7"
+      "bytes": 46804,
+      "sha256": "ee03717aa52e1f4acd2c8ef3887095e772334e2eeba5cdc8c782315268a4f11f"
     },
     {
       "path": "src/act1/minimap.js",
@@ -3946,12 +4301,17 @@
     {
       "path": "src/act1/model.js",
       "bytes": 123587,
-      "sha256": "c7b2855d27acbb43541afb2204fca61daf915c1d23058f7f3bd756d245c0ec09"
+      "sha256": "2adb34e4fde9248ae4f1257967e558c055a193cd9293cfe4ca52af423466a2b7"
+    },
+    {
+      "path": "src/act1/motion-clip-corrections.js",
+      "bytes": 15225,
+      "sha256": "0078c30b3cacc77bac03cd02d46bc6c0c293315c8aed5e0dc5e1554065ebf8c7"
     },
     {
       "path": "src/act1/navigation.js",
-      "bytes": 15876,
-      "sha256": "9216d6e3498ce8401f1c95b5033f5e542c4de42463eca6c68ff1f6bde1cda06c"
+      "bytes": 15875,
+      "sha256": "fdc4f9dfbe09064ef841c25b4e9d47bb7091470fe42596e35a3bb123fb6e478b"
     },
     {
       "path": "src/act1/painted-material.js",
@@ -3960,13 +4320,13 @@
     },
     {
       "path": "src/act1/painted-motion.js",
-      "bytes": 5317,
-      "sha256": "e7a7a79be79c4dc28f7ded7ab39e55df3ad395b6ab665709fd13516e76f409ef"
+      "bytes": 5765,
+      "sha256": "e8fa0a72d9696f143348b6c0f1ea538e00b086f7a83fdeb25545ae19d1fbd484"
     },
     {
       "path": "src/act1/party-motion.js",
-      "bytes": 5531,
-      "sha256": "c9a8753564e2011d5626f8d9f0b1c8d569aff1aafb3e55a59d5e38ed52ef2e4d"
+      "bytes": 5559,
+      "sha256": "f5f34b776296f7516b07a6bc160498f17ae4695237402de910555b80a3564ef1"
     },
     {
       "path": "src/act1/presentation-environment.js",
@@ -3975,8 +4335,8 @@
     },
     {
       "path": "src/act1/presentation-motion.js",
-      "bytes": 587,
-      "sha256": "f04dcc51b651875f0fa47591bad63df8c21e366b5c4df4709b202719153c1c92"
+      "bytes": 2693,
+      "sha256": "78dd00f10512d0146c14e02847970da8ccad2acf72fccdb299486c735fb01dec"
     },
     {
       "path": "src/act1/presentation-paths.js",
@@ -3990,8 +4350,8 @@
     },
     {
       "path": "src/act1/presentation-timing.js",
-      "bytes": 1672,
-      "sha256": "57d9c98c231123ba569907fb77fd9f1c2ee01cf4ed1d69a484be5c847c7f004d"
+      "bytes": 1863,
+      "sha256": "0ee82e9e5c6b2cbfff0b0dc0bfe3f182a52e72b5e832fabb85fb311110cdeba5"
     },
     {
       "path": "src/act1/presentation-visibility.js",
@@ -4030,8 +4390,8 @@
     },
     {
       "path": "src/act1/save.js",
-      "bytes": 13294,
-      "sha256": "9a10349596541ff51ceea76a6517981df0ffca4bd207f8e018676e8137d01435"
+      "bytes": 13293,
+      "sha256": "caa4ef429191db6f4bb18dc4a4c8c7c2cd7ff0cc4ed48ea3ec7a100a4f755999"
     },
     {
       "path": "src/act1/source-facing.js",
@@ -4060,13 +4420,13 @@
     },
     {
       "path": "src/act1/water-fire.js",
-      "bytes": 15788,
-      "sha256": "e93e2553a3168738fd9fcf9660d419de22f722611391d3b44022ff2fd11786e6"
+      "bytes": 15787,
+      "sha256": "d8fc20a5844913c2ee571949b009881ccda4cecd5552031c68d5ae460d49c5e6"
     },
     {
       "path": "src/act1/world.js",
-      "bytes": 105175,
-      "sha256": "70047cbd6f4ed92d60dc254c2a4ba5bde83526c512bdd0ef41275a0c59b67fe7"
+      "bytes": 107305,
+      "sha256": "ecaeadaf72bb62a068ef0688cb3420ab2c73b1f9273767e3d9d4e11c4d2c6f6a"
     },
     {
       "path": "src/act1/writer-session.js",
@@ -4253,5 +4613,31 @@
     "musicCues": 27,
     "delivery": "GitHub Pages WebGL 2, streamed models and audio",
     "saveSchema": 2
+  },
+  "motionRevision": {
+    "id": "motion-110",
+    "baseCommit": "78fd9916baf4f86ed85bb49c31594ddf2148677a",
+    "poseRateHz": 25,
+    "sourceTrackCorrections": 500,
+    "changedProfileClips": 462,
+    "patchedProfiles": 66,
+    "correctionPayloadBytes": 91308,
+    "presentation": [
+      "gait cadence",
+      "biped sole contact",
+      "continuous turn",
+      "patrol",
+      "melee approach and return",
+      "archery",
+      "timed recoil"
+    ],
+    "streaming": {
+      "locationCount": 19,
+      "glbRequestsBeforeStart": 0,
+      "clipRequestsBeforeStart": 0,
+      "saveSchema": 2,
+      "loadScreen": "progress bar",
+      "resident": "current location and party"
+    }
   }
 }
