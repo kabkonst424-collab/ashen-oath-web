@@ -1,20 +1,22 @@
 import * as T from '../../assets/vendor/three.module.js';
 import {GLTFLoader} from '../../assets/vendor/GLTFLoader.js';
-import {BASE_MODELS} from './graphics-refresh.js?v=painted-20261114-r2';
+import {BASE_MODELS} from './graphics-refresh.js?v=roads-018';
 import {mergeGeometries} from '../../assets/vendor/BufferGeometryUtils.js';
 import {TerrainMaterials} from './terrain-material.js?v=painted-20261114-r2';
 import {paintMeshes} from './painted-material.js?v=painted-20261114-r2';
 import {fetchBytes} from './resource-loader.js?v=0.16.0-demo';
 
+import { buildAuthoredGround, buildAuthoredLandscape } from './authored-landscape.js?v=roads-018';
+
 // This module is installed after graphics-refresh. It changes presentation only;
-// the authoritative ellipse, interaction definitions and campaign state stay in model.js.
+// authoritative movement and campaign state stay in model.js.
 export const WORLD_SLOTS=Object.freeze(['tree','rock','grass','wheat','house','tower','wall','pillar','arch','altar_inspect','brazier','well','chest','crate','barrel','camp','puzzle','bookshelf_book','merchant_stall','bridge','cart','crane','waterwheel','banner','satchel','basket','lantern','terrain_village','terrain_forest','terrain_marsh','terrain_ruin','path_strip','water_strip']);
 export const EXEMPT_WEAPONS=Object.freeze(['Sword','Shield','Staff','Spear','Censer','Hammer','Bow','Crossbow','Oar']);
 export const PROP_SLOTS=Object.freeze({Rock:'rock',House:'house',Tower:'tower',Wall:'wall',Pillar:'pillar',Arch:'arch',Altar:'altar_inspect',Inspect:'altar_inspect',Brazier:'brazier',Well:'well',Chest:'chest',Crate:'crate',Barrel:'barrel',Camp:'camp',Puzzle:'puzzle',Bookshelf:'bookshelf_book',Book:'book',Stall:'merchant_stall',Bridge:'bridge',Cart:'cart',Crane:'crane',Waterwheel:'waterwheel',BannerFrame:'banner',Satchel:'satchel',Basket:'basket',Lantern:'lantern',Tree:'tree',Grass:'grass',Wheat:'wheat'});
 // Comparable to the existing library's dimensions, independent of Meshy's arbitrary units.
 const HEIGHT={tree:7.5,rock:1,grass:1,wheat:1,house:7,tower:11,wall:3.5,pillar:3.8,arch:4.7,altar_inspect:1.35,brazier:1.5,well:2.2,chest:1.2,crate:1.1,barrel:1.1,camp:.6,puzzle:1.7,bookshelf_book:4.8,merchant_stall:3,bridge:1.2,cart:2.1,crane:7,waterwheel:5.6,banner:5,satchel:.48,basket:.55,lantern:.55,book:.5};
 const UI_KEY=/^(proxy:|ring:|selection:|selection-gold:|target-arrow$|exit-glyph$|inspect-glyph$|fire$|effect-ring$)/;
-const ORIGINS=new Set(['meshy-world','meshy-character','exempt-weapon','ui-marker','vfx','interaction-proxy']);
+const ORIGINS=new Set(['authored-landscape','actor-accessory','meshy-world','meshy-character','exempt-weapon','ui-marker','vfx','interaction-proxy']);
 const TAU=Math.PI*2;
 const TERRAIN_TEMPLATES=new WeakMap();
 const NO_CAST_SHADOW=new Set(['grass','wheat','book','satchel','basket','lantern','camp']);
@@ -324,7 +326,7 @@ export function installMeshyWorld(World){
   }
   return group;
  };
- P.buildGround=function(){const group=this.meshySurface(this.meshyTerrainId(),{radiusX:this.radiusX,radiusZ:this.radiusZ,phase:this.seedPhase,tiled:true,edgeScale:Math.sqrt(.9)+.018,edgeNoise:.22});this.ground=group.children.reduce((largest,m)=>!largest||(m.geometry.attributes.position.count)>(largest.geometry.attributes.position.count)?m:largest,null);};
+ P.buildGround=function(){if(this.area.layout){buildAuthoredGround(this);return;}const group=this.meshySurface(this.meshyTerrainId(),{radiusX:this.radiusX,radiusZ:this.radiusZ,phase:this.seedPhase,tiled:true,edgeScale:Math.sqrt(.9)+.018,edgeNoise:.22});this.ground=group.children.reduce((largest,m)=>!largest||(m.geometry.attributes.position.count)>(largest.geometry.attributes.position.count)?m:largest,null);};
  P.perimeterApron=function(cx,cz,hw,hd,angle){let rx=hw+2.7,rz=hd+2.7,corner=Math.hypot(hw/rx,hd/rz);if(corner>.94){rx*=corner/.94;rz*=corner/.94;}this.meshySurface(this.meshyTerrainId(),{radiusX:rx,radiusZ:rz,centerX:cx,centerZ:cz,angle,phase:this.seedPhase,elevation:.014});};
  P.perimeter=function(group,hw,hd){const footprint=group.userData.meshyFootprint;return oldPerimeter.call(this,group,Math.max(hw,footprint?.halfWidth||0),Math.max(hd,footprint?.halfDepth||0));};
  P.ribbon=function(points,width,material,elevation=.025){
@@ -345,6 +347,7 @@ export function installMeshyWorld(World){
   return {mesh:group,samples};
  };
  P.buildLandscape=function(){
+  if(this.area.layout){buildAuthoredLandscape(this);return;}
   const trees=[],rocks=[],grass=[],count=this.theme==='grass'?10:this.biome==='village'?18:this.biome==='abbey'?12:40;
   for(let attempt=0;attempt<count*9&&trees.length<count;attempt++){const a=this.rng()*TAU,r=Math.sqrt(this.rng())*.98,x=Math.cos(a)*this.radiusX*r,z=Math.sin(a)*this.radiusZ*r;if(!this.free(x,z,3.6)||trees.some(p=>Math.hypot(p.x-x,p.z-z)<4.4))continue;const scale=.65+this.rng()*.55;trees.push({x,y:this.height(x,z),z,scale,ry:this.rng()*TAU,rz:(this.rng()-.5)*.05});}
   for(let i=0;i<170;i++){const a=this.rng()*TAU,r=.45+this.rng()*.52,x=Math.cos(a)*this.radiusX*r,z=Math.sin(a)*this.radiusZ*r;if(!this.free(x,z,1.6))continue;const s=.4+this.rng()*1.1;rocks.push({x,y:this.height(x,z)-.06,z,sx:s*1.4,sy:s*.7,sz:s,ry:this.rng()*TAU});}

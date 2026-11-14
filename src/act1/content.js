@@ -1,3 +1,7 @@
+import { AREA_LAYOUTS } from './area-layouts.js?v=roads-018';
+import { applyAreaLayouts } from './area-geometry.js?v=roads-018';
+import { extendRoadsContent } from './roads-content.js?v=roads-018';
+
 // Ashen Oath — original first act. Immutable authored data; runtime owns all state.
 export const CONTENT_VERSION = '1.0.0';
 
@@ -1406,3 +1410,8 @@ export const QUEST_TARGETS = {
     }
   ]
 };
+
+applyAreaLayouts(AREAS, AREA_LAYOUTS);
+extendRoadsContent({areas:AREAS,quests:QUESTS,dialogues:DIALOGUES,targets:QUEST_TARGETS,enemies:ENEMIES});
+ACT_INFO.optionalQuestCount = QUESTS.filter(quest => quest.optional).length;
+ACT_INFO.encounterCount = AREAS.reduce((sum, area) => sum + area.encounters.length, 0);

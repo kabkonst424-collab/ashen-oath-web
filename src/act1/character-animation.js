@@ -1,5 +1,5 @@
 import * as T from '../../assets/vendor/three.module.js';
-import { PARTY } from './content.js?v=0.16.0-demo';
+import { PARTY } from './content.js?v=roads-018';
 import { fetchBytes } from './resource-loader.js?v=0.16.0-demo';
 import { validateCastHands } from './cast-anchors.js?v=0.16.0-demo';
 import { SOURCE_BASES, SOURCE_FRONT_YAW, resolveBaseFrontYaw, resolveProfileFrontYaw, actorSourceBase, isSourceBase, sourceValue, normalizeSourceHash, normalizeSourceYaw, sourceFacingBasis, applySourceFacing } from './source-facing.js?v=0.16.0-demo';
@@ -180,8 +180,8 @@ export class CharacterAnimationLibrary {
 
   identity(actor) {
     if (actor.options?.party) return `party:${String(actor.options.role || actor.id.split(':')[1]).split('_')[0]}`;
-    if (actor.options?.hostile && actor.options.enemyId) return `enemy:${actor.options.enemyId}`;
-    if (actor.options?.npc) return actor.id.startsWith('npc:') ? actor.id : `npc:${actor.options.role}`;
+    if (actor.options?.hostile && actor.options.enemyId) return `enemy:${actor.options.animationSource || actor.options.enemyId}`;
+    if (actor.options?.npc) return `npc:${actor.options.animationSource || (actor.id.startsWith('npc:') ? actor.id.slice(4) : actor.options.role)}`;
     return String(actor.options?.animationProfile || actor.id);
   }
 

@@ -126,6 +126,17 @@
       "originalSha256": "c867fb42619b82325d51ea242180f9863a499e11155bcf0f5eaa19a1f215ac18",
       "producer": "built-in ImageGen",
       "derivation": "The 0.17.0 ImageGen menu resized as a storefront poster"
+    },
+    {
+      "id": "roads-storefront-cover",
+      "path": "assets/act1/painted/roads-cover.webp",
+      "width": 1200,
+      "height": 675,
+      "originalSha256": "526216fb26afa5b439486f3091f77d6e94516441d491d720b442893b138e95a5",
+      "producer": "built-in ImageGen",
+      "bytes": 367098,
+      "sha256": "0fbf159545484e57129a24e348b93b85023115743cb32f8b03450e314affb2a3",
+      "derivation": "Gouache fantasy valley storefront illustration, cropped and compressed to WebP"
     }
   ],
   "animation": {

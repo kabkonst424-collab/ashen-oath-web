@@ -1,21 +1,21 @@
-import * as M from './model.js?v=0.16.0-demo';
-import * as CONTENT from './content.js?v=0.16.0-demo';
+import * as M from './model.js?v=roads-018';
+import * as CONTENT from './content.js?v=roads-018';
 
-// Navigation is presentation only. Actual collision currently is the model's
-// convex ellipse; props/walls are decorative and are not invented obstacles.
+// Routes and the schematic take their boundaries from the movement model.
 const PHASES=[];
 const phase=(order,run)=>PHASES.push({order,run});
 const values=v=>Array.isArray(v)?v:Object.values(v||{});
 const byId=v=>new Map(values(v).map(a=>[a.id,a]));
 const finite=n=>Number.isFinite(n);
 const distance=(a,b)=>Math.hypot(a.x-b.x,a.z-b.z);
-export function areaBounds(area={}){const b=area.bounds||{};return {x:b.x||0,z:b.z||0,rx:(b.rx||area.radiusX||area.rx||area.width/2||30)*Math.sqrt(.9),rz:(b.rz||area.radiusZ||area.rz||area.depth/2||35)*Math.sqrt(.9)};}
+export function areaBounds(area={}){if(area.layout)return area.bounds;const b=area.bounds||{};return {x:b.x||0,z:b.z||0,rx:(b.rx||area.radiusX||area.rx||area.width/2||30)*Math.sqrt(.9),rz:(b.rz||area.radiusZ||area.rz||area.depth/2||35)*Math.sqrt(.9)};}
 function objectIn(area,id){return [...(area?.npcs||[]).map(o=>({...o,kind:'npc'})),...(area?.nodes||[]).map(o=>({...o,kind:o.type||'inspect'})),...(area?.encounters||[]).map(o=>({...o,kind:'encounter'})),...(area?.exits||[]).map(o=>({...o,kind:'exit'})),...(area?.shops||[]).map(o=>({...o,kind:'shop'}))].find(o=>o.id===id);}
 function allowed(state,object){return (object.requiresFlags||[]).every(f=>state.flags?.[f])&&!(object.forbidFlags||[]).some(f=>state.flags?.[f]);}
 function availableObject(state,object){return !!object&&allowed(state,object)&&!(state.defeated||[]).includes(object.id)&&!(object.kind==='chest'&&(state.claimed||[]).includes('node:'+object.id));}
 export function createNavigationService({walkable=M.walkable,areas=CONTENT.AREAS,quests=CONTENT.QUESTS,model=M,now=()=>globalThis.performance?.now?.()??Date.now()}={}){
+ const phases=[...PHASES].sort((a,b)=>a.order-b.order);
  const metrics={updates:0,routeComputations:0,routeCacheHits:0},ctx={areas:byId(areas),quests:values(quests),model,walkable,metrics,now,stageNoticeUntil:0,previousTarget:null,routeCache:null};
- return {metrics,update(state,selection={}){metrics.updates++;const area=ctx.areas.get(state.areaId),view={mode:state.mode,runId:state.runId,area:{id:state.areaId,title:area?.title||area?.name||'Неизвестная область',bounds:areaBounds(area)},player:null,quest:null,target:null,waypoint:null,route:{status:'none',points:[],areas:[]},hint:'',distance:null,arrived:false,landmarks:[],quests:[]};for(const item of [...PHASES].sort((a,b)=>a.order-b.order))item.run(view,state,selection,ctx);return view;}};
+ return {metrics,update(state,selection={}){metrics.updates++;const area=ctx.areas.get(state.areaId),view={mode:state.mode,runId:state.runId,area:{id:state.areaId,title:area?.title||area?.name||'Неизвестная область',bounds:areaBounds(area),layout:area?.layout},player:null,quest:null,target:null,waypoint:null,route:{status:'none',points:[],areas:[]},hint:'',distance:null,arrived:false,landmarks:[],quests:[]};for(const item of phases)item.run(view,state,selection,ctx);return view;}};
 }
 
 
@@ -37,7 +37,74 @@ export function approachTarget(areaId,target,from,walkable=M.walkable){if(!targe
 phase(40,(v,s,selection,c)=>{if(v.target?.areaId!==s.areaId)return;const object=objectIn(c.areas.get(s.areaId),v.target.id);v.waypoint={...v.target,radius:object?.radius||3.4};v.waypoint.approach=approachTarget(s.areaId,v.waypoint,v.player,c.walkable);});
 
 export function validSegment(areaId,a,b,walkable=M.walkable){const count=Math.max(1,Math.ceil(distance(a,b)/.7));for(let i=0;i<=count;i++)if(!walkable(areaId,a.x+(b.x-a.x)*i/count,a.z+(b.z-a.z)*i/count))return false;return true;}
-export function planPath(areaId,start,end,{walkable=M.walkable,bounds,step=2,maxVisited=4096}={}){if(!end||!walkable(areaId,start.x,start.z)||!walkable(areaId,end.x,end.z))return {status:'unreachable',points:[]};if(validSegment(areaId,start,end,walkable))return {status:'ready',points:[{...start},{...end}]};const b=bounds||{x:0,z:0,rx:55,rz:60},key=(x,z)=>x+','+z,nearest=p=>({x:Math.round((p.x-b.x)/step),z:Math.round((p.z-b.z)/step)}),world=p=>({x:b.x+p.x*step,z:b.z+p.z*step}),source=nearest(start),goal=nearest(end),open=[{...source,g:0,f:0}],closed=new Set(),cost=new Map([[key(source.x,source.z),0]]),previous=new Map();let finish=null;while(open.length&&closed.size<maxVisited){open.sort((a,b)=>a.f-b.f||a.g-b.g||a.x-b.x||a.z-b.z);const p=open.shift(),id=key(p.x,p.z);if(closed.has(id))continue;closed.add(id);const wp=world(p);if(distance(wp,end)<=step*1.8&&validSegment(areaId,wp,end,walkable)){finish=p;break;}for(const [dx,dz]of [[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1]]){const next={x:p.x+dx,z:p.z+dz},q=world(next),nid=key(next.x,next.z);if(Math.abs(q.x-b.x)>b.rx+step||Math.abs(q.z-b.z)>b.rz+step||closed.has(nid)||!walkable(areaId,q.x,q.z)||!validSegment(areaId,wp,q,walkable))continue;if(dx&&dz&&(!walkable(areaId,wp.x+dx*step,wp.z)||!walkable(areaId,wp.x,wp.z+dz*step)))continue;const g=p.g+Math.hypot(dx,dz)*step;if(g>=(cost.get(nid)??Infinity))continue;cost.set(nid,g);previous.set(nid,id);open.push({...next,g,f:g+distance(q,end)});}}if(!finish)return {status:'unreachable',points:[]};const points=[{...end}],visited=new Set();let cursor=key(finish.x,finish.z);while(cursor&&!visited.has(cursor)){visited.add(cursor);const [x,z]=cursor.split(',').map(Number);points.push(world({x,z}));cursor=previous.get(cursor);}points.push({...start});points.reverse();if(!points.every((p,i)=>!i||validSegment(areaId,points[i-1],p,walkable)))return {status:'unreachable',points:[]};const smooth=[points[0]];let index=0;while(index<points.length-1){let far=points.length-1;while(far>index+1&&!validSegment(areaId,points[index],points[far],walkable))far--;smooth.push(points[far]);index=far;}return {status:'ready',points:smooth};}
+const NEIGHBORS = [[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1]];
+function enqueue(queue, value) {
+ let i=queue.length;
+ queue.push(value);
+ while(i>0){
+  const parent=(i-1)>>1;
+  if(queue[parent].f<=value.f)break;
+  queue[i]=queue[parent];i=parent;
+ }
+ queue[i]=value;
+}
+
+function dequeue(queue) {
+ const root=queue[0],last=queue.pop();
+ if(!queue.length)return root;
+ let i=0;
+ while(i*2+1<queue.length){
+  let child=i*2+1;
+  if(child+1<queue.length&&queue[child+1].f<queue[child].f)child++;
+  if(last.f<=queue[child].f)break;
+  queue[i]=queue[child];i=child;
+ }
+ queue[i]=last;
+ return root;
+}
+
+export function planPath(areaId,start,end,{walkable=M.walkable,bounds,step=2,maxVisited=11000}={}){
+ const failed={status:'unreachable',points:[]};
+ if(!end||!walkable(areaId,start.x,start.z)||!walkable(areaId,end.x,end.z))return failed;
+ if(validSegment(areaId,start,end,walkable))return {status:'ready',points:[{...start},{...end}]};
+ const b=bounds||areaBounds(byId(CONTENT.AREAS).get(areaId));
+ const key=(x,z)=>x+','+z, world=(x,z)=>({x:b.x+x*step,z:b.z+z*step});
+ const source={x:Math.round((start.x-b.x)/step),z:Math.round((start.z-b.z)/step)};
+ const open=[],closed=new Set(),visited=new Map();
+ for(let dx=-2;dx<=2;dx++)for(let dz=-2;dz<=2;dz++){
+  const x=source.x+dx,z=source.z+dz,p=world(x,z),g=distance(start,p);
+  if(!validSegment(areaId,start,p,walkable))continue;
+  const row={x,z,p,g,f:g+distance(p,end),previous:null};
+  visited.set(key(x,z),row);enqueue(open,row);
+ }
+ let finish=null;
+ while(open.length&&closed.size<maxVisited){
+  const current=dequeue(open),id=key(current.x,current.z);
+  if(closed.has(id)||visited.get(id)!==current)continue;
+  closed.add(id);
+  if(distance(current.p,end)<=step*2.5&&validSegment(areaId,current.p,end,walkable)){finish=current;break;}
+  for(const [dx,dz] of NEIGHBORS){
+   const x=current.x+dx,z=current.z+dz,p=world(x,z),next=key(x,z);
+   const g=current.g+Math.hypot(dx,dz)*step;
+   if(Math.abs(p.x-b.x)>b.rx+step||Math.abs(p.z-b.z)>b.rz+step||closed.has(next)||
+       g>=(visited.get(next)?.g??Infinity)||!validSegment(areaId,current.p,p,walkable))continue;
+   if(dx&&dz&&(!walkable(areaId,p.x,current.p.z)||!walkable(areaId,current.p.x,p.z)))continue;
+   const row={x,z,p,g,f:g+distance(p,end),previous:current};
+   visited.set(next,row);enqueue(open,row);
+  }
+ }
+ if(!finish)return failed;
+ const points=[{...end}];
+ for(let cursor=finish;cursor;cursor=cursor.previous)points.push(cursor.p);
+ points.push({...start});points.reverse();
+ const smooth=[points[0]];
+ for(let i=0;i<points.length-1;){
+  let j=points.length-1;
+  while(j>i+1&&!validSegment(areaId,points[i],points[j],walkable))j--;
+  smooth.push(points[j]);i=j;
+ }
+ return {status:'ready',points:smooth};
+}
 phase(70,(v,s,selection,c)=>{if(!v.waypoint)return;const endpoint=v.waypoint.approach,key=JSON.stringify([s.runId,s.areaId,v.waypoint.id,endpoint,Math.floor(v.player.x/2),Math.floor(v.player.z/2),s.flags,s.claimed,s.defeated]);let path;if(c.routeCache?.key===key&&c.routeCache.path.status==='ready'&&validSegment(s.areaId,v.player,c.routeCache.path.points[1]||endpoint,c.walkable)){c.metrics.routeCacheHits++;path={...c.routeCache.path,points:[{...v.player},...c.routeCache.path.points.slice(1)]};}else{c.metrics.routeComputations++;path=planPath(s.areaId,v.player,endpoint,{walkable:c.walkable,bounds:v.area.bounds});c.routeCache={key,path};}v.route={...v.route,...path};if(path.status==='unreachable')v.route.reason='Не удалось построить доступный путь. Проверьте цель в журнале.';});
 phase(96,v=>{if(v.route.points.length>1)v.distance=Math.ceil(v.route.points.slice(1).reduce((sum,p,i)=>sum+distance(v.route.points[i],p),0));});
 
@@ -81,11 +148,28 @@ phase(71,v=>{if(v.targetBlockedHint){v.route.status='blocked-target';v.route.poi
 
 phase(30,(v,s,selection,c)=>{v.quests=c.model.questList(s).filter(q=>q.known&&q.available&&!q.complete).map(q=>({id:q.id,title:q.title}));});
 
-phase(35,(v,s,selection,c)=>{const near=c.model.nearby(s).filter(o=>availableObject(s,o)&&['npc','camp','exit','shop'].includes(o.kind)),exits=(c.areas.get(s.areaId)?.exits||[]).filter(o=>allowed(s,o)).map(o=>({...o,kind:'exit',label:o.label||o.id,areaId:s.areaId}));v.landmarks=[...new Map([...near,...exits].filter(o=>o.id!==v.target?.id).map(o=>[o.id,{id:o.id,x:o.x,z:o.z,label:o.label||o.name||o.id,kind:o.kind==='shop'||o.kind==='npc'&&o.shop?'merchant':o.kind}])).values()].slice(0,16);});
+export function areaMapMarkers(area,state,targetId=null) {
+ const entries=(list,kind)=>(list||[]).map(item=>({...item,kind:item.type||kind}));
+ const npcs=entries(area.npcs,'npc').filter(npc=>!state.party?.some(hero=>npc.id.startsWith(hero.id+'_')));
+ const objects=[...npcs,...entries(area.nodes,'inspect'),...entries(area.encounters,'encounter'),...entries(area.exits,'exit')];
+ const active=objects.filter(object=>object.id!==targetId && !(object.forbidFlags||[]).some(f=>state.flags?.[f]) &&
+   !(state.defeated||[]).includes(object.id) && !(state.claimed||[]).includes('node:'+object.id) &&
+   (object.kind==='exit'||allowed(state,object)));
+ return [...(area.layout?.landmarks||[]),...active.map(object=>({
+   id:object.id,x:object.x,z:object.z,
+   label:object.label||object.name||(object.kind==='encounter'?CONTENT.ENEMIES[object.enemies?.[0]]?.name:null)||object.id,
+   kind:object.kind==='npc'&&object.shop?'merchant':object.boss?'boss':object.kind,
+   locked:!allowed(state,object),
+ }))];
+}
 
-
-
-
+phase(35,(v,s,selection,c)=>{
+ const area=c.areas.get(s.areaId);
+ if(area?.layout){v.landmarks=areaMapMarkers(area,s,v.target?.id);return;}
+ const near=c.model.nearby(s).filter(o=>availableObject(s,o)&&['npc','camp','exit','shop'].includes(o.kind));
+ const exits=(area?.exits||[]).filter(o=>allowed(s,o)).map(o=>({...o,kind:'exit'}));
+ v.landmarks=[...new Map([...near,...exits].filter(o=>o.id!==v.target?.id).map(o=>[o.id,{id:o.id,x:o.x,z:o.z,label:o.label||o.name||o.id,kind:o.kind==='shop'||o.kind==='npc'&&o.shop?'merchant':o.kind}])).values()].slice(0,16);
+});
 
 export function directionName(from,to){if(!to)return '';const angle=(Math.atan2(to.x-from.x,-(to.z-from.z))*180/Math.PI+360)%360;return ['север','северо-восток','восток','юго-восток','юг','юго-запад','запад','северо-запад'][Math.round(angle/45)%8];}
 phase(105,v=>{v.direction=v.arrived?'вы у цели':directionName(v.player,v.waypoint?.approach||(v.target?.areaId===v.area.id?v.target:null));});

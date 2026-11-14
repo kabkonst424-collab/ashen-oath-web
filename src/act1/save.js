@@ -1,5 +1,5 @@
-import {VERSION,SCHEMA,validate,snapshot,upgradeCombatState} from './model.js?v=0.16.0-demo';
-import {CONTENT_VERSION} from './content.js?v=0.16.0-demo';
+import {VERSION,SCHEMA,validate,snapshot,upgradeCombatState,upgradeMapState} from './model.js?v=roads-018';
+import {CONTENT_VERSION} from './content.js?v=roads-018';
 import {parseSaveJSON} from '../strict-json.js?v=0.16.0-demo';
 
 // Act I deliberately has its own database. The 0.2.0 save is never opened here.
@@ -8,10 +8,10 @@ const MAX_BYTES=2*1024*1024;
 export class SaveConflictError extends Error{constructor(message){super(message);this.name='SaveConflictError';this.code='SAVE_CONFLICT';}}
 export function canonical(value){if(value===null||typeof value!=='object')return JSON.stringify(value);if(Array.isArray(value))return '['+value.map(canonical).join(',')+']';return '{'+Object.keys(value).sort().map(key=>JSON.stringify(key)+':'+canonical(value[key])).join(',')+'}';}
 async function checksum(value){const hash=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(canonical(value)));return [...new Uint8Array(hash)].map(value=>value.toString(16).padStart(2,'0')).join('');}
-export async function envelope(state,revision=0){if(!Number.isSafeInteger(revision)||revision<0)throw Error('Неверная ревизия сохранения');const payload=snapshot(state);validate(payload);upgradeCombatState(payload);validate(payload);const data={schemaVersion:SCHEMA,contentVersion:CONTENT_VERSION||1,buildVersion:VERSION,revision,savedAt:new Date().toISOString(),payload};return {...data,checksum:await checksum(data)};}
+export async function envelope(state,revision=0){if(!Number.isSafeInteger(revision)||revision<0)throw Error('Неверная ревизия сохранения');const payload=snapshot(state);validate(payload);upgradeMapState(payload);upgradeCombatState(payload);validate(payload);const data={schemaVersion:SCHEMA,contentVersion:CONTENT_VERSION||1,buildVersion:VERSION,revision,savedAt:new Date().toISOString(),payload};return {...data,checksum:await checksum(data)};}
 export async function verify(file){
  if(!file||Array.isArray(file)||Object.keys(file).sort().join(',')!=='buildVersion,checksum,contentVersion,payload,revision,savedAt,schemaVersion'||file.schemaVersion!==SCHEMA||file.contentVersion!==(CONTENT_VERSION||1)||typeof file.checksum!=='string'||!/^[a-f0-9]{64}$/.test(file.checksum)||!Number.isSafeInteger(file.revision)||file.revision<0||typeof file.buildVersion!=='string'||file.buildVersion.length>80||typeof file.savedAt!=='string'||file.savedAt.length>40||!Number.isFinite(Date.parse(file.savedAt)))throw Error('Неподдерживаемая версия или метаданные сохранения первого акта');
- const {checksum:stored,...data}=file;if(await checksum(data)!==stored)throw Error('Контрольная сумма не совпала. Файл повреждён.');validate(data.payload);const payload=snapshot(data.payload);upgradeCombatState(payload);validate(payload);return payload;
+ const {checksum:stored,...data}=file;if(await checksum(data)!==stored)throw Error('Контрольная сумма не совпала. Файл повреждён.');validate(data.payload);const payload=snapshot(data.payload);upgradeMapState(payload);upgradeCombatState(payload);validate(payload);return payload;
 }
 
 function observeTransaction(tx,resolve,reject,value=()=>undefined,error=()=>tx.error){

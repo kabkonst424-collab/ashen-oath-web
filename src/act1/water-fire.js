@@ -1,8 +1,9 @@
+import { buildAuthoredOcean } from './authored-landscape.js?v=roads-018';
 import * as T from '../../assets/vendor/three.module.js';
 import { environmentalTime, fireDistanceFade, waterReadability } from './presentation-environment.js?v=0.16.0-demo';
-import { tileTerrainGeometry } from './meshy-world.js?v=painted-20261114-r2';
+import { tileTerrainGeometry } from './meshy-world.js?v=roads-018';
 
-// Presentation only. The shore stays beyond model.walkable's sqrt(.9) ellipse.
+// The old radial shore serves the battle arenas. Authored zones set their own banks.
 export const SHORE = Object.freeze({radius: Math.sqrt(.9) + .018, noise: .22});
 const hash = text => [...String(text)].reduce((h,c) => Math.imul(h^c.charCodeAt(0),16777619)>>>0,2166136261);
 const tag = object => { object.userData.modelOrigin={kind:'vfx',source:'Painted campfire and ambient particles'};return object; };
@@ -22,7 +23,7 @@ const vertex = `
     #include <fog_vertex>
   }`;
 const fragment = `
-  uniform float clock;uniform float river;uniform float phase;uniform float rippleDetail;uniform float glintStrength;uniform float foamCap;
+  uniform float clock;uniform float river;uniform float authoredOcean;uniform float phase;uniform float rippleDetail;uniform float glintStrength;uniform float foamCap;
   uniform vec2 island;uniform vec2 center;
   uniform vec3 deepColor;uniform vec3 shallowColor;uniform vec3 skyColor;uniform vec3 sunDirection;
   uniform sampler2D sourceMap;uniform float hasSource;
@@ -32,7 +33,8 @@ const fragment = `
     vec2 p=surface.xz,q=(p-center)/island;
     float a=atan(q.y,q.x),coast=${SHORE.radius.toFixed(8)}+sin(a*5.+phase)*.026*.22+cos(a*9.-phase)*.018*.22;
     float shore=(length(q)-coast)*min(island.x,island.y);
-    if(river<.5 && shore<-.10)discard;
+    if(river<.5 && shore<-.10 && authoredOcean<.5)discard;
+    if(authoredOcean>.5)shore=max(2.,shore);
     float depth=mix(smoothstep(0.,8.,shore),.42,river);
     float w1=dot(p,vec2(.72,.49))-clock*1.12,w2=dot(p,vec2(-1.11,.73))+clock*.84;
     float r1=dot(p,vec2(2.7,-1.9))+clock*1.37,r2=dot(p,vec2(-3.2,-2.1))-clock*1.09;
@@ -64,13 +66,13 @@ const fragment = `
 
 export class WorldElements {
   constructor(world){this.world=world;this.motionClock={value:world.time||0,last:world.time||0,reduced:!!world.reducedMotion};this.water=[];this.waterCache=new Map();this.fireAtlasCache=new Map();this.fires=[];this.serial=0;this.nearest=[null,null,null,null];this.nearestDistance=[Infinity,Infinity,Infinity,Infinity];this.nextLightSelection=0;this.viewProjection=new T.Matrix4();this.frustum=new T.Frustum();this.fireBounds=new T.Sphere(new T.Vector3(),2.5);}
-  material(source,river=false,center={x:0,z:0},rx=this.world.radiusX,rz=this.world.radiusZ){
+  material(source,river=false,center={x:0,z:0},rx=this.world.radiusX,rz=this.world.radiusZ,authoredOcean=false){
     const w=this.world,marsh=w.biome==='marsh',dark=w.biome==='abbey';
-    const key=`${source?.uuid||'none'}:${river?1:0}:${center.x}:${center.z}:${rx}:${rz}:${w.biome}`;
+    const key=`${source?.uuid||'none'}:${river?1:0}:${center.x}:${center.z}:${rx}:${rz}:${w.biome}:${authoredOcean?1:0}`;
     if(this.waterCache.has(key))return this.waterCache.get(key);
     const material=new T.ShaderMaterial({vertexShader:vertex,fragmentShader:fragment,fog:true,side:T.DoubleSide,
       uniforms:T.UniformsUtils.merge([T.UniformsLib.fog,{
-        clock:{value:w.time},river:{value:river?1:0},phase:{value:w.seedPhase||0},island:{value:new T.Vector2(rx,rz)},center:{value:new T.Vector2(center.x,center.z)},
+        clock:{value:w.time},river:{value:river?1:0},authoredOcean:{value:authoredOcean?1:0},phase:{value:w.seedPhase||0},island:{value:new T.Vector2(rx,rz)},center:{value:new T.Vector2(center.x,center.z)},
         deepColor:{value:new T.Color(marsh?0x123d39:dark?0x173940:0x10586a)},shallowColor:{value:new T.Color(marsh?0x577e63:dark?0x447979:0x529b96)},
         skyColor:{value:w.scene.background.clone()},sunDirection:{value:w.sun.position.clone().sub(w.sun.target.position).normalize()},
         sourceMap:{value:null},hasSource:{value:source?.map?1:0},rippleDetail:{value:w.qualityLevel==='low'?0:1},glintStrength:{value:waterReadability(w.reducedMotion).glint},foamCap:{value:waterReadability(w.reducedMotion).foam}
@@ -80,7 +82,9 @@ export class WorldElements {
     this.water.push(material);this.waterCache.set(key,material);return material;
   }
   ocean(parent=this.world.areaGroup,stage=false){
-    const w=this.world,source=w.meshyParts('water_strip'),center=stage?w.battleCenter:{x:0,z:0},rx=stage?72:w.radiusX,rz=stage?72:w.radiusZ;
+    const w=this.world;
+    if(!stage&&w.area?.layout){buildAuthoredOcean(w);return;}
+    const source=w.meshyParts('water_strip'),center=stage?w.battleCenter:{x:0,z:0},rx=stage?72:w.radiusX,rz=stage?72:w.radiusZ;
     const group=new T.Group();group.name='Meshy_surrounding_water';parent.add(group);
     for(const part of source.parts){
       const geometry=tileTerrainGeometry(part.geometry,{radiusX:Math.max(145,rx+100),radiusZ:Math.max(145,rz+100),centerX:center.x,centerZ:center.z,tileSize:40,

@@ -1,4 +1,5 @@
-import {createNavigationService} from './navigation.js?v=0.16.0-demo';
+import {drawAreaSchematic,markerShape,terrainShapes} from './area-schematic.js?v=roads-018';
+import {areaMapMarkers,createNavigationService} from './navigation.js?v=roads-018';
 const INITIALIZERS=[],RENDERERS=[];
 const initialize=run=>INITIALIZERS.push(run),renderer=(order,run)=>RENDERERS.push({order,run});
 const NS='http://www.w3.org/2000/svg';
@@ -24,7 +25,22 @@ export function createMinimap({el,text,button,onQuestSelect=()=>{},onDetails=()=
  for(const run of INITIALIZERS)run(env);
  return api;
 }
-renderer(0,e=>{const b=e.view.area.bounds,center=e.project({x:b.x,z:b.z}),edge=e.project({x:b.x+b.rx,z:b.z+b.rz});e.shape('terrain','bounds','ellipse',{cx:center.x,cy:center.y,rx:Math.abs(edge.x-center.x),ry:Math.abs(edge.y-center.y),fill:'#1c3534',stroke:'#c9a55e','stroke-width':1.4});e.caption('area',e.view.area.title,{parent:e.header,size:14,bold:true});});
+renderer(0,e=>{
+ const layout=e.view.area.layout;
+ const key=e.view.area.id+':'+e.prefs.zoom+(e.prefs.zoom===2?':'+e.view.player.x.toFixed(2)+':'+e.view.player.z.toFixed(2):'');
+ if(e.terrainKey!==key){
+  e.terrainKey=key;
+  const shapes=terrainShapes(layout,e.project),live=new Set(shapes.map(shape=>shape[0]));
+  if(!layout){
+   const b=e.view.area.bounds,center=e.project({x:b.x,z:b.z}),edge=e.project({x:b.x+b.rx,z:b.z+b.rz});
+   live.add('bounds');
+   shapes.push(['bounds','ellipse',{cx:center.x,cy:center.y,rx:Math.abs(edge.x-center.x),ry:Math.abs(edge.y-center.y),fill:'#263a32',stroke:'#ae9b69','stroke-width':1.1}]);
+  }
+  for(const node of [...e.layers.terrain.children])if(!live.has(node.getAttribute('data-nav-shape')))e.removeShape(node);
+  for(const [id,tag,attrs] of shapes)e.shape('terrain',id,tag,attrs);
+ }
+ e.caption('area',e.view.area.title,{parent:e.header,size:14,bold:true});
+});
 
 
 
@@ -65,7 +81,22 @@ initialize(e=>{const list=documentFallback(e,'nav50-quest-list');e.questList=lis
 function documentFallback(e,cls){return e.el('div',cls);}
 renderer(90,e=>{e.questList.hidden=!e.prefs.chooser;if(!e.prefs.chooser)return;const listKey=JSON.stringify([e.view.quests,e.view.quest?.id,e.selection.textScale||1]);if(e.questList._navKey===listKey)return;e.questList._navKey=listKey;e.questList.replaceChildren();for(const quest of e.view.quests){const selected=e.view.quest?.id===quest.id,node=e.control('quest-'+quest.id,(selected?'Выбрано · ':'')+quest.title,()=>e.choose(quest.id),e.questList);e.attr(node,'aria-pressed',String(selected));e.questList.append(node);}if(!e.view.quests.length)e.caption('no-quests','Нет активных известных заданий.',{parent:e.questList,size:12});});
 
-renderer(15,e=>{const live=new Set();for(const marker of e.view.landmarks){const p=e.project(marker);if(p.x<5||p.x>195||p.y<5||p.y>155)continue;const key='landmark-'+marker.id;live.add(key);const d=marker.kind==='camp'?'M-4,0 H4 M0,-4 V4':marker.kind==='exit'?'M-4,-4 H4 V4 H-4 Z':marker.kind==='merchant'?'M0,-5 L5,4 H-5 Z':'M-3,0 A3,3 0 1,0 3,0 A3,3 0 1,0 -3,0';e.shape('landmarks',key,'path',{d,transform:'translate('+p.x+' '+p.y+')',fill:marker.kind==='camp'?'none':'#b3c8c4',stroke:'#f0d391','stroke-width':1.4});}for(const node of [...e.layers.landmarks.children])if(!live.has(node.getAttribute('data-nav-shape')))e.removeShape(node);});
+renderer(15,e=>{
+ const live=new Set();
+ for(const marker of e.view.landmarks){
+  const p=e.project(marker);
+  if(p.x<5||p.x>195||p.y<5||p.y>155)continue;
+  const key='landmark-'+marker.id;
+  live.add(key);
+  const node=e.shape('landmarks',key,'path',markerShape(marker,e.project));
+  const label=marker.label+(marker.locked?' · закрыто':'');
+  if(node._markerTitle!==label){node._markerTitle=label;let title=node.firstChild;
+   if(!title){title=e.svg.ownerDocument.createElementNS(NS,'title');node.append(title);}
+   title.textContent=label;
+  }
+ }
+ for(const node of [...e.layers.landmarks.children])if(!live.has(node.getAttribute('data-nav-shape')))e.removeShape(node);
+});
 
 initialize(e=>e.control('route','Линия: да',()=>{e.prefs.showRoute=!e.prefs.showRoute;e.refresh();}));
 renderer(95,e=>{const button=e.control('route',e.prefs.showRoute?'Линия: да':'Линия: нет',()=>{e.prefs.showRoute=!e.prefs.showRoute;e.refresh();});e.attr(button,'aria-pressed',String(e.prefs.showRoute));e.attr(e.layers.route,'visibility',e.prefs.showRoute?'visible':'hidden');});
@@ -82,6 +113,16 @@ initialize(e=>e.control('details','Журнал',()=>e.onDetails(e.view.quest?.i
 renderer(97,e=>{const node=e.control('details','Журнал',()=>e.onDetails(e.view.quest?.id||null));node.ariaLabel='Открыть задание в журнале · '+(e.view.quest?.title||'Текущая задача');});
 
 initialize(e=>e.control('legend','Значки',()=>{e.prefs.legend=!e.prefs.legend;e.refresh();}));
-renderer(98,e=>{e.attr(e.control('legend','Значки',()=>{e.prefs.legend=!e.prefs.legend;e.refresh();}),'aria-expanded',String(e.prefs.legend));e.caption('legend',e.prefs.legend?'Стрелка — отряд · Ромб — цель\nКруг — собеседник · Крест — лагерь\nКвадрат — выход · Малый треугольник — торговец':'',{parent:e.extra,size:12});e.attr(e.svg,'aria-label',[e.view.area.title,e.view.quest?.title,e.view.hint,e.view.route.reason,e.view.distance!==null?'Примерно '+e.view.distance+' шагов':'',e.view.direction].filter(Boolean).join('. '));});
+renderer(98,e=>{e.attr(e.control('legend','Значки',()=>{e.prefs.legend=!e.prefs.legend;e.refresh();}),'aria-expanded',String(e.prefs.legend));e.caption('legend',e.prefs.legend?'Светлая стрелка — отряд · Золотой ромб — цель\nАрка — выход · Шатёр — лагерь · Сумка — торговец\nКрасный крест — враги · Синий — вода · Линия — дорога':'',{parent:e.extra,size:12});e.attr(e.svg,'aria-label',[e.view.area.title,e.view.quest?.title,e.view.hint,e.view.route.reason,e.view.distance!==null?'Примерно '+e.view.distance+' шагов':'',e.view.direction].filter(Boolean).join('. '));});
 
 
+
+export function createAreaSchematic({area,state,questId,document=globalThis.document}){
+ const local=state.areaId===area.id;
+ const view=createNavigationService().update(state,{questId});
+ const target=view.target?.areaId===area.id?view.target:null;
+ return drawAreaSchematic({
+  area,state,position:local?{...state.position,angle:state.angle}:null,
+  markers:areaMapMarkers(area,state,target?.id),target,route:local?view.route.points:[],document,
+ });
+}

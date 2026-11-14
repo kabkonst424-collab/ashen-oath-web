@@ -102,6 +102,17 @@
 }
 .battle-actions .combat-cost .bitmap-text { max-height: 13px; }
 
+.act-map-detail {
+  display: grid;
+  gap: 8px;
+  margin: 5px 0 14px;
+  padding: 12px;
+  background: #0b2027;
+  border: 1px solid #8c7447;
+  border-radius: 7px;
+}
+.act-area-schematic { max-width: 690px; margin: 0 auto; }
+
 @media (max-width: 760px), (max-height: 460px) {
   #actHud[data-mode="battle"] .turn-order { height: 48px; }
   #actHud[data-mode="battle"] .turn-entry {

@@ -1,6 +1,6 @@
 {
   "id": "ashen-oath",
-  "version": "0.17.0-demo",
+  "version": "0.18.0-demo",
   "releaseStatus": "demo",
   "demo": true,
   "posterArtRevision": {
@@ -9,7 +9,7 @@
     "coverSHA256": "e7f492f4d6d5fc4c90316ffbe52d75bd3d9441ce5dda0910cfeda68721bbea95"
   },
   "level": "act1",
-  "graphics": "ImageGen_painted_art_and_surfaces_matte_band_lighting_25Hz_8view_motion",
+  "graphics": "Authored Act I geometry and Diorama-style roads, painted terrain, animated 3D characters",
   "presentation": {
     "baselineAuthoredBlenderActions": 314,
     "baselineCompatibilityAliases": 45,
@@ -19,8 +19,8 @@
     "skillProfiles": 30,
     "enemyVariants": 31,
     "posesPerClip": 25,
-    "surface": "ImageGen ground atlas; four biomes; mirrored stochastic sampling in world space",
-    "water": "Retained water surface geometry; painted color bands and subdued glint",
+    "surface": "Authored terrain perimeter, banks, water cutouts and roads. Reuses ImageGen maps and existing Meshy material sources.",
+    "water": "Animated pond and shore surfaces bounded by the area plan. Authored inland surroundings.",
     "browser": "Adaptive resolution; spatial instance chunks; shadow budgets; shared raster HUD observers",
     "poseRateHzAtNormalSpeed": 25,
     "poseIntervalMs": 40,
@@ -28,7 +28,8 @@
     "newRasterFrames": {
       "campfire": 25
     },
-    "characterArt": "Existing rigs with ImageGen pigment textures and banded lighting"
+    "characterArt": "Existing rigs with ImageGen pigment textures and banded lighting",
+    "collision": "Polygon boundary, footprint obstacles, and path routing share the map plan."
   },
   "combatAnimationMagic200": {
     "requested": 200,
@@ -2120,7 +2121,7 @@
     "status": "DESIGN_ESTIMATE_NOT_MEASURED"
   },
   "platform": "WebGL2",
-  "builtAt": "2026-11-14T11:24:00.605Z",
+  "builtAt": "2026-11-14T12:06:07.641Z",
   "files": [
     {
       "path": "act1.css",
@@ -2129,8 +2130,8 @@
     },
     {
       "path": "act1.html",
-      "bytes": 1503,
-      "sha256": "bf45e1d91804cefb210ed77cf52a9af4d9af25b00911f247ad2612798d590e9c"
+      "bytes": 1471,
+      "sha256": "fb305b37e3456b0d15d07ef3acad93d716d7ed117885afabe54fae21c5023f10"
     },
     {
       "path": "assets/act1/animation/animation-library.json",
@@ -2534,8 +2535,8 @@
     },
     {
       "path": "assets/act1/painted/manifest.json",
-      "bytes": 4863,
-      "sha256": "c208bd84940a58c829b4d459c3393ee15e1e623af3ea57ab119ca1746cb0d2af"
+      "bytes": 5212,
+      "sha256": "8eda46b59df03a7041f20b9986f4a786d0e612cad915e24985081bc1c1181995"
     },
     {
       "path": "assets/act1/painted/materials.webp",
@@ -2551,6 +2552,11 @@
       "path": "assets/act1/painted/portraits.webp",
       "bytes": 423130,
       "sha256": "37ed413430c02d80a42d9f43707eacde16fe4a0ae6bdd44c420de00f2b0e285f"
+    },
+    {
+      "path": "assets/act1/painted/roads-cover.webp",
+      "bytes": 367098,
+      "sha256": "0fbf159545484e57129a24e348b93b85023115743cb32f8b03450e314affb2a3"
     },
     {
       "path": "assets/act1/painted/terrain.webp",
@@ -2914,8 +2920,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 1503,
-      "sha256": "bf45e1d91804cefb210ed77cf52a9af4d9af25b00911f247ad2612798d590e9c"
+      "bytes": 1471,
+      "sha256": "fb305b37e3456b0d15d07ef3acad93d716d7ed117885afabe54fae21c5023f10"
     },
     {
       "path": "interface-windows.css",
@@ -2944,13 +2950,33 @@
     },
     {
       "path": "painted.css",
-      "bytes": 5811,
-      "sha256": "3d652aebd534186ab8d8ddfb37ed161a2bf29dd13e9ef392434059ca51e1f0eb"
+      "bytes": 6032,
+      "sha256": "3a756802cfbc74e8cbcbf62fd879047c6b5c9e2f435e8d60553075050b38a3ce"
     },
     {
       "path": "quest-arrow.css",
       "bytes": 1982,
       "sha256": "b6db467c36743d92d4e73eee98048e48239fb93198a9d191ccd9ae490a363b9e"
+    },
+    {
+      "path": "src/act1/area-geometry.js",
+      "bytes": 6638,
+      "sha256": "d36327f4bf80ffac996953185495e9fa980a64290fa1534870876494261fb13f"
+    },
+    {
+      "path": "src/act1/area-layouts.js",
+      "bytes": 22426,
+      "sha256": "780c8667bb4aa9fc79c752a6c3a8850f5c25cfb151500733dc254026e626e9ad"
+    },
+    {
+      "path": "src/act1/area-schematic.js",
+      "bytes": 5393,
+      "sha256": "43e9b1d4ffadaa26ddbbfacd5776ca031dadd10ad73dfc43d028f065992c26ca"
+    },
+    {
+      "path": "src/act1/authored-landscape.js",
+      "bytes": 12148,
+      "sha256": "663507fafc21e391e3ae314316d5f0ae37cee5f749c272bdbaf05be123da7be9"
     },
     {
       "path": "src/act1/battle-stage.js",
@@ -2974,8 +3000,8 @@
     },
     {
       "path": "src/act1/character-animation.js",
-      "bytes": 16301,
-      "sha256": "8e33c284c118820ae3883e0e9357fd4dd426b84c007f6290ab67bde6abb8ed46"
+      "bytes": 16376,
+      "sha256": "379b1195e1cfe12ab0929c7ed5ba9abc7e86de17d4e8806dc3ca92244bf167eb"
     },
     {
       "path": "src/act1/combat200-animation-policy.js",
@@ -2989,8 +3015,8 @@
     },
     {
       "path": "src/act1/content.js",
-      "bytes": 207798,
-      "sha256": "551275f080e70ea571ad6e647b421e406b8cd43e3dec04de20490730688d514b"
+      "bytes": 208318,
+      "sha256": "b38e228323643ee579e5531bc3ce1204bfc5b529383c895c92095db0584aec91"
     },
     {
       "path": "src/act1/data/ground-clearance.js",
@@ -3009,8 +3035,8 @@
     },
     {
       "path": "src/act1/graphics-refresh.js",
-      "bytes": 16757,
-      "sha256": "f170b90364eea289e08dc8c76a9cacd1b5c8a736701094327cffc7a1b6627fef"
+      "bytes": 17085,
+      "sha256": "bc707eec4c73ddc8ad8a97dd5b6140d2211edfc565f46f5ef100cfe8ef24bd7c"
     },
     {
       "path": "src/act1/hero-abilities.js",
@@ -3044,28 +3070,28 @@
     },
     {
       "path": "src/act1/main.js",
-      "bytes": 100189,
-      "sha256": "23130b66916c990f126558eb6b4a74343d42c5bd064700a9a3a4772b86707cb1"
+      "bytes": 101413,
+      "sha256": "b8009ae0d7de24a8882704d571b4b17a21030d1262d153181961c8b6d1f74398"
     },
     {
       "path": "src/act1/meshy-world.js",
-      "bytes": 39983,
-      "sha256": "c6b9943e996b771eae0e81d816515a23f1ba572e886958ba84ce5d7a25dcc86e"
+      "bytes": 40203,
+      "sha256": "8d0dab049c2b8d9570a436f72000577ab4545937bfdcd3b256642f95b47b2cdb"
     },
     {
       "path": "src/act1/minimap.js",
-      "bytes": 12240,
-      "sha256": "bc572edc95edc617eab62d2fc8dbabbeb576e6a7367496760c89a5ae32da2d02"
+      "bytes": 13491,
+      "sha256": "38a64fbc0a9b948e1f90538cc4d0ecbcf1fc119388e026d81331ed85b274b6df"
     },
     {
       "path": "src/act1/model.js",
-      "bytes": 108166,
-      "sha256": "b73244579b9792e2d0f90669ecb1f03051c4f799a6fc0453dcaf6573b256cec5"
+      "bytes": 109128,
+      "sha256": "27555b335588179d2040d26dbee71369658c0b14f4c2609f7d97af19f11ec9fe"
     },
     {
       "path": "src/act1/navigation.js",
-      "bytes": 14120,
-      "sha256": "bcaa2b0638335fc847b477e6000d545d0ceba70f0486f248df9659ff1b036812"
+      "bytes": 15851,
+      "sha256": "5c044e4f1ea6253441aefa0480fa6967db24ec5f17c3abf20bcc3c2385ecb8bf"
     },
     {
       "path": "src/act1/painted-material.js",
@@ -3128,9 +3154,19 @@
       "sha256": "d106f86d70e289d7da8c5894b69d35c2ea7c652062d85bb80f84395c8fe5afc7"
     },
     {
+      "path": "src/act1/road-actor-looks.js",
+      "bytes": 2791,
+      "sha256": "b53a110f50714b333965f4e2033e78976dbc44f7f4856b0bf92ad41340bbcf68"
+    },
+    {
+      "path": "src/act1/roads-content.js",
+      "bytes": 59479,
+      "sha256": "47ecd69e14d14638a4973b80bfe967cd2aefd3d10c2454d80c5afe692145489e"
+    },
+    {
       "path": "src/act1/save.js",
-      "bytes": 13136,
-      "sha256": "7ada013fd985b1278b0ddcf0d83e23ef3bdee7ad56dadd97a7cc2f25cde5e5c6"
+      "bytes": 13198,
+      "sha256": "7c400913c4bfb4fbec751051b916e6ca17f3da2a0f5c2cefe6bb9420b0c1513c"
     },
     {
       "path": "src/act1/source-facing.js",
@@ -3159,13 +3195,13 @@
     },
     {
       "path": "src/act1/water-fire.js",
-      "bytes": 14623,
-      "sha256": "176ac0fbd8e31d6181ea7bd4927c12037d4781f6805b8cdae50436247d8da57d"
+      "bytes": 14944,
+      "sha256": "c4e7a7f00919ea140edc8f9e73e47590c9f76b897c4b9cb8fc856152cafae0bc"
     },
     {
       "path": "src/act1/world.js",
-      "bytes": 102971,
-      "sha256": "45b9b6a62a6d256ada13d05b95e3548223e16ed59e42143b6d818d85a1c9a57e"
+      "bytes": 103018,
+      "sha256": "8390dfd517d59caf923a86a0ecd5b2c366f62f526e50d544f009e01e520b2cd6"
     },
     {
       "path": "src/act1/writer-session.js",
@@ -3216,9 +3252,26 @@
   "paintedRevision": {
     "baseCommit": "8112bb1d5453db2cea9c525d46919da95ce9181d",
     "artManifest": "assets/act1/painted/manifest.json",
-    "artManifestSHA256": "c208bd84940a58c829b4d459c3393ee15e1e623af3ea57ab119ca1746cb0d2af",
+    "artManifestSHA256": "8eda46b59df03a7041f20b9986f4a786d0e612cad915e24985081bc1c1181995",
     "staticFiles": "index.html and act1.html from repository root",
     "releaseDateMoscow": "2026-11-14",
     "assetRevision": "painted-20261114-r2"
+  },
+  "roadsRevision": {
+    "id": "roads-018",
+    "baseCommit": "07f690e77277d74f4b4a462717f79c0242b637cd",
+    "layoutCount": 9,
+    "quests": {
+      "main": 35,
+      "optional": 15
+    },
+    "encounters": 39,
+    "newEnemies": 6,
+    "newNpcs": 7,
+    "layoutFile": "src/act1/area-layouts.js",
+    "mapRevision": 1,
+    "modelSaveSchema": 2,
+    "oldPositionMigration": "0.17 coordinates map to nearby authored anchors",
+    "cover": "assets/act1/painted/roads-cover.webp"
   }
 }

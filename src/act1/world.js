@@ -1,22 +1,25 @@
-import {installRefresh} from './graphics-refresh.js?v=painted-20261114-r2';
-import {installMeshyWorld} from './meshy-world.js?v=painted-20261114-r2';
-import {WorldElements,installWorldElements} from './water-fire.js?v=painted-20261114-r2';
+import {installRefresh} from './graphics-refresh.js?v=roads-018';
+import {installMeshyWorld} from './meshy-world.js?v=roads-018';
+import {WorldElements,installWorldElements} from './water-fire.js?v=roads-018';
 import {MagicVfx} from './magic-vfx.js?v=painted-20261114-r2';
 import {advancePaintedPose, orientPaintedActors, paintedActionAge, resetPaintedPose} from './painted-motion.js?v=painted-20261114-r2';
-import {CharacterAnimationLibrary} from './character-animation.js?v=0.16.0-demo';
+import {CharacterAnimationLibrary} from './character-animation.js?v=roads-018';
 import {installBrowserPerformance} from './browser-performance.js?v=0.16.0-demo';
 import * as T from '../../assets/vendor/three.module.js';
 import { GLTFLoader } from '../../assets/vendor/GLTFLoader.js';
 import { clone as cloneSkeleton } from '../../assets/vendor/SkeletonUtils.js';
-import * as Content from './content.js?v=0.16.0-demo';
+import * as Content from './content.js?v=roads-018';
 import { battleFormation, fitBattleCamera, facingToward, oppositionFacing, wrapFacing } from './battle-stage.js?v=0.16.0-demo';
 import { combatMotionPolicy, actionLunge } from './presentation-motion.js?v=0.16.0-demo';
 import { actionTimeline, actionClipPhase } from './presentation-timing.js?v=0.16.0-demo';
 import { reactionPhase, contactReaction, transitionBlend, hasUnsettledDeath } from './combat200-animation-policy.js?v=0.16.0-demo';
 import { PartyTrail, loopTiming, COMBAT_MOTION, combatPlaybackRate } from './party-motion.js?v=0.16.0-demo';
-import { walkable } from './model.js?v=0.16.0-demo';
+import { walkable } from './model.js?v=roads-018';
 import { BattleLayoutCache } from './ui-framing.js?v=0.16.0-demo';
 import { paintGildedLine } from './bitmap.js?v=painted-20261114-r2';
+
+import { buildAuthoredRoad } from './authored-landscape.js?v=roads-018';
+import { nearestLand, terrainElevation } from './area-geometry.js?v=roads-018';
 
 const UP = new T.Vector3(0, 1, 0);
 const TAU = Math.PI * 2;
@@ -264,7 +267,7 @@ export class World {
   }
 
   height(x, z) {
-    return Math.sin(x * 0.16 + this.seedPhase) * Math.cos(z * 0.19) * 0.095 + Math.sin(z * 0.37 + x * 0.11) * 0.035;
+    return terrainElevation(this.area?.layout, x, z, this.seedPhase);
   }
 
   loadArea(id, state) {
@@ -371,6 +374,12 @@ export class World {
   }
 
   buildPaths() {
+    if (this.area.layout) {
+      for (const road of this.area.layout.roads) {
+        this.paths.push(buildAuthoredRoad(this, road));
+      }
+      return;
+    }
     const spawn = point(this.area.spawn);
     const center = { x: spawn.x * 0.1, z: spawn.z * 0.05 };
     const goals = [...values(this.area.exits), ...values(this.area.npcs), ...values(this.area.nodes), ...values(this.area.encounters)];
@@ -851,7 +860,7 @@ export class World {
     for (const definition of values(this.area.npcs)) {
       const partyId = values(Content.PARTY).find(member => definition.id.startsWith(member.id + '_'))?.id;
       const role = partyId || definition.id;
-      const actor = this.createActor(`npc:${definition.id}`, roleLook(role)?.model || 'acolyte', { role, npc: true, portrait: definition.portrait });
+      const actor = this.createActor(`npc:${definition.id}`, roleLook(role)?.model || 'acolyte', { role, npc: true, portrait: definition.portrait, animationSource: definition.animationSource, visual: definition.visual });
       actor.wrapper.position.set(definition.x, this.height(definition.x, definition.z), definition.z);
       actor.wrapper.rotation.y = Math.atan2(-definition.x, -definition.z) - (actor.sourceFrontYaw || 0);
       actor.definition = definition;
@@ -868,7 +877,7 @@ export class World {
       item.marker = this.ring(group, true, definition.boss ? 1.85 : 1.4);
       const enemyId = typeof definition.enemies?.[0] === 'string' ? definition.enemies[0] : definition.enemies?.[0]?.id;
       const enemy = Content.ENEMIES?.[enemyId] || values(Content.ENEMIES).find(e => e.id === enemyId);
-      const actor = this.createActor(`encounter:${definition.id}`, enemy?.kind || (definition.boss ? 'boss' : 'husk'), { hostile: true, enemyId });
+      const actor = this.createActor(`encounter:${definition.id}`, enemy?.kind || (definition.boss ? 'boss' : 'husk'), { hostile: true, enemyId, animationSource: enemy?.animationSource, visual: enemy?.visual });
       actor.wrapper.position.copy(group.position);
       actor.wrapper.rotation.y = Math.atan2(-definition.x, -definition.z) - (actor.sourceFrontYaw || 0);
       item.actor = actor;
@@ -1096,10 +1105,7 @@ export class World {
 
   constrainFollower(position) {
     if(walkable(this.areaId,position.x,position.z))return {...position};
-    const bounds=this.area.bounds||{},cx=bounds.x||0,cz=bounds.z||0;
-    const rx=bounds.rx||this.area.radiusX||this.radiusX,rz=bounds.rz||this.area.radiusZ||this.radiusZ;
-    const length=Math.hypot((position.x-cx)/rx,(position.z-cz)/rz),factor=.94/Math.max(.94,length);
-    return {x:cx+(position.x-cx)*factor,z:cz+(position.z-cz)*factor};
+    return nearestLand(this.area.layout, position, 6) || point(this.state?.position || this.area.spawn);
   }
 
   syncParty(state, dt, battle) {
@@ -1205,7 +1211,7 @@ export class World {
     for (let index = 0; index < battle.enemies.length; index++) {
       const unit = battle.enemies[index];
       const definition = Content.ENEMIES[unit.kind] || values(Content.ENEMIES).find(enemy => enemy.id === unit.kind);
-      const actor = this.createActor(`enemy:${unit.uid}`, definition?.kind || 'husk', { hostile: true, enemyId: definition?.id });
+      const actor = this.createActor(`enemy:${unit.uid}`, definition?.kind || 'husk', { hostile: true, enemyId: definition?.id, animationSource: definition?.animationSource, visual: definition?.visual });
       actor.wrapper.visible = true;
       actor.battleControlled = true;
       if (!actor.battleLabel) {
@@ -1668,9 +1674,7 @@ export class World {
     const groundHit = this.raycaster.intersectObjects(terrain, false)[0];
     let hit = groundHit?.point;
     if (!hit) { hit = new T.Vector3(); if (!this.raycaster.ray.intersectPlane(this.groundPlane, hit)) return null; }
-    const normalized = Math.sqrt((hit.x / this.radiusX) ** 2 + (hit.z / this.radiusZ) ** 2);
-    if (normalized > 0.94) { hit.x *= 0.94 / normalized; hit.z *= 0.94 / normalized; }
-    return { x: hit.x, z: hit.z };
+    return nearestLand(this.area.layout, hit, 14);
   }
 
   /** Screen locations use the actual canvas rectangle, including embedded layouts. */

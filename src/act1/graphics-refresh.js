@@ -1,3 +1,4 @@
+import {addRoadAccent} from './road-actor-looks.js?v=roads-018';
 import * as T from '../../assets/vendor/three.module.js';
 import {GLTFLoader} from '../../assets/vendor/GLTFLoader.js';
 import {groundClearanceLift,flightBaseline,mirrorWingDelta} from './party-motion.js?v=0.16.0-demo';
@@ -28,7 +29,11 @@ export function installRefresh(World){
  };
  P.createActor=function(id,type,options={}){
   if(this.actors.has(id))return this.actors.get(id);
-  const role=String(options.role||'').split('_')[0],visual=options.enemyId?ENEMY_VISUALS[options.enemyId]:ROLE_VISUALS[role];const look=visual||FALLBACK[type]||ROLE_VISUALS.alar;
+  const role=String(options.npc&&options.animationSource||options.role||'').split('_')[0];
+  const visual=options.enemyId?ENEMY_VISUALS[options.animationSource||options.enemyId]:ROLE_VISUALS[role];
+  const source=visual||FALLBACK[type]||ROLE_VISUALS.alar;
+  const accent=options.visual;
+  const look=accent?{...source,tint:accent.color??source.tint,scale:(source.scale||1)*(accent.scale||1)}:source;
   const actor=create.call(this,id,look.base,{...options,refreshVisual:look});actor.type=type;actor.refreshVisual=look;
   this.characterAnimations?.bindActor(actor);
   if(!options.role)this.accessories(actor,'',false);
@@ -39,6 +44,7 @@ export function installRefresh(World){
   actor.presentationHeight=actor.refreshHeight+actor.flightBaseline*Math.abs(actor.wrapper.scale.y);actor.root.position.y=actor.refreshRootBaseY;
   if(['moth','bird'].includes(look.base)){const bone=actor.root.getObjectByName('WingR');if(bone)actor.wingCorrection={bone,rest:bone.quaternion.clone(),scratch:new T.Quaternion()};}
   if(look.tint||look.opacity||look.glow)actor.root.traverse(o=>{if(!o.isMesh)return;for(const m of Array.isArray(o.material)?o.material:[o.material]){if(look.tint)m.color.multiply(new T.Color(look.tint));if(look.opacity){m.transparent=true;m.opacity=look.opacity;m.depthWrite=false;}if(look.glow){m.emissive.setHex(look.tint||0xffa040);m.emissiveIntensity=look.glow;}}});
+  addRoadAccent(this,actor,accent);
   return actor;
  };
  P.accessories=function(actor,role,npc){
