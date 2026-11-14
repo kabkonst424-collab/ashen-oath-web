@@ -3,6 +3,7 @@ import * as T from '../../assets/vendor/three.module.js';
 import {groundClearanceLift,flightBaseline,mirrorWingDelta} from './party-motion.js?v=motion-110';
 import {SOURCE_BASES} from './source-facing.js?v=campaign-v1';
 import {isCampaignModel,campaignActor} from './campaign-visuals.js?v=campaign-v1';
+import {preparePartyGait} from './party-gait.js?v=gait-111';
 
 export const BASE_MODELS=SOURCE_BASES.filter(id=>!isCampaignModel(id));
 const v=(base,gear=[],extra={})=>({base,gear,...extra});
@@ -60,6 +61,7 @@ export function installRefresh(World){
   const factor=desired/Math.max(.1,height)*(look.scale||1);actor.wrapper.scale.multiplyScalar(factor);actor.refreshHeight=desired*(look.scale||1);
   actor.flightBaseline=look.hover==null?flightBaseline(look.base):look.hover/factor;actor.refreshRootBaseY=actor.root.position.y+actor.flightBaseline;
   actor.presentationHeight=actor.refreshHeight+actor.flightBaseline*Math.abs(actor.wrapper.scale.y);actor.root.position.y=actor.refreshRootBaseY;
+  preparePartyGait(actor);
   if(['moth','bird'].includes(look.base)){const bone=actor.root.getObjectByName('WingR');if(bone)actor.wingCorrection={bone,rest:bone.quaternion.clone(),scratch:new T.Quaternion()};}
   if(look.tint||look.opacity||look.glow)actor.root.traverse(o=>{if(!o.isMesh)return;for(const m of Array.isArray(o.material)?o.material:[o.material]){if(look.tint)m.color.multiply(new T.Color(look.tint));if(look.opacity){m.transparent=true;m.opacity=look.opacity;m.depthWrite=false;}if(look.glow){m.emissive.setHex(look.tint||0xffa040);m.emissiveIntensity=look.glow;}}});
   addRoadAccent(this,actor,options.visual);

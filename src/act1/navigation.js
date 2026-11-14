@@ -1,4 +1,4 @@
-import * as M from './model.js?v=motion-110';
+import * as M from './model.js?v=gait-111';
 import * as CONTENT from './content.js?v=campaign-v1';
 
 // Routes and the schematic take their boundaries from the movement model.

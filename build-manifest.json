@@ -1,6 +1,6 @@
 {
   "id": "ashen-oath",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "releaseStatus": "release",
   "demo": false,
   "posterArtRevision": {
@@ -2126,12 +2126,12 @@
     "act1PriorDesignTargetMinutes": 180
   },
   "platform": "WebGL2",
-  "builtAt": "2026-11-14T17:46:49.593Z",
+  "builtAt": "2026-11-14T18:45:34.487Z",
   "files": [
     {
       "path": "README.md",
-      "bytes": 1834,
-      "sha256": "098d03cbee1045b47ac7a9a62e0b40196fc53b49c8b2be7576fe39f682afe59d"
+      "bytes": 1850,
+      "sha256": "a45ed4767a61f0a0f929a206cd326301829dea079277284e7db055cb1a859514"
     },
     {
       "path": "act1.css",
@@ -2140,8 +2140,8 @@
     },
     {
       "path": "act1.html",
-      "bytes": 1726,
-      "sha256": "2aca73e7a9ba0f36ab425c1b30ca7916d0e518e3a2189260d1396fa423cb82a9"
+      "bytes": 1724,
+      "sha256": "44b12369ffc810fd3118af0cd5f3922cd3e49972547b8cda3c485fe6018589fc"
     },
     {
       "path": "assets/act1/animation/animation-library.json",
@@ -4030,8 +4030,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 1726,
-      "sha256": "2aca73e7a9ba0f36ab425c1b30ca7916d0e518e3a2189260d1396fa423cb82a9"
+      "bytes": 1724,
+      "sha256": "44b12369ffc810fd3118af0cd5f3922cd3e49972547b8cda3c485fe6018589fc"
     },
     {
       "path": "interface-windows.css",
@@ -4080,8 +4080,8 @@
     },
     {
       "path": "src/act1/area-asset-plan.js",
-      "bytes": 6053,
-      "sha256": "2d6d2601a2cfd4f5b52226508a39fa317538fe96ee7e70942b41ceba287b73e6"
+      "bytes": 6051,
+      "sha256": "6d8984e11d4a1075147502c2d07dc2f6e311e50f45dcd04d9a3c8708d1dde8db"
     },
     {
       "path": "src/act1/area-geometry.js",
@@ -4156,7 +4156,7 @@
     {
       "path": "src/act1/campaign-ui.js",
       "bytes": 4861,
-      "sha256": "531e51857d2e1bc5d89d5c4cf2ff28c128a3eab92ad59befb55b88ed03fc8a64"
+      "sha256": "c24bd04072ca167d8a18796852e50ded966884c2c7d8b259bd2a0572cb7034b5"
     },
     {
       "path": "src/act1/campaign-visuals.js",
@@ -4170,8 +4170,8 @@
     },
     {
       "path": "src/act1/character-animation.js",
-      "bytes": 15942,
-      "sha256": "b1354084e5f96f659b9e2a4c54e84336dcef10af62d4cdbd4c1b7ea78cdc71ec"
+      "bytes": 15940,
+      "sha256": "11720442928e5cb84f6fe79d75ff07e221f018690917a27e4511bf7ade55646a"
     },
     {
       "path": "src/act1/combat200-animation-policy.js",
@@ -4230,8 +4230,8 @@
     },
     {
       "path": "src/act1/graphics-refresh.js",
-      "bytes": 17213,
-      "sha256": "02416bd5ad6124f4caa928bece0344898819b6268b48e16f8097927f5eaf6630"
+      "bytes": 17303,
+      "sha256": "5ad3ccd49808bacc91420f5cbd9682aed29cc85740b0961a9b9dddca1956fbbe"
     },
     {
       "path": "src/act1/groundcover-plants.js",
@@ -4285,23 +4285,23 @@
     },
     {
       "path": "src/act1/main.js",
-      "bytes": 113470,
-      "sha256": "9811bc0db0e4d8b6438f4fb9cb6e788bbd80a33a1f98a11f2aad61c76390eda4"
+      "bytes": 113456,
+      "sha256": "e559c5666ebfbef5dc99d15d6b861cbd252e3358c94cc76f31ff5afaa5e2f0ec"
     },
     {
       "path": "src/act1/meshy-world.js",
-      "bytes": 46804,
-      "sha256": "ee03717aa52e1f4acd2c8ef3887095e772334e2eeba5cdc8c782315268a4f11f"
+      "bytes": 46800,
+      "sha256": "ad4e9d11051675bcdeefea44bc6b1378bd4c842ab83f9bb909174b1033eef6b7"
     },
     {
       "path": "src/act1/minimap.js",
-      "bytes": 13646,
-      "sha256": "c881d74ecd4e8b77b816337cca2c22b6d73d4fdcba25c321b84b3cb98672a990"
+      "bytes": 13643,
+      "sha256": "923a810971e09e22ac23b95cc9684460e8d13d083381e4df7ed8e24b62fa0eda"
     },
     {
       "path": "src/act1/model.js",
       "bytes": 123587,
-      "sha256": "2adb34e4fde9248ae4f1257967e558c055a193cd9293cfe4ca52af423466a2b7"
+      "sha256": "8b832cd27afd20cb42f0f7a806dc48f7da6797aaad7a7197d2102eac6b02fd34"
     },
     {
       "path": "src/act1/motion-clip-corrections.js",
@@ -4310,8 +4310,8 @@
     },
     {
       "path": "src/act1/navigation.js",
-      "bytes": 15875,
-      "sha256": "fdc4f9dfbe09064ef841c25b4e9d47bb7091470fe42596e35a3bb123fb6e478b"
+      "bytes": 15873,
+      "sha256": "8cd4f2e1b24ea7fba3851f9ab5f791c5d579901c02f4e6a0641ac26f492bc9d6"
     },
     {
       "path": "src/act1/painted-material.js",
@@ -4320,8 +4320,13 @@
     },
     {
       "path": "src/act1/painted-motion.js",
-      "bytes": 5765,
-      "sha256": "e8fa0a72d9696f143348b6c0f1ea538e00b086f7a83fdeb25545ae19d1fbd484"
+      "bytes": 5900,
+      "sha256": "dc9805547a7ce1a53404711d8e3606d4dff56984a1cbb3250655f58bbd9f40e2"
+    },
+    {
+      "path": "src/act1/party-gait.js",
+      "bytes": 11261,
+      "sha256": "408c2c56e3673380fc468aaccbb45ff35173764c4061e7d81c75ee401e09f35f"
     },
     {
       "path": "src/act1/party-motion.js",
@@ -4390,8 +4395,8 @@
     },
     {
       "path": "src/act1/save.js",
-      "bytes": 13293,
-      "sha256": "caa4ef429191db6f4bb18dc4a4c8c7c2cd7ff0cc4ed48ea3ec7a100a4f755999"
+      "bytes": 13291,
+      "sha256": "27cf5a2f8272fad3ced227d7a153fa3e5c784f33d0316b66c1cfbead21ab9d27"
     },
     {
       "path": "src/act1/source-facing.js",
@@ -4420,13 +4425,13 @@
     },
     {
       "path": "src/act1/water-fire.js",
-      "bytes": 15787,
-      "sha256": "d8fc20a5844913c2ee571949b009881ccda4cecd5552031c68d5ae460d49c5e6"
+      "bytes": 15785,
+      "sha256": "d932e780f6c19975033e2a0b2d2e69b6a025165794dacbec664bf458c1b37f90"
     },
     {
       "path": "src/act1/world.js",
-      "bytes": 107305,
-      "sha256": "ecaeadaf72bb62a068ef0688cb3420ab2c73b1f9273767e3d9d4e11c4d2c6f6a"
+      "bytes": 107746,
+      "sha256": "16e21cc272e7a64a1560f5e053c9db5bd5175bf1a82dd3231008b399916f74ae"
     },
     {
       "path": "src/act1/writer-session.js",
@@ -4639,5 +4644,24 @@
       "loadScreen": "progress bar",
       "resident": "current location and party"
     }
+  },
+  "gaitRevision": {
+    "id": "gait-111",
+    "baseCommit": "5895dab1e3d02e5893c6c9f66b2525f3c5843259",
+    "poseRateHz": 25,
+    "party": [
+      "alar",
+      "myrt",
+      "elian",
+      "iona",
+      "radan",
+      "leia"
+    ],
+    "presentation": [
+      "plantar alignment",
+      "pelvis and knee extension",
+      "spine balance",
+      "gait crossfade"
+    ]
   }
 }

@@ -1,6 +1,6 @@
 import { STARTERS } from './campaign-starters.js?v=campaign-v1';
 
-export const RELEASE = '1.1.0';
+export const RELEASE = '1.1.1';
 const portraits = new Set(STARTERS.map(hero => hero.id));
 
 export function campaignPortrait(id) {

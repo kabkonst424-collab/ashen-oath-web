@@ -4,7 +4,7 @@ import * as CONTENT from './content.js?v=campaign-v1';
 import {chestLoot,encounterLoot,enemyLoot,rollLoot} from './loot-tables.js?v=forged-019';
 import {ACT_ENTRY_LEVELS, BOSS_CHAPTER_PRESSURE, LEVEL_CAP, STARTERS, experienceAtLevel, experienceThreshold, runedSkill, talentBonuses, talentCatalog, validTalents} from './campaign-progression.js?v=campaign-v1';
 
-export const VERSION='1.1.0';
+export const VERSION='1.1.1';
 export const SCHEMA=2;
 export const BAG_SIZE=30;
 const list=value=>Array.isArray(value)?value:Object.values(value||{});

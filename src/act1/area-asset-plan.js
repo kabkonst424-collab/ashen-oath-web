@@ -1,6 +1,6 @@
 import { AREAS, DIALOGUES, ENEMIES, PARTY } from './content.js?v=campaign-v1';
 import { CHAPTER_BIOMES, isCampaignModel } from './campaign-visuals.js?v=campaign-v1';
-import { actorAnimationIdentity, resolveActorVisual } from './graphics-refresh.js?v=motion-110';
+import { actorAnimationIdentity, resolveActorVisual } from './graphics-refresh.js?v=gait-111';
 
 export const PROP_SLOTS = Object.freeze({
   Rock:'rock', House:'house', Tower:'tower', Wall:'wall', Pillar:'pillar', Arch:'arch',

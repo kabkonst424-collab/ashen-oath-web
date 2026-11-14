@@ -134,3 +134,7 @@ export function paintedPoseStatus(actor) {
     yaw: facing?.yaw ?? null,
   };
 }
+
+export function paintedHeading(actor) {
+  return facings.get(actor)?.yaw ?? actor.wrapper.rotation.y + (actor.sourceFrontYaw || 0);
+}

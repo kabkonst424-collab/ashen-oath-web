@@ -1,10 +1,10 @@
-import {installRefresh} from './graphics-refresh.js?v=motion-110';
-import {installMeshyWorld} from './meshy-world.js?v=motion-110';
-import {areaBiome} from './area-asset-plan.js?v=motion-110';
-import {WorldElements,installWorldElements} from './water-fire.js?v=motion-110';
+import {installRefresh} from './graphics-refresh.js?v=gait-111';
+import {installMeshyWorld} from './meshy-world.js?v=gait-111';
+import {areaBiome} from './area-asset-plan.js?v=gait-111';
+import {WorldElements,installWorldElements} from './water-fire.js?v=gait-111';
 import {MagicVfx} from './magic-vfx.js?v=motion-110';
-import {advancePaintedPose, orientPaintedActors, paintedActionAge, resetPaintedPose} from './painted-motion.js?v=motion-110';
-import {CharacterAnimationLibrary} from './character-animation.js?v=motion-110';
+import {advancePaintedPose, orientPaintedActors, paintedActionAge, resetPaintedPose, paintedHeading} from './painted-motion.js?v=gait-111';
+import {CharacterAnimationLibrary} from './character-animation.js?v=gait-111';
 import {installBrowserPerformance} from './browser-performance.js?v=0.16.0-demo';
 import * as T from '../../assets/vendor/three.module.js';
 import { GLTFLoader } from '../../assets/vendor/GLTFLoader.js';
@@ -15,9 +15,10 @@ import { combatMotionPolicy, actionLunge, impactRecoil, meleeTiming, meleeTravel
 import { actionTimeline, actionClipPhase } from './presentation-timing.js?v=motion-110';
 import { reactionPhase, contactReaction, transitionBlend, hasUnsettledDeath } from './combat200-animation-policy.js?v=0.16.0-demo';
 import { PartyTrail, loopTiming, COMBAT_MOTION, combatPlaybackRate } from './party-motion.js?v=motion-110';
-import { walkable } from './model.js?v=motion-110';
+import { walkable } from './model.js?v=gait-111';
 import { gaitForSpeed, gaitRate, gaitEntryPhase } from './actor-locomotion.js?v=motion-110';
 import { applyFootContact, resetFootContact } from './foot-contact.js?v=motion-110';
+import { applyPartyGait, resetPartyGait } from './party-gait.js?v=gait-111';
 import { updateBow, disposeBow } from './bow-presentation.js?v=motion-110';
 import { BattleLayoutCache } from './ui-framing.js?v=0.16.0-demo';
 import { paintGildedLine } from './bitmap.js?v=painted-20261114-r2';
@@ -1063,7 +1064,9 @@ export class World {
     action.reset();
     if (looping) {
       const timing=loopTiming(actor.id,name,action.getClip().duration,this.time,actor.motionSpeed||0);
-      action.time=gaitEntryPhase(actor,name,actor.current,gaitPhase,timing.phase/action.getClip().duration)*action.getClip().duration;
+      const keepPlantPhase = actor.partyGait && !actor.battleControlled && gaitPhase !== null && name !== 'Idle';
+      const entryPhase = keepPlantPhase ? gaitPhase : gaitEntryPhase(actor,name,actor.current,gaitPhase,timing.phase/action.getClip().duration);
+      action.time = entryPhase * action.getClip().duration;
       action.setEffectiveTimeScale(gaitRate(actor,name,action.getClip().duration,timing.rate));
     } else action.setEffectiveTimeScale(combatPlaybackRate(name,action.getClip().duration,actor.presentationTiming));
     action.fadeIn(blend).play();
@@ -1543,7 +1546,7 @@ export class World {
 
   presentationPending() { return this.cues.length > 0 || this.time < (this.timeline || 0) + COMBAT_MOTION.finishPad || !!(this.visualBattle && !this.state?.battle); }
 
-  clearPresentation() { this.pendingCombatHover=null;this.hoverCombatTarget=null;this.magicVfx?.clear(); this.browserPerformance?.resetTiming(); this.partyTrail=null;this.motionContext=null;this.combatSelection={};this.pendingReviveActors=new Set();this.cues.length = 0; this.timeline = this.time - 1; this.lastActionStart = 0; this.previousEvents = null; this.visualBattle = null; this.visualBattleSource = null; for (const actor of this.actors.values()) { resetPaintedPose(actor); resetFootContact(actor); actor.pulseUntil = 0; actor.lungeUntil = 0; actor.actionTargetId = null; actor.deathFacingYaw = null; actor.deathPosition=null;actor.restoredCorpse=false;actor.reactionAt=null; actor.reactionUntil = 0; actor.deathAt = 0; actor.clearanceLift=0; if(actor.refreshRootBaseY!=null)actor.root.position.y=actor.refreshRootBaseY; } for (const effect of this.effects) { effect.mesh.material.dispose(); this.fxGroup.remove(effect.mesh); } this.effects.length = 0; }
+  clearPresentation() { this.pendingCombatHover=null;this.hoverCombatTarget=null;this.magicVfx?.clear(); this.browserPerformance?.resetTiming(); this.partyTrail=null;this.motionContext=null;this.combatSelection={};this.pendingReviveActors=new Set();this.cues.length = 0; this.timeline = this.time - 1; this.lastActionStart = 0; this.previousEvents = null; this.visualBattle = null; this.visualBattleSource = null; for (const actor of this.actors.values()) { resetPaintedPose(actor); resetFootContact(actor); resetPartyGait(actor); actor.pulseUntil = 0; actor.lungeUntil = 0; actor.actionTargetId = null; actor.deathFacingYaw = null; actor.deathPosition=null;actor.restoredCorpse=false;actor.reactionAt=null; actor.reactionUntil = 0; actor.deathAt = 0; actor.clearanceLift=0; if(actor.refreshRootBaseY!=null)actor.root.position.y=actor.refreshRootBaseY; } for (const effect of this.effects) { effect.mesh.material.dispose(); this.fxGroup.remove(effect.mesh); } this.effects.length = 0; }
 
   render(state, dt = 0) {
     if (this.disposed || !this.loaded || !state) return;
@@ -1671,7 +1674,12 @@ export class World {
     orientPaintedActors(this.actors.values(), this.activeCamera, dt);
     this.footSurface ||= (x,z) => this.battleStage.visible ? this.height(x,z) : this.walkHeight(x,z);
     for (const actor of this.actors.values()) {
-      if (actor.wrapper.visible && actor.poseSampled) applyFootContact(actor,this.footSurface,this.justEnteredArea||this.enteringBattle);
+      if (actor.wrapper.visible && actor.poseSampled) {
+        const snap=this.justEnteredArea||this.enteringBattle;
+        if (!applyPartyGait(actor,this.footSurface,paintedHeading(actor),this.time,snap)) {
+          applyFootContact(actor,this.footSurface,snap);
+        }
+      }
       if (actor.wrapper.visible) updateBow(actor,this);
       actor.poseSampled=false;
     }

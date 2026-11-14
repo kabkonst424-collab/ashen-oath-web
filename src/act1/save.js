@@ -1,4 +1,4 @@
-import {VERSION,SCHEMA,validate,snapshot,upgradeCombatState,upgradeLootState,upgradeMapState,upgradeCampaignState} from './model.js?v=motion-110';
+import {VERSION,SCHEMA,validate,snapshot,upgradeCombatState,upgradeLootState,upgradeMapState,upgradeCampaignState} from './model.js?v=gait-111';
 import {CONTENT_VERSION} from './content.js?v=campaign-v1';
 import {parseSaveJSON} from '../strict-json.js?v=0.16.0-demo';
 
