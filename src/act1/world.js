@@ -1,10 +1,10 @@
-import {installRefresh} from './graphics-refresh.js?v=gait-111';
-import {installMeshyWorld} from './meshy-world.js?v=gait-111';
-import {areaBiome} from './area-asset-plan.js?v=gait-111';
-import {WorldElements,installWorldElements} from './water-fire.js?v=gait-111';
+import {installRefresh} from './graphics-refresh.js?v=stride-112';
+import {installMeshyWorld} from './meshy-world.js?v=stride-112';
+import {areaBiome} from './area-asset-plan.js?v=stride-112';
+import {WorldElements,installWorldElements} from './water-fire.js?v=stride-112';
 import {MagicVfx} from './magic-vfx.js?v=motion-110';
 import {advancePaintedPose, orientPaintedActors, paintedActionAge, resetPaintedPose, paintedHeading} from './painted-motion.js?v=gait-111';
-import {CharacterAnimationLibrary} from './character-animation.js?v=gait-111';
+import {CharacterAnimationLibrary} from './character-animation.js?v=stride-112';
 import {installBrowserPerformance} from './browser-performance.js?v=0.16.0-demo';
 import * as T from '../../assets/vendor/three.module.js';
 import { GLTFLoader } from '../../assets/vendor/GLTFLoader.js';
@@ -15,10 +15,10 @@ import { combatMotionPolicy, actionLunge, impactRecoil, meleeTiming, meleeTravel
 import { actionTimeline, actionClipPhase } from './presentation-timing.js?v=motion-110';
 import { reactionPhase, contactReaction, transitionBlend, hasUnsettledDeath } from './combat200-animation-policy.js?v=0.16.0-demo';
 import { PartyTrail, loopTiming, COMBAT_MOTION, combatPlaybackRate } from './party-motion.js?v=motion-110';
-import { walkable } from './model.js?v=gait-111';
+import { walkable } from './model.js?v=stride-112';
 import { gaitForSpeed, gaitRate, gaitEntryPhase } from './actor-locomotion.js?v=motion-110';
 import { applyFootContact, resetFootContact } from './foot-contact.js?v=motion-110';
-import { applyPartyGait, resetPartyGait } from './party-gait.js?v=gait-111';
+import { applyPartyGait, leavePartyGait, resetPartyGait } from './party-gait.js?v=stride-112';
 import { updateBow, disposeBow } from './bow-presentation.js?v=motion-110';
 import { BattleLayoutCache } from './ui-framing.js?v=0.16.0-demo';
 import { paintGildedLine } from './bitmap.js?v=painted-20261114-r2';
@@ -885,7 +885,7 @@ export class World {
       const first = definition.enemies?.[0];
       const enemyId = typeof first === 'string' ? first : first?.kind || first?.id;
       const enemy = Content.ENEMIES?.[enemyId] || values(Content.ENEMIES).find(e => e.id === enemyId);
-      const actor = this.createActor(`encounter:${definition.id}`, enemy?.kind || (definition.boss ? 'boss' : 'husk'), { hostile: true, enemyId, animationSource: enemy?.animationSource, visual: enemy?.visual });
+      const actor = this.createActor(`encounter:${definition.id}`, enemy?.kind || (definition.boss ? 'boss' : 'husk'), { hostile: true, patrol: !!definition.stroll, enemyId, animationSource: enemy?.animationSource, visual: enemy?.visual });
       actor.wrapper.position.copy(group.position);
       actor.wrapper.rotation.y = Math.atan2(-definition.x, -definition.z) - (actor.sourceFrontYaw || 0);
       if (definition.stroll) actor.stroll = { definition, target: new T.Vector3(), time: .38 + (hash(definition.id) % 100) / 100 };
@@ -1116,6 +1116,7 @@ export class World {
       this.time < actor.pulseUntil ? actor.pulseAnimation : desiredAnimation;
     if (dying && !actor.deathPosition) actor.deathPosition = actor.wrapper.position.clone();
     this.play(actor, animation);
+    leavePartyGait(actor);
     if (restoredCorpse && actor.current === 'Death') {
       const death = actor.actions.Death;
       if (death?.getClip) {
@@ -1258,7 +1259,7 @@ export class World {
     for (let index = 0; index < battle.enemies.length; index++) {
       const unit = battle.enemies[index];
       const definition = Content.ENEMIES[unit.kind] || values(Content.ENEMIES).find(enemy => enemy.id === unit.kind);
-      const actor = this.createActor(`enemy:${unit.uid}`, definition?.kind || 'husk', { hostile: true, enemyId: definition?.id, animationSource: definition?.animationSource, visual: definition?.visual });
+      const actor = this.createActor(`enemy:${unit.uid}`, definition?.kind || 'husk', { hostile: true, battle: true, enemyId: definition?.id, animationSource: definition?.animationSource, visual: definition?.visual });
       actor.wrapper.visible = true;
       actor.battleControlled = true;
       if (!actor.battleLabel) {

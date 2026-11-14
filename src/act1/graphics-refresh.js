@@ -3,7 +3,7 @@ import * as T from '../../assets/vendor/three.module.js';
 import {groundClearanceLift,flightBaseline,mirrorWingDelta} from './party-motion.js?v=motion-110';
 import {SOURCE_BASES} from './source-facing.js?v=campaign-v1';
 import {isCampaignModel,campaignActor} from './campaign-visuals.js?v=campaign-v1';
-import {preparePartyGait} from './party-gait.js?v=gait-111';
+import {preparePartyGait} from './party-gait.js?v=stride-112';
 
 export const BASE_MODELS=SOURCE_BASES.filter(id=>!isCampaignModel(id));
 const v=(base,gear=[],extra={})=>({base,gear,...extra});

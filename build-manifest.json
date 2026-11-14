@@ -1,6 +1,6 @@
 {
   "id": "ashen-oath",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "releaseStatus": "release",
   "demo": false,
   "posterArtRevision": {
@@ -2126,12 +2126,12 @@
     "act1PriorDesignTargetMinutes": 180
   },
   "platform": "WebGL2",
-  "builtAt": "2026-11-14T18:45:34.487Z",
+  "builtAt": "2026-11-14T19:22:42.116Z",
   "files": [
     {
       "path": "README.md",
-      "bytes": 1850,
-      "sha256": "a45ed4767a61f0a0f929a206cd326301829dea079277284e7db055cb1a859514"
+      "bytes": 1921,
+      "sha256": "47cb06219c9e708e05bc1bb185341eb99dd40eba7ab4bc699c52455d0500f70b"
     },
     {
       "path": "act1.css",
@@ -2140,13 +2140,18 @@
     },
     {
       "path": "act1.html",
-      "bytes": 1724,
-      "sha256": "44b12369ffc810fd3118af0cd5f3922cd3e49972547b8cda3c485fe6018589fc"
+      "bytes": 1726,
+      "sha256": "fc8fe7e62a122f58709103a93b45c0d987b7127efa4f5b727db13ed413ac92bb"
     },
     {
       "path": "assets/act1/animation/animation-library.json",
       "bytes": 46724,
       "sha256": "938fe89ccf5995d7b3a1342ad0ab8484a9e414ff8bd61e9d42144418204e0055"
+    },
+    {
+      "path": "assets/act1/animation/locomotion-credits.md",
+      "bytes": 794,
+      "sha256": "b8ad89bc9462407d013dce9dd4c49026f883e8385f66699e2b6a72065ed0ad9e"
     },
     {
       "path": "assets/act1/animation/motion/alar_nocape--enemy-oath_knight.json",
@@ -4030,8 +4035,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 1724,
-      "sha256": "44b12369ffc810fd3118af0cd5f3922cd3e49972547b8cda3c485fe6018589fc"
+      "bytes": 1726,
+      "sha256": "fc8fe7e62a122f58709103a93b45c0d987b7127efa4f5b727db13ed413ac92bb"
     },
     {
       "path": "interface-windows.css",
@@ -4080,8 +4085,8 @@
     },
     {
       "path": "src/act1/area-asset-plan.js",
-      "bytes": 6051,
-      "sha256": "6d8984e11d4a1075147502c2d07dc2f6e311e50f45dcd04d9a3c8708d1dde8db"
+      "bytes": 6053,
+      "sha256": "ebe9f362ec062388452b80bb4441badde06977a876eda009cf937fd9301ac354"
     },
     {
       "path": "src/act1/area-geometry.js",
@@ -4156,7 +4161,7 @@
     {
       "path": "src/act1/campaign-ui.js",
       "bytes": 4861,
-      "sha256": "c24bd04072ca167d8a18796852e50ded966884c2c7d8b259bd2a0572cb7034b5"
+      "sha256": "4bb91a33ca1b2a53751ec3c21a9ef8153cc70d35e91be099740cc96c3bea9a21"
     },
     {
       "path": "src/act1/campaign-visuals.js",
@@ -4170,8 +4175,8 @@
     },
     {
       "path": "src/act1/character-animation.js",
-      "bytes": 15940,
-      "sha256": "11720442928e5cb84f6fe79d75ff07e221f018690917a27e4511bf7ade55646a"
+      "bytes": 15942,
+      "sha256": "88cd39c6e9411fd4d81ec2cafbbb2337aec56af147d9705084dcc7d835e98eeb"
     },
     {
       "path": "src/act1/combat200-animation-policy.js",
@@ -4197,6 +4202,11 @@
       "path": "src/act1/data/magic-profiles.js",
       "bytes": 10456,
       "sha256": "8311461cfd2cd3a4c0617fd7846663fd64ba11566d95f9acb161da05ced0a245"
+    },
+    {
+      "path": "src/act1/data/party-locomotion.js",
+      "bytes": 6529,
+      "sha256": "e9dd0b15ebf80fa54e13bb0ea530e481802989285725da0ce71b03c750ca6cc3"
     },
     {
       "path": "src/act1/equipment-presentation.js",
@@ -4230,8 +4240,8 @@
     },
     {
       "path": "src/act1/graphics-refresh.js",
-      "bytes": 17303,
-      "sha256": "5ad3ccd49808bacc91420f5cbd9682aed29cc85740b0961a9b9dddca1956fbbe"
+      "bytes": 17305,
+      "sha256": "f3fa0aa6ed1dd45fabd244d3bfd52dcb0d916e319d4f27a1dac1b6fd22c3f7fd"
     },
     {
       "path": "src/act1/groundcover-plants.js",
@@ -4285,23 +4295,23 @@
     },
     {
       "path": "src/act1/main.js",
-      "bytes": 113456,
-      "sha256": "e559c5666ebfbef5dc99d15d6b861cbd252e3358c94cc76f31ff5afaa5e2f0ec"
+      "bytes": 113468,
+      "sha256": "153265d84d921d8e75441d2add6fe90673a98c0134176b221aaba9695e0cefe3"
     },
     {
       "path": "src/act1/meshy-world.js",
-      "bytes": 46800,
-      "sha256": "ad4e9d11051675bcdeefea44bc6b1378bd4c842ab83f9bb909174b1033eef6b7"
+      "bytes": 46804,
+      "sha256": "d0507f06ecca2a19d9be4851c38e9ebae118312dea11220c8deb681a2c14b20a"
     },
     {
       "path": "src/act1/minimap.js",
-      "bytes": 13643,
-      "sha256": "923a810971e09e22ac23b95cc9684460e8d13d083381e4df7ed8e24b62fa0eda"
+      "bytes": 13645,
+      "sha256": "056de32960c485c75910473b583bce5c93e4ec45b1cc8a2b9d1f8675e8c48db5"
     },
     {
       "path": "src/act1/model.js",
       "bytes": 123587,
-      "sha256": "8b832cd27afd20cb42f0f7a806dc48f7da6797aaad7a7197d2102eac6b02fd34"
+      "sha256": "8c17e607173c291309dcaf5e93cb855b5a342b96f77d6c153f009058cf2902c5"
     },
     {
       "path": "src/act1/motion-clip-corrections.js",
@@ -4310,8 +4320,8 @@
     },
     {
       "path": "src/act1/navigation.js",
-      "bytes": 15873,
-      "sha256": "8cd4f2e1b24ea7fba3851f9ab5f791c5d579901c02f4e6a0641ac26f492bc9d6"
+      "bytes": 15875,
+      "sha256": "9add0c2132c8eb873c52f8d8630f95bded0a7ddf282f5dc033f958f8abc5390e"
     },
     {
       "path": "src/act1/painted-material.js",
@@ -4325,8 +4335,8 @@
     },
     {
       "path": "src/act1/party-gait.js",
-      "bytes": 11261,
-      "sha256": "408c2c56e3673380fc468aaccbb45ff35173764c4061e7d81c75ee401e09f35f"
+      "bytes": 19483,
+      "sha256": "fa11abb6c5a961c6afc1de9956b101d4cdab4b4a173ac3889619749675e2957f"
     },
     {
       "path": "src/act1/party-motion.js",
@@ -4395,8 +4405,8 @@
     },
     {
       "path": "src/act1/save.js",
-      "bytes": 13291,
-      "sha256": "27cf5a2f8272fad3ced227d7a153fa3e5c784f33d0316b66c1cfbead21ab9d27"
+      "bytes": 13293,
+      "sha256": "2b11a90d9046236360fae67d847a949327d2f4b28c36a33f72a6cc6251f6d725"
     },
     {
       "path": "src/act1/source-facing.js",
@@ -4425,13 +4435,13 @@
     },
     {
       "path": "src/act1/water-fire.js",
-      "bytes": 15785,
-      "sha256": "d932e780f6c19975033e2a0b2d2e69b6a025165794dacbec664bf458c1b37f90"
+      "bytes": 15787,
+      "sha256": "1ca7d9e3637a75c4e0f60ec3d468a91982f35b0673343003bd48237917ee9081"
     },
     {
       "path": "src/act1/world.js",
-      "bytes": 107746,
-      "sha256": "16e21cc272e7a64a1560f5e053c9db5bd5175bf1a82dd3231008b399916f74ae"
+      "bytes": 107847,
+      "sha256": "68c3a6c39634138e6c9ee68b40ff1f64ff59b26355ab2b31c7558ab856660d97"
     },
     {
       "path": "src/act1/writer-session.js",
@@ -4662,6 +4672,25 @@
       "pelvis and knee extension",
       "spine balance",
       "gait crossfade"
+    ]
+  },
+  "locomotionRevision": {
+    "id": "stride-112",
+    "baseCommit": "baaf4c7750cb41643dd012e6a020e95880d0520b",
+    "poseRateHz": 25,
+    "party": [
+      "alar",
+      "myrt",
+      "elian",
+      "iona",
+      "radan",
+      "leia"
+    ],
+    "presentation": [
+      "CMU motion capture adapted per rig",
+      "heel to toe support",
+      "pelvic motion and counter rotation",
+      "combat approach"
     ]
   }
 }

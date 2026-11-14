@@ -1,22 +1,22 @@
 import {resolveInitialQuality} from './browser-performance.js?v=0.16.0-demo-mobile-default20261107';
 import {createQuestArrow} from './quest-arrow-view.js?v=0.16.0-demo-webperf20261106';
-import {approachTarget,areaBounds,planPath,validSegment} from './navigation.js?v=gait-111';
-import {createMinimap,createAreaSchematic} from './minimap.js?v=gait-111';
+import {approachTarget,areaBounds,planPath,validSegment} from './navigation.js?v=stride-112';
+import {createMinimap,createAreaSchematic} from './minimap.js?v=stride-112';
 import * as HUD50 from './hud-presentation.js?v=0.16.0-demo';
 import * as UI100 from './interface-100.js?v=campaign-v1';
 import {ownsMovementKey,ignoreGameShortcut,canBattleShortcut,canStartInventoryDrag,worldTapStart,worldTapComplete} from './input-policy.js?v=0.16.0-demo';
 import {normalizeSettings,captureSurface,restoreSurface,captureDisclosures,restoreDisclosures,heroSummary,slotSummary,saveWarning,itemStatLine,feedbackSurface,normalizePresentationSettings,statusDescription,createAudioEventCursor,eventAudioCues,presentationAudioCue} from './ui-feedback.js?v=campaign-v1';
-import * as M from './model.js?v=gait-111';
+import * as M from './model.js?v=stride-112';
 import {PARTY,ITEMS,SKILLS,ENEMIES,AREAS,QUESTS,DIALOGUES,CAMPAIGN_ACTS,CAMPAIGN_COMICS,CAMPAIGN_ENDINGS} from './content.js?v=campaign-v1';
-import {Saves} from './save.js?v=gait-111';
-import {World} from './world.js?v=gait-111';
+import {Saves} from './save.js?v=stride-112';
+import {World} from './world.js?v=stride-112';
 import {WriterSession} from './writer-session.js?v=0.16.0-demo';
 import {Audio} from './act-audio.js?v=campaign-v1';
 import {bridgeAt,riverSection} from './area-geometry.js?v=rivers-0181';
 import {magicProfile} from './data/magic-profiles.js?v=motion-110';
 import {durabilityLabel,durabilityMeter,itemRarity,renderChestLoot,renderSmithy} from './forged-ui.js?v=forged-019';
 import {textImage,sprite,atlasCell,loadTypography} from './bitmap.js?v=painted-20261114-r2';
-import {RELEASE,campaignPortrait,renderStarterSelection,renderTalentBranches,renderCampaignComic} from './campaign-ui.js?v=gait-111';
+import {RELEASE,campaignPortrait,renderStarterSelection,renderTalentBranches,renderCampaignComic} from './campaign-ui.js?v=stride-112';
 
 const $=id=>document.getElementById(id),list=v=>Array.isArray(v)?v:Object.values(v||{}),dict=v=>Object.fromEntries(list(v).map(x=>[x.id,x]));
 const partyDefs=dict(PARTY),itemDefs=dict(ITEMS),areaDefs=dict(AREAS),dialogueDefs=dict(DIALOGUES),enemyDefs=dict(ENEMIES);

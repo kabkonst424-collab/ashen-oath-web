@@ -1,6 +1,6 @@
 import * as T from '../../assets/vendor/three.module.js';
 import {GLTFLoader} from '../../assets/vendor/GLTFLoader.js';
-import {BASE_MODELS} from './graphics-refresh.js?v=gait-111';
+import {BASE_MODELS} from './graphics-refresh.js?v=stride-112';
 import {mergeGeometries} from '../../assets/vendor/BufferGeometryUtils.js';
 import {TerrainMaterials} from './terrain-material.js?v=campaign-v1';
 import {paintMeshes} from './painted-material.js?v=painted-20261114-r2';
@@ -8,7 +8,7 @@ import {fetchBytes} from './resource-loader.js?v=0.16.0-demo';
 
 import { buildAuthoredGround, buildAuthoredLandscape } from './authored-landscape.js?v=campaign-v1';
 import { NEW_CHARACTERS } from './campaign-visuals.js?v=campaign-v1';
-import { PROP_SLOTS, areaAssetPlan, terrainSlot } from './area-asset-plan.js?v=gait-111';
+import { PROP_SLOTS, areaAssetPlan, terrainSlot } from './area-asset-plan.js?v=stride-112';
 
 // This module is installed after graphics-refresh. It changes presentation only;
 // authoritative movement and campaign state stay in model.js.
