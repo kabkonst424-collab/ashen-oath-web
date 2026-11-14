@@ -1,24 +1,24 @@
-import {installRefresh} from './graphics-refresh.js?v=roads-018';
-import {installMeshyWorld} from './meshy-world.js?v=rivers-0181';
-import {WorldElements,installWorldElements} from './water-fire.js?v=rivers-0181';
-import {MagicVfx} from './magic-vfx.js?v=painted-20261114-r2';
+import {installRefresh} from './graphics-refresh.js?v=forged-019';
+import {installMeshyWorld} from './meshy-world.js?v=forged-019';
+import {WorldElements,installWorldElements} from './water-fire.js?v=forged-019';
+import {MagicVfx} from './magic-vfx.js?v=forged-019';
 import {advancePaintedPose, orientPaintedActors, paintedActionAge, resetPaintedPose} from './painted-motion.js?v=painted-20261114-r2';
-import {CharacterAnimationLibrary} from './character-animation.js?v=rivers-0181';
+import {CharacterAnimationLibrary} from './character-animation.js?v=forged-019';
 import {installBrowserPerformance} from './browser-performance.js?v=0.16.0-demo';
 import * as T from '../../assets/vendor/three.module.js';
 import { GLTFLoader } from '../../assets/vendor/GLTFLoader.js';
 import { clone as cloneSkeleton } from '../../assets/vendor/SkeletonUtils.js';
-import * as Content from './content.js?v=rivers-0181';
+import * as Content from './content.js?v=forged-019';
 import { battleFormation, fitBattleCamera, facingToward, oppositionFacing, wrapFacing } from './battle-stage.js?v=0.16.0-demo';
-import { combatMotionPolicy, actionLunge } from './presentation-motion.js?v=0.16.0-demo';
-import { actionTimeline, actionClipPhase } from './presentation-timing.js?v=0.16.0-demo';
+import { combatMotionPolicy, actionLunge } from './presentation-motion.js?v=forged-019';
+import { actionTimeline, actionClipPhase } from './presentation-timing.js?v=forged-019';
 import { reactionPhase, contactReaction, transitionBlend, hasUnsettledDeath } from './combat200-animation-policy.js?v=0.16.0-demo';
 import { PartyTrail, loopTiming, COMBAT_MOTION, combatPlaybackRate } from './party-motion.js?v=0.16.0-demo';
-import { walkable } from './model.js?v=rivers-0181';
+import { walkable } from './model.js?v=forged-019';
 import { BattleLayoutCache } from './ui-framing.js?v=0.16.0-demo';
 import { paintGildedLine } from './bitmap.js?v=painted-20261114-r2';
 
-import { buildAuthoredRoad } from './authored-landscape.js?v=rivers-0181';
+import { buildAuthoredRoad } from './authored-landscape.js?v=forged-019';
 import { bridgeAt, bridgeHeight, nearestLand, terrainElevation } from './area-geometry.js?v=rivers-0181';
 
 const UP = new T.Vector3(0, 1, 0);
@@ -885,6 +885,7 @@ export class World {
       const actor = this.createActor(`encounter:${definition.id}`, enemy?.kind || (definition.boss ? 'boss' : 'husk'), { hostile: true, enemyId, animationSource: enemy?.animationSource, visual: enemy?.visual });
       actor.wrapper.position.copy(group.position);
       actor.wrapper.rotation.y = Math.atan2(-definition.x, -definition.z) - (actor.sourceFrontYaw || 0);
+      if (definition.stroll) actor.stroll = { definition, target: new T.Vector3(), time: .38 + (hash(definition.id) % 100) / 100 };
       item.actor = actor;
       this.play(actor, 'Idle');
     }
@@ -908,6 +909,20 @@ export class World {
       if (item.lid) { item.lid.rotation.x = used ? -0.9 : 0; if (!item.craftedLid) item.lid.position.y = used ? 1.18 : 0.98; }
       if (item.glyph) item.glyph.visible = item.ready;
     }
+  }
+
+  animatePatrol(actor, dt) {
+    const patrol = actor.stroll, { definition: d, target } = patrol;
+    patrol.time += dt;
+    const [dx, dz, period] = d.stroll;
+    const phase = TAU * patrol.time / period;
+    const x = d.x + dx * Math.sin(phase), z = d.z + dz * Math.sin(phase), speed = Math.cos(phase);
+    const safe = walkable(this.areaId, x, z), moving = Math.abs(speed) > .23 && safe;
+    const yaw = moving ? Math.atan2(dx * speed, dz * speed) :
+      actor.wrapper.rotation.y + (actor.sourceFrontYaw || 0);
+    target.set(safe ? x : d.x, this.height(safe ? x : d.x, safe ? z : d.z), safe ? z : d.z);
+    actor.motionSpeed = moving ? Math.hypot(dx, dz) * TAU / period * Math.abs(speed) : 0;
+    this.animate(actor, target, yaw, moving ? 'Walk' : 'Idle', 1, dt, this.justEnteredArea);
   }
 
   createActor(id, type, options = {}) {
@@ -1377,7 +1392,7 @@ export class World {
         if (event.type !== 'revive') target.deathAt = at + 0.13;
         this.cues.push({ at, kind: event.type, actor: target, source, event, actionCue: group });
       }
-      if (event.type === 'victory' && this.visualBattle) this.cues.push({ at: Math.max(this.time + 0.25, (this.timeline || this.time) - 0.2), kind: 'victory' });
+      if (event.type === 'victory' && this.visualBattle) this.cues.push({ at: Math.max(this.time + 0.25, (this.timeline || this.time) - 0.2), kind: 'victory', event });
       if (event.type === 'level' || event.type === 'recruit') {
         const actor = this.eventActor(event.heroId);
         if (actor) {
@@ -1540,7 +1555,12 @@ export class World {
     this.playCues();
     for (const [id, actor] of this.actors) if ((id.startsWith('npc:') || id.startsWith('encounter:')) && actor.wrapper.visible) {
       const actorDelta = this.browserPerformance?.shouldUpdateActor(actor, animationDelta, { critical: false }) ?? animationDelta;
-      advancePaintedPose(actor, actorDelta, this.time);
+      if (actor.stroll && !presentation.battle && !this.reducedMotion) {
+        if (actorDelta > 0 || this.justEnteredArea) this.animatePatrol(actor, actorDelta);
+      } else {
+        if (actor.stroll && this.reducedMotion) this.play(actor, 'Idle');
+        advancePaintedPose(actor, actorDelta, this.time);
+      }
     }
     this.updateEffects(animationDelta);
     this.updateAtmosphere(state, dt);
@@ -1727,6 +1747,7 @@ export class World {
     this.magicVfx?.retireActor?.(actor);
     actor.mixer.stopAllAction();
     actor.mixer.uncacheRoot(actor.root);
+    actor.outfitGeometry?.dispose();
     actor.wrapper.removeFromParent();
     actor.selectionMarker?.removeFromParent();
     const skeletons = new Set();

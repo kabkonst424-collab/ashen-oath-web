@@ -1,5 +1,5 @@
 // Read-only UI adapters. Commands are passed by main; no model state is mutated here.
-import {statusDescription as modelStatusDescription} from './ui-feedback.js';
+import {statusDescription as modelStatusDescription} from './ui-feedback.js?v=forged-019';
 export const features=[];
 export function decorate(root,surface,d){if(root._ui100Marker?.parentNode===root)return;for(const f of features)if(f.surface===surface)f.apply(root,d);const marker=d.el('span','ui100-render-boundary');marker.hidden=true;root.append(marker);root._ui100Marker=marker;}
 export function applyFeature(id,root,d){const f=features.find(f=>f.id===id);if(!f)throw Error('Unknown UI feature '+id);f.apply(root,d);}

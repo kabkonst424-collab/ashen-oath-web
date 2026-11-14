@@ -1,6 +1,6 @@
 {
   "id": "ashen-oath",
-  "version": "0.18.1-demo",
+  "version": "0.19.0-demo",
   "releaseStatus": "demo",
   "demo": true,
   "posterArtRevision": {
@@ -2121,7 +2121,7 @@
     "status": "DESIGN_ESTIMATE_NOT_MEASURED"
   },
   "platform": "WebGL2",
-  "builtAt": "2026-11-14T13:04:15.181Z",
+  "builtAt": "2026-11-14T13:33:57.546Z",
   "files": [
     {
       "path": "act1.css",
@@ -2130,8 +2130,8 @@
     },
     {
       "path": "act1.html",
-      "bytes": 1473,
-      "sha256": "eb90f74f9ffb63778eb7cadf0e27a53f1dde4bcdf0d219e73001c87e13ddab68"
+      "bytes": 1526,
+      "sha256": "6872509c4d1530d06ae6ed6ad2ef69e74084b3b1fb1055ca7e1b7c3015ef002b"
     },
     {
       "path": "assets/act1/animation/animation-library.json",
@@ -2384,6 +2384,61 @@
       "sha256": "bac8bb5325f452c1f17e6c72f11140dc18f9a3c5e64c40c467c6ae09fd3aff3f"
     },
     {
+      "path": "assets/act1/audio/LICENSE-Kenney.txt",
+      "bytes": 456,
+      "sha256": "78da85b7f8c1fb30b7c2f081619474a5b0b1808fcb0e28830a967eec8bd0ec44"
+    },
+    {
+      "path": "assets/act1/audio/README.md",
+      "bytes": 2267,
+      "sha256": "f1e27ccf5d4f4f0761f8fc25f3ec1c9e1f86bbbbf83870cb8e83aef930a42c6d"
+    },
+    {
+      "path": "assets/act1/audio/boot-a.ogg",
+      "bytes": 9475,
+      "sha256": "6fe61ef1fc3bcf0e253bf2eb64759db6cb69e2fe452f4d88cc597ecf78a3d601"
+    },
+    {
+      "path": "assets/act1/audio/boot-b.ogg",
+      "bytes": 10559,
+      "sha256": "a86756b9af9f370455ab47844239bb07fd1bee7a113068c91f0fcd9b72703fae"
+    },
+    {
+      "path": "assets/act1/audio/boot-c.ogg",
+      "bytes": 9885,
+      "sha256": "6cabfe7ae95d227a84066c6e17014ac31cc7c89b14ef51d7877e98352d4a64fb"
+    },
+    {
+      "path": "assets/act1/audio/boot-d.ogg",
+      "bytes": 9356,
+      "sha256": "9324ebb9b2c5bcd078dcb523c6518d38a9f34081069d511602c2efb14ce06ce2"
+    },
+    {
+      "path": "assets/act1/audio/chest-hinge.ogg",
+      "bytes": 10408,
+      "sha256": "f9638787f95004b9d2d06f8eff8e99d4e594c21b51947daf562856fbcec905d1"
+    },
+    {
+      "path": "assets/act1/audio/coins.ogg",
+      "bytes": 13094,
+      "sha256": "4b857968d64f9ac9336a10ffac6694d7547e1f01566ad6857b30bc8db3ee6c32"
+    },
+    {
+      "path": "assets/act1/audio/latch.ogg",
+      "bytes": 10208,
+      "sha256": "ba9ba60b172b3ebc131a940f25793cd2e207aca7af73dc80d637277f060f1708"
+    },
+    {
+      "path": "assets/act1/audio/smith.ogg",
+      "bytes": 13615,
+      "sha256": "9851a69d0c613e13bceef08060ecc4148f098ef487927cbebe270d642398a3b3"
+    },
+    {
+      "path": "assets/act1/audio/steel.ogg",
+      "bytes": 11134,
+      "sha256": "276403e72c3b71c47bc24db3083970c23f8e5551ffa78f436f83483c56f3f0bb"
+    },
+    {
       "path": "assets/act1/combat-actions-v1.png",
       "bytes": 1781721,
       "sha256": "4fa06b9d67803006b086599183b9e32b155bded5bcb523155b81f809bfac75a1"
@@ -2529,14 +2584,19 @@
       "sha256": "622f54f0f067f47aeec1d2bf818a0e8d2adcd997ed5349548843d7778b3877c2"
     },
     {
+      "path": "assets/act1/painted/forge-cover.webp",
+      "bytes": 244916,
+      "sha256": "1ab849c0b7a1fb736a0da9009d4118bb1d81a4e05f8033c8152cef611fcc3554"
+    },
+    {
       "path": "assets/act1/painted/items.webp",
       "bytes": 214274,
       "sha256": "f4c3cc8949811373a0adaa2cb5757cd5d330ec098d318fd03d800cc413cbe0ac"
     },
     {
       "path": "assets/act1/painted/manifest.json",
-      "bytes": 5212,
-      "sha256": "8eda46b59df03a7041f20b9986f4a786d0e612cad915e24985081bc1c1181995"
+      "bytes": 5706,
+      "sha256": "89383841f3257c590604075e57a826cce01c8a8370a05a31b38da5b701bbd1e6"
     },
     {
       "path": "assets/act1/painted/materials.webp",
@@ -2919,9 +2979,14 @@
       "sha256": "104f56145899722094556490d787aae0617cc2fc3382f31df02d724ea1aee341"
     },
     {
+      "path": "forged.css",
+      "bytes": 1343,
+      "sha256": "60cd819b0a9da5c4926210079ca722a90fb179e7a65ff8c1453003cd2b268a4a"
+    },
+    {
       "path": "index.html",
-      "bytes": 1473,
-      "sha256": "eb90f74f9ffb63778eb7cadf0e27a53f1dde4bcdf0d219e73001c87e13ddab68"
+      "bytes": 1526,
+      "sha256": "6872509c4d1530d06ae6ed6ad2ef69e74084b3b1fb1055ca7e1b7c3015ef002b"
     },
     {
       "path": "interface-windows.css",
@@ -2959,6 +3024,11 @@
       "sha256": "b6db467c36743d92d4e73eee98048e48239fb93198a9d191ccd9ae490a363b9e"
     },
     {
+      "path": "src/act1/act-audio.js",
+      "bytes": 26050,
+      "sha256": "858eba8dbb7d404da607818d18779f5b1e2e45f4d5930f444ba340e6993d0b47"
+    },
+    {
       "path": "src/act1/area-geometry.js",
       "bytes": 11374,
       "sha256": "6c834a105a2748a009ce5bb54c43e5cdc1de91d172627108d7da02148d23312e"
@@ -2970,13 +3040,13 @@
     },
     {
       "path": "src/act1/area-schematic.js",
-      "bytes": 6904,
-      "sha256": "ad42cb898511144a49ad126cb6b42afebe7a52efd4be1b9b4381346d92a12042"
+      "bytes": 6975,
+      "sha256": "40754df589d3a8152f2eec091c983f0914f3f0dfc21b82cfb48530497fda2673"
     },
     {
       "path": "src/act1/authored-landscape.js",
-      "bytes": 14091,
-      "sha256": "75f730148253e13108e1671bab2a23b907f840ed67788203a6a8c760bd091bba"
+      "bytes": 15144,
+      "sha256": "5b5440ff37a50c27879bccadf03810ee31caff37977b74c908c442cd4eb60d72"
     },
     {
       "path": "src/act1/battle-stage.js",
@@ -3000,8 +3070,8 @@
     },
     {
       "path": "src/act1/character-animation.js",
-      "bytes": 16378,
-      "sha256": "72cd27191ba76fef64c6bb531f7670762142e7fe1f1783f98cd1951200f7eaa0"
+      "bytes": 16376,
+      "sha256": "72b9d979ad894d888af84359a1d47fd8c52811b517a0b31a110cdb3401238f93"
     },
     {
       "path": "src/act1/combat200-animation-policy.js",
@@ -3015,8 +3085,8 @@
     },
     {
       "path": "src/act1/content.js",
-      "bytes": 208337,
-      "sha256": "bdfdb32481493ce10255231ba6832114b2a4607a8d4f7b4fec180a577fe4faf5"
+      "bytes": 208654,
+      "sha256": "2edaf2c58432fe6c0cffbfe61106f90d213d1496be2a3f432fcb5dd6a12156a0"
     },
     {
       "path": "src/act1/data/ground-clearance.js",
@@ -3025,8 +3095,8 @@
     },
     {
       "path": "src/act1/data/magic-profiles.js",
-      "bytes": 6399,
-      "sha256": "a542077ef8864c5ef3cb91b7728e0fcfc77830d252b7608019d5470b04313f6c"
+      "bytes": 7385,
+      "sha256": "3ff1e6b2145991835bb1a8b4af9c4fd3d821149021866823726caeee6211c9f2"
     },
     {
       "path": "src/act1/equipment-presentation.js",
@@ -3034,9 +3104,29 @@
       "sha256": "ff5a13d887de4df456a49ae3e50e77542f2b7b67b52c6b8b8555af3c0e9cd526"
     },
     {
+      "path": "src/act1/forged-enemies.js",
+      "bytes": 5335,
+      "sha256": "a06d4b4a85b6ae934e8a7d29fec3f8f371e9ed2e157621f1f3ab970cac561ead"
+    },
+    {
+      "path": "src/act1/forged-enemy-looks.js",
+      "bytes": 10885,
+      "sha256": "5eb306a27e4865eb6059123e217e62d23b386318b92bfd364048578e8fa74292"
+    },
+    {
+      "path": "src/act1/forged-smiths.js",
+      "bytes": 2486,
+      "sha256": "6a4713dde2abe27cdc0b1b12f5fd53cec14841e3e070adda139a4591b6030614"
+    },
+    {
+      "path": "src/act1/forged-ui.js",
+      "bytes": 4370,
+      "sha256": "481e84dcef1bf67fc8f8dd5c85a0f7ace84ba8f98c70d417bd3ff5032632f00d"
+    },
+    {
       "path": "src/act1/graphics-refresh.js",
-      "bytes": 17085,
-      "sha256": "bc707eec4c73ddc8ad8a97dd5b6140d2211edfc565f46f5ef100cfe8ef24bd7c"
+      "bytes": 17233,
+      "sha256": "864cebb7f1bc78575f318cc1fb83a6093e789c9cea303c7028ed7661e0386120"
     },
     {
       "path": "src/act1/hero-abilities.js",
@@ -3055,43 +3145,48 @@
     },
     {
       "path": "src/act1/interface-100.js",
-      "bytes": 43124,
-      "sha256": "3b5c72e1af046ab848e5f6041d93c7f7bd5c5f8c63c8a9f68d0d8aac1757e623"
+      "bytes": 43137,
+      "sha256": "5862e25b76a5171b8fdd8213aed0301fc42e54e112d067c22eed628605c4f132"
     },
     {
       "path": "src/act1/interface-presentation.js",
-      "bytes": 1636,
-      "sha256": "74f2f052c24c615f6f86d7e447cf2587174ab26882c3e4a30d2c9ba9b245104c"
+      "bytes": 1676,
+      "sha256": "f7f3cc971ce0bccb580b989cd8f174aeaf0f672f38a4fd393edd0e9f83ba244e"
+    },
+    {
+      "path": "src/act1/loot-tables.js",
+      "bytes": 6093,
+      "sha256": "7dcf5d399bbab1b76631d447deac8b23626a7288e4e478a7e676ad8957581ac6"
     },
     {
       "path": "src/act1/magic-vfx.js",
-      "bytes": 51584,
-      "sha256": "a7241523aefcbe3092dfc2d7ecdf12c6e39530969c7781d22f323000ff07830f"
+      "bytes": 51581,
+      "sha256": "fd18a25c5ad6d83135668459a81e205c47ac59116adae560105822adec088486"
     },
     {
       "path": "src/act1/main.js",
-      "bytes": 101425,
-      "sha256": "b7bc95ac31a958ce9f61a8ce7904569133d0e90a2e83cb901f2ba67d679cce60"
+      "bytes": 106743,
+      "sha256": "ddb4563c766436f4a2db5cb2c6b7519ec987a86125bb1163f8961ebf341594ec"
     },
     {
       "path": "src/act1/meshy-world.js",
       "bytes": 40250,
-      "sha256": "617657770eb505e6da31837fb6910885b93cef210fb4cc42d5cb90de4369f563"
+      "sha256": "0d055f7170379ed57b3a1cc2bffbaf288c8e37a116145d0e2c453f62801e2e15"
     },
     {
       "path": "src/act1/minimap.js",
-      "bytes": 13616,
-      "sha256": "2b360d932af4715c32223ede2398b85d439c0ec653f3969579778e3de19b9a25"
+      "bytes": 13645,
+      "sha256": "e7069727d1c28561c843e97f16b5677f04d9a0e53abe49ea9c4547eae805bbac"
     },
     {
       "path": "src/act1/model.js",
-      "bytes": 109497,
-      "sha256": "534df5dbc24f26e45658b12dbd82d702d26b841708838e450f58c9fc77626fcc"
+      "bytes": 116181,
+      "sha256": "a52dddff093b5e7ab1c141191c98a786552ac3b327e401662a1a77d1f800f86b"
     },
     {
       "path": "src/act1/navigation.js",
-      "bytes": 15855,
-      "sha256": "a8a79ad617b466c9953623cda6fc713a66b4c8ce93560343c0afe17ff4a5046b"
+      "bytes": 15874,
+      "sha256": "cb59d37037f7b1462449849202da541a3bdc127c15208d21fcb3e66649447d01"
     },
     {
       "path": "src/act1/painted-material.js",
@@ -3115,8 +3210,8 @@
     },
     {
       "path": "src/act1/presentation-motion.js",
-      "bytes": 588,
-      "sha256": "ea97d3cfd4e729b6d4a96c5373a4daf82103ce5397a19a6b03acc092769df9f7"
+      "bytes": 587,
+      "sha256": "f04dcc51b651875f0fa47591bad63df8c21e366b5c4df4709b202719153c1c92"
     },
     {
       "path": "src/act1/presentation-paths.js",
@@ -3130,8 +3225,8 @@
     },
     {
       "path": "src/act1/presentation-timing.js",
-      "bytes": 1673,
-      "sha256": "5b0a91cd6578e63871d52e185a2ce2f5971fa85df75a3b913c574e142cea4727"
+      "bytes": 1672,
+      "sha256": "57d9c98c231123ba569907fb77fd9f1c2ee01cf4ed1d69a484be5c847c7f004d"
     },
     {
       "path": "src/act1/presentation-visibility.js",
@@ -3170,8 +3265,8 @@
     },
     {
       "path": "src/act1/save.js",
-      "bytes": 13202,
-      "sha256": "38b92906e819f83f18e0720e3507b5dd1fea6423fc45ff94920caaddb5ca2102"
+      "bytes": 13269,
+      "sha256": "c8d52cabf5125de9612e1043807ab6fc93d9953746f2d63c31f27ea3d38b3ece"
     },
     {
       "path": "src/act1/source-facing.js",
@@ -3190,8 +3285,8 @@
     },
     {
       "path": "src/act1/ui-feedback.js",
-      "bytes": 8280,
-      "sha256": "1e736a41b6dd8c0aa0281b46aa4a972582ed7548cf562691b05daa1b872d8ed8"
+      "bytes": 8410,
+      "sha256": "4b435a7a60429a257f22c3e665b9667206c13f0075e9e721a2c1502d0d67571b"
     },
     {
       "path": "src/act1/ui-framing.js",
@@ -3200,13 +3295,13 @@
     },
     {
       "path": "src/act1/water-fire.js",
-      "bytes": 15788,
-      "sha256": "b2c50deb974d2e1a300e03a0957b7827d52703744e985ead971e0d7934b3b6c9"
+      "bytes": 15786,
+      "sha256": "06fb32772ed4e181f9800416aa209fc898fab7c937969f05b135503f0653d136"
     },
     {
       "path": "src/act1/world.js",
-      "bytes": 103362,
-      "sha256": "6515d17d7fac602edbc6ddfd356510b04ed1030afaabd3ebe959885ef5e0aa2f"
+      "bytes": 104602,
+      "sha256": "144d745ef333d63265f8e116c6edc0e9d932c6c285a0f22d36ac67297df16c64"
     },
     {
       "path": "src/act1/writer-session.js",
@@ -3257,7 +3352,7 @@
   "paintedRevision": {
     "baseCommit": "8112bb1d5453db2cea9c525d46919da95ce9181d",
     "artManifest": "assets/act1/painted/manifest.json",
-    "artManifestSHA256": "8eda46b59df03a7041f20b9986f4a786d0e612cad915e24985081bc1c1181995",
+    "artManifestSHA256": "89383841f3257c590604075e57a826cce01c8a8370a05a31b38da5b701bbd1e6",
     "staticFiles": "index.html and act1.html from repository root",
     "releaseDateMoscow": "2026-11-14",
     "assetRevision": "painted-20261114-r2"
@@ -3292,5 +3387,22 @@
     "mapRevision": 2,
     "modelSaveSchema": 2,
     "migration": "Revision 1 retains valid positions and relocates exposed positions to nearby walkable ground or a deck"
+  },
+  "forgedRevision": {
+    "id": "forged-019",
+    "baseCommit": "adc12ec1ec74779056af44e309e4c34808b5ff12",
+    "areas": 9,
+    "newEnemyTypes": 5,
+    "newEnemySkills": 9,
+    "totalEncounters": 44,
+    "blacksmiths": 5,
+    "additionalEquipment": 8,
+    "newTrophies": 3,
+    "musicThemes": 8,
+    "cc0FoleySounds": 9,
+    "saveSchema": 2,
+    "mapRevision": 2,
+    "cover": "assets/act1/painted/forge-cover.webp",
+    "saveMigration": "Legacy gear starts at full durability; combat and loot RNG are independent."
   }
 }

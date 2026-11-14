@@ -10,6 +10,7 @@ const tones = {
 const signs = {
   npc: ['M-3,0 A3,3 0 1,0 3,0 A3,3 0 1,0 -3,0', '#bbcfab'],
   merchant: ['M-4,-3 H4 L3,4 H-3 Z M-2,-3 V-5 H2 V-3', '#9ed5ba'],
+  smith: ['M-5,-3 H1 L4,-2 V0 H1 L-3,4 L-4,3 L-1,0 H-5 Z', '#ecb585'],
   camp: ['M-4,4 H4 L0,-4 Z M0,-.5 V4', '#e5b177'],
   exit: ['M-4,4 V-1 A4,4 0 0,1 4,-1 V4 Z M0,-2 V2', '#e6cc86'],
   chest: ['M-4,-3 H4 V3 H-4 Z M-4,0 H4 M0,0 V2', '#e3ae6c'],

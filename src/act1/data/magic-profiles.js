@@ -36,6 +36,15 @@ export const MAGIC_PROFILES = Object.freeze({
   enemy_ring: profile('nova', 'CastNova', 0xd6ac65, { style: 'bell', scale: 1.15 }),
   enemy_guard: profile('ward', 'CastWard', 0x9daab9, { style: 'iron', fallback: 'Block', scale: .95 }),
   enemy_mend: profile('heal', 'CastMend', 0xb2cb9b, { style: 'ash', core: 0xe6eddc }),
+  forged_lynx_lunge: profile('physical', 'Attack', 0xe5b464, { style: 'claw', scale: 1.05 }),
+  forged_slag_shell: profile('ward', 'CastEnemyRing', 0xaba68c, { style: 'iron', fallback: 'Idle', scale: 1.15 }),
+  forged_slag_eruption: profile('fire', 'CastNova', 0xff7338, { style: 'wave', core: 0xffdb95, scale: 1.20 }),
+  forged_weaver_needle: profile('ice', 'CastFrost', 0x85c9d7, { style: 'shards', projectile: true, core: 0xe5f5ea, scale: .88 }),
+  forged_weaver_mend: profile('heal', 'CastMend', 0xa5df8e, { style: 'breath', core: 0xe6f6b8 }),
+  forged_wisp_spark: profile('lightning', 'CastLightning', 0x8bf1e2, { style: 'copper', core: 0xe5fff7, scale: .86 }),
+  forged_wisp_discharge: profile('lightning', 'CastLightning', 0x5edfcf, { style: 'chain', core: 0xebfff3, scale: 1.12 }),
+  forged_guard_stand: profile('ward', 'CastWard', 0x9cb7c1, { style: 'iron', fallback: 'Block' }),
+  forged_guard_rivet: profile('physical', 'Attack', 0xc99c65, { style: 'hammer', scale: 1.13 }),
 });
 
 const enemy = (color, theme, extra = {}) => Object.freeze({ color, theme, ...extra });

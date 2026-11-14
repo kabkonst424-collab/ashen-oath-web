@@ -1,4 +1,4 @@
-import { magicProfile } from './data/magic-profiles.js?v=0.16.0-demo';
+import { magicProfile } from './data/magic-profiles.js?v=forged-019';
 import { heavyTiming } from './combat200-animation-policy.js?v=0.16.0-demo';
 const make=(kind,duration,release,impact)=>Object.freeze({kind,duration,release,impact,spacing:duration+.13,releasePose:7/24,impactPose:.5});
 export const ACTION_TIMINGS=Object.freeze({

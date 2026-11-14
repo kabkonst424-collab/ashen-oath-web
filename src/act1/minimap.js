@@ -1,5 +1,5 @@
-import {createTerrainClip,drawAreaSchematic,markerShape,terrainShapes} from './area-schematic.js?v=rivers-0181';
-import {areaMapMarkers,createNavigationService} from './navigation.js?v=rivers-0181';
+import {createTerrainClip,drawAreaSchematic,markerShape,terrainShapes} from './area-schematic.js?v=forged-019';
+import {areaMapMarkers,createNavigationService} from './navigation.js?v=forged-019';
 const INITIALIZERS=[],RENDERERS=[];
 const initialize=run=>INITIALIZERS.push(run),renderer=(order,run)=>RENDERERS.push({order,run});
 const NS='http://www.w3.org/2000/svg';
@@ -113,7 +113,7 @@ initialize(e=>e.control('details','Журнал',()=>e.onDetails(e.view.quest?.i
 renderer(97,e=>{const node=e.control('details','Журнал',()=>e.onDetails(e.view.quest?.id||null));node.ariaLabel='Открыть задание в журнале · '+(e.view.quest?.title||'Текущая задача');});
 
 initialize(e=>e.control('legend','Значки',()=>{e.prefs.legend=!e.prefs.legend;e.refresh();}));
-renderer(98,e=>{e.attr(e.control('legend','Значки',()=>{e.prefs.legend=!e.prefs.legend;e.refresh();}),'aria-expanded',String(e.prefs.legend));e.caption('legend',e.prefs.legend?'Светлая стрелка — отряд · Золотой ромб — цель\nАрка — выход · Шатёр — лагерь · Сумка — торговец\nКрасный крест — враги · Синий — вода\nЛиния — дорога · Светлый настил — мост':'',{parent:e.extra,size:12});e.attr(e.svg,'aria-label',[e.view.area.title,e.view.quest?.title,e.view.hint,e.view.route.reason,e.view.distance!==null?'Примерно '+e.view.distance+' шагов':'',e.view.direction].filter(Boolean).join('. '));});
+renderer(98,e=>{e.attr(e.control('legend','Значки',()=>{e.prefs.legend=!e.prefs.legend;e.refresh();}),'aria-expanded',String(e.prefs.legend));e.caption('legend',e.prefs.legend?'Светлая стрелка — отряд · Золотой ромб — цель\nАрка — выход · Шатёр — лагерь · Сумка — торговец\nМолот — кузнец · Красный крест — враги\nСиний — вода · Линия — дорога · Светлый настил — мост':'',{parent:e.extra,size:12});e.attr(e.svg,'aria-label',[e.view.area.title,e.view.quest?.title,e.view.hint,e.view.route.reason,e.view.distance!==null?'Примерно '+e.view.distance+' шагов':'',e.view.direction].filter(Boolean).join('. '));});
 
 
 

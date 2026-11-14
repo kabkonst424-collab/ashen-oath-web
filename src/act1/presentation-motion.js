@@ -1,4 +1,4 @@
-import {magicProfile} from './data/magic-profiles.js?v=0.16.0-demo';
+import {magicProfile} from './data/magic-profiles.js?v=forged-019';
 export function combatMotionPolicy(event,actor){const p=magicProfile(event,actor);return {planted:p.family!=='physical'||p.style==='arrow',distance:p.family!=='physical'||p.style==='arrow'?0:p.style==='thrust'?.50:p.style==='claw'?.30:.42};}
 export function actionLunge(age,timing,distance){
  if(!(age>0)||age>=timing.duration)return 0;

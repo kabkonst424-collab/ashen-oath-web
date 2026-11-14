@@ -1,5 +1,5 @@
-import * as M from './model.js?v=rivers-0181';
-import * as CONTENT from './content.js?v=rivers-0181';
+import * as M from './model.js?v=forged-019';
+import * as CONTENT from './content.js?v=forged-019';
 
 // Routes and the schematic take their boundaries from the movement model.
 const PHASES=[];
@@ -158,7 +158,7 @@ export function areaMapMarkers(area,state,targetId=null) {
  return [...(area.layout?.landmarks||[]),...active.map(object=>({
    id:object.id,x:object.x,z:object.z,
    label:object.label||object.name||(object.kind==='encounter'?CONTENT.ENEMIES[object.enemies?.[0]]?.name:null)||object.id,
-   kind:object.kind==='npc'&&object.shop?'merchant':object.boss?'boss':object.kind,
+   kind:object.smith?'smith':object.kind==='npc'&&object.shop?'merchant':object.boss?'boss':object.kind,
    locked:!allowed(state,object),
  }))];
 }

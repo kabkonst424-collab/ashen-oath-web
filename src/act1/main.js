@@ -1,17 +1,20 @@
 import {resolveInitialQuality} from './browser-performance.js?v=0.16.0-demo-mobile-default20261107';
 import {createQuestArrow} from './quest-arrow-view.js?v=0.16.0-demo-webperf20261106';
-import {approachTarget,areaBounds,planPath,validSegment} from './navigation.js?v=rivers-0181';
-import {createMinimap,createAreaSchematic} from './minimap.js?v=rivers-0181';
+import {approachTarget,areaBounds,planPath,validSegment} from './navigation.js?v=forged-019';
+import {createMinimap,createAreaSchematic} from './minimap.js?v=forged-019';
 import * as HUD50 from './hud-presentation.js?v=0.16.0-demo';
-import * as UI100 from './interface-100.js?v=0.16.0-demo';
+import * as UI100 from './interface-100.js?v=forged-019';
 import {ownsMovementKey,ignoreGameShortcut,canBattleShortcut,canStartInventoryDrag,worldTapStart,worldTapComplete} from './input-policy.js?v=0.16.0-demo';
-import {normalizeSettings,captureSurface,restoreSurface,captureDisclosures,restoreDisclosures,heroSummary,slotSummary,saveWarning,itemStatLine,feedbackSurface,normalizePresentationSettings,statusDescription,createAudioEventCursor,eventAudioCues,presentationAudioCue} from './ui-feedback.js?v=0.16.0-demo';
-import * as M from './model.js?v=rivers-0181';
-import {PARTY,ITEMS,SKILLS,ENEMIES,AREAS,QUESTS,DIALOGUES,ENDINGS,ACT_INFO} from './content.js?v=rivers-0181';
-import {Saves} from './save.js?v=rivers-0181';
-import {World} from './world.js?v=rivers-0181';
+import {normalizeSettings,captureSurface,restoreSurface,captureDisclosures,restoreDisclosures,heroSummary,slotSummary,saveWarning,itemStatLine,feedbackSurface,normalizePresentationSettings,statusDescription,createAudioEventCursor,eventAudioCues,presentationAudioCue} from './ui-feedback.js?v=forged-019';
+import * as M from './model.js?v=forged-019';
+import {PARTY,ITEMS,SKILLS,ENEMIES,AREAS,QUESTS,DIALOGUES,ENDINGS,ACT_INFO} from './content.js?v=forged-019';
+import {Saves} from './save.js?v=forged-019';
+import {World} from './world.js?v=forged-019';
 import {WriterSession} from './writer-session.js?v=0.16.0-demo';
-import {Audio} from '../audio.js?v=0.16.0-demo';
+import {Audio} from './act-audio.js?v=forged-019';
+import {bridgeAt,riverSection} from './area-geometry.js?v=rivers-0181';
+import {magicProfile} from './data/magic-profiles.js?v=forged-019';
+import {durabilityLabel,durabilityMeter,itemRarity,renderChestLoot,renderSmithy} from './forged-ui.js?v=forged-019';
 import {textImage,sprite,atlasCell,loadTypography} from './bitmap.js?v=painted-20261114-r2';
 
 const $=id=>document.getElementById(id),list=v=>Array.isArray(v)?v:Object.values(v||{}),dict=v=>Object.fromEntries(list(v).map(x=>[x.id,x]));
@@ -24,7 +27,7 @@ const audioEventCursor=createAudioEventCursor();audioEventCursor.prime(state);
 let navigationMinimap=null,navigationUpdateTime=0,navigationView=null;
 let questArrow=null,arrow50LayoutTime=Infinity,arrow50Obstacles=[],arrow50Viewport={width:0,height:0},arrow50Insets={},arrow50SafeProbe=null;
 const keys=new Set(),ui={modal:null,hero:'alar',selected:null,detail:null,drag:null,target:null,dialogueId:null,line:0,shop:null,suppressClickUntil:0};
-let settings={volume:.3,textScale:1};try{settings={...settings,...JSON.parse(localStorage.getItem('ashen-oath-act1-settings')||'{}')};}catch{}
+let settings={volume:.3,music:.8,sfx:.92,ambience:.72,textScale:1};try{settings={...settings,...JSON.parse(localStorage.getItem('ashen-oath-act1-settings')||'{}')};}catch{}
 settings.quality=resolveInitialQuality(settings,globalThis.navigator);
 settings={...normalizeSettings(settings),...normalizePresentationSettings(settings)};let appliedTextScale=settings.textScale;
 const store=new Saves((kind,message)=>{if(kind==='error'){saveError=true;saveFailure=message;}setSaveStatus(message);});
@@ -32,7 +35,7 @@ const store=new Saves((kind,message)=>{if(kind==='error'){saveError=true;saveFai
 const WRITER_WAIT='Игра открыта в другой вкладке. Закройте её — кнопки запуска здесь включатся автоматически.';
 let writerRefresh=Promise.resolve(),writerRefreshSerial=0,startupError='',startupWarning='';
 const writerSession=new WriterSession({onChange:writerChanged});
-import {windowBagView,windowValidSelection,windowQuantity,windowOwnership,windowQuestView} from './interface-presentation.js';
+import {windowBagView,windowValidSelection,windowQuantity,windowOwnership,windowQuestView} from './interface-presentation.js?v=forged-019';
 
 function windowDisclosure(key,label,...children){
   const box=el('details','window-disclosure'),head=el('summary','',text(label,600,17,'#e9ca91',true));
@@ -70,7 +73,7 @@ function arrow50Update(dt=0){
  if(!questArrow)return;
  const active=ready&&!!world&&running&&!paused&&!contextLost&&!ui.modal&&!ui.presentationLock&&state.mode==='explore';
  if(active)arrow50Measure(dt);
- const plane=active?(world.height(state.position.x,state.position.z)||0)+.3:0;
+ const plane=active?world.walkHeight(state.position.x,state.position.z)+.3:0;
  return questArrow.update({view:navigationView,runId:state.runId,areaId:state.areaId,position:state.position,project:point=>world.screen(point.x,plane,point.z),viewport:arrow50Viewport,obstacles:arrow50Obstacles,safeInsets:arrow50Insets,suspended:!active,reducedMotion:settings.reducedMotion,textScale:settings.textScale,dt});
 }
 
@@ -105,14 +108,78 @@ function setSaveStatus(message){const n=$('saveStatus');if(n)n.replaceChildren(t
 async function save({retry=false}={}){if(!running||readOnly||loadFailed||saveConflict||saveError&&!retry)return false;if(saving){saveRequested=true;return false;}saving=true;let committed=false;try{const payload=M.snapshot(state);await store.write(payload);saved=payload;saveError=false;saveFailure='';lastSavedAt=new Date().toLocaleTimeString('ru-RU');committed=true;return true;}catch(error){saveError=true;saveFailure=error.message;saveConflict=error.code==='SAVE_CONFLICT';toast('Не удалось сохранить: '+error.message);return false;}finally{saving=false;saveTime=0;const again=saveRequested;saveRequested=false;if(again&&committed)void save();}}
 async function retrySave(){if(saving||readOnly||saveConflict||loadFailed)return false;if(!store.db)try{await store.open();}catch(error){saveFailure=error.message;renderMenu('Не удалось снова открыть хранилище. Экспортируйте прогресс.');return false;}const ok=await save({retry:true});renderMenu(ok?'Прогресс записан. Автосохранение восстановлено.':'Прогресс пока не записан. Экспортируйте прохождение.');return ok;}
 function commit(answer,{quiet=false,keepModal=false}={}){if(!answer)return;if(!answer.ok){toast(answer.message);return;}playModelAudio();if(!quiet)toast(answer.message);ui.selected=null;if(!keepModal)ui.detail=null;saveTime=6;syncMode();renderHud();if(ui.modal&&state.mode==='explore')renderModal();const notice=[...state.events].reverse().find(e=>['defeat','level','quest','recruit','victory'].includes(e.type));if(notice&&JSON.stringify(notice)!==lastNotice){lastNotice=JSON.stringify(notice);toast(notice.message);}void save();}
-function playModelAudio(){const fresh=audioEventCursor.fresh(state);for(const cue of eventAudioCues(fresh.filter(event=>(!state.battle&&!ui.presentationLock)||event.type==='flee')))audio.play(cue);}
-function playPresentationCue(cue){if(cue.event&&presentationAudioReceipts.has(cue.event))return;const name=presentationAudioCue(cue,SKILLS);if(!name)return;if(cue.event)presentationAudioReceipts.add(cue.event);audio.play(name);}
+function playModelAudio(){
+ const fresh=audioEventCursor.fresh(state),outsideBattle=!state.battle&&!ui.presentationLock;
+ for(const cue of eventAudioCues(fresh.filter(event=>outsideBattle||event.type==='flee')))audio.play(cue);
+ if(!outsideBattle)return;
+ const chest=fresh.some(event=>event.type==='loot'&&event.nodeId);
+ if(chest)audio.play('chest');
+ else if(fresh.some(event=>event.type==='loot'))audio.play('loot');
+ if(fresh.some(event=>event.type==='repair'))audio.play('repair');
+ if(fresh.some(event=>event.type==='trade'))audio.play('coin');
+}
+function playPresentationCue(cue){
+ if(cue.event&&presentationAudioReceipts.has(cue.event))return;
+ const event=cue.event||{},profile=magicProfile(event);
+ const special=(cue.kind==='action'&&event.skillId?.startsWith('forged_')&&['fire','ice','lightning','physical','ward'].includes(profile.family));
+ const name=special?({physical:'slash',ward:'block'}[profile.family]||profile.family):presentationAudioCue(cue,SKILLS);
+ if(!name)return;
+ if(cue.event)presentationAudioReceipts.add(cue.event);
+ audio.play(name);
+ if((cue.kind||event.type)==='victory'&&event.rewardGrants?.some(reward=>reward.items?.length))audio.play('loot');
+}
+
+function updateAudioScene(){
+ const covered=document.hidden||contextLost;
+ const battle=state.mode==='battle'||!!ui.presentationLock;
+ const mode=paused||covered?'menu':battle?'battle':state.mode;
+ audio.setScene({mode,areaId:state.areaId,boss:!!(state.battle?.boss||world?.visualBattle?.boss)});
+ if(mode!=='explore')audio.setWaterProximity(0);
+}
+
+let audioPosition=null,stepTravel=0,riverAudioTime=0;
+function walkingAudio(dt,canWalk){
+ if(!canWalk){audioPosition=null;stepTravel=0;riverAudioTime=0;return;}
+ const {runId,areaId,position:{x,z}}=state,layout=areaDefs[areaId].layout;
+ const from=audioPosition;
+ audioPosition={runId,areaId,x,z};
+ if(from?.areaId===areaId&&from.runId===runId){
+  const distance=Math.hypot(x-from.x,z-from.z);
+  if(distance<=1)stepTravel+=distance;
+  else stepTravel=0;
+  if(stepTravel>=1.58){
+   const bridge=bridgeAt(layout,x,z);
+   const surface=bridge?(bridge.style==='stone'?'stone':'wood'):
+     areaId==='fen'?'mud':['briarwood','sunfields','village'].includes(areaId)?'soil':'stone';
+   audio.footstep(surface);stepTravel=0;
+  }
+ }
+ riverAudioTime-=dt;
+ if(riverAudioTime>0&&from?.areaId===areaId)return;
+ riverAudioTime=.18;
+ let distance=Infinity;
+ for(const river of layout.rivers||[]){
+  const bank=riverSection(river,z);
+  if(bank)distance=Math.min(distance,Math.max(0,bank.left-x,x-bank.right));
+ }
+ audio.setWaterProximity(Math.max(0,1-distance/16));
+}
 function isAllowed(value){return (!value.requiresFlags||value.requiresFlags.every(f=>state.flags[f]))&&(!value.forbidFlags||value.forbidFlags.every(f=>!state.flags[f]));}
 function syncMode(){if(state.mode==='dialogue'){ui.dialogueId=state.dialogue?.id;ui.line=state.dialogue?.line||0;openModal('dialogue');}else if(state.mode==='complete')openModal('complete');else if(ui.modal==='dialogue'){closeModal(true);}if(state.mode!=='battle'){world?.requestCombatHover?.(null,null);ui.hoverEnemy=null;ui.target=null;ui.enemyId=null;ui.allyId=null;world?.setCombatSelection?.({});}}
 function openModal(kind){if(ui.modal===kind&&$('gameModal').open)return;cancelDrag();clearInput();ui.modalNotice='';ui.modal=kind;world?.invalidateLayout?.();world?.requestCombatHover?.(null,null);renderModal();if(!$('gameModal').open)$('gameModal').showModal();}
 function closeModal(force=false){if(!force&&(state.mode==='complete'||ui.modal==='complete'))return;cancelDrag();if(state.mode==='dialogue'&&!force){commit(M.cancelDialogue(state),{quiet:true});}ui.modal=null;ui.selected=null;ui.riskSale=null;world?.invalidateLayout?.();$('gameModal').close();clearInput();}
 function modalFrame(title){const content=$('modalContent');content.replaceChildren();const close=button('Закрыть',()=>closeModal(),{small:true,width:110});if(state.mode==='complete')close.disabled=true;content.append(el('header','modal-header',text(title,700,27,'#ebd08e',true),close));const status=el('div','modal-feedback');status.id='modalFeedback';status.role='status';status.ariaLive='polite';status.ariaAtomic='true';if(ui.modalNotice)status.append(text(ui.modalNotice,850,15,'#f3d69e',true));content.append(status);const body=el('div','modal-body');body.dataset.scrollKey='modal-body';content.append(body);return body;}
-function renderModal(){if(ui.drag)return;const kind=ui.modal;if(!kind)return;const modal=$('gameModal'),focusLabel=captureSurface(modal),modalDisclosures=captureDisclosures(modal);const names={inventory:'Сумка и снаряжение',journal:'Журнал путешествия',map:'Дороги первого акта',party:'Спутники',dialogue:'Разговор',shop:'Торговля',complete:ACT_INFO.title,revival:'Возрождение спутника',about:'Об игре и лицензии'};const body=modalFrame(names[kind]||'Пепельная клятва');if(kind==='inventory')renderInventory(body);if(kind==='journal')renderJournal(body);if(kind==='map')renderMap(body);if(kind==='party')renderParty(body);if(kind==='revival')renderRevival(body);if(kind==='dialogue')renderDialogue(body);if(kind==='shop')renderShop(body);if(kind==='complete')renderComplete(body);if(kind==='puzzle')renderPuzzle(body);if(kind==='about')renderAbout(body);restoreDisclosures(modal,modalDisclosures);restoreHudFocus(modal,focusLabel);}
+function renderModal(){
+ if(ui.drag||!ui.modal)return;
+ const kind=ui.modal,modal=$('gameModal'),focusLabel=captureSurface(modal),disclosures=captureDisclosures(modal);
+ const names={inventory:'Сумка и снаряжение',journal:'Журнал путешествия',map:'Дороги первого акта',party:'Спутники',dialogue:'Разговор',shop:'Торговля',smithy:'Кузница',chestLoot:'Добыча из сундука',complete:ACT_INFO.title,revival:'Возрождение спутника',about:'Об игре и лицензии'};
+ const body=modalFrame(names[kind]||'Пепельная клятва');
+ const renderers={inventory:renderInventory,journal:renderJournal,map:renderMap,party:renderParty,revival:renderRevival,
+   dialogue:renderDialogue,shop:renderShop,smithy:renderSmith,complete:renderComplete,puzzle:renderPuzzle,about:renderAbout};
+ if(kind==='chestLoot')renderChestLoot(body,{...ui.chestLoot,defs:itemDefs,el,text,button,icon,goToInventory:()=>openModal('inventory')});
+ else renderers[kind]?.(body);
+ restoreDisclosures(modal,disclosures);restoreHudFocus(modal,focusLabel);
+}
 
 function partyStatusText(hero){const status=state.battle?.status?.[hero.id]||{},tags=[];if(hero.hp<=0)tags.push('Пал');if(status.guard>0)tags.push('Защита');if(status.attack>0)tags.push('Усиление');if(status.taunt>0)tags.push('Провокация');return tags.join(' · ');}
 function heroCard(hero,active=false,callback=null){const def=partyDefs[hero.id],st=M.stats(state,hero.id),compact=state.mode==='battle',values=el('div','party-values');if(compact)values.append(el('div','party-heading',text((active?'Ход: ':'')+def.name+' · '+hero.level+' ур.',148,13,'#e5cf9a',true)));else values.append(text(def.name,105,15,'#e5cf9a',true),text('Ур. '+hero.level,105,12));for(const [value,max,type] of [[hero.hp,st.maxHp,'hp'],[hero.mp,st.maxMp,'mp']]){const m=el('div','meter '+type),bar=el('i');bar.style.width=Math.max(0,value/max*100)+'%';m.append(bar);const amount=text(HUD50.vitalLabel(value,max,type),compact?105:120,compact?11:12);if(compact)values.append(el('div','party-vital',m,amount));else values.append(m,amount);}if(active&&!compact)values.append(text('Ваш ход',105,12,'#f7dc94',true));const conditions=(M.statusInfo&&state.mode==='battle'?statusDescription(M.statusInfo(state,hero.id)):'')||partyStatusText(hero);if(conditions)values.append(hud50ConditionNode(hero,conditions,compact));const healthWarning=HUD50.healthWarning(hero.hp,st.maxHp);if(healthWarning)values.append(el('div','hud50-health-warning',text(healthWarning,compact?148:105,11,'#efce8d',true)));if(hero.hp<=0)values.append(text('Павший · Возродить',compact?148:105,12,'#9de1c5',true));const card=panel(2,'party-card'+(active?' active':'')+(hero.hp<=0?' fallen':''),portrait(def.portrait),values);if(callback){card.tabIndex=0;card.role='button';card.dataset.focusKey='hero:'+hero.id;card.ariaLabel=heroSummary(def.name,hero,st,active,conditions);card.onclick=callback;card.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();callback();}};}return card;}
@@ -126,9 +193,24 @@ function hud50NearbyPanel(near){if(typeof nav50PreferredNearby==='function')near
 function hud50InspectSkill(box,skill){const old=box.querySelector?.('.hud50-skill-inspection');old?.remove();if(!skill)return;const copy=box.querySelector?.('.combat-info-copy');if(!copy)return;const n=el('div','hud50-skill-inspection',text('Просмотр · '+skill.name+' · '+(skill.mp??skill.cost??0)+' MP',640,13,'#efce8d',true),text(skill.description||'',640,12));n.role='status';n.ariaLive='polite';copy.append(n);}
 function restoreHudFocus(root,snapshot){restoreSurface(root,snapshot);}
 function renderHud(){const root=$('actHud');root.hidden=!running||paused;if(root.hidden)return;root.dataset.mode=state.mode;const nearby=M.nearby(state);const signature=JSON.stringify([ui.trackedQuestId,settings.textScale,state.runId,state.revision,state.mode,state.areaId,ui.target,ui.enemyId,ui.allyId,ui.presentationLock,state.party.map(h=>[h.id,h.hp,h.mp]),nearby.map(n=>[n.id,n.ready])]);if(signature===lastHudSignature)return;const focused=captureSurface(root);lastHudSignature=signature;const battleKey=state.battle?state.runId+':'+state.battle.encounterId:'';const disclosures=root.dataset.battleKey===battleKey?captureDisclosures(root):[];root.dataset.battleKey=battleKey;root.replaceChildren();if(state.mode==='explore'&&typeof nav50Mount==='function'){nav50Mount(root);arrow50Mount(root);}const objective=M.currentObjective(state,ui.trackedQuestId),top=el('div','hud-top');top.append(hud50ObjectivePanel(objective));const controls=el('nav','hud-controls');if(state.mode==='battle'){const quest=HUD50.battleQuestLabel(objective);controls.append(button(quest.label,()=>openModal('journal'),{small:true,width:150,ariaLabel:quest.accessible,focusKey:'battle:quest'}));}for(const [label,kind]of [['Сумка · I','inventory'],['Журнал · J','journal'],['Карта · M','map'],['Отряд · P','party']])controls.append(button(label,()=>openModal(kind),{small:true,width:110,disabled:state.mode==='dialogue'}));controls.append(button('Меню · Esc',showMenu,{small:true,width:120}));top.append(controls);root.append(top);const strip=el('div','party-strip');for(const h of state.party){const card=heroCard(h,h.id===HUD50.presentationActor({locked:ui.presentationLock,presentationActorId:ui.hud50PresentationActor,activeHeroId:state.battle?.activeHeroId}),()=>partyClick(h));card.classList.toggle('chosen-target',ui.allyId===h.id);strip.append(card);}root.append(strip);if(state.mode==='battle')root.append(turnOrderPanel());if(ui.presentationLock)root.append(panel(0,'near-panel',text('Выполняется ход · '+(partyDefs[ui.hud50PresentationActor]?.name||'отряд')+'…',235,15)));else if(state.mode==='battle')root.append(battlePanel());else if(state.mode==='explore'){root.append(hud50NearbyPanel(nearby));}ui100Decorate(root,'hud');restoreDisclosures(root,disclosures);restoreHudFocus(root,focused);UI100.restoreAfterLayout(root,{state,ui});hud50FollowQueue(root);}
-function interactionLabel(node){return (node.kind==='encounter'||node.type==='encounter'?'Бой · ':'')+(node.label||node.name||'Взаимодействовать');}
+function interactionLabel(node){return (node.kind==='encounter'||node.type==='encounter'?'Бой · ':node.smith?'Ремонт · ':'')+(node.label||node.name||'Взаимодействовать');}
 function itemDescription(def){if(def.description)return def.description;const effect=def.effect||def.use||{},power=Number(effect.power);if(effect.kind==='heal')return 'Восстанавливает здоровье'+(Number.isFinite(power)?': '+power:'')+'.';if(effect.kind==='mp')return 'Восстанавливает ману'+(Number.isFinite(power)?': '+power:'')+'.';if(effect.kind==='revive')return 'Возвращает павшего спутника'+(Number.isFinite(power)&&power>0?' с '+Math.round(power*100)+'% здоровья':'')+'.';return ({weapon:'Оружие отряда.',armor:'Доспех отряда.',charm:'Талисман отряда.',material:'Материал.',quest:'Предмет задания.',consumable:'Расходуемый предмет.'})[def.kind]||'Предмет отряда.';}
-function interact(id){if(ui.presentationLock)return;clearInput();const answer=M.interact(state,id);commit(answer);if(state.shopId&&state.mode==='explore'){ui.shop=state.shopId;openModal('shop');}if(answer?.kind==='puzzle'||answer?.puzzle)showPuzzle(answer.nodeId||id);}
+function interact(id){
+ if(ui.presentationLock)return;
+ clearInput();
+ const answer=M.interact(state,id);
+ commit(answer);
+ if(!answer?.ok||state.mode!=='explore')return;
+ if(answer.smithId){ui.smith=answer.smithId;openModal('smithy');return;}
+ if(answer.lootGrant?.items?.length){
+  const chest=areaDefs[state.areaId].nodes.find(node=>node.id===id);
+  ui.chestLoot={grant:answer.lootGrant,label:chest?.label||'Открытый сундук'};
+  openModal('chestLoot');
+  return;
+ }
+ if(state.shopId){ui.shop=state.shopId;openModal('shop');}
+ if(answer.puzzle)showPuzzle(answer.nodeId||id);
+}
 function enemyIntent(enemy){const intent=String(enemy.telegraph||'').trim(),phase=enemy.phase>1&&enemyDefs[enemy.kind]?.kind==='boss'?'Фаза '+enemy.phase+' · ':'';return phase+(intent?'Намерение: '+intent:'Намерение: '+({attack:'Атака',heavy:'Тяжёлый удар',all:'Атака по отряду',guard:'Защита',heal:'Лечение'}[enemy.intent]||'неизвестно'));}
 function enemyStatusText(enemy){const tags=[];if(enemy.status?.break>0)tags.push('Равновесие нарушено');if(enemy.status?.guard>0)tags.push('Защита');return tags.join(' · ');}
 function combatSkillIcon(skill){if(skill.kind==='heal'||skill.kind==='revive')return 'heal';if(['guard','buff','taunt'].includes(skill.kind))return 'defend';if(skill.element==='fire')return 'fire';if(skill.element==='ice')return 'ice';return ['damage','break'].includes(skill.kind)&&(!skill.element||skill.element==='physical')?'attack':'arcane';}
@@ -205,7 +287,32 @@ function battle(action){if(ui.presentationLock||!action)return;const order=M.com
 
 function locationItem(loc){return loc.kind==='bag'?state.bag[loc.index]:state.gear[loc.heroId]?.[loc.slot];}
 function sameLocation(a,b){return JSON.stringify(a)===JSON.stringify(b);}
-function itemSlot(loc){const item=locationItem(loc),n=el('button','item-slot'+(loc.kind==='gear'?' gear-slot':''));n.type='button';n.dataset.location=JSON.stringify(loc);n.dataset.focusKey='slot:'+JSON.stringify(loc);const picked=!!ui.selected&&sameLocation(ui.selected.from,loc);n.ariaLabel=slotSummary(loc,item,item?itemDefs[item.defId].name:null,partyDefs[loc.heroId]?.name,picked);n.setAttribute('aria-pressed',String(picked));if(item){n.append(icon(itemDefs[item.defId]));if(item.qty>1){const q=text(item.qty,40,15,'#fff2cf',true);q.classList.add('qty');n.append(q);}}if(ui.selected&&sameLocation(ui.selected.from,loc))n.classList.add('selected');n.onclick=()=>{if(ui.drag||performance.now()<ui.suppressClickUntil)return;const found=locationItem(loc);if(ui.selected&&!sameLocation(ui.selected.from,loc)){const s=ui.selected;commit(M.moveItem(state,s.from,loc,s.uid,s.revision),{keepModal:true});return;}ui.selected=found?{from:loc,uid:found.uid,revision:state.revision}:null;ui.detail=found?.defId||null;renderModal();};n.style.touchAction=ui.touchDrag?'none':'pan-y pinch-zoom';n.onpointerdown=e=>startDrag(e,n,loc);n.onlostpointercapture=e=>{if(ui.drag?.pointer===e.pointerId)cancelDrag();};return n;}
+function itemSlot(loc){
+ const item=locationItem(loc),slot=el('button','item-slot'+(loc.kind==='gear'?' gear-slot':''));
+ const condition=item?M.durabilityInfo(item):null,selected=!!ui.selected&&sameLocation(ui.selected.from,loc);
+ slot.type='button';slot.dataset.location=JSON.stringify(loc);slot.dataset.focusKey='slot:'+slot.dataset.location;
+ const definition=itemDefs[item?.defId];
+ slot.ariaLabel=[slotSummary(loc,item,definition?.name,partyDefs[loc.heroId]?.name,selected),itemRarity(definition),durabilityLabel(condition)].filter(Boolean).join(' · ');
+ slot.setAttribute('aria-pressed',String(selected));
+ if(item){
+  slot.append(icon(itemDefs[item.defId]));
+  if(item.qty>1){const quantity=text(item.qty,40,15,'#fff2cf',true);quantity.classList.add('qty');slot.append(quantity);}
+  if(condition&&condition.ratio<1)slot.append(durabilityMeter(condition,el,text,{tiny:true}));
+ }
+ slot.classList.toggle('selected',selected);
+ slot.onclick=()=>{
+  if(ui.drag||performance.now()<ui.suppressClickUntil)return;
+  const found=locationItem(loc);
+  if(ui.selected&&!sameLocation(ui.selected.from,loc)){
+   const s=ui.selected;commit(M.moveItem(state,s.from,loc,s.uid,s.revision),{keepModal:true});return;
+  }
+  ui.selected=found?{from:loc,uid:found.uid,revision:state.revision}:null;ui.detail=found?.defId||null;renderModal();
+ };
+ slot.style.touchAction=ui.touchDrag?'none':'pan-y pinch-zoom';
+ slot.onpointerdown=event=>startDrag(event,slot,loc);
+ slot.onlostpointercapture=event=>{if(ui.drag?.pointer===event.pointerId)cancelDrag();};
+ return slot;
+}
 function paintDropTarget(d,event){document.querySelectorAll('[data-drop-state]').forEach(n=>{delete n.dataset.dropState;n.classList.remove('drag-over');});const n=document.elementFromPoint(event.clientX,event.clientY)?.closest('[data-location]');if(!n){d.feedback?.replaceChildren();return;}const to=JSON.parse(n.dataset.location),forecast=M.previewMoveItem(state,d.from,to),sourceItem=locationItem(d.from),targetItem=locationItem(to),kind=!forecast.ok?'invalid':targetItem?(targetItem.defId===sourceItem?.defId?'merge':'swap'):'move';n.dataset.dropState=kind;n.classList.add('drag-over');if(!d.feedback){d.feedback=el('div','drag-feedback');document.body.append(d.feedback);}const message=forecast.ok?({merge:'Объединить стопки',swap:'Обменять предметы',move:'Переместить предмет'}[kind]):forecast.reason||forecast.message;const changes=(forecast.heroes||[]).map(h=>Object.entries(h.delta||{}).filter(([,v])=>v).map(([k,v])=>k+' '+(v>0?'+':'')+v).join(' · ')).filter(Boolean).join(' · ');const key=kind+':'+message+changes;if(key!==d.feedbackKey){d.feedbackKey=key;d.feedback.replaceChildren(text(message+(changes?' · '+changes:''),300,13,forecast.ok?'#bce7c6':'#f3b69e'));}d.feedback.style.left=Math.min(event.clientX+12,innerWidth-310)+'px';d.feedback.style.top=Math.max(8,event.clientY-70)+'px';}
 function startDrag(event,node,from){const item=locationItem(from);if(ui.drag){if(ui.drag.pointer!==event.pointerId)cancelDrag();return;}if(!item||!canStartInventoryDrag(event,ui.touchDrag))return;ui.drag={pointer:event.pointerId,node,from,uid:item.uid,revision:state.revision,start:{x:event.clientX,y:event.clientY},anchor:UI100.dragAnchor(event,node.getBoundingClientRect()),active:false,preview:null};node.setPointerCapture(event.pointerId);}
 function dragMove(event){const d=ui.drag;if(!d||event.pointerId!==d.pointer)return;if(!d.active&&Math.hypot(event.clientX-d.start.x,event.clientY-d.start.y)>7){d.active=true;d.preview=icon(itemDefs[locationItem(d.from)?.defId]);d.preview.classList.add('drag-preview');document.body.append(d.preview);}if(!d.active)return;event.preventDefault();const position=UI100.dragPreviewPosition(event,d.anchor,d.preview.getBoundingClientRect());d.preview.style.left=position.x+'px';d.preview.style.top=position.y+'px';d.lastEvent={clientX:event.clientX,clientY:event.clientY};UI100.autoScrollDrag($('gameModal'),event);paintDropTarget(d,event);}
@@ -220,7 +327,10 @@ function renderInventory(body){
   gear.append(heroes,text('Снаряжение · '+partyDefs[hero.id].name,200,18,'#e9ca91',true),text('HP '+Math.ceil(hero.hp)+' / '+M.stats(state,hero.id).maxHp+' · MP '+Math.ceil(hero.mp)+' / '+M.stats(state,hero.id).maxMp,200,14));
   gear.append(portrait(partyDefs[hero.id].portrait));
   for(const [slot,label]of [['weapon','Оружие'],['armor','Доспех'],['charm','Талисман']]){
-    const worn=state.gear[hero.id]?.[slot];gear.append(el('div','gear-row',itemSlot({kind:'gear',heroId:hero.id,slot}),el('div','grow',text(label,135,13),text(worn?itemDefs[worn.defId].name:'Пустой слот',135,14,'#e9ca91',true))));
+    const worn=state.gear[hero.id]?.[slot];
+    gear.append(el('div','gear-row',itemSlot({kind:'gear',heroId:hero.id,slot}),
+      el('div','grow',text(label,135,13),text(worn?itemDefs[worn.defId].name:'Пустой слот',135,14,'#e9ca91',true),
+        worn&&durabilityMeter(M.durabilityInfo(worn),el,text))));
   }
   if(hero.hp<=0)gear.append(button('Возродить '+partyDefs[hero.id].name,()=>openRevival(hero.id),{small:true,width:160,combatIcon:'heal'}));
   const st=M.stats(state,hero.id);gear.append(text('Атака '+st.atk+' · Защита '+st.def+'\nИнициатива '+st.initiative,180,14));
@@ -228,7 +338,7 @@ function renderInventory(body){
   bag.append(button('Упорядочить сумку',()=>commit(M.organizeBag(state,inventoryRevision),{keepModal:true}),{small:true,width:350,disabled:!['explore','complete'].includes(state.mode),focusKey:'organize-bag'}));
   ui.windowBagFilter=ui.windowBagFilter||'all';
   const filters=el('div','window-tabs');filters.ariaLabel='Типы предметов';
-  for(const [id,label]of [['all','Все'],['equipment','Снаряжение'],['supplies','Припасы'],['quest','Задания']]){
+  for(const [id,label]of [['all','Все'],['equipment','Снаряжение'],['supplies','Припасы'],['trophy','Материалы'],['quest','Задания']]){
     const b=button(label,()=>{ui.windowBagFilter=id;renderModal();},{small:true,width:140,focusKey:'bag-filter:'+id});b.setAttribute('aria-pressed',String(ui.windowBagFilter===id));filters.append(b);
   }
   bag.append(text('Показано предметов: '+windowBagView(state.bag,itemDefs,ui.windowBagFilter,ui.windowBagQuery).filter(entry=>entry.item).length,420,13));
@@ -241,10 +351,20 @@ function renderInventory(body){
   if(state.pendingRewards?.length)bag.append(button('Забрать отложенные припасы',()=>commit(M.claimRewards(state),{keepModal:true}),{small:true,width:370}));
   const detail=el('div','item-detail'),def=itemDefs[ui.detail];
   if(def){
-    detail.append(icon(def),text(def.name,205,21,'#efcf91',true),text(itemDescription(def),205,15));
-    if(ui.selected){const from=ui.selected.from;detail.append(text(from.kind==='gear'?'Носит: '+partyDefs[from.heroId].name+' · '+({weapon:'Оружие',armor:'Доспех',charm:'Талисман'}[from.slot]||from.slot):'В сумке · ячейка '+(from.index+1),300,14));}
+    detail.append(icon(def),text(def.name,205,21,'#efcf91',true),
+      def.rarity?text(itemRarity(def),205,14,def.rarity==='rare'?'#8cdbdf':'#b3cfaf',true):'',
+      text(itemDescription(def),205,15));
+    if(ui.selected){
+      const from=ui.selected.from,instance=locationItem(from),condition=M.durabilityInfo(instance);
+      detail.append(text(from.kind==='gear'?'Носит: '+partyDefs[from.heroId].name+' · '+({weapon:'Оружие',armor:'Доспех',charm:'Талисман'}[from.slot]||from.slot):'В сумке · ячейка '+(from.index+1),300,14));
+      if(condition){
+        detail.append(durabilityMeter(condition,el,text));
+        if(condition.combatFactor<1)detail.append(text('Бонус атаки и защиты от этой вещи: '+Math.round(condition.combatFactor*100)+'%. Починить можно у кузнеца.',260,14,'#efbc9f'));
+      }
+      const price=M.salePrice(instance);
+      if(price>0)detail.append(text('Продажа: '+price+' золота за шт.',230,14));
+    }
     if(def.stats)detail.append(text(itemStatLine(def),205,14));
-    detail.append(text('Цена: '+def.price,205,14));
     if(ui.selected?.from.kind==='bag'&&['weapon','armor','charm'].includes(def.kind)){
       const destination={kind:'gear',heroId:hero.id,slot:def.kind},forecast=M.previewMoveItem(state,ui.selected.from,destination),current=state.gear[hero.id]?.[def.kind],delta=forecast.heroes?.find(h=>h.id===hero.id)?.delta;
       const compare=el('div','window-compare',text('Сравнение · '+partyDefs[hero.id].name,300,17,'#e9ca91',true),text('Сейчас: '+(current?itemDefs[current.defId].name:'Пустой слот')+'\nВыбрано: '+def.name,300,15));
@@ -308,7 +428,9 @@ function renderShop(body){
   const wallet=el('div','window-wallet',text((npc?.name||'Торговец')+' · Кошелёк: '+state.gold+' золота',850,20,'#e0c281')),quote=el('div','window-wallet-quote',text('Выберите товар: здесь появится итог операции.',850,14));wallet.append(quote);body.append(wallet);
   const quoteRow=(row,label,forecast)=>{const show=()=>quote.replaceChildren(text(forecast.ok?label+' · Итог: '+forecast.price+' золота · После: '+(state.gold+(ui.windowShopMode==='sell'?forecast.price:-forecast.price))+' золота':label+' · '+(forecast.reason||forecast.message)+' · Кошелёк: '+state.gold+' золота',850,14));row.onfocusin=show;row.onpointerenter=show;return row;};
   ui.windowShopMode=ui.windowShopMode||'buy';const tabs=el('div','window-tabs');
-  for(const [id,label]of [['buy','Купить'],['sell','Продать']]){const b=button(label,()=>{ui.windowShopMode=id;renderModal();},{small:true,width:240,focusKey:'shop-mode:'+id});b.setAttribute('aria-pressed',String(ui.windowShopMode===id));tabs.append(b);}body.append(tabs);
+  for(const [id,label]of [['buy','Купить'],['sell','Продать']]){const b=button(label,()=>{ui.windowShopMode=id;renderModal();},{small:true,width:240,focusKey:'shop-mode:'+id});b.setAttribute('aria-pressed',String(ui.windowShopMode===id));tabs.append(b);}
+  if(npc?.smith)tabs.append(button('Ремонт',()=>{ui.smith=npc.id;openModal('smithy');},{small:true,width:150,focusKey:'shop-mode:repair'}));
+  body.append(tabs);
   ui.windowShopQuantities=ui.windowShopQuantities||{};
   const quantityControls=(key,quantity,max)=>{const box=el('div','window-quantity',text('Количество: '+quantity,160,14));for(const [delta,label]of [[-1,'−1'],[1,'+1']])box.append(button(label,()=>{ui.windowShopQuantities[key]=windowQuantity(quantity+delta,max);renderModal();},{small:true,width:60,disabled:delta<0?quantity<=1:quantity>=max,focusKey:'quantity:'+key+':'+delta,ariaLabel:(delta<0?'Уменьшить':'Увеличить')+' количество'}));return box;};
   const rows=el('div',ui.windowShopMode==='buy'?'shop-list':'window-sale-list');
@@ -322,9 +444,15 @@ function renderShop(body){
   }
   else state.bag.forEach((item,i)=>{
     if(!item||itemDefs[item.defId].kind==='quest')return;const d=itemDefs[item.defId],key='sell:'+item.uid,quantity=windowQuantity(ui.windowShopQuantities[key],item.qty)||1,forecast=M.previewSell(state,ui.shop,i,quantity);
-    rows.append(quoteRow(el('div','shop-entry',icon(d),el('div','grow',text(d.name+' · В сумке: '+item.qty+' · Итог: '+forecast.price+' золота',540,16),text(itemDescription(d),540,13),quantityControls(key,quantity,item.qty),!forecast.ok&&text(forecast.reason||forecast.message,540,13,'#efbb9a')),button('Продать ×'+quantity,()=>{if(state.revision!==forecast.revision){toast('Сумка изменилась. Проверьте продажу ещё раз.');renderModal();return;}UI100.confirmRiskSale(ui,forecast,quantity,()=>commit(M.sell(state,ui.shop,i,quantity,forecast.uid),{keepModal:true}),renderModal);},{small:true,width:120,focusKey:'sell:'+ui.shop+':'+i,disabled:!forecast.ok,ariaLabel:'Продать '+d.name+' за '+forecast.price+' золота'})),d.name,forecast));
+    rows.append(quoteRow(el('div','shop-entry',icon(d),el('div','grow',text(d.name+' · В сумке: '+item.qty+' · Итог: '+forecast.price+' золота',540,16),text(itemDescription(d),540,13),durabilityMeter(M.durabilityInfo(item),el,text),quantityControls(key,quantity,item.qty),!forecast.ok&&text(forecast.reason||forecast.message,540,13,'#efbb9a')),button('Продать ×'+quantity,()=>{if(state.revision!==forecast.revision){toast('Сумка изменилась. Проверьте продажу ещё раз.');renderModal();return;}UI100.confirmRiskSale(ui,forecast,quantity,()=>commit(M.sell(state,ui.shop,i,quantity,forecast.uid),{keepModal:true}),renderModal);},{small:true,width:120,focusKey:'sell:'+ui.shop+':'+i,disabled:!forecast.ok,ariaLabel:'Продать '+d.name+' за '+forecast.price+' золота'})),d.name,forecast));
   });
   if(!rows.children.length)rows.append(text(ui.windowShopMode==='buy'?'У торговца сейчас нет товаров.':'В сумке нет предметов для продажи.',850,17));body.append(rows);ui100Decorate(body,'shop');
+}
+function renderSmith(body){
+ const smith=areaDefs[state.areaId].npcs?.find(npc=>npc.id===ui.smith&&npc.smith);
+ renderSmithy(body,{model:M,state,smith,items:itemDefs,party:partyDefs,el,text,button,icon,
+   repair:request=>commit(M.repair(state,smith.id,request),{keepModal:true}),
+   trade:()=>{ui.shop=smith.id;ui.windowShopMode='sell';openModal('shop');}});
 }
 function showPuzzle(id){ui.puzzleId=id;openModal('puzzle');renderModal();}
 function renderPuzzle(body){const node=areaDefs[state.areaId].nodes.find(n=>n.id===ui.puzzleId);if(!node?.puzzle)return;body.append(text(node.puzzle.prompt,880,21));node.puzzle.choices.forEach((choice,i)=>body.append(button(choice.text,()=>{const r=M.solvePuzzle(state,node.id,i);commit(r);if(r.ok&&r.correct!==false)closeModal(true);else renderModal();},{width:830})));}
@@ -333,12 +461,38 @@ async function exportProgress(raw=false){await(raw?store.exportRaw():store.expor
 function renderComplete(body){const ending=ENDINGS[state.flags.public_truth?'public_truth':'stewardship'];body.append(text(ACT_INFO.title,900,32,'#e7ca8c',true),text(ending?.title||'Первый акт завершён',900,26,'#e7ca8c',true),text(ending?.summary||'Рассвет вернулся. Первый акт завершён.',900,23),text(ending?.nextHook||'',900,18),text('Завершено заданий: '+state.completedQuests.length+'\nПобеждено отрядов врагов: '+state.defeated.length+'\nВремя в игре: '+Math.floor(state.playSeconds/60)+' мин.',900,18),button('Экспортировать прохождение',()=>exportProgress(),{width:380}),button('В главное меню',()=>{closeModal(true);showMenu();},{width:280}));ui100Decorate(body,'complete');}
 
 
-function renderAbout(body){body.append(text('Пепельная клятва · '+ACT_INFO.title+' · Демо 0.18.1',900,27,'#e7ca8c',true),text('Оригинальная история и игровые материалы для Авторской кузницы. Художественный референс предоставлен пользователем. Панели, портреты, иконки и поверхности созданы через ImageGen; персонажи, существа и физическое окружение созданы в Meshy; отдельное оружие, дополнительные анимации магии и атласы эффектов — в Blender. Все видимые строки выводятся растровыми изображениями.',900,17),text('Кириллица: Cormorant SC — Christian Thalmann; Lora — Cyreal. SIL Open Font License 1.1. Полные лицензии поставляются в assets/act1/fonts. Новая иллюстрация меню, надпись и пигменты для игровых моделей созданы в ImageGen.',900,15),text('Three.js · MIT License',900,22,'#e7ca8c'));fetch('assets/vendor/THREE-LICENSE.txt').then(r=>r.text()).then(value=>{if(ui.modal==='about')body.append(text(value,900,13));}).catch(()=>body.append(text('Полный текст лицензии включён в assets/vendor/THREE-LICENSE.txt',900,14)));}
-function showMenu(){cancelDrag();clearInput();ui.riskSale=null;if(ui.modal){ui.modal=null;$('gameModal').close();}paused=true;world?.requestCombatHover?.(null,null);audio.pause();$('actMenu').hidden=false;renderMenu();$('actHud').hidden=true;}
-function resume(){if(!ready||!running||readOnly||ui.importing||contextLost||contextRecovering)return;UI100.restoreUIPreferences(localStorage,state,ui,M,areaDefs);ui.menuNotice='';paused=false;$('actMenu').hidden=true;last=performance.now();audio.start().catch(()=>{});syncMode();renderHud();if(ui.pendingObjectiveOpen){const objectiveId=ui.pendingObjectiveOpen;ui.pendingObjectiveOpen=null;if(['explore','battle'].includes(state.mode)){ui.trackedQuestId=objectiveId;openModal('journal');}}if(state.mode==='explore'&&!ui.modal)$('actWorld').focus({preventScroll:true});}
-function renderMenu(status=''){const card=$('menuCard'),menuFocus=captureSurface(card),menuDisclosures=captureDisclosures(card);const service=windowDisclosure('menu-save','Сохранения и восстановление',text('Экспорт — копия прохождения в файл. Импорт — проверка файла и замена текущего прохождения. При сбое записи сначала экспортируйте прогресс.',330,14));if(saveError||store.corrupt||ui.importing)service.open=true;const brand=new Image();brand.src='assets/act1/painted/title.webp?v=painted-20261114-r2';brand.alt='Пепельная клятва';brand.className='gilded-brand';const actTitle=text(ACT_INFO.title,330,25,'#e9cb84',true);actTitle.classList.add('painted-act-title');card.replaceChildren(brand,actTitle,text('ДЕМО-ВЕРСИЯ · 0.18.1',330,16,'#b6e7e0',true),el('div','intro',text('Рассвет не исчез: его продают. Соберите отряд, выслушайте свидетелей и решите, кому достанется свет.',330,18)),text((status||(startupError?startupError:ready&&readOnly?writerMessage():'Пошаговое путешествие с отрядом\nДевять локаций · оригинальная история'))+(ready&&startupWarning?'\n'+startupWarning:''),330,14,'#c1c5b2'));if(startupError||writerSession.error||startupWarning)card.append(button('Повторить загрузку',()=>location.reload(),{width:290}));if(contextLost){card.append(text(contextRecovering?'Восстанавливаем графику. Прогресс остаётся в памяти.':contextError||'Графика недоступна. Возврат в мир включится после восстановления; экспорт доступен.',330,15,'#f0bc98',true),button('Повторить графику',restoreGraphics,{width:290,disabled:contextRecovering}));}if(ui.menuNotice)card.append(text(ui.menuNotice,330,15,'#f3d69e',true));if(store.corrupt&&typeof store.exportRaw==='function')service.append(button('Экспорт исходных записей',()=>exportProgress(true),{small:true,width:290}));if(saveError){card.append(text(saveWarning({failure:saveFailure,conflict:saveConflict}),330,16,'#f0bc98',true));if(running&&!loadFailed&&!saveConflict)service.append(button('Повторить сохранение',retrySave,{width:290,disabled:readOnly||saving,focusKey:'retry-save'}));}if(running)card.append(button('Вернуться в путь',resume,{disabled:!ready||readOnly||contextLost||contextRecovering,width:290}));if(saved&&!running)card.append(button('Продолжить акт',()=>{resetPresentation();state=structuredClone(saved);audioEventCursor.prime(state);ui.trackedQuestId=null;running=true;resume();},{disabled:!ready||readOnly||contextLost||contextRecovering,width:290}));card.append(button(ui.confirmNew?'Подтвердить новый путь':'Новая история',()=>{if((saved||running)&&!ui.confirmNew){ui.confirmNew=true;renderMenu();return;}ui.confirmNew=false;resetPresentation();state=M.newGame();audioEventCursor.prime(state);ui.trackedQuestId=null;running=true;resume();void save();},{disabled:!ready||readOnly||loadFailed||ui.importing||contextLost||contextRecovering,width:290,focusKey:'new-story'}));service.append(button('Экспорт сохранения',()=>exportProgress(),{small:true,width:290}),button('Импорт сохранения',()=>$('saveFile').click(),{small:true,width:290,disabled:readOnly||ui.importing}));card.append(service);const settingsBox=windowDisclosure('menu-settings','Настройки изображения, текста и звука');const volume=document.createElement('input');volume.type='range';volume.min=0;volume.max=1;volume.step=.05;volume.value=settings.volume;volume.ariaLabel='Громкость';volume.dataset.focusKey='volume';volume.oninput=()=>{settings.volume=Number(volume.value);applySettings();};settingsBox.append(el('div','menu-setting',text('Звук',110,15),volume));settingsBox.append(button('Размер текста: '+Math.round(settings.textScale*100)+'%',()=>{settings.textScale=settings.textScale===1?1.25:settings.textScale===1.25?1.5:1;applySettings();renderMenu();},{small:true,width:290,focusKey:'text-scale'}),button('Качество: '+(settings.quality==='high'?'высокое':'низкое'),()=>{settings.quality=settings.quality==='high'?'low':'high';applySettings();renderMenu();},{small:true,width:290,focusKey:'quality'}));settingsBox.append(button('Снижение движения: '+(settings.reducedMotion?'включено':'выключено'),()=>{settings.reducedMotion=!settings.reducedMotion;applySettings();renderMenu();},{small:true,width:290,focusKey:'reduced-motion'}),button('Скорость показа боя: ×'+settings.presentationSpeed,()=>{settings.presentationSpeed=settings.presentationSpeed===1?1.5:settings.presentationSpeed===1.5?2:1;applySettings();renderMenu();},{small:true,width:290,focusKey:'presentation-speed'}));card.append(settingsBox);card.append(button('Об игре и лицензии',()=>openModal('about'),{small:true,width:290}));card.append(text('WASD или клик — движение · E — разговор\nI — сумка · J — журнал · M — карта · P — отряд\nСохранения первого акта отдельны от демо 0.2.',330,12,'#9db2a3'));const link=el('a','');link.href='https://theforgeforall.ru/game.html?id=ashen-oath';link.append(text('Авторская кузница · Страница игры',330,14,'#d6bb7d'));card.append(link);const legacy=el('a','');legacy.href='legacy-level1.html';legacy.append(text('Предыдущее демо · 0.2',330,13,'#a5b5a8'));card.append(legacy);ui100Decorate(card,'menu');restoreDisclosures(card,menuDisclosures);if(saveError||store.corrupt||ui.importing)service.open=true;restoreSurface(card,menuFocus);}
-function applySettings(){settings={...normalizeSettings(settings),...normalizePresentationSettings(settings)};world?.setReducedMotion?.(settings.reducedMotion);world?.setPresentationSpeed?.(settings.presentationSpeed);world?.invalidateLayout?.();globalThis.document?.body?.classList.toggle('reduced',settings.reducedMotion);if(appliedTextScale!==settings.textScale){appliedTextScale=settings.textScale;lastHudSignature='';if(ui.modal)renderModal();}audio.setVolume(settings.volume);world?.quality(settings.quality);try{localStorage.setItem('ashen-oath-act1-settings',JSON.stringify(settings));}catch{}}
-function frame(time){const dt=Math.min(.08,(time-(last||time))/1000);last=time;if(running&&!paused&&(ui.modal||state.mode!=='explore'||ui.presentationLock))M.update(state,dt,null);if(running&&!paused&&!ui.modal&&!ui.presentationLock&&state.mode==='explore'){const input=walkInput();M.update(state,dt,input);if(state.mode!=='explore'){clearInput();syncMode();}saveTime+=dt;if(saveTime>5)save();}if(world&&ready&&!paused&&!contextLost){world.setCombatSelection?.({skillId:ui.target?.skillId,targetId:ui.enemyId,targetIds:chosenSkill()?.target==='allEnemies'?(state.battle?.enemies||[]).filter(e=>e.hp>0).map(e=>e.uid):[],hoverTargetId:ui.hoverEnemy});world.render(state,running?dt:0);if(world.getCombatHover)ui.hoverEnemy=world.getCombatHover();if(ui.presentationLock&&!world.presentationPending()){ui.presentationLock=false;ui.presentationOrder=null;ui.hud50PresentationActor=null;lastHudSignature='';renderHud();}hudTime+=dt;if(hudTime>.35){hudTime=0;if(!ui.drag)renderHud();}}if(ui.drag?.active&&ui.drag.lastEvent){UI100.autoScrollDrag($('gameModal'),ui.drag.lastEvent);paintDropTarget(ui.drag,ui.drag.lastEvent);}if(typeof nav50Update==='function')nav50Update(dt);arrow50Update(dt);requestAnimationFrame(frame);}
+function renderAbout(body){
+ body.append(text('Пепельная клятва · '+ACT_INFO.title+' · Демо 0.19.0',900,27,'#e7ca8c',true),
+  text('Оригинальная история и игровые материалы для Авторской кузницы. Панели, портреты, иконки и поверхности созданы в ImageGen. Для 3D-моделей использован Meshy, для части анимаций и экипировки — Blender.',900,17),
+  text('Кириллица · Cormorant SC и Lora · SIL Open Font License 1.1',900,16),
+  text('Музыкальные темы и атмосфера созданы для игры. Записи шагов, металла и сундука · Kenney RPG Audio · CC0 1.0.',900,16));
+ const audioLicense=el('a','row',text('Лицензия и звуковые материалы',370,15,'#e7ca8c',true));
+ audioLicense.href='assets/act1/audio/README.md?v=forged-019';
+ audioLicense.target='_blank';audioLicense.rel='noopener';
+ body.append(audioLicense,text('Three.js · MIT License',900,22,'#e7ca8c'));
+ fetch('assets/vendor/THREE-LICENSE.txt').then(r=>r.text()).then(value=>{if(ui.modal==='about')body.append(text(value,900,13));})
+  .catch(()=>{if(ui.modal==='about')body.append(text('Полный текст лицензии включён в assets/vendor/THREE-LICENSE.txt',900,14));});
+}
+function showMenu(){cancelDrag();clearInput();ui.riskSale=null;if(ui.modal){ui.modal=null;$('gameModal').close();}paused=true;world?.requestCombatHover?.(null,null);updateAudioScene();$('actMenu').hidden=false;renderMenu();$('actHud').hidden=true;}
+function resume(){if(!ready||!running||readOnly||ui.importing||contextLost||contextRecovering)return;UI100.restoreUIPreferences(localStorage,state,ui,M,areaDefs);ui.menuNotice='';paused=false;$('actMenu').hidden=true;last=performance.now();updateAudioScene();audio.start().catch(()=>{});syncMode();renderHud();if(ui.pendingObjectiveOpen){const objectiveId=ui.pendingObjectiveOpen;ui.pendingObjectiveOpen=null;if(['explore','battle'].includes(state.mode)){ui.trackedQuestId=objectiveId;openModal('journal');}}if(state.mode==='explore'&&!ui.modal)$('actWorld').focus({preventScroll:true});}
+function renderMenu(status=''){const card=$('menuCard'),menuFocus=captureSurface(card),menuDisclosures=captureDisclosures(card);const service=windowDisclosure('menu-save','Сохранения и восстановление',text('Экспорт — копия прохождения в файл. Импорт — проверка файла и замена текущего прохождения. При сбое записи сначала экспортируйте прогресс.',330,14));if(saveError||store.corrupt||ui.importing)service.open=true;const brand=new Image();brand.src='assets/act1/painted/title.webp?v=painted-20261114-r2';brand.alt='Пепельная клятва';brand.className='gilded-brand';const actTitle=text(ACT_INFO.title,330,25,'#e9cb84',true);actTitle.classList.add('painted-act-title');card.replaceChildren(brand,actTitle,text('ДЕМО-ВЕРСИЯ · 0.19.0',330,16,'#b6e7e0',true),el('div','intro',text('Рассвет не исчез: его продают. Соберите отряд, выслушайте свидетелей и решите, кому достанется свет.',330,18)),text((status||(startupError?startupError:ready&&readOnly?writerMessage():'Пошаговое путешествие с отрядом\nДевять локаций · оригинальная история'))+(ready&&startupWarning?'\n'+startupWarning:''),330,14,'#c1c5b2'));if(startupError||writerSession.error||startupWarning)card.append(button('Повторить загрузку',()=>location.reload(),{width:290}));if(contextLost){card.append(text(contextRecovering?'Восстанавливаем графику. Прогресс остаётся в памяти.':contextError||'Графика недоступна. Возврат в мир включится после восстановления; экспорт доступен.',330,15,'#f0bc98',true),button('Повторить графику',restoreGraphics,{width:290,disabled:contextRecovering}));}if(ui.menuNotice)card.append(text(ui.menuNotice,330,15,'#f3d69e',true));if(store.corrupt&&typeof store.exportRaw==='function')service.append(button('Экспорт исходных записей',()=>exportProgress(true),{small:true,width:290}));if(saveError){card.append(text(saveWarning({failure:saveFailure,conflict:saveConflict}),330,16,'#f0bc98',true));if(running&&!loadFailed&&!saveConflict)service.append(button('Повторить сохранение',retrySave,{width:290,disabled:readOnly||saving,focusKey:'retry-save'}));}if(running)card.append(button('Вернуться в путь',resume,{disabled:!ready||readOnly||contextLost||contextRecovering,width:290}));if(saved&&!running)card.append(button('Продолжить акт',()=>{resetPresentation();state=structuredClone(saved);audioEventCursor.prime(state);ui.trackedQuestId=null;running=true;resume();},{disabled:!ready||readOnly||contextLost||contextRecovering,width:290}));card.append(button(ui.confirmNew?'Подтвердить новый путь':'Новая история',()=>{if((saved||running)&&!ui.confirmNew){ui.confirmNew=true;renderMenu();return;}ui.confirmNew=false;resetPresentation();state=M.newGame();audioEventCursor.prime(state);ui.trackedQuestId=null;running=true;resume();void save();},{disabled:!ready||readOnly||loadFailed||ui.importing||contextLost||contextRecovering,width:290,focusKey:'new-story'}));service.append(button('Экспорт сохранения',()=>exportProgress(),{small:true,width:290}),button('Импорт сохранения',()=>$('saveFile').click(),{small:true,width:290,disabled:readOnly||ui.importing}));card.append(service);const settingsBox=windowDisclosure('menu-settings','Настройки изображения, текста и звука');settingsBox.append(audioControls());settingsBox.append(button('Размер текста: '+Math.round(settings.textScale*100)+'%',()=>{settings.textScale=settings.textScale===1?1.25:settings.textScale===1.25?1.5:1;applySettings();renderMenu();},{small:true,width:290,focusKey:'text-scale'}),button('Качество: '+(settings.quality==='high'?'высокое':'низкое'),()=>{settings.quality=settings.quality==='high'?'low':'high';applySettings();renderMenu();},{small:true,width:290,focusKey:'quality'}));settingsBox.append(button('Снижение движения: '+(settings.reducedMotion?'включено':'выключено'),()=>{settings.reducedMotion=!settings.reducedMotion;applySettings();renderMenu();},{small:true,width:290,focusKey:'reduced-motion'}),button('Скорость показа боя: ×'+settings.presentationSpeed,()=>{settings.presentationSpeed=settings.presentationSpeed===1?1.5:settings.presentationSpeed===1.5?2:1;applySettings();renderMenu();},{small:true,width:290,focusKey:'presentation-speed'}));card.append(settingsBox);card.append(button('Об игре и лицензии',()=>openModal('about'),{small:true,width:290}));card.append(text('WASD или клик — движение · E — разговор\nI — сумка · J — журнал · M — карта · P — отряд\nСохранения первого акта отдельны от демо 0.2.',330,12,'#9db2a3'));const link=el('a','');link.href='https://theforgeforall.ru/game.html?id=ashen-oath';link.append(text('Авторская кузница · Страница игры',330,14,'#d6bb7d'));card.append(link);const legacy=el('a','');legacy.href='legacy-level1.html';legacy.append(text('Предыдущее демо · 0.2',330,13,'#a5b5a8'));card.append(legacy);ui100Decorate(card,'menu');restoreDisclosures(card,menuDisclosures);if(saveError||store.corrupt||ui.importing)service.open=true;restoreSurface(card,menuFocus);}
+function saveAudioMix(){
+ audio.setVolume(settings.volume);audio.setMix(settings);
+ try{localStorage.setItem('ashen-oath-act1-settings',JSON.stringify(settings));}catch{}
+}
+function audioControls(){
+ const group=el('div','menu-audio-mix');
+ for(const [key,label] of [['volume','Общая громкость'],['music','Музыка'],['sfx','Эффекты'],['ambience','Окружение']]){
+  const range=document.createElement('input');
+  range.type='range';range.min='0';range.max='1';range.step='.05';range.value=settings[key];
+  range.ariaLabel=label;range.dataset.focusKey='audio:'+key;
+  range.oninput=()=>{settings[key]=Number(range.value);saveAudioMix();};
+  group.append(el('div','menu-setting',text(label,160,14),range));
+ }
+ return group;
+}
+function applySettings(){settings={...normalizeSettings(settings),...normalizePresentationSettings(settings)};world?.setReducedMotion?.(settings.reducedMotion);world?.setPresentationSpeed?.(settings.presentationSpeed);world?.invalidateLayout?.();globalThis.document?.body?.classList.toggle('reduced',settings.reducedMotion);if(appliedTextScale!==settings.textScale){appliedTextScale=settings.textScale;lastHudSignature='';if(ui.modal)renderModal();}saveAudioMix();world?.quality(settings.quality);}
+function frame(time){const dt=Math.min(.08,(time-(last||time))/1000);last=time;if(running&&!paused&&(ui.modal||state.mode!=='explore'||ui.presentationLock))M.update(state,dt,null);const walking=running&&!paused&&!ui.modal&&!ui.presentationLock&&state.mode==='explore';if(walking){const input=walkInput();M.update(state,dt,input);if(state.mode!=='explore'){clearInput();syncMode();}saveTime+=dt;if(saveTime>5)save();}if(world&&ready&&!paused&&!contextLost){world.setCombatSelection?.({skillId:ui.target?.skillId,targetId:ui.enemyId,targetIds:chosenSkill()?.target==='allEnemies'?(state.battle?.enemies||[]).filter(e=>e.hp>0).map(e=>e.uid):[],hoverTargetId:ui.hoverEnemy});world.render(state,running?dt:0);if(world.getCombatHover)ui.hoverEnemy=world.getCombatHover();if(ui.presentationLock&&!world.presentationPending()){ui.presentationLock=false;ui.presentationOrder=null;ui.hud50PresentationActor=null;lastHudSignature='';renderHud();}hudTime+=dt;if(hudTime>.35){hudTime=0;if(!ui.drag)renderHud();}}if(ui.drag?.active&&ui.drag.lastEvent){UI100.autoScrollDrag($('gameModal'),ui.drag.lastEvent);paintDropTarget(ui.drag,ui.drag.lastEvent);}updateAudioScene();walkingAudio(dt,walking&&state.mode==='explore');if(typeof nav50Update==='function')nav50Update(dt);arrow50Update(dt);requestAnimationFrame(frame);}
 function resetPresentation(){ui.presentationLock=false;ui.presentationOrder=null;ui.hud50PresentationActor=null;ui.target=null;ui.enemyId=null;ui.allyId=null;world?.setCombatSelection?.({});world?.clearPresentation();clearInput();}
 function clearDestination(){destination=null;approach=null;destinationPath=[];}
 function setDestination(picked){
@@ -372,10 +526,10 @@ function worldPointerAction(e){if(e.button!==0||paused||contextLost||ui.modal||u
 $('actWorld').addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'||!e.pointerType){if(e.isPrimary!==false)worldPointerAction(e);return;}if(e.isPrimary===false){ui.worldTap=null;return;}ui.worldTap=worldTapStart(e);});
 $('actWorld').addEventListener('pointerup',e=>{const tap=ui.worldTap;ui.worldTap=null;if(worldTapComplete(tap,e))worldPointerAction(e);});$('actWorld').addEventListener('pointercancel',()=>{ui.worldTap=null;});
 $('actWorld').addEventListener('pointermove',e=>{if(ui.worldTap&&Math.hypot(e.clientX-ui.worldTap.x,e.clientY-ui.worldTap.y)>12)ui.worldTap=null;if(state.mode==='battle'&&!paused&&!ui.modal&&!ui.presentationLock)world?.requestCombatHover?.(e.clientX,e.clientY);});$('actWorld').addEventListener('pointerleave',()=>{ui.hoverEnemy=null;world?.requestCombatHover?.(null,null);});
-window.addEventListener('pointermove',dragMove,{passive:false});window.addEventListener('pointerup',dragEnd);window.addEventListener('pointercancel',cancelDrag);window.addEventListener('blur',()=>{clearInput();cancelDrag();});window.addEventListener('resize',()=>{world?.invalidateLayout?.();cancelDrag();if(paused)renderMenu();else renderHud();if(ui.modal)renderModal();});document.addEventListener('visibilitychange',()=>{clearInput();last=performance.now();if(document.hidden&&running){save();showMenu();}});$('gameModal').addEventListener('cancel',e=>{e.preventDefault();if(state.mode!=='complete')closeModal();});$('saveFile').onchange=async e=>{let writing=false,importOwned=false;try{const file=e.target.files[0];if(!file)return;if(readOnly||!writerSession.owned)throw Error('Эта вкладка не владеет сохранением');if(saving||ui.importing)throw Error('Дождитесь завершения текущей записи и повторите импорт');ui.importing=true;saving=true;importOwned=true;renderMenu('Проверяем файл прохождения…');const imported=await store.import(file);M.validate(imported);if(readOnly||!writerSession.owned)throw Error('Доступ к сохранению изменился. Повторите импорт');renderMenu('Проверенное прохождение записывается…');if(loadFailed&&!store.corrupt)await store.load();writing=true;if(store.corrupt){if(typeof store.recover!=='function')throw Error('Восстановление хранилища ещё не готово. Исходные записи сохранены.');await store.recover(imported);}else await store.write(imported);resetPresentation();state=imported;audioEventCursor.prime(state);ui.trackedQuestId=null;running=true;saved=M.snapshot(state);saveError=false;saveFailure='';saveConflict=false;loadFailed=false;startupError='';lastSavedAt=new Date().toLocaleTimeString('ru-RU');ui.menuNotice='Импортированное прохождение проверено и сохранено';renderMenu(ui.menuNotice);}catch(error){if(writing){saveError=true;saveFailure=error.message;saveConflict=error.code==='SAVE_CONFLICT';}toast('Импорт не завершён: '+error.message);renderMenu('Импорт не записан. Текущее прохождение сохранено в памяти.');}finally{if(importOwned){saving=false;ui.importing=false;saveRequested=false;}e.target.value='';if(paused)renderMenu();}};
+window.addEventListener('pointermove',dragMove,{passive:false});window.addEventListener('pointerup',dragEnd);window.addEventListener('pointercancel',cancelDrag);window.addEventListener('blur',()=>{clearInput();cancelDrag();});window.addEventListener('resize',()=>{world?.invalidateLayout?.();cancelDrag();if(paused)renderMenu();else renderHud();if(ui.modal)renderModal();});document.addEventListener('visibilitychange',()=>{clearInput();last=performance.now();if(document.hidden){audio.pause();if(running){save();showMenu();}}});$('gameModal').addEventListener('cancel',e=>{e.preventDefault();if(state.mode!=='complete')closeModal();});$('saveFile').onchange=async e=>{let writing=false,importOwned=false;try{const file=e.target.files[0];if(!file)return;if(readOnly||!writerSession.owned)throw Error('Эта вкладка не владеет сохранением');if(saving||ui.importing)throw Error('Дождитесь завершения текущей записи и повторите импорт');ui.importing=true;saving=true;importOwned=true;renderMenu('Проверяем файл прохождения…');const imported=await store.import(file);M.validate(imported);if(readOnly||!writerSession.owned)throw Error('Доступ к сохранению изменился. Повторите импорт');renderMenu('Проверенное прохождение записывается…');if(loadFailed&&!store.corrupt)await store.load();writing=true;if(store.corrupt){if(typeof store.recover!=='function')throw Error('Восстановление хранилища ещё не готово. Исходные записи сохранены.');await store.recover(imported);}else await store.write(imported);resetPresentation();state=imported;audioEventCursor.prime(state);ui.trackedQuestId=null;running=true;saved=M.snapshot(state);saveError=false;saveFailure='';saveConflict=false;loadFailed=false;startupError='';lastSavedAt=new Date().toLocaleTimeString('ru-RU');ui.menuNotice='Импортированное прохождение проверено и сохранено';renderMenu(ui.menuNotice);}catch(error){if(writing){saveError=true;saveFailure=error.message;saveConflict=error.code==='SAVE_CONFLICT';}toast('Импорт не завершён: '+error.message);renderMenu('Импорт не записан. Текущее прохождение сохранено в памяти.');}finally{if(importOwned){saving=false;ui.importing=false;saveRequested=false;}e.target.value='';if(paused)renderMenu();}};
 function graphicsLost(e){e.preventDefault();contextLost=true;contextRecovering=false;contextError='';clearInput();void save();showMenu();renderMenu('Графика приостановлена. Экспортируйте прогресс при необходимости.');}
 async function restoreGraphics(){if(!contextLost||contextRecovering||!world)return false;contextRecovering=true;let message='';renderMenu('Восстанавливаем материалы и сцену…');try{await new Promise(resolve=>requestAnimationFrame(resolve));if(world.renderer?.getContext?.().isContextLost?.())throw Error('Графический контекст пока недоступен');resetPresentation();world.resize?.();world.invalidateLayout?.();await world.renderer?.compileAsync?.(world.scene,world.activeCamera||world.camera);world.render(state,0);if(world.renderer?.getContext?.().isContextLost?.())throw Error('Графический контекст снова потерян');contextLost=false;contextError='';lastHudSignature='';message='Графика восстановлена. Можно вернуться в путь.';return true;}catch(error){contextError='Не удалось восстановить графику: '+error.message+'. Экспортируйте прогресс и повторите загрузку страницы.';message=contextError;return false;}finally{contextRecovering=false;renderMenu(message);}}
-$('actWorld').addEventListener('webglcontextlost',graphicsLost);$('actWorld').addEventListener('webglcontextrestored',()=>{void restoreGraphics();});window.addEventListener('pagehide',()=>{cancelDrag();clearInput();save();});
+$('actWorld').addEventListener('webglcontextlost',graphicsLost);$('actWorld').addEventListener('webglcontextrestored',()=>{void restoreGraphics();});window.addEventListener('pagehide',()=>{audio.pause();cancelDrag();clearInput();save();});
 async function init(){
  await loadTypography();renderMenu('Открываем хронику…');applySettings();
  try{await store.open();saved=await store.load();if(saved)state=structuredClone(saved);audioEventCursor.prime(state);}catch(error){saveError=true;loadFailed=true;saveFailure=error.message;toast('Хранилище: '+error.message);}
@@ -390,7 +544,15 @@ async function init(){
  requestAnimationFrame(frame);
 }
 
-window.__ashen={getState:()=>M.snapshot(state),getStatus:()=>({ready,running,paused,readOnly,saveError,contextLost,contextRecovering,mode:state.mode,version:'0.18.1-demo'}),save};
+function enableAudio(event){
+ if(!event.isTrusted||document.hidden||event.repeat)return;
+ updateAudioScene();
+ void audio.start().catch(()=>{});
+}
+$('actMenu').addEventListener('pointerdown',enableAudio);
+$('actMenu').addEventListener('keydown',enableAudio);
+
+window.__ashen={getState:()=>M.snapshot(state),getStatus:()=>({ready,running,paused,readOnly,saveError,contextLost,contextRecovering,mode:state.mode,version:'0.19.0-demo'}),save};
 init();
 
 function ui100Decorate(root,surface){UI100.decorate(root,surface,{state,menuState:running?state:saved,ui,M,partyDefs,enemyDefs,itemDefs,areaDefs,dialogueDefs,SKILLS,el,text,button,panel,settings,redraw:()=>{lastHudSignature='';renderHud();},renderModal,openModal,openObjective:ui100OpenObjective,targetEnemy,targetHero,pendingBattleAction,chosenSkill,battle,chooseAttack,selectSkill,cancelBattleChoice,toast,commit,locationItem,cancelDrag,nav50SelectQuest,storage:localStorage,window:globalThis,document});}

@@ -1,6 +1,9 @@
 import { AREA_LAYOUTS } from './area-layouts.js?v=rivers-0181';
 import { applyAreaLayouts } from './area-geometry.js?v=rivers-0181';
-import { extendRoadsContent } from './roads-content.js?v=rivers-0181';
+import { extendRoadsContent } from './roads-content.js?v=forged-019';
+import { extendForgedEncounters } from './forged-enemies.js?v=forged-019';
+import { addSmithies } from './forged-smiths.js?v=forged-019';
+import { FORGE_ITEMS } from './loot-tables.js?v=forged-019';
 
 // Ashen Oath — original first act. Immutable authored data; runtime owns all state.
 export const CONTENT_VERSION = '1.0.0';
@@ -83,7 +86,8 @@ export const ITEMS = {
   witness_register:item('witness_register','Книга живых свидетельств','quest',0),
   warden_key:item('warden_key','Ключ коменданта','quest',0),
   bell_clapper:item('bell_clapper','Расколотый язык большого колокола','quest',0),
-  broken_badge:item('broken_badge','Жетон восьмой смены','quest',0)
+  broken_badge:item('broken_badge','Жетон восьмой смены','quest',0),
+  ...FORGE_ITEMS
 };
 
 const enemy=(id,name,kind,hp,atk,def,speed,xp,gold,skills=['enemy_claw'],extra={})=>({id,name,kind,stats:{hp,mp:99,atk,def,speed},skills,rewards:{xp,gold,items:[]},...extra});
@@ -1411,6 +1415,8 @@ export const QUEST_TARGETS = {
   ]
 };
 
+addSmithies(AREAS, AREA_LAYOUTS);
+extendForgedEncounters({ENEMIES,SKILLS,AREAS,AREA_LAYOUTS});
 applyAreaLayouts(AREAS, AREA_LAYOUTS);
 extendRoadsContent({areas:AREAS,quests:QUESTS,dialogues:DIALOGUES,targets:QUEST_TARGETS,enemies:ENEMIES});
 ACT_INFO.optionalQuestCount = QUESTS.filter(quest => quest.optional).length;

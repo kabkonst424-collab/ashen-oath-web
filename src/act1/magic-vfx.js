@@ -2,11 +2,11 @@ import * as T from '../../assets/vendor/three.module.js';
 import { STATUS_KINDS, statusRows, statusParts } from './presentation-status.js?v=0.16.0-demo';
 import { reducedFlash } from './presentation-visibility.js?v=0.16.0-demo';
 import { arcPoint } from './presentation-paths.js?v=0.16.0-demo';
-import { actionTimeline } from './presentation-timing.js?v=0.16.0-demo';
+import { actionTimeline } from './presentation-timing.js?v=forged-019';
 import { COMBAT_MOTION } from './party-motion.js?v=0.16.0-demo';
-import { magicProfile } from './data/magic-profiles.js?v=0.16.0-demo';
+import { magicProfile } from './data/magic-profiles.js?v=forged-019';
 import { fetchBytes } from './resource-loader.js?v=0.16.0-demo';
-import { resolveCastAnchor } from './cast-anchors.js?v=0.16.0-demo';
+import { resolveCastAnchor } from './cast-anchors.js?v=forged-019';
 import { heavyAnimation } from './combat200-animation-policy.js?v=0.16.0-demo';
 import { ensureCombat200Assets, combat200Material, combat200Windup, combat200Launch, combat200Impact } from './combat200-vfx.js?v=0.16.0-demo';
 

@@ -1,0 +1,44 @@
+.item-condition {
+  margin-top: .22rem;
+  display: grid;
+  gap: .22rem;
+}
+.item-condition.compact {
+  position: absolute;
+  inset: auto 13% 8%;
+  pointer-events: none;
+}
+.condition-track {
+  display: block;
+  width: min(100%, 11rem);
+  height: 6px;
+  overflow: hidden;
+  border: 1px solid #938257;
+  border-radius: 3px;
+  background: #091b24;
+}
+.condition-fill { display: block; height: 100%; background: #79baa7; }
+.condition-track.worn .condition-fill { background: #e8bb72; }
+.condition-track.broken { border-color: #d4998a; background: #773428; }
+.smithy-toolbar, .smithy-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .85rem;
+  margin: .1rem 0 .85rem;
+}
+.smithy-total {
+  justify-content: flex-start;
+  background: #142b32;
+  border: 1px solid #98784d;
+  padding: .6rem;
+}
+.smithy-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: .5rem; margin: .65rem 0; }
+.smithy-item .icons { width: 44px; height: 44px; }
+.smithy-item .paint-button { flex-shrink: 0; }
+@media (max-width: 760px) {
+  .smithy-list { grid-template-columns: minmax(0,1fr); }
+  .smithy-toolbar, .smithy-total { align-items: stretch; flex-direction: column; }
+  .smithy-item { display: grid; grid-template-columns: auto minmax(0,1fr); }
+  .smithy-item .paint-button { grid-column: 2; justify-self: end; }
+}

@@ -1,5 +1,7 @@
 export function normalizeSettings(value={}){
- return {volume:Number.isFinite(value?.volume)?Math.max(0,Math.min(1,value.volume)):.3,textScale:[1,1.25,1.5].includes(value?.textScale)?value.textScale:1,quality:value?.quality==='low'?'low':'high'};
+ const gain=(name,fallback)=>Number.isFinite(value?.[name])?Math.max(0,Math.min(1,value[name])):fallback;
+ return {volume:gain('volume',.3),music:gain('music',.8),sfx:gain('sfx',.92),ambience:gain('ambience',.72),
+   textScale:[1,1.25,1.5].includes(value?.textScale)?value.textScale:1,quality:value?.quality==='low'?'low':'high'};
 }
 export function captureSurface(root){
  const active=root.ownerDocument?.activeElement;

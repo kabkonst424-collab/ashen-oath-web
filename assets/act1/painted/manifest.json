@@ -137,6 +137,17 @@
       "bytes": 367098,
       "sha256": "0fbf159545484e57129a24e348b93b85023115743cb32f8b03450e314affb2a3",
       "derivation": "Gouache fantasy valley storefront illustration, cropped and compressed to WebP"
+    },
+    {
+      "id": "forged-storefront-cover",
+      "path": "assets/act1/painted/forge-cover.webp",
+      "width": 1200,
+      "height": 675,
+      "originalSha256": "8199cdb1cebcbbabb72c94bfe43766fad00d8d106106810c96b38674465310bf",
+      "producer": "built-in ImageGen",
+      "bytes": 244916,
+      "sha256": "1ab849c0b7a1fb736a0da9009d4118bb1d81a4e05f8033c8152cef611fcc3554",
+      "derivation": "Original painted dusk river crossing and roadside smithy, resized and encoded as WebP"
     }
   ],
   "animation": {

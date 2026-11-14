@@ -206,6 +206,24 @@ function onRoad(roads, x, z, padding) {
     i && segmentDistance(x, z, road.points[i - 1], p) < road.width * .5 + padding));
 }
 
+function addAnvil(world, { x, z, yaw }) {
+  const group = new T.Group();
+  group.name = 'Кузнечная наковальня';
+  group.position.set(x, world.height(x,z), z);
+  group.rotation.y = yaw;
+  world.areaGroup.add(group);
+  const wood = world.material('anvil-block', { color:0x6e4934, roughness:.94 });
+  const iron = world.material('anvil-iron', { color:0x62676c, metalness:.48, roughness:.59 });
+  const base = world.geometry('anvil-stump', () => new T.CylinderGeometry(.43,.48,.73,9));
+  const horn = world.geometry('anvil-horn', () => new T.CylinderGeometry(.035,.22,.50,5).rotateZ(-Math.PI/2));
+  const parts = [
+    world.mesh(base,wood,group,0,.365,0), world.box(.65,.14,.54,iron,group,0,.8,0),
+    world.box(.41,.23,.35,iron,group,0,.97,0), world.box(.95,.16,.62,iron,group,-.05,1.14,0),
+    world.mesh(horn,iron,group,.59,1.13,0),
+  ];
+  for (const part of parts) part.userData.modelOrigin = { kind:'authored-landscape', source:world.areaId, layer:'smithy' };
+}
+
 export function buildAuthoredLandscape(world) {
   const layout = world.area.layout;
   const groups = new Map();
@@ -217,7 +235,9 @@ export function buildAuthoredLandscape(world) {
     });
   };
   for (const prop of layout.props) {
-    if (prop.slot === 'brazier' || prop.slot === 'camp') {
+    if (prop.slot === 'anvil') {
+      addAnvil(world, prop);
+    } else if (prop.slot === 'brazier' || prop.slot === 'camp') {
       const fire = world.meshyProp(prop.slot, world.areaGroup, [prop.x, world.height(prop.x, prop.z), prop.z], prop.scale || 1);
       fire.rotation.y = prop.yaw || 0;
     } else emit(prop.slot, prop.x, prop.z, prop.scale, prop.yaw, prop.stretch);

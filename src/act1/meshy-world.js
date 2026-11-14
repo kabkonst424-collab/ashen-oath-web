@@ -1,12 +1,12 @@
 import * as T from '../../assets/vendor/three.module.js';
 import {GLTFLoader} from '../../assets/vendor/GLTFLoader.js';
-import {BASE_MODELS} from './graphics-refresh.js?v=roads-018';
+import {BASE_MODELS} from './graphics-refresh.js?v=forged-019';
 import {mergeGeometries} from '../../assets/vendor/BufferGeometryUtils.js';
 import {TerrainMaterials} from './terrain-material.js?v=painted-20261114-r2';
 import {paintMeshes} from './painted-material.js?v=painted-20261114-r2';
 import {fetchBytes} from './resource-loader.js?v=0.16.0-demo';
 
-import { buildAuthoredGround, buildAuthoredLandscape } from './authored-landscape.js?v=rivers-0181';
+import { buildAuthoredGround, buildAuthoredLandscape } from './authored-landscape.js?v=forged-019';
 
 // This module is installed after graphics-refresh. It changes presentation only;
 // authoritative movement and campaign state stay in model.js.
