@@ -1,15 +1,15 @@
 {
   "id": "ashen-oath",
-  "version": "0.16.0-demo",
+  "version": "0.17.0-demo",
   "releaseStatus": "demo",
   "demo": true,
   "posterArtRevision": {
-    "id": "poster-20261105",
-    "menuSHA256": "0717dfc3104f91415155f0d6d1cf3db740903a069584d334f8e8463460f4cc67",
-    "coverSHA256": "03c9bdfead7101474985940f42b68ac104d7843dee094978cbc95782a29f1811"
+    "id": "painted-20261114",
+    "menuSHA256": "9b31aeeb7e3c1f820e4dda8b225a0c7b75e183f0753a4fcae719ea79c7b22967",
+    "coverSHA256": "e7f492f4d6d5fc4c90316ffbe52d75bd3d9441ce5dda0910cfeda68721bbea95"
   },
   "level": "act1",
-  "graphics": "Meshy_world_continuous_PBR_Blender_unique_profile_animations_gilded_Cyrillic_magic_water",
+  "graphics": "ImageGen_painted_art_and_surfaces_matte_band_lighting_25Hz_8view_motion",
   "presentation": {
     "baselineAuthoredBlenderActions": 314,
     "baselineCompatibilityAliases": 45,
@@ -19,9 +19,16 @@
     "skillProfiles": 30,
     "enemyVariants": 31,
     "posesPerClip": 25,
-    "surface": "World-space coordinated PBR blends and biome macro variation",
-    "water": "Meshy-derived surfaces; analytic sky reflection, waves and shore foam",
-    "browser": "Adaptive resolution; spatial instance chunks; shadow budgets; shared raster HUD observers"
+    "surface": "ImageGen ground atlas; four biomes; mirrored stochastic sampling in world space",
+    "water": "Retained water surface geometry; painted color bands and subdued glint",
+    "browser": "Adaptive resolution; spatial instance chunks; shadow budgets; shared raster HUD observers",
+    "poseRateHzAtNormalSpeed": 25,
+    "poseIntervalMs": 40,
+    "cameraRelativeDirections": 8,
+    "newRasterFrames": {
+      "campfire": 25
+    },
+    "characterArt": "Existing rigs with ImageGen pigment textures and banded lighting"
   },
   "combatAnimationMagic200": {
     "requested": 200,
@@ -2113,7 +2120,7 @@
     "status": "DESIGN_ESTIMATE_NOT_MEASURED"
   },
   "platform": "WebGL2",
-  "builtAt": "2026-11-07T21:12:06.215Z",
+  "builtAt": "2026-11-14T10:17:37.725Z",
   "files": [
     {
       "path": "act1.css",
@@ -2122,8 +2129,8 @@
     },
     {
       "path": "act1.html",
-      "bytes": 1308,
-      "sha256": "e826108ca01431fbf5b82c69848c4e7c6102d971746fd7abd269247d856cf01b"
+      "bytes": 1489,
+      "sha256": "c00eb02c1b866c4d3e8f5d08430dae8ee99502c6e6f659f311344b7110510eae"
     },
     {
       "path": "assets/act1/animation/animation-library.json",
@@ -2216,14 +2223,14 @@
       "sha256": "f0ce0d5fba16a6f9979f6916dc44edf863f8ebc0f6769f6124401bbafa110929"
     },
     {
-      "path": "assets/act1/animation/profiles/enemy-oathshade.json",
-      "bytes": 545051,
-      "sha256": "f005b25a6c148e3aa594f4b4f1cf3bdc38421c89eeeae31594860426e0740d67"
-    },
-    {
       "path": "assets/act1/animation/profiles/enemy-oath_knight.json",
       "bytes": 545978,
       "sha256": "b57c977b6c0b7910c463b20525b8b96b6dd76cd232c678df1272aac822431b4d"
+    },
+    {
+      "path": "assets/act1/animation/profiles/enemy-oathshade.json",
+      "bytes": 545051,
+      "sha256": "f005b25a6c148e3aa594f4b4f1cf3bdc38421c89eeeae31594860426e0740d67"
     },
     {
       "path": "assets/act1/animation/profiles/enemy-paper_swarm.json",
@@ -2426,6 +2433,11 @@
       "sha256": "0f4c1d6a80d3cfaa177dbb8f5a18653bdbaee6c42fb9a81b143b8edc3570fd6e"
     },
     {
+      "path": "assets/act1/magic/combat200/LICENSE-Kenney.txt",
+      "bytes": 645,
+      "sha256": "dabd7cc9f78caf9dd0e0c2dbf27eca9c22383bed5bf035bc26341a246b748cc6"
+    },
+    {
       "path": "assets/act1/magic/combat200/blender-ember-atlas.json",
       "bytes": 7954,
       "sha256": "ef38a089fc2f44294b45ba4f9208371435cd3bde0f8d2e14fd3415c0faa377db"
@@ -2444,11 +2456,6 @@
       "path": "assets/act1/magic/combat200/flame_01.png",
       "bytes": 35189,
       "sha256": "dc6b5decd0e7e99900b0493fa1496f80e34d272f5603081634d0e99235ea9d2b"
-    },
-    {
-      "path": "assets/act1/magic/combat200/LICENSE-Kenney.txt",
-      "bytes": 645,
-      "sha256": "dabd7cc9f78caf9dd0e0c2dbf27eca9c22383bed5bf035bc26341a246b748cc6"
     },
     {
       "path": "assets/act1/magic/combat200/light_03.png",
@@ -2511,6 +2518,56 @@
       "sha256": "578f488d504c8541ba61029bba532580e096d2e68c3da740893a42589b6de53d"
     },
     {
+      "path": "assets/act1/painted/actions.webp",
+      "bytes": 67068,
+      "sha256": "ddaab39067ef359dd02b019fba8a30f8435a73753ab74122041d416369f0f558"
+    },
+    {
+      "path": "assets/act1/painted/flame.webp",
+      "bytes": 140444,
+      "sha256": "622f54f0f067f47aeec1d2bf818a0e8d2adcd997ed5349548843d7778b3877c2"
+    },
+    {
+      "path": "assets/act1/painted/items.webp",
+      "bytes": 214274,
+      "sha256": "f4c3cc8949811373a0adaa2cb5757cd5d330ec098d318fd03d800cc413cbe0ac"
+    },
+    {
+      "path": "assets/act1/painted/manifest.json",
+      "bytes": 4863,
+      "sha256": "c208bd84940a58c829b4d459c3393ee15e1e623af3ea57ab119ca1746cb0d2af"
+    },
+    {
+      "path": "assets/act1/painted/materials.webp",
+      "bytes": 21682,
+      "sha256": "28264fd3783e81aecea37d6c9c349f98db9ff297af38ad5cc3b2a0ef40308318"
+    },
+    {
+      "path": "assets/act1/painted/menu.webp",
+      "bytes": 389132,
+      "sha256": "9b31aeeb7e3c1f820e4dda8b225a0c7b75e183f0753a4fcae719ea79c7b22967"
+    },
+    {
+      "path": "assets/act1/painted/portraits.webp",
+      "bytes": 423130,
+      "sha256": "37ed413430c02d80a42d9f43707eacde16fe4a0ae6bdd44c420de00f2b0e285f"
+    },
+    {
+      "path": "assets/act1/painted/terrain.webp",
+      "bytes": 317878,
+      "sha256": "4e29e7e9bf0740fe03daebbbf584527632f6022def6a04bcd36a618f89a85a75"
+    },
+    {
+      "path": "assets/act1/painted/title.webp",
+      "bytes": 164412,
+      "sha256": "12df2900d90c03b6afb0bf6a7a2d8f33ece66d26b94a8dfb57f2f00ef1e39da6"
+    },
+    {
+      "path": "assets/act1/painted/ui-frame.webp",
+      "bytes": 28632,
+      "sha256": "e3ee004a7be3dd572affc4092c274b7fb116688d1f1b7a06f2d5c4e7cf526df4"
+    },
+    {
       "path": "assets/act1/portraits.png",
       "bytes": 3174484,
       "sha256": "42c9f756e0b48b207d29847df864405de4c554d12013381e2678d58cc580e033"
@@ -2532,8 +2589,8 @@
     },
     {
       "path": "assets/cover.png",
-      "bytes": 762065,
-      "sha256": "670d335d2e46db324868b2f38171f19648aa8baf11ad2ef95eabc7145a81dbbb"
+      "bytes": 1448137,
+      "sha256": "e7f492f4d6d5fc4c90316ffbe52d75bd3d9441ce5dda0910cfeda68721bbea95"
     },
     {
       "path": "assets/models/acolyte.glb",
@@ -2559,6 +2616,16 @@
       "path": "assets/models/husk.glb",
       "bytes": 1454012,
       "sha256": "b737247ffcd0627e52e7283329fbe861c2ebf0bf91798ba0074d399e949dcaee"
+    },
+    {
+      "path": "assets/models/refresh-manifest.json",
+      "bytes": 5114,
+      "sha256": "b9cbc9c81e17852dd135dba32bc9c6693f89d90488473f41663cf7168a56bc47"
+    },
+    {
+      "path": "assets/models/refresh-props.glb",
+      "bytes": 5132260,
+      "sha256": "312f7e5e77ee97da7b1e8ab28ff0acf35fecb2136d019bde22a66128039bb6ac"
     },
     {
       "path": "assets/models/refresh/alar_nocape.glb",
@@ -2629,16 +2696,6 @@
       "path": "assets/models/refresh/wolf.glb",
       "bytes": 6245796,
       "sha256": "7c6e8f935137a339040ce6fb56ae9486588826be361e5c921bd6f8136637a372"
-    },
-    {
-      "path": "assets/models/refresh-manifest.json",
-      "bytes": 5114,
-      "sha256": "b9cbc9c81e17852dd135dba32bc9c6693f89d90488473f41663cf7168a56bc47"
-    },
-    {
-      "path": "assets/models/refresh-props.glb",
-      "bytes": 5132260,
-      "sha256": "312f7e5e77ee97da7b1e8ab28ff0acf35fecb2136d019bde22a66128039bb6ac"
     },
     {
       "path": "assets/models/sentinel.glb",
@@ -2801,14 +2858,14 @@
       "sha256": "71328e028cba9456764ab1ccf9fed6344893c75dc86f5d802c2ddcec660ffcdf"
     },
     {
-      "path": "assets/models/world-meshy/waterwheel.glb",
-      "bytes": 1010008,
-      "sha256": "2a51c6017d34ae69941af785e9de7eca7977e6fc2c9d0dba5c2897a896f458c2"
-    },
-    {
       "path": "assets/models/world-meshy/water_strip.glb",
       "bytes": 870520,
       "sha256": "f67d60c2bd57c368a338a0c43dd07cec761ee11b7b6a59ddaedd5d50e6e03292"
+    },
+    {
+      "path": "assets/models/world-meshy/waterwheel.glb",
+      "bytes": 1010008,
+      "sha256": "2a51c6017d34ae69941af785e9de7eca7977e6fc2c9d0dba5c2897a896f458c2"
     },
     {
       "path": "assets/models/world-meshy/well.glb",
@@ -2857,8 +2914,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 1308,
-      "sha256": "e826108ca01431fbf5b82c69848c4e7c6102d971746fd7abd269247d856cf01b"
+      "bytes": 1489,
+      "sha256": "c00eb02c1b866c4d3e8f5d08430dae8ee99502c6e6f659f311344b7110510eae"
     },
     {
       "path": "interface-windows.css",
@@ -2871,9 +2928,24 @@
       "sha256": "7428e9ddacb890d1b0a262fb9ec78c952f40c4d6d9dd109ce4948be783729bd4"
     },
     {
+      "path": "loader-ads.css",
+      "bytes": 1836,
+      "sha256": "cae27373d15695587291ce1ff1814c58173c084c35126d523d4ab7ab4e1b7a8a"
+    },
+    {
+      "path": "loader-ads.js",
+      "bytes": 2311,
+      "sha256": "bfb4d49b311aef1ae68595f260268cbf9bdf257218889c0f728b22c981d1ad00"
+    },
+    {
       "path": "navigation.css",
       "bytes": 6189,
       "sha256": "5d66b5d8e3585ccb11cb6d20e232b11180cb3c67ff44a050200633cafd5af956"
+    },
+    {
+      "path": "painted.css",
+      "bytes": 5701,
+      "sha256": "cac19782b2b3067e3ea544027dc9ba0a375ae57aea3a7d6f1abb9dc4cfc479ee"
     },
     {
       "path": "quest-arrow.css",
@@ -2887,8 +2959,8 @@
     },
     {
       "path": "src/act1/bitmap.js",
-      "bytes": 7499,
-      "sha256": "b727ad345e0b23d3783201722f364cbdd7a8917f38e3f2cd99ce19d8aabf53ec"
+      "bytes": 7093,
+      "sha256": "923438f42fa977f0503231c1cc6c66366585f5712975dcc8c51e2d8ba95525ca"
     },
     {
       "path": "src/act1/browser-performance.js",
@@ -2937,8 +3009,8 @@
     },
     {
       "path": "src/act1/graphics-refresh.js",
-      "bytes": 16690,
-      "sha256": "9cf7806d89074d140d084f9da49602f1174356f771ecc849ea35d7143790ef7d"
+      "bytes": 16757,
+      "sha256": "f170b90364eea289e08dc8c76a9cacd1b5c8a736701094327cffc7a1b6627fef"
     },
     {
       "path": "src/act1/hero-abilities.js",
@@ -2967,18 +3039,18 @@
     },
     {
       "path": "src/act1/magic-vfx.js",
-      "bytes": 51351,
-      "sha256": "26c6048f3072322c9ca109f74396c0d477275e6997ac7ff2e91b84b3b8517f89"
+      "bytes": 51532,
+      "sha256": "899704cddea03edd8501d07d83bc3c21bbad2e04fdb663a8c628a178019faa92"
     },
     {
       "path": "src/act1/main.js",
-      "bytes": 100003,
-      "sha256": "1b81f003f4198db87f613fef3b6c8d987e33982212744ed9244020c2e0d76eb3"
+      "bytes": 100161,
+      "sha256": "1b37356e330973bdff91d96669fe8b9cd3e17b3bf647a14fe31a106005f22158"
     },
     {
       "path": "src/act1/meshy-world.js",
-      "bytes": 38956,
-      "sha256": "856e2693b67b77c93de0b7411e4162cc5dd205be026e5b9ecf888ebf93db8471"
+      "bytes": 39947,
+      "sha256": "f5bf1f81f64c8c5cb786ba2740c053043aba52d738e1c5d2425fa2ef9958bd94"
     },
     {
       "path": "src/act1/minimap.js",
@@ -2994,6 +3066,16 @@
       "path": "src/act1/navigation.js",
       "bytes": 14120,
       "sha256": "bcaa2b0638335fc847b477e6000d545d0ceba70f0486f248df9659ff1b036812"
+    },
+    {
+      "path": "src/act1/painted-material.js",
+      "bytes": 3582,
+      "sha256": "beba6fd3652e56db7d9dca90a3234f29688964ec876456a0d15375ba2c7b06a9"
+    },
+    {
+      "path": "src/act1/painted-motion.js",
+      "bytes": 5317,
+      "sha256": "e7a7a79be79c4dc28f7ded7ab39e55df3ad395b6ab665709fd13516e76f409ef"
     },
     {
       "path": "src/act1/party-motion.js",
@@ -3057,8 +3139,8 @@
     },
     {
       "path": "src/act1/terrain-material.js",
-      "bytes": 10296,
-      "sha256": "876a22f81ff74e665dc2e620a80d830c7d4dbee9294c3018e73002e9abf6e6c8"
+      "bytes": 11405,
+      "sha256": "615aea88fc7c7d19eb9a67caf7ac2bc0a346be0d3df47221c110c38609d898bf"
     },
     {
       "path": "src/act1/terrain-sampling.js",
@@ -3077,13 +3159,13 @@
     },
     {
       "path": "src/act1/water-fire.js",
-      "bytes": 14682,
-      "sha256": "56d78a596b49902ddf51c9285124c2b6855b384043b984805c7055a704398c97"
+      "bytes": 14620,
+      "sha256": "916c30a31ff894eb0763ee39bb2a7dc5f70318ce55e65a115496df80705470cb"
     },
     {
       "path": "src/act1/world.js",
-      "bytes": 102433,
-      "sha256": "8dcb4076d4910e2360da2d7fb8a98c88721d087622c01ca7ff11449224814760"
+      "bytes": 102953,
+      "sha256": "7bf957d4bb5065fa545725b4b67b15ac832b5efef88e2a59adcee3239736c29e"
     },
     {
       "path": "src/act1/writer-session.js",
@@ -3130,5 +3212,12 @@
       "bytes": 13622,
       "sha256": "879615f8dcf700f612c736e16a2da70d93b75a698f6fdf7c04a8f25242c881bb"
     }
-  ]
+  ],
+  "paintedRevision": {
+    "baseCommit": "8112bb1d5453db2cea9c525d46919da95ce9181d",
+    "artManifest": "assets/act1/painted/manifest.json",
+    "artManifestSHA256": "c208bd84940a58c829b4d459c3393ee15e1e623af3ea57ab119ca1746cb0d2af",
+    "staticFiles": "index.html and act1.html from repository root",
+    "releaseDateMoscow": "2026-11-14"
+  }
 }

@@ -1,0 +1,168 @@
+:root {
+  --ink: #f8e6c5;
+  --gold: #d7aa60;
+  --black: #102832;
+  --paint-line: #a87c42;
+  --paint-panel: #112b34;
+  --paint-frame: url("assets/act1/painted/ui-frame.webp");
+}
+
+#actMenu {
+  background: #24394a url("assets/act1/painted/menu.webp") center / cover no-repeat;
+  padding: max(14px, var(--safe-top)) max(4vw, var(--safe-right)) max(14px, var(--safe-bottom)) max(4vw, var(--safe-left));
+}
+
+.menu-card, .panel {
+  background: var(--paint-panel);
+  border: 1px solid var(--paint-line);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px #09222b55;
+}
+
+.menu-card::before, .panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-image: var(--paint-frame) 62 fill / 11px / 0 stretch;
+  background: none;
+  opacity: 1;
+  pointer-events: none;
+}
+
+.menu-card {
+  width: min(390px, 46vw);
+  padding: clamp(16px, 2vw, 26px);
+  isolation: isolate;
+  position: relative;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.gilded-brand {
+  width: min(100%, 330px);
+  aspect-ratio: 3 / 1;
+  object-fit: contain;
+  margin: 0 auto 7px;
+}
+
+.menu-card .intro { margin: 5px 0 9px; }
+.menu-card .window-disclosure { margin: 6px 0; }
+.menu-card .window-disclosure > summary { min-height: 37px; }
+.menu-card .paint-button { margin: 3px 0; }
+.panel::after { content: none; }
+
+.paint-button, .paint-button.small, .item-slot {
+  background: linear-gradient(165deg, #27414a, #162b34);
+  border: 1px solid #be9656;
+  box-shadow: inset 0 0 0 2px #172b2e;
+  border-radius: 7px;
+}
+
+.paint-button:hover:not(:disabled) { background: #3e514a; }
+.paint-button:active:not(:disabled) { background: #203a42; }
+.paint-button[aria-pressed="true"], .paint-button.selected { background: #315b56; }
+.menu-card .paint-button[data-focus-key="new-story"] { background: #774428; border-color: #e4ba72; }
+.menu-card .paint-button[data-focus-key="new-story"]:hover:not(:disabled) { background: #925832; }
+.window-disclosure, .item-detail, .window-choice-card, .ui100-summary { background-color: #19343d; border-color: #8d7651; }
+.item-slot.drag-over { background-color: #37675a; }
+.modal-header { background: #142e38fa; }
+.sprite.portraits { background-image: url("assets/act1/painted/portraits.webp"); border-color: #b89a63; }
+.sprite.icons { background-image: url("assets/act1/painted/items.webp"); }
+.combat-icon { background-image: url("assets/act1/painted/actions.webp"); }
+.battle-panel, #actHud[data-mode="battle"] .battle-panel { background-color: var(--paint-panel); }
+.turn-order { height: 70px; }
+.turn-entry {
+  flex-basis: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+}
+.turn-entry > .bitmap-text:first-child {
+  min-height: 0;
+  max-height: 39px;
+  object-position: left center;
+}
+.turn-entry > .bitmap-text:last-child { max-height: 17px; object-position: left center; }
+.turn-entry.enemy { background-color: #57372e; }
+.turn-entry.current { background-color: #35534c; }
+.battle-actions .hud50-skill { padding: 3px 4px !important; }
+.battle-actions .hud50-skill > .bitmap-text { max-height: 20px; font-size: 12px; }
+.battle-actions .hud50-skill .combat-icon {
+  width: 19px !important;
+  height: 19px !important;
+  flex-basis: 19px !important;
+}
+.battle-actions .hud50-skill .combat-cost {
+  position: static;
+  align-self: end;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+.battle-actions .combat-cost .bitmap-text { max-height: 13px; }
+
+@media (max-width: 760px), (max-height: 460px) {
+  #actHud[data-mode="battle"] .turn-order { height: 48px; }
+  #actHud[data-mode="battle"] .turn-entry {
+    flex-basis: 110px;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) 12px;
+    align-items: center;
+  }
+  #actHud[data-mode="battle"] .turn-entry > .bitmap-text:first-child { max-height: 28px; }
+  #actHud[data-mode="battle"] .turn-entry > .bitmap-text:last-child { display: block; max-height: 13px; }
+  #actHud[data-mode="battle"] .battle-actions .hud50-skill {
+    width: 105px;
+    flex-basis: 105px;
+    min-width: 105px;
+  }
+}
+
+@media (max-width: 759px) and (orientation: portrait) {
+  #actMenu {
+    align-items: end;
+    justify-content: center;
+    background-position: 20% center;
+  }
+  #actMenu:not([data-loader-ads]) { padding-top: clamp(125px, 29dvh, 250px); }
+  .menu-card {
+    width: min(100%, 420px);
+    max-height: min(69dvh, calc(100dvh - var(--safe-top) - var(--safe-bottom) - 28px));
+    padding: 14px 15px 16px;
+  }
+  .gilded-brand { width: min(100%, 280px); }
+  #actHud[data-mode="battle"] .hud-controls .paint-button:last-child {
+    position: static;
+    box-shadow: inset 0 0 0 2px #172b2e;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 515px) {
+  #actMenu { background-position: center 48%; }
+  .menu-card { max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 20px); padding: 12px 17px; }
+  .menu-card::before { content: none; }
+  .gilded-brand { width: min(100%, 225px); max-height: 58px; margin-bottom: 2px; }
+  .menu-card .intro { display: none; }
+  .menu-card .painted-act-title { max-height: 46px; object-position: left center; }
+  .menu-card .window-disclosure > summary { min-height: 34px; }
+  #actMenu[data-loader-ads] > .menu-card { max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 42px); }
+}
+
+@media (min-width: 1001px) and (min-height: 461px) {
+  #actHud[data-mode="battle"] .combat-info.expanded {
+    display: flex;
+    flex-direction: column;
+    max-height: min(295px, 45dvh);
+    overflow: hidden;
+  }
+
+  #actHud[data-mode="battle"] .combat-info.expanded .combat-info-copy {
+    display: block;
+    min-height: 0;
+    overflow: auto;
+    scrollbar-width: thin;
+  }
+
+  #actHud[data-mode="battle"] .combat-info.expanded .combat-choice-controls { flex: none; }
+}
