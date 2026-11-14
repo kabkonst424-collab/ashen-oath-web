@@ -2,11 +2,11 @@ import * as T from '../../assets/vendor/three.module.js';
 import {GLTFLoader} from '../../assets/vendor/GLTFLoader.js';
 import {BASE_MODELS} from './graphics-refresh.js?v=forged-meshy-0191';
 import {mergeGeometries} from '../../assets/vendor/BufferGeometryUtils.js';
-import {TerrainMaterials} from './terrain-material.js?v=painted-20261114-r2';
+import {TerrainMaterials} from './terrain-material.js?v=groundcover-0192';
 import {paintMeshes} from './painted-material.js?v=painted-20261114-r2';
 import {fetchBytes} from './resource-loader.js?v=0.16.0-demo';
 
-import { buildAuthoredGround, buildAuthoredLandscape } from './authored-landscape.js?v=forged-019';
+import { buildAuthoredGround, buildAuthoredLandscape } from './authored-landscape.js?v=groundcover-0192';
 
 // This module is installed after graphics-refresh. It changes presentation only;
 // authoritative movement and campaign state stay in model.js.
@@ -327,11 +327,11 @@ export function installMeshyWorld(World){
   for(const part of source.parts){
    const surfaceOptions={...options,height:(x,z)=>this.height(x,z)},geometries=[(options.tiled?tileTerrainGeometry:deformTerrainGeometry)(part.geometry,surfaceOptions)];
    if(options.tiled&&id.startsWith('terrain_'))geometries.push(terrainFoundationGeometry(part.geometry,surfaceOptions));
-   for(const geometry of geometries){const mesh=new T.Mesh(geometry,this.terrainMaterials.material(part.material,id));mesh.name=geometry.userData.foundationDepth?'Meshy_terrain_foundation_'+id:'Meshy_terrain_top_'+id;mesh.userData.modelOrigin={...provenance(source.entry),deformation:geometry.userData.meshyDeformation};mesh.userData.stageGeometry=stage;mesh.castShadow=false;mesh.receiveShadow=true;group.add(mesh);if(!stage)this.areaGeometries.add(geometry);}
+   for(const geometry of geometries){const mesh=new T.Mesh(geometry,this.terrainMaterials.material(part.material,id,{groundcover:stage||options.groundcover}));mesh.name=geometry.userData.foundationDepth?'Meshy_terrain_foundation_'+id:'Meshy_terrain_top_'+id;mesh.userData.modelOrigin={...provenance(source.entry),deformation:geometry.userData.meshyDeformation};mesh.userData.stageGeometry=stage;mesh.castShadow=false;mesh.receiveShadow=true;group.add(mesh);if(!stage)this.areaGeometries.add(geometry);}
   }
   return group;
  };
- P.buildGround=function(){if(this.area.layout){buildAuthoredGround(this);return;}const group=this.meshySurface(this.meshyTerrainId(),{radiusX:this.radiusX,radiusZ:this.radiusZ,phase:this.seedPhase,tiled:true,edgeScale:Math.sqrt(.9)+.018,edgeNoise:.22});this.ground=group.children.reduce((largest,m)=>!largest||(m.geometry.attributes.position.count)>(largest.geometry.attributes.position.count)?m:largest,null);};
+ P.buildGround=function(){if(this.area.layout){buildAuthoredGround(this);return;}const group=this.meshySurface(this.meshyTerrainId(),{radiusX:this.radiusX,radiusZ:this.radiusZ,phase:this.seedPhase,tiled:true,edgeScale:Math.sqrt(.9)+.018,edgeNoise:.22,groundcover:true});this.ground=group.children.reduce((largest,m)=>!largest||(m.geometry.attributes.position.count)>(largest.geometry.attributes.position.count)?m:largest,null);};
  P.perimeterApron=function(cx,cz,hw,hd,angle){let rx=hw+2.7,rz=hd+2.7,corner=Math.hypot(hw/rx,hd/rz);if(corner>.94){rx*=corner/.94;rz*=corner/.94;}this.meshySurface(this.meshyTerrainId(),{radiusX:rx,radiusZ:rz,centerX:cx,centerZ:cz,angle,phase:this.seedPhase,elevation:.014});};
  P.perimeter=function(group,hw,hd){const footprint=group.userData.meshyFootprint;return oldPerimeter.call(this,group,Math.max(hw,footprint?.halfWidth||0),Math.max(hd,footprint?.halfDepth||0));};
  P.ribbon=function(points,width,material,elevation=.025){
@@ -353,11 +353,11 @@ export function installMeshyWorld(World){
  };
  P.buildLandscape=function(){
   if(this.area.layout){buildAuthoredLandscape(this);return;}
-  const trees=[],rocks=[],grass=[],count=this.theme==='grass'?10:this.biome==='village'?18:this.biome==='abbey'?12:40;
+  const trees=[],rocks=[],count=this.theme==='grass'?10:this.biome==='village'?18:this.biome==='abbey'?12:40;
   for(let attempt=0;attempt<count*9&&trees.length<count;attempt++){const a=this.rng()*TAU,r=Math.sqrt(this.rng())*.98,x=Math.cos(a)*this.radiusX*r,z=Math.sin(a)*this.radiusZ*r;if(!this.free(x,z,3.6)||trees.some(p=>Math.hypot(p.x-x,p.z-z)<4.4))continue;const scale=.65+this.rng()*.55;trees.push({x,y:this.height(x,z),z,scale,ry:this.rng()*TAU,rz:(this.rng()-.5)*.05});}
   for(let i=0;i<170;i++){const a=this.rng()*TAU,r=.45+this.rng()*.52,x=Math.cos(a)*this.radiusX*r,z=Math.sin(a)*this.radiusZ*r;if(!this.free(x,z,1.6))continue;const s=.4+this.rng()*1.1;rocks.push({x,y:this.height(x,z)-.06,z,sx:s*1.4,sy:s*.7,sz:s,ry:this.rng()*TAU});}
-  for(let i=0;i<220;i++){const x=(this.rng()*2-1)*this.radiusX,z=(this.rng()*2-1)*this.radiusZ;if(!this.free(x,z,1.2))continue;const h=(this.biome==='marsh'?.65:.25)+this.rng()*.5;grass.push({x,y:this.height(x,z),z,sx:.35+this.rng()*.3,sy:h,sz:.35+this.rng()*.3,ry:this.rng()*TAU});}
-  this.meshyInstances('tree',trees);this.meshyInstances('rock',rocks);this.meshyInstances('grass',grass);
+  this.meshyInstances('tree',trees);this.meshyInstances('rock',rocks);
+  this.groundcover.build(this.areaGroup);
   if(this.biome==='village')this.village();if(this.biome==='forest'||this.biome==='marsh')this.stream();if(this.theme==='quarry')this.quarry();else if(this.theme==='grass')this.fields();else if(this.biome==='abbey'){this.abbey();if(this.theme==='archive')this.archive();if(this.theme==='fortress')this.fortress();}this.buildAtmosphere();
  };
  P.fields=function(){
@@ -369,10 +369,22 @@ export function installMeshyWorld(World){
   this.clearBattleStage();const center=this.battleCenter;this.meshySurface(this.meshyTerrainId(),{radiusX:72,radiusZ:72,centerX:center.x,centerZ:center.z,phase:this.seedPhase,tiled:true},this.battleStage,true);
   let seed=177;for(const c of this.areaId)seed=(seed*31+c.charCodeAt(0))>>>0;const rng=()=>((seed=Math.imul(seed,1664525)+1013904223>>>0)/4294967296);
   for(let i=-6;i<=6;i++){const x=center.x+22+i*2.5,z=center.z-13+i*5,rock=this.meshyProp('rock',this.battleStage,[x,this.height(x,z)-1,z]);rock.scale.set(8+rng()*3,6+rng()*4,8+rng()*3);rock.rotation.y=rng()*TAU;}
-  for(let i=0;i<22;i++){const x=center.x+12+rng()*20,z=center.z-20+rng()*39;if(['forest','marsh','village'].includes(this.biome)){const tree=this.meshyProp('tree',this.battleStage,[x,this.height(x,z),z],.75+rng()*.4);tree.rotation.y=rng()*TAU;}else if(i%3===0)this.module(i%2?'Pillar':'Arch',x,z,.9+rng()*.5,rng()*.6,this.battleStage);}
-  const grass=[];for(let i=0;i<100;i++){const x=center.x+(rng()-.5)*32,z=center.z+(rng()-.5)*34;if(Math.abs(x-center.x)<8&&Math.abs(z-center.z)<8)continue;grass.push({x,y:this.height(x,z),z,scale:.4+rng()*.4,ry:rng()*TAU});}this.meshyInstances('grass',grass,this.battleStage);
+  const obstacles=[];
+  for(let i=0;i<22;i++){
+   const x=center.x+12+rng()*20,z=center.z-20+rng()*39;
+   if(['forest','marsh','village'].includes(this.biome)){
+    const tree=this.meshyProp('tree',this.battleStage,[x,this.height(x,z),z],.75+rng()*.4);tree.rotation.y=rng()*TAU;
+    obstacles.push({x,z,radius:1.1*tree.scale.x});
+   }else if(i%3===0){
+    const slot=i%2?'Pillar':'Arch';
+    const prop=this.module(slot,x,z,.9+rng()*.5,rng()*.6,this.battleStage);
+    const {halfWidth,halfDepth}=prop.userData.meshyFootprint;
+    obstacles.push({x,z,radius:Math.max(halfWidth,halfDepth)*prop.scale.x+.24});
+   }
+  }
+  this.groundcover.build(this.battleStage, { center, obstacles });
  };
- P.clearBattleStage=function(){this.battleStage?.traverse(object=>{if(object.isInstancedMesh)object.dispose();});return oldClearStage?.call(this);};
+ P.clearBattleStage=function(){this.groundcover.clear('arena');this.battleStage?.traverse(object=>{if(object.isInstancedMesh)object.dispose();});return oldClearStage?.call(this);};
  P.buildInteractions=function(){
   oldInteractions.call(this);
   for(const item of this.interactables){

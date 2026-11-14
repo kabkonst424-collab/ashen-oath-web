@@ -1,7 +1,7 @@
 import * as T from '../../assets/vendor/three.module.js';
 import { bridgeAt, nearRiverBank, obstacleOutline, riverAt, riverSections, segmentDistance, walkableLayout } from './area-geometry.js?v=rivers-0181';
 import { buildRiverBridges, riverGeometry } from './river-crossings.js?v=rivers-0181';
-import { TerrainMaterials } from './terrain-material.js?v=painted-20261114-r2';
+import { TerrainMaterials } from './terrain-material.js?v=groundcover-0192';
 
 export function buildAuthoredRoad(world, road) {
   const layout = world.area.layout;
@@ -38,7 +38,7 @@ export function buildAuthoredRoad(world, road) {
   const material = world.terrainMaterials.material(Array.isArray(source) ? source[0] : source,'path_strip',{path:true});
   const mesh = attach(world,geometry,material,'Authored road','road');
   mesh.receiveShadow = true;
-  return {mesh,samples};
+  return { mesh, samples, width: road.width };
 }
 
 function edgeNeedsSplit(layout, a, b) {
@@ -135,9 +135,9 @@ function attach(world, geometry, material, name, origin) {
   return object;
 }
 
-function authoredGroundMaterial(world, id, { path = false } = {}) {
+function authoredGroundMaterial(world, id, { path = false, groundcover = false } = {}) {
   const source = world.meshyParts(id).parts[0].material;
-  return world.terrainMaterials.material(Array.isArray(source) ? source[0] : source, id, { path });
+  return world.terrainMaterials.material(Array.isArray(source) ? source[0] : source, id, { path, groundcover });
 }
 
 export function buildAuthoredOcean(world) {
@@ -175,7 +175,7 @@ export function buildAuthoredGround(world) {
   // biome shader/material from the existing Meshy source.
   const terrain = world.meshyTerrainId();
   world.terrainMaterials ??= new TerrainMaterials(world);
-  const ground = authoredGroundMaterial(world, terrain);
+  const ground = authoredGroundMaterial(world, terrain, { groundcover: true });
   world.ground = attach(world, surfaceGeometry(outline, holes, height, layout), ground, 'Authored ground', 'ground');
   attach(world, shorelineGeometry(outline, height, 2.8, layout), world.materials.get('cliff'), 'Outer bank', 'bank');
 
@@ -253,6 +253,7 @@ export function buildAuthoredLandscape(world) {
   }
   const biomeTrees = world.area.id === 'briarwood' ? 114 : world.area.id === 'sunfields' ? 24 :
     world.biome === 'marsh' ? 60 : world.biome === 'village' ? 60 : 44;
+  // Keep the seeded rock and crop transforms from the shipped layouts.
   const wanted = [['tree', biomeTrees, 4], ['grass', 410, .8], ['rock', 112, 1.8]];
   const forests = layout.groves || [];
   for (const [slot, quantity, margin] of wanted) {
@@ -294,6 +295,7 @@ export function buildAuthoredLandscape(world) {
       emit(isRock ? 'rock' : 'grass', x, z, isRock ? .3 + world.rng() * .32 : .39 + world.rng() * .4, world.rng() * 6.28);
     }
   }
-  for (const [slot, transforms] of groups) world.meshyInstances(slot, transforms);
+  for (const [slot, transforms] of groups) if (slot !== 'grass') world.meshyInstances(slot, transforms);
+  world.groundcover.build(world.areaGroup, { props: groups });
   world.buildAtmosphere();
 }

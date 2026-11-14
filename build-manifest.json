@@ -1,6 +1,6 @@
 {
   "id": "ashen-oath",
-  "version": "0.19.1-demo",
+  "version": "0.19.2-demo",
   "releaseStatus": "demo",
   "demo": true,
   "posterArtRevision": {
@@ -2121,7 +2121,7 @@
     "status": "DESIGN_ESTIMATE_NOT_MEASURED"
   },
   "platform": "WebGL2",
-  "builtAt": "2026-11-14T14:09:44.683Z",
+  "builtAt": "2026-11-14T15:01:36.752Z",
   "files": [
     {
       "path": "act1.css",
@@ -2130,8 +2130,8 @@
     },
     {
       "path": "act1.html",
-      "bytes": 1533,
-      "sha256": "b95c8968f80bc25bd4002bc8c73f1599d81006b23032e67285dc131e1ffb92c6"
+      "bytes": 1532,
+      "sha256": "231d47115545284659f757b0451c608660e4e9ae5f2e4320e620c2899cf8be53"
     },
     {
       "path": "assets/act1/animation/animation-library.json",
@@ -3035,8 +3035,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 1533,
-      "sha256": "b95c8968f80bc25bd4002bc8c73f1599d81006b23032e67285dc131e1ffb92c6"
+      "bytes": 1532,
+      "sha256": "231d47115545284659f757b0451c608660e4e9ae5f2e4320e620c2899cf8be53"
     },
     {
       "path": "interface-windows.css",
@@ -3095,8 +3095,8 @@
     },
     {
       "path": "src/act1/authored-landscape.js",
-      "bytes": 15144,
-      "sha256": "5b5440ff37a50c27879bccadf03810ee31caff37977b74c908c442cd4eb60d72"
+      "bytes": 15377,
+      "sha256": "e3d6cf7289d0dd5d7f93129a17a6dfc13b23f26003e0c05e432d4bd0d2b644ac"
     },
     {
       "path": "src/act1/battle-stage.js",
@@ -3179,6 +3179,16 @@
       "sha256": "4c007c87d438e72f1e28747cece1f972013dc80622fbd625b2d33cc111d65647"
     },
     {
+      "path": "src/act1/groundcover-plants.js",
+      "bytes": 6522,
+      "sha256": "24f3d77b12a1ceae487e220d4c505cd675a478056b253acb7120c2c473e12b29"
+    },
+    {
+      "path": "src/act1/groundcover.js",
+      "bytes": 17727,
+      "sha256": "98806ebc445492f6e251ea6ce935c59e68860249e675b780f2db6d60a59522a3"
+    },
+    {
       "path": "src/act1/hero-abilities.js",
       "bytes": 3498,
       "sha256": "26a484f633b2be3319b462997a0a2275c96b353f7f3777375e99fed2eaf57f3d"
@@ -3215,13 +3225,13 @@
     },
     {
       "path": "src/act1/main.js",
-      "bytes": 106785,
-      "sha256": "bf9bd95b9766ce70b6c47a7c06340703dd203033a04b594be9fe700da4bbf63a"
+      "bytes": 106784,
+      "sha256": "8e8430ab0de3a156a5c309fd5c65901bb256fd8ed9033e4b60c5f900d9e2e408"
     },
     {
       "path": "src/act1/meshy-world.js",
-      "bytes": 40257,
-      "sha256": "1e1d0c019ab051e69bda516767c55ba3eadfaa02d5a2a56664f1e9f463acd628"
+      "bytes": 40145,
+      "sha256": "a9cdba10cb71e7c2c70fceb1bd2d2d0407b3e4f7238181c7fffff2c9cbfa6694"
     },
     {
       "path": "src/act1/minimap.js",
@@ -3325,8 +3335,8 @@
     },
     {
       "path": "src/act1/terrain-material.js",
-      "bytes": 11405,
-      "sha256": "615aea88fc7c7d19eb9a67caf7ac2bc0a346be0d3df47221c110c38609d898bf"
+      "bytes": 12102,
+      "sha256": "01d0da1d0366d97cbf83bef320b8bf2cc609d48bfec2525dd425b39e0c319a63"
     },
     {
       "path": "src/act1/terrain-sampling.js",
@@ -3345,13 +3355,13 @@
     },
     {
       "path": "src/act1/water-fire.js",
-      "bytes": 15793,
-      "sha256": "3dde9eda93448545882265199fd196ba04db6ac1c14096a5e57b4e4e22e5e32a"
+      "bytes": 15798,
+      "sha256": "214645726c40212649e5478aece24d70c25d6243e908fc4c8ed8e2c7d8d1fb7a"
     },
     {
       "path": "src/act1/world.js",
-      "bytes": 104644,
-      "sha256": "0c94c4fe26d2691a819fd6b9fa4dd0f274346f9e96194068edf9a251d1593cda"
+      "bytes": 104892,
+      "sha256": "538cf5f76dd816a6f7f719915664d682c1d14db892beadeeb951fd991ace5beb"
     },
     {
       "path": "src/act1/writer-session.js",
@@ -3491,5 +3501,24 @@
         "triangles": 10989
       }
     ]
+  },
+  "groundcoverRevision": {
+    "id": "groundcover-0192",
+    "baseCommit": "564867bff5a1ec12dfc0818d5f45c20434440a4f",
+    "areaProfiles": 9,
+    "surfaces": [
+      "exploration",
+      "combat"
+    ],
+    "plants": [
+      "grass blades",
+      "plantain",
+      "ferns",
+      "reeds",
+      "wildflowers"
+    ],
+    "rendering": "Instanced opaque leaves, frustum culled and streamed by spatial batches, distance falloff and a lighter quality tier.",
+    "accessibility": "Reduced Motion freezes grass and disables bending around the party.",
+    "saveSchema": 2
   }
 }

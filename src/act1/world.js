@@ -1,6 +1,6 @@
 import {installRefresh} from './graphics-refresh.js?v=forged-meshy-0191';
-import {installMeshyWorld} from './meshy-world.js?v=forged-meshy-0191';
-import {WorldElements,installWorldElements} from './water-fire.js?v=forged-meshy-0191';
+import {installMeshyWorld} from './meshy-world.js?v=groundcover-0192';
+import {WorldElements,installWorldElements} from './water-fire.js?v=groundcover-0192';
 import {MagicVfx} from './magic-vfx.js?v=forged-019';
 import {advancePaintedPose, orientPaintedActors, paintedActionAge, resetPaintedPose} from './painted-motion.js?v=painted-20261114-r2';
 import {CharacterAnimationLibrary} from './character-animation.js?v=forged-meshy-0191';
@@ -18,8 +18,9 @@ import { walkable } from './model.js?v=forged-meshy-0191';
 import { BattleLayoutCache } from './ui-framing.js?v=0.16.0-demo';
 import { paintGildedLine } from './bitmap.js?v=painted-20261114-r2';
 
-import { buildAuthoredRoad } from './authored-landscape.js?v=forged-019';
+import { buildAuthoredRoad } from './authored-landscape.js?v=groundcover-0192';
 import { bridgeAt, bridgeHeight, nearestLand, terrainElevation } from './area-geometry.js?v=rivers-0181';
+import { Groundcover } from './groundcover.js?v=groundcover-0192';
 
 const UP = new T.Vector3(0, 1, 0);
 const TAU = Math.PI * 2;
@@ -109,6 +110,7 @@ export class World {
     const rim = new T.DirectionalLight(0x9abec6, 1.15);
     rim.position.set(16, 14, -25);
     this.scene.add(rim);
+    this.groundcover = new Groundcover(this);
     this.areaGroup = new T.Group();
     this.actorGroup = new T.Group();
     this.fxGroup = new T.Group();
@@ -1637,6 +1639,7 @@ export class World {
     orientPaintedActors(this.actors.values(), this.activeCamera);
     this.magicVfx?.update(animationDelta);
     this.worldElements?.update();
+    this.groundcover.update(inBattle, animationDelta);
     this.resolveCombatHover();
     this.renderer.render(this.scene, this.activeCamera);
     this.enteringBattle = false;
@@ -1761,6 +1764,7 @@ export class World {
     this.browserPerformance?.resetTiming();
     this.magicVfx?.clear();
     this.worldElements?.clearArea();
+    this.groundcover.clear('surface');
     this.partyTrail=null;this.motionContext=null;this.combatSelection={};
     this.clearBattleStage();
     this.areaGroup.visible = true;
@@ -1788,6 +1792,7 @@ export class World {
     this.layoutMutationObserver?.disconnect();this.layoutResizeObserver?.disconnect();
     globalThis.removeEventListener?.('resize', this.resizeHandler);
     this.clearArea();
+    this.groundcover.dispose();
     this.worldElements?.dispose();
     this.magicVfx?.dispose();
     this.characterAnimations?.dispose();
