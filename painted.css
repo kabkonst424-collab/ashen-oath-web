@@ -4,11 +4,11 @@
   --black: #102832;
   --paint-line: #a87c42;
   --paint-panel: #112b34;
-  --paint-frame: url("assets/act1/painted/ui-frame.webp");
+  --paint-frame: url("assets/act1/painted/ui-frame.webp?v=painted-20261114-r2");
 }
 
 #actMenu {
-  background: #24394a url("assets/act1/painted/menu.webp") center / cover no-repeat;
+  background: #24394a url("assets/act1/painted/menu.webp?v=painted-20261114-r2") center / cover no-repeat;
   padding: max(14px, var(--safe-top)) max(4vw, var(--safe-right)) max(14px, var(--safe-bottom)) max(4vw, var(--safe-left));
 }
 
@@ -67,9 +67,9 @@
 .window-disclosure, .item-detail, .window-choice-card, .ui100-summary { background-color: #19343d; border-color: #8d7651; }
 .item-slot.drag-over { background-color: #37675a; }
 .modal-header { background: #142e38fa; }
-.sprite.portraits { background-image: url("assets/act1/painted/portraits.webp"); border-color: #b89a63; }
-.sprite.icons { background-image: url("assets/act1/painted/items.webp"); }
-.combat-icon { background-image: url("assets/act1/painted/actions.webp"); }
+.sprite.portraits { background-image: url("assets/act1/painted/portraits.webp?v=painted-20261114-r2"); border-color: #b89a63; }
+.sprite.icons { background-image: url("assets/act1/painted/items.webp?v=painted-20261114-r2"); }
+.combat-icon { background-image: url("assets/act1/painted/actions.webp?v=painted-20261114-r2"); }
 .battle-panel, #actHud[data-mode="battle"] .battle-panel { background-color: var(--paint-panel); }
 .turn-order { height: 70px; }
 .turn-entry {

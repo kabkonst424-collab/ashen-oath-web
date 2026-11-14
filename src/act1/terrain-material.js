@@ -2,7 +2,17 @@ import * as T from '../../assets/vendor/three.module.js';
 import {safeAtlasDomain,TERRAIN_GLSL,ATLAS_LINEAR_LUMINANCE} from './terrain-sampling.js?v=0.16.0-demo';
 
 // Three-support stochastic atlas sampling; bounded luminance compensation, not full histogram synthesis.
-// Reuse each embedded Meshy texture; material variants never copy its pixels.
+// Paint the ground with one shared atlas. Source materials remain available for tools.
+const PAINTED_DOMAINS = Object.freeze({
+  terrain_village: [0, .5, .5, .5], terrain_forest: [.5, .5, .5, .5],
+  terrain_marsh: [0, 0, .5, .5], terrain_ruin: [.5, 0, .5, .5],
+  path_strip: [0, .5, .5, .5],
+});
+const PAINTED_LUMA = Object.freeze({
+  terrain_village: .183619, terrain_forest: .109988, terrain_marsh: .106486,
+  terrain_ruin: .316303, path_strip: .183619,
+});
+const PAINTED_INSET = 4 / 1024;
 const BIOMES = Object.freeze({
   terrain_village: { scale: .15, macro: .13, roughness: .04 },
   terrain_forest: { scale: .56, macro: .19, roughness: .06 },
@@ -62,11 +72,25 @@ export class TerrainMaterials {
     const key=`${source.uuid}:${id}:${path?'path':'ground'}`;
     if(this.cache.has(key))return this.cache.get(key);
     const settings=BIOMES[id]||BIOMES.terrain_ruin,material=source.clone();
-    for(const key of ['map','normalMap','roughnessMap','metalnessMap','aoMap'])material[key]=this._sampler(source[key]);
-    const uniforms={terrainMean:{value:ATLAS_LINEAR_LUMINANCE[id]??ATLAS_LINEAR_LUMINANCE.terrain_ruin},terrainRect:{value:new T.Vector4(...safeAtlasDomain(id))},terrainScale:{value:settings.scale},terrainMacro:{value:settings.macro},terrainDetail:{value:this.qualityLevel==='low'?0:1},terrainRoughness:{value:settings.roughness}};
+    const painted = this.world.paintedTerrain;
+    const bindings = ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap'];
+    const sourceTexture = key => painted ? (key === 'map' ? painted : null) : source[key];
+    for(const key of bindings) material[key]=this._sampler(sourceTexture(key));
+    let domain = safeAtlasDomain(id), mean = ATLAS_LINEAR_LUMINANCE[id] ?? ATLAS_LINEAR_LUMINANCE.terrain_ruin;
+    if (painted) {
+      const [x, y, w, h] = PAINTED_DOMAINS[id] || PAINTED_DOMAINS.terrain_ruin;
+      const inset = PAINTED_INSET;
+      domain = [x + inset, y + inset, w - 2 * inset, h - 2 * inset];
+      mean = PAINTED_LUMA[id] ?? PAINTED_LUMA.terrain_ruin;
+      material.color.set(path ? 0xf0cf99 : id === 'terrain_ruin' ? 0xede7de : 0xffffff);
+      material.roughness = .97;
+      material.metalness = 0;
+    }
+    const scale = painted && !path ? (id === 'terrain_forest' ? .23 : settings.scale * 1.13) : settings.scale;
+    const uniforms={terrainMean:{value:mean},terrainRect:{value:new T.Vector4(...domain)},terrainScale:{value:scale},terrainMacro:{value:settings.macro},terrainDetail:{value:this.qualityLevel==='low'?0:1},terrainRoughness:{value:settings.roughness}};
     material.name=`${source.name||'Meshy'}_continuous_${id}`;
-    material.userData={...material.userData,terrainSource:source.uuid,terrainSampling:'world XZ; 3 continuous stochastic supports; verified atlas island; co-transformed PBR/gradients/normals; original embedded pixels'};
-    material.defines={...material.defines,...(source.aoMap&&source.aoMap===source.roughnessMap&&source.aoMap===source.metalnessMap?{TERRAIN_AO_ORM:1}:{}),...(source.roughnessMap&&source.roughnessMap===source.metalnessMap?{TERRAIN_SHARED_ORM:1}:{}),...(path?{TERRAIN_PATH:1}:{})};
+    material.userData={...material.userData,terrainSource:source.uuid,terrainSampling:painted?'ImageGen atlas; world XZ; 3 mirrored stochastic samples':'Original embedded PBR; world XZ; 3 continuous stochastic samples'};
+    material.defines={...material.defines,...(material.aoMap&&material.aoMap===material.roughnessMap&&material.aoMap===material.metalnessMap?{TERRAIN_AO_ORM:1}:{}),...(material.roughnessMap&&material.roughnessMap===material.metalnessMap?{TERRAIN_SHARED_ORM:1}:{}),...(path?{TERRAIN_PATH:1}:{})};
     material.normalScale?.multiplyScalar(.82);
     if(path){material.transparent=true;material.forceSinglePass=material.side===T.DoubleSide;material.depthWrite=false;material.alphaTest=.018;material.polygonOffset=true;material.polygonOffsetFactor=-1;material.polygonOffsetUnits=-1;}
     const upstreamCompile=source.onBeforeCompile;
@@ -88,9 +112,8 @@ export class TerrainMaterials {
       const ao=T.ShaderChunk.aomap_fragment.replace(/texture2D\(\s*aoMap,\s*vAoMapUv\s*\)/g,material.defines.TERRAIN_AO_ORM?'terrainOrmSample':'terrainSample(aoMap)');
       shader.fragmentShader=shader.fragmentShader.replace('#include <aomap_fragment>',ao);
     };
-    const bindings=['map','normalMap','roughnessMap','metalnessMap','aoMap'];
     material.onBeforeRender=(...args)=>{
-      this.syncTextures();let rebound=false;for(const key of bindings){const next=source[key]?this._sampler(source[key]):null;if(material[key]!==next){material[key]=next;rebound=true;}}
+      this.syncTextures();let rebound=false;for(const key of bindings){const next=this._sampler(sourceTexture(key));if(material[key]!==next){material[key]=next;rebound=true;}}
       if(rebound){delete material.defines.TERRAIN_SHARED_ORM;delete material.defines.TERRAIN_AO_ORM;if(material.roughnessMap&&material.roughnessMap===material.metalnessMap)material.defines.TERRAIN_SHARED_ORM=1;if(material.aoMap&&material.aoMap===material.roughnessMap&&material.aoMap===material.metalnessMap)material.defines.TERRAIN_AO_ORM=1;material.needsUpdate=true;}source.onBeforeRender?.apply(material,args);
     };
     material.customProgramCacheKey=()=>JSON.stringify(['ashen-terrain-stochastic-v3',path?'path':'ground',source.customProgramCacheKey?.()??String(upstreamCompile),!!material.defines.TERRAIN_SHARED_ORM,!!material.defines.TERRAIN_AO_ORM]);

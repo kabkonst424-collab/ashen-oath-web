@@ -1,0 +1,137 @@
+{
+  "files": [
+    {
+      "id": "painted-portraits",
+      "path": "assets/act1/painted/portraits.webp",
+      "width": 1024,
+      "height": 1024,
+      "columns": 4,
+      "rows": 4,
+      "bytes": 423130,
+      "sha256": "37ed413430c02d80a42d9f43707eacde16fe4a0ae6bdd44c420de00f2b0e285f",
+      "source": "assets/act1/portraits.png",
+      "originalSha256": "888fced25cec3d2cb2634388b09319be6510a2874baf6300752122042a3fb0cc",
+      "producer": "built-in ImageGen"
+    },
+    {
+      "id": "painted-terrain",
+      "path": "assets/act1/painted/terrain.webp",
+      "width": 1024,
+      "height": 1024,
+      "columns": 2,
+      "rows": 2,
+      "bytes": 317878,
+      "sha256": "4e29e7e9bf0740fe03daebbbf584527632f6022def6a04bcd36a618f89a85a75",
+      "source": "assets/act1/terrain-atlas.png",
+      "originalSha256": "1995dbc75635cf87f8e8ed44018bb430ec4ae430fb23a4eb42c161386036eb40",
+      "producer": "built-in ImageGen"
+    },
+    {
+      "id": "painted-ui-frame",
+      "path": "assets/act1/painted/ui-frame.webp",
+      "width": 1200,
+      "height": 385,
+      "alpha": true,
+      "borderImageSlice": 62,
+      "bytes": 28632,
+      "sha256": "e3ee004a7be3dd572affc4092c274b7fb116688d1f1b7a06f2d5c4e7cf526df4",
+      "originalSha256": "e1a6bcc3b94b18b3e6a0043025f0d5d445950d298a9f4cab75b90c72074540ca",
+      "producer": "built-in ImageGen"
+    },
+    {
+      "id": "painted-item-icons",
+      "path": "assets/act1/painted/items.webp",
+      "width": 896,
+      "height": 896,
+      "columns": 4,
+      "rows": 4,
+      "alpha": true,
+      "padding": 24,
+      "bytes": 214274,
+      "sha256": "f4c3cc8949811373a0adaa2cb5757cd5d330ec098d318fd03d800cc413cbe0ac",
+      "source": "assets/act1/item-icons.png",
+      "originalSha256": "b88aaf41c1bf3dc595453fb0639e4e4ee977635f1010bdabd21bfae407aa5c77",
+      "producer": "built-in ImageGen"
+    },
+    {
+      "id": "painted-menu",
+      "path": "assets/act1/painted/menu.webp",
+      "width": 1672,
+      "height": 941,
+      "bytes": 389132,
+      "sha256": "9b31aeeb7e3c1f820e4dda8b225a0c7b75e183f0753a4fcae719ea79c7b22967",
+      "originalSha256": "c867fb42619b82325d51ea242180f9863a499e11155bcf0f5eaa19a1f215ac18",
+      "producer": "built-in ImageGen"
+    },
+    {
+      "id": "painted-title",
+      "path": "assets/act1/painted/title.webp",
+      "width": 1000,
+      "height": 326,
+      "bytes": 164412,
+      "sha256": "12df2900d90c03b6afb0bf6a7a2d8f33ece66d26b94a8dfb57f2f00ef1e39da6",
+      "originalSha256": "8206df58eca6fb19871fa1f4ce5bc3b155888427c699e97b923afbce3f107d7e",
+      "producer": "built-in ImageGen",
+      "alpha": true
+    },
+    {
+      "id": "painted-actions",
+      "path": "assets/act1/painted/actions.webp",
+      "width": 512,
+      "height": 256,
+      "bytes": 67068,
+      "sha256": "ddaab39067ef359dd02b019fba8a30f8435a73753ab74122041d416369f0f558",
+      "originalSha256": "5859c4598c86b8bfbd18a86354c9b3bc7640488dca94a642415c7e92cc0ba2dc",
+      "producer": "built-in ImageGen",
+      "alpha": true,
+      "columns": 4,
+      "rows": 2
+    },
+    {
+      "id": "painted-flame",
+      "path": "assets/act1/painted/flame.webp",
+      "width": 640,
+      "height": 640,
+      "bytes": 140444,
+      "sha256": "622f54f0f067f47aeec1d2bf818a0e8d2adcd997ed5349548843d7778b3877c2",
+      "originalSha256": "e9548b0659965ce6462f74b7d62d44150ffc1cdf14c7566ce56e08482bf3379f",
+      "producer": "built-in ImageGen",
+      "alpha": true,
+      "columns": 5,
+      "rows": 5,
+      "frames": 25,
+      "fps": 25,
+      "frameDurationMs": 40
+    },
+    {
+      "id": "painted-materials",
+      "path": "assets/act1/painted/materials.webp",
+      "width": 512,
+      "height": 512,
+      "bytes": 21682,
+      "sha256": "28264fd3783e81aecea37d6c9c349f98db9ff297af38ad5cc3b2a0ef40308318",
+      "originalSha256": "d5d5647e89326f0febd9f6bcfba833434ee47ec6f9ba91354758662f470cfad7",
+      "producer": "built-in ImageGen",
+      "columns": 2,
+      "rows": 2,
+      "purpose": "Pigment wash atlas for active body material"
+    },
+    {
+      "id": "painted-cover",
+      "path": "assets/cover.png",
+      "width": 1200,
+      "height": 675,
+      "bytes": 1448137,
+      "sha256": "e7f492f4d6d5fc4c90316ffbe52d75bd3d9441ce5dda0910cfeda68721bbea95",
+      "originalSha256": "c867fb42619b82325d51ea242180f9863a499e11155bcf0f5eaa19a1f215ac18",
+      "producer": "built-in ImageGen",
+      "derivation": "The 0.17.0 ImageGen menu resized as a storefront poster"
+    }
+  ],
+  "animation": {
+    "characterTechnique": "Existing 3D rigs with held poses and eight camera-relative facings",
+    "campfireTechnique": "25 ImageGen raster frames aligned and spaced for runtime filtering"
+  },
+  "revision": "0.17.0-demo",
+  "generatedDate": "2026-11-14"
+}

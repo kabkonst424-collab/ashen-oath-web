@@ -75,23 +75,24 @@ export function installRefresh(World){
  // Baked creature Death clips are used directly. Humanoid reactions use an
  // additional presentation transform, leaving combat state and source clips intact.
  const animate=P.animate;P.animate=function(actor,target,angle,desired,hp,dt,snap=false){
-  animate.call(this,actor,target,angle,desired,hp,dt,snap);
+  const sampled = animate.call(this,actor,target,angle,desired,hp,dt,snap);
   // New Blender profile clips already contain coherent wing and death motion.
   // Keep only the original per-model ground/flight placement around those poses.
   if(actor.profileActions?.has(actor.current)){
    actor.clearanceLift=0;actor.fall=0;actor.wrapper.rotation.x=actor.wrapper.rotation.z=0;
    if(actor.refreshRootBaseY!=null)actor.root.position.y=actor.refreshRootBaseY;
-   return;
+   return sampled;
   }
   // The raw WingR track mirrors the already mirrored local bone a second time.
   // Invert only its animated delta, preserving its rest orientation and Death pose.
-  if(actor.wingCorrection&&actor.current!=='Death'){const {bone,rest,scratch}=actor.wingCorrection;mirrorWingDelta(bone.quaternion,rest,scratch);}
+  if(sampled!==null&&actor.wingCorrection&&actor.current!=='Death'){const {bone,rest,scratch}=actor.wingCorrection;mirrorWingDelta(bone.quaternion,rest,scratch);}
   const attack=actor.actions.Attack,phase=attack?.getClip().duration?attack.time/attack.getClip().duration:0;
   actor.refreshRootBaseY??=actor.root.position.y;
   actor.clearanceLift=hp>0?groundClearanceLift(actor.refreshVisual?.base,actor.current,phase,attack?.getEffectiveWeight()||0,actor.flightBaseline||0):0;
   actor.root.position.y=actor.refreshRootBaseY+actor.clearanceLift;
-  if(actor.actions.Death)return;
+  if(actor.actions.Death)return sampled;
   actor.fall=actor.fall||0;const fallen=hp<=0&&this.time>=(actor.deathAt||0);actor.fall=T.MathUtils.damp(actor.fall,fallen?1:0,8,dt);actor.wrapper.rotation.x=-1.48*actor.fall;if(!fallen&&!this.reducedMotion&&this.time<actor.reactionUntil)actor.wrapper.rotation.z=Math.sin((actor.reactionUntil-this.time)*18)*.10;else actor.wrapper.rotation.z=0;actor.wrapper.position.y+=actor.fall*.12;
+  return sampled;
  };
  const interactions=P.buildInteractions;
  P.buildInteractions=function(){

@@ -1,11 +1,11 @@
 import * as T from '../../assets/vendor/three.module.js';
 import { environmentalTime, fireDistanceFade, waterReadability } from './presentation-environment.js?v=0.16.0-demo';
-import { tileTerrainGeometry } from './meshy-world.js?v=0.16.0-demo';
+import { tileTerrainGeometry } from './meshy-world.js?v=painted-20261114-r2';
 
 // Presentation only. The shore stays beyond model.walkable's sqrt(.9) ellipse.
 export const SHORE = Object.freeze({radius: Math.sqrt(.9) + .018, noise: .22});
 const hash = text => [...String(text)].reduce((h,c) => Math.imul(h^c.charCodeAt(0),16777619)>>>0,2166136261);
-const tag = object => { object.userData.modelOrigin={kind:'vfx',source:'Blender campfire atlas'};return object; };
+const tag = object => { object.userData.modelOrigin={kind:'vfx',source:'Painted campfire and ambient particles'};return object; };
 const vertex = `
   uniform float clock; uniform float river;
   uniform vec2 island; uniform vec2 center; uniform float phase;
@@ -45,10 +45,11 @@ const fragment = `
     vec3 scanned=vec3(.5);if(hasSource>.5)scanned=texture2D(sourceMap,p*.055+slope*.018).rgb;
     base*=mix(vec3(1.),mix(vec3(.86),vec3(1.14),scanned),hasSource*.18);
     vec3 reflectedSky=mix(skyColor*.58,skyColor*1.12,clamp(reflect(-viewDirection,normal).y,0.,1.));
-    vec3 color=mix(base,reflectedSky,clamp(fresnel*.82,.035,.82));
+    float skyBand=mix(.19,.63,smoothstep(.28,.43,fresnel));
+    vec3 color=mix(base,reflectedSky,skyBand);
     vec3 halfVector=normalize(sunDirection+viewDirection);
     float glint=pow(max(dot(normal,halfVector),0.),160.);
-    color+=vec3(1.,.87,.60)*glint*glintStrength;
+    color+=vec3(1.,.90,.72)*smoothstep(.08,.40,glint)*glintStrength*.58;
     float front=.18+sin(clock*.87+sin(a*7.)*.45)*.16;
     float coastalFoam=(1.-smoothstep(.04,.19,abs(shore-front)))*(1.-smoothstep(.7,1.15,shore));
     coastalFoam*=smoothstep(-.72,.62,sin(dot(p,vec2(1.3,.8))+sin(dot(p,vec2(-.43,.71)))*1.8-clock*.31));
@@ -104,7 +105,7 @@ export class WorldElements {
   addFire(parent,kind){
     if(parent.userData.hasLiveFire)return;parent.userData.hasLiveFire=true;
     const w=this.world,atlas=w.magicVfx?.textures,phase=(hash(`${w.areaId}:${parent.position.toArray()}:${kind}:${this.serial++}`)%10007)/10007;
-    const root=tag(new T.Group());root.name='Blender_live_'+kind;root.position.y=kind==='brazier'?1.22:.26;parent.add(root);
+    const root=tag(new T.Group());root.name='Painted_live_'+kind;root.position.y=kind==='brazier'?1.22:.26;parent.add(root);
     const sprites=[];
     const sprite=(key,x,y,size,opacity,color,additive=false)=>{
       if(!atlas?.[key])return;
@@ -147,9 +148,9 @@ export class WorldElements {
       if(fade<=0){fire.light.visible=false;fire.light.intensity=0;for(const spark of fire.sparks)spark.material.opacity=0;continue;}
       const p=fire.phase,clock=t*(.88+p*.17)+p*8;
       for(const s of fire.sprites){
-        // Flame has a duplicated closing frame. Use its 24 unique phases so the
-        // matched endpoint does not add a repeated-frame hitch every cycle.
-        const speed=s.key==='smoke'?6:19,frame=Math.floor((clock*speed)%(s.key==='flame'?24:25));
+        const frame=s.key==='flame'
+          ? Math.floor((t+p)*25)%25
+          : Math.floor(clock*6)%25;
         s.cell.value.z=frame%5/5+s.inset;s.cell.value.w=1-(Math.floor(frame/5)+1)/5+s.inset;
         const flutter=Math.sin(clock*3.3+p*15)*.035;s.object.material.rotation=flutter;
         s.object.position.x=s.x+Math.sin(clock*1.9)*.045;

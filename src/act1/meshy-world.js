@@ -1,8 +1,9 @@
 import * as T from '../../assets/vendor/three.module.js';
 import {GLTFLoader} from '../../assets/vendor/GLTFLoader.js';
-import {BASE_MODELS} from './graphics-refresh.js?v=0.16.0-demo';
+import {BASE_MODELS} from './graphics-refresh.js?v=painted-20261114-r2';
 import {mergeGeometries} from '../../assets/vendor/BufferGeometryUtils.js';
-import {TerrainMaterials} from './terrain-material.js?v=0.16.0-demo';
+import {TerrainMaterials} from './terrain-material.js?v=painted-20261114-r2';
+import {paintMeshes} from './painted-material.js?v=painted-20261114-r2';
 import {fetchBytes} from './resource-loader.js?v=0.16.0-demo';
 
 // This module is installed after graphics-refresh. It changes presentation only;
@@ -227,7 +228,7 @@ function prepareParts(gltf,entry){
 
 
 function releaseUnadopted(gltf){const geometries=new Set(),materials=new Set(),textures=new Set();gltf?.scene?.traverse(object=>{if(!object.isMesh)return;geometries.add(object.geometry);for(const material of Array.isArray(object.material)?object.material:[object.material])if(material){materials.add(material);for(const value of Object.values(material))if(value?.isTexture)textures.add(value);}});for(const geometry of geometries)geometry.dispose();for(const material of materials)material.dispose();for(const texture of textures)texture.dispose();}
-function decodeWorldAtlas(bytes,signal){const url=URL.createObjectURL(new Blob([bytes],{type:'image/png'})),image=new Image();let completed=false;const decoding=new Promise((resolve,reject)=>{image.onload=()=>resolve(image);image.onerror=()=>reject(Error('Не удалось декодировать атлас поверхностей'));image.src=url;});return worldStage(decoding,signal).then(value=>new T.Texture(value)).then(texture=>{texture.needsUpdate=true;completed=true;return texture;}).finally(()=>{URL.revokeObjectURL(url);if(!completed){image.onload=null;image.onerror=null;image.src='';}});}
+function decodeWorldAtlas(bytes,signal){const url=URL.createObjectURL(new Blob([bytes],{type:'image/webp'})),image=new Image();let completed=false;const decoding=new Promise((resolve,reject)=>{image.onload=()=>resolve(image);image.onerror=()=>reject(Error('Не удалось декодировать атлас поверхностей'));image.src=url;});return worldStage(decoding,signal).then(value=>new T.Texture(value)).then(texture=>{texture.needsUpdate=true;completed=true;return texture;}).finally(()=>{URL.revokeObjectURL(url);if(!completed){image.onload=null;image.onerror=null;image.src='';}});}
 function worldStage(promise,signal,late=()=>{}){return new Promise((resolve,reject)=>{let settled=false;const finish=(callback,value)=>{if(settled)return false;settled=true;clearTimeout(timer);signal.removeEventListener('abort',aborted);callback(value);return true;},aborted=()=>finish(reject,signal.reason||new DOMException('World load cancelled','AbortError')),timer=setTimeout(()=>finish(reject,Object.assign(Error('Модель не завершила декодирование за 30 секунд'),{name:'TimeoutError'})),30000);signal.addEventListener('abort',aborted,{once:true});if(signal.aborted)aborted();Promise.resolve(promise).then(value=>{if(!finish(resolve,value))late(value);},error=>finish(reject,error));});}
 export function installMeshyWorld(World){
  const P=World.prototype,oldProp=P.prop,oldActor=P.createActor,oldInteractions=P.buildInteractions,oldPerimeter=P.perimeter,oldDispose=P.dispose,oldClearStage=P.clearBattleStage;
@@ -245,7 +246,8 @@ export function installMeshyWorld(World){
    if(item.key&&sha!==characters.get(item.key)?.sha256)throw new Error('Retained Meshy character hash mismatch: '+item.key);
    this.loadedAssetHashes.set(item.key||item.id,sha);
    assertActive();const gltf=await worldStage(loader.parseAsync(bytes,url.slice(0,url.lastIndexOf('/')+1)),signal,releaseUnadopted);if(signal.aborted){releaseUnadopted(gltf);throw signal.reason;}
-   gltf.scene.traverse(o=>{if(o.isMesh)o.castShadow=o.receiveShadow=true;});
+    gltf.scene.traverse(o=>{if(o.isMesh)o.castShadow=o.receiveShadow=true;});
+    if(physical && !item.id.startsWith('terrain_') && !item.id.endsWith('_strip')) paintMeshes(gltf.scene);
    this.assets[physical?'world:'+item.id:item.key]=gltf;if(physical)this.meshyLibrary.set(item.id,prepareParts(gltf,item));
    if(BASE_MODELS.includes(item.key))gltf.scene.traverse(object=>{if(object.isMesh)this.meshyCharacterGeometry.set(object.geometry,{kind:'meshy-character',base:item.key,source:'assets/models/'+item.file,sourceSha256:sha});});
    if(item.key==='refreshProps')this.exemptWeaponSourceSha256=sha;
@@ -253,9 +255,21 @@ export function installMeshyWorld(World){
   });
   let next=0;workers=Array.from({length:4},async()=>{try{while(next<jobs.length&&!signal.aborted)await jobs[next++]();}catch(error){controller.abort(error);throw error;}});await Promise.all(workers);assertActive();
   Object.assign(this.assets,{hero:this.assets.alar_nocape,husk:this.assets.ash_husk,acolyte:this.assets.ember_acolyte,sentinel:this.assets.radan_nocape,boss:this.assets.bellkeeper});
-  // The old atlas remains a material dependency for UI helpers only. All physical
-  // surface meshes below use their own embedded Meshy PBR materials.
-  const atlas=await decodeWorldAtlas(await request(new URL('../../assets/act1/terrain-atlas.png',import.meta.url).href),signal);try{assertActive();}catch(error){atlas.dispose();throw error;}this.atlas=atlas;this.atlas.colorSpace=T.SRGBColorSpace;
+   const artURL = new URL('../../assets/act1/painted/', import.meta.url);
+   const [terrainBytes, pigmentBytes] = await Promise.all(
+    ['terrain.webp', 'materials.webp'].map(file => request(new URL(file + '?v=painted-20261114-r2', artURL).href))
+   );
+   const atlas = await decodeWorldAtlas(terrainBytes, signal);
+   try { assertActive(); } catch (error) { atlas.dispose(); throw error; }
+   atlas.colorSpace = T.SRGBColorSpace;
+   this.atlas = atlas;
+   this.paintedTerrain = atlas;
+   const pigments = await decodeWorldAtlas(pigmentBytes, signal);
+   try { assertActive(); } catch (error) { pigments.dispose(); throw error; }
+   pigments.colorSpace = T.SRGBColorSpace;
+   pigments.generateMipmaps = false;
+   pigments.minFilter = pigments.magFilter = T.LinearFilter;
+   this.paintedPigments = pigments;
   this.makeMaterials();this.loaded=true;onProgress?.('Мир Meshy готов');return this;
   }catch(error){controller.abort(error);await Promise.allSettled(workers);if(this.meshyLoadController===controller){this.loaded=false;try{this.dispose();}catch(disposeError){console.warn('Partial world cleanup:',disposeError);}}throw error;}
  };
@@ -273,7 +287,18 @@ export function installMeshyWorld(World){
   const object=this.meshyProp(id,parent,position,scale);if(name==='Book')object.rotation.y=Math.PI;return object;
  };
  P.module=function(name,x,z,scale=1,angle=0,parent=this.areaGroup){const group=this.prop(name,parent,[x,this.height(x,z),z],scale);group.rotation.y=angle;return group;};
- P.createActor=function(...args){const actor=oldActor.apply(this,args);tagKnownCharacterMeshes(actor.root,this.meshyCharacterGeometry);return actor;};
+ P.createActor=function(...args){
+  const cached = this.actors.get(args[0]);
+  if (cached) return cached;
+  const actor = oldActor.apply(this,args);
+  tagKnownCharacterMeshes(actor.root,this.meshyCharacterGeometry);
+  const bodyMaterials = new Set(actor.ownMaterials);
+  paintMeshes(actor.root, { character: true, pigments: this.paintedPigments }, object => {
+   const materials = Array.isArray(object.material) ? object.material : [object.material];
+   return !materials.every(material => bodyMaterials.has(material));
+  });
+  return actor;
+ };
  // Replace refresh's geometry substitutions. Only UI and temporary interaction
  // construction use these helpers; the temporary physical nodes are removed below.
  P.geometry=function(key,factory){if(!this.geometries.has(key)){const geometry=factory();geometry.userData.runtimeKey=key;this.geometries.set(key,geometry);}return this.geometries.get(key);};

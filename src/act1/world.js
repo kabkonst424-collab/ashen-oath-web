@@ -1,7 +1,8 @@
-import {installRefresh} from './graphics-refresh.js?v=0.16.0-demo';
-import {installMeshyWorld} from './meshy-world.js?v=0.16.0-demo';
-import {WorldElements,installWorldElements} from './water-fire.js?v=0.16.0-demo';
-import {MagicVfx} from './magic-vfx.js?v=0.16.0-demo';
+import {installRefresh} from './graphics-refresh.js?v=painted-20261114-r2';
+import {installMeshyWorld} from './meshy-world.js?v=painted-20261114-r2';
+import {WorldElements,installWorldElements} from './water-fire.js?v=painted-20261114-r2';
+import {MagicVfx} from './magic-vfx.js?v=painted-20261114-r2';
+import {advancePaintedPose, orientPaintedActors, paintedActionAge, resetPaintedPose} from './painted-motion.js?v=painted-20261114-r2';
 import {CharacterAnimationLibrary} from './character-animation.js?v=0.16.0-demo';
 import {installBrowserPerformance} from './browser-performance.js?v=0.16.0-demo';
 import * as T from '../../assets/vendor/three.module.js';
@@ -15,16 +16,16 @@ import { reactionPhase, contactReaction, transitionBlend, hasUnsettledDeath } fr
 import { PartyTrail, loopTiming, COMBAT_MOTION, combatPlaybackRate } from './party-motion.js?v=0.16.0-demo';
 import { walkable } from './model.js?v=0.16.0-demo';
 import { BattleLayoutCache } from './ui-framing.js?v=0.16.0-demo';
-import { paintGildedLine } from './bitmap.js?v=0.16.0-demo';
+import { paintGildedLine } from './bitmap.js?v=painted-20261114-r2';
 
 const UP = new T.Vector3(0, 1, 0);
 const TAU = Math.PI * 2;
 const MODEL_NAMES = ['hero', 'husk', 'acolyte', 'sentinel', 'boss', 'environment'];
 const PALETTES = {
-  village: { tile: 0, sky: 0x526367, fog: 0x617175, foliage: 0x536b42, earth: 0x77735f, light: 0xffe3b6 },
-  forest: { tile: 1, sky: 0x344e4b, fog: 0x49615b, foliage: 0x395d43, earth: 0x63674d, light: 0xdde8bf },
-  marsh: { tile: 2, sky: 0x3c5253, fog: 0x596e69, foliage: 0x526449, earth: 0x646b57, light: 0xd1ddbd },
-  abbey: { tile: 3, sky: 0x41484e, fog: 0x555d65, foliage: 0x515744, earth: 0x73746c, light: 0xf8d6a0 },
+  village: { tile: 0, sky: 0x9abeb7, fog: 0x92b0ac, foliage: 0x627948, earth: 0x79745e, light: 0xffe1aa },
+  forest: { tile: 1, sky: 0x668d81, fog: 0x668579, foliage: 0x486347, earth: 0x776c53, light: 0xffedc7 },
+  marsh: { tile: 2, sky: 0x79958e, fog: 0x71928b, foliage: 0x64794d, earth: 0x656e56, light: 0xe4edc2 },
+  abbey: { tile: 3, sky: 0x778c9c, fog: 0x7e9199, foliage: 0x536250, earth: 0x6a665c, light: 0xffe1b8 },
 };
 // Friendly silhouettes reuse the original armored / robed GLB families.
 const ROLE_LOOKS = {
@@ -82,7 +83,7 @@ export class World {
     this.renderer.shadowMap.type = T.PCFShadowMap;
     this.renderer.outputColorSpace = T.SRGBColorSpace;
     this.renderer.toneMapping = T.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.22;
+    this.renderer.toneMappingExposure = 1.11;
     this.scene = new T.Scene();
     this.scene.background = new T.Color(0x435451);
     this.scene.fog = new T.FogExp2(0x546660, 0.012);
@@ -1076,16 +1077,21 @@ export class World {
       const action=actor.actions[actor.current],timing=loopTiming(actor.id,actor.current,action.getClip().duration,this.time,actor.motionSpeed||0);
       action.setEffectiveTimeScale(timing.rate);
     }
-    actor.mixer.update(dt);
-    if (actor.current === 'Hit' && Number.isFinite(actor.reactionAt)) {
+    const sampleTime = advancePaintedPose(actor, dt, this.time);
+    if (sampleTime !== null && actor.current === 'Hit' && Number.isFinite(actor.reactionAt)) {
       const action = actor.actions.Hit;
-      if (action?.getClip) { action.time = reactionPhase(this.time, actor.reactionAt, COMBAT_MOTION.reaction) * action.getClip().duration; actor.mixer.update(0); }
+      if (action?.getClip) { action.time = reactionPhase(sampleTime, actor.reactionAt, COMBAT_MOTION.reaction) * action.getClip().duration; actor.mixer.update(0); }
     }
-    if (!dying && actor.presentationTiming && actor.current === actor.pulseAnimation && this.time <= actor.pulseUntil) {
+    if (sampleTime !== null && !dying && actor.presentationTiming && actor.current === actor.pulseAnimation && sampleTime <= actor.pulseUntil) {
       const action = actor.actions[actor.current];
-      if (action?.getClip) { action.time = actionClipPhase(this.time - actor.actionAt, actor.presentationTiming) * action.getClip().duration; actor.mixer.update(0); }
+      if (action?.getClip) {
+        const age = paintedActionAge(sampleTime, actor.actionAt, actor.presentationTiming);
+        action.time = actionClipPhase(age, actor.presentationTiming) * action.getClip().duration;
+        actor.mixer.update(0);
+      }
     }
     actor.lastHp = hp;
+    return sampleTime;
   }
 
   constrainFollower(position) {
@@ -1476,7 +1482,7 @@ export class World {
 
   presentationPending() { return this.cues.length > 0 || this.time < (this.timeline || 0) + COMBAT_MOTION.finishPad || !!(this.visualBattle && !this.state?.battle); }
 
-  clearPresentation() { this.pendingCombatHover=null;this.hoverCombatTarget=null;this.magicVfx?.clear(); this.browserPerformance?.resetTiming(); this.partyTrail=null;this.motionContext=null;this.combatSelection={};this.pendingReviveActors=new Set();this.cues.length = 0; this.timeline = this.time - 1; this.lastActionStart = 0; this.previousEvents = null; this.visualBattle = null; this.visualBattleSource = null; for (const actor of this.actors.values()) { actor.pulseUntil = 0; actor.lungeUntil = 0; actor.actionTargetId = null; actor.deathFacingYaw = null; actor.deathPosition=null;actor.restoredCorpse=false;actor.reactionAt=null; actor.reactionUntil = 0; actor.deathAt = 0; actor.clearanceLift=0; if(actor.refreshRootBaseY!=null)actor.root.position.y=actor.refreshRootBaseY; } for (const effect of this.effects) { effect.mesh.material.dispose(); this.fxGroup.remove(effect.mesh); } this.effects.length = 0; }
+  clearPresentation() { this.pendingCombatHover=null;this.hoverCombatTarget=null;this.magicVfx?.clear(); this.browserPerformance?.resetTiming(); this.partyTrail=null;this.motionContext=null;this.combatSelection={};this.pendingReviveActors=new Set();this.cues.length = 0; this.timeline = this.time - 1; this.lastActionStart = 0; this.previousEvents = null; this.visualBattle = null; this.visualBattleSource = null; for (const actor of this.actors.values()) { resetPaintedPose(actor); actor.pulseUntil = 0; actor.lungeUntil = 0; actor.actionTargetId = null; actor.deathFacingYaw = null; actor.deathPosition=null;actor.restoredCorpse=false;actor.reactionAt=null; actor.reactionUntil = 0; actor.deathAt = 0; actor.clearanceLift=0; if(actor.refreshRootBaseY!=null)actor.root.position.y=actor.refreshRootBaseY; } for (const effect of this.effects) { effect.mesh.material.dispose(); this.fxGroup.remove(effect.mesh); } this.effects.length = 0; }
 
   render(state, dt = 0) {
     if (this.disposed || !this.loaded || !state) return;
@@ -1522,10 +1528,9 @@ export class World {
     this.playCues();
     for (const [id, actor] of this.actors) if ((id.startsWith('npc:') || id.startsWith('encounter:')) && actor.wrapper.visible) {
       const actorDelta = this.browserPerformance?.shouldUpdateActor(actor, animationDelta, { critical: false }) ?? animationDelta;
-      if (actorDelta > 0) actor.mixer.update(actorDelta);
+      advancePaintedPose(actor, actorDelta, this.time);
     }
     this.updateEffects(animationDelta);
-    this.magicVfx?.update(animationDelta);
     this.updateAtmosphere(state, dt);
     const inBattle = !!presentation.battle;
     const destination = inBattle ? this.battleCenter : point(state.position || state.hero);
@@ -1597,6 +1602,8 @@ export class World {
     this.sun.target.position.copy(this.focus);
     this.sun.target.updateMatrixWorld();
     this.activeCamera.updateMatrixWorld();
+    orientPaintedActors(this.actors.values(), this.activeCamera);
+    this.magicVfx?.update(animationDelta);
     this.worldElements?.update();
     this.resolveCombatHover();
     this.renderer.render(this.scene, this.activeCamera);
@@ -1706,6 +1713,7 @@ export class World {
   setQuality(value) { this.quality(value); return this; }
 
   destroyActor(actor) {
+    resetPaintedPose(actor);
     this.magicVfx?.retireActor?.(actor);
     actor.mixer.stopAllAction();
     actor.mixer.uncacheRoot(actor.root);
@@ -1768,6 +1776,7 @@ export class World {
     for (const material of materials) material.dispose();
     for (const texture of textures) texture.dispose();
     this.atlas?.dispose();
+    this.paintedPigments?.dispose();
     this.sun.shadow.map?.dispose();
     this.renderer.renderLists.dispose();
     this.renderer.dispose();

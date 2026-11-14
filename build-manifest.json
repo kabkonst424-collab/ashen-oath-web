@@ -2120,7 +2120,7 @@
     "status": "DESIGN_ESTIMATE_NOT_MEASURED"
   },
   "platform": "WebGL2",
-  "builtAt": "2026-11-14T10:17:37.725Z",
+  "builtAt": "2026-11-14T11:24:00.605Z",
   "files": [
     {
       "path": "act1.css",
@@ -2129,8 +2129,8 @@
     },
     {
       "path": "act1.html",
-      "bytes": 1489,
-      "sha256": "c00eb02c1b866c4d3e8f5d08430dae8ee99502c6e6f659f311344b7110510eae"
+      "bytes": 1503,
+      "sha256": "bf45e1d91804cefb210ed77cf52a9af4d9af25b00911f247ad2612798d590e9c"
     },
     {
       "path": "assets/act1/animation/animation-library.json",
@@ -2914,8 +2914,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 1489,
-      "sha256": "c00eb02c1b866c4d3e8f5d08430dae8ee99502c6e6f659f311344b7110510eae"
+      "bytes": 1503,
+      "sha256": "bf45e1d91804cefb210ed77cf52a9af4d9af25b00911f247ad2612798d590e9c"
     },
     {
       "path": "interface-windows.css",
@@ -2944,8 +2944,8 @@
     },
     {
       "path": "painted.css",
-      "bytes": 5701,
-      "sha256": "cac19782b2b3067e3ea544027dc9ba0a375ae57aea3a7d6f1abb9dc4cfc479ee"
+      "bytes": 5811,
+      "sha256": "3d652aebd534186ab8d8ddfb37ed161a2bf29dd13e9ef392434059ca51e1f0eb"
     },
     {
       "path": "quest-arrow.css",
@@ -3039,18 +3039,18 @@
     },
     {
       "path": "src/act1/magic-vfx.js",
-      "bytes": 51532,
-      "sha256": "899704cddea03edd8501d07d83bc3c21bbad2e04fdb663a8c628a178019faa92"
+      "bytes": 51584,
+      "sha256": "a7241523aefcbe3092dfc2d7ecdf12c6e39530969c7781d22f323000ff07830f"
     },
     {
       "path": "src/act1/main.js",
-      "bytes": 100161,
-      "sha256": "1b37356e330973bdff91d96669fe8b9cd3e17b3bf647a14fe31a106005f22158"
+      "bytes": 100189,
+      "sha256": "23130b66916c990f126558eb6b4a74343d42c5bd064700a9a3a4772b86707cb1"
     },
     {
       "path": "src/act1/meshy-world.js",
-      "bytes": 39947,
-      "sha256": "f5bf1f81f64c8c5cb786ba2740c053043aba52d738e1c5d2425fa2ef9958bd94"
+      "bytes": 39983,
+      "sha256": "c6b9943e996b771eae0e81d816515a23f1ba572e886958ba84ce5d7a25dcc86e"
     },
     {
       "path": "src/act1/minimap.js",
@@ -3159,13 +3159,13 @@
     },
     {
       "path": "src/act1/water-fire.js",
-      "bytes": 14620,
-      "sha256": "916c30a31ff894eb0763ee39bb2a7dc5f70318ce55e65a115496df80705470cb"
+      "bytes": 14623,
+      "sha256": "176ac0fbd8e31d6181ea7bd4927c12037d4781f6805b8cdae50436247d8da57d"
     },
     {
       "path": "src/act1/world.js",
-      "bytes": 102953,
-      "sha256": "7bf957d4bb5065fa545725b4b67b15ac832b5efef88e2a59adcee3239736c29e"
+      "bytes": 102971,
+      "sha256": "45b9b6a62a6d256ada13d05b95e3548223e16ed59e42143b6d818d85a1c9a57e"
     },
     {
       "path": "src/act1/writer-session.js",
@@ -3218,6 +3218,7 @@
     "artManifest": "assets/act1/painted/manifest.json",
     "artManifestSHA256": "c208bd84940a58c829b4d459c3393ee15e1e623af3ea57ab119ca1746cb0d2af",
     "staticFiles": "index.html and act1.html from repository root",
-    "releaseDateMoscow": "2026-11-14"
+    "releaseDateMoscow": "2026-11-14",
+    "assetRevision": "painted-20261114-r2"
   }
 }

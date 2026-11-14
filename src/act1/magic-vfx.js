@@ -81,7 +81,7 @@ export class MagicVfx {
   // release its Blob URL on every exit, and discard a texture arriving late.
   loadAtlasTexture(bytes, file) {
     if (this.disposed) return Promise.reject(this.controller.signal.reason);
-    const url = this.createObjectURL(new Blob([bytes], { type: 'image/png' }));
+    const url = this.createObjectURL(new Blob([bytes], { type: file.endsWith('.webp') ? 'image/webp' : 'image/png' }));
     const signal = this.controller.signal;
     return new Promise((resolve, reject) => {
       let settled = false, timer;
@@ -130,9 +130,10 @@ export class MagicVfx {
           this.atlasMeta = meta;
           await Promise.all(['flame', 'explosion', 'smoke'].map(async key => {
             try {
-              const file = meta.files?.[key];
-              if (!file || !/^[a-z0-9-]+\.png$/i.test(file)) throw new Error(`Invalid ${key} atlas path`);
-              const bytes = await fetchBytes(new URL(file, ASSET_ROOT), { ...this.requestOptions, signal: this.controller.signal });
+              const file = key === 'flame' ? 'flame.webp' : meta.files?.[key];
+              if (!file || !/^[a-z0-9-]+\.(?:png|webp)$/i.test(file)) throw new Error(`Invalid ${key} atlas path`);
+              const atlasRoot = key === 'flame' ? new URL('../painted/', ASSET_ROOT) : ASSET_ROOT;
+              const bytes = await fetchBytes(new URL(key === 'flame' ? file + '?v=painted-20261114-r2' : file, atlasRoot), { ...this.requestOptions, signal: this.controller.signal });
               if (this.disposed) return;
               const texture = await this.loadAtlasTexture(bytes, file);
               texture.colorSpace = T.SRGBColorSpace;

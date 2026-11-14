@@ -1,4 +1,4 @@
-// Every player-facing string is rasterized locally with the reference-inspired gilded style.
+// Rasterize labels in the same matte palette as the painted menu and portraits.
 const cache=new Map();
 let cacheBytes=0;
 const CACHE_BYTES=16*1024*1024,CACHE_ENTRIES=600;
@@ -40,13 +40,9 @@ export function loadTypography({timeoutMs=30000}={}){
 export function paintGildedLine(ctx,line,x,y,size,{align='left',display=true,accent=false}={}){
  ctx.font=`${display?'700':'600'} ${size}px ${display?'RiftDisplay':'RiftText'}, Georgia, serif`;
  ctx.textAlign=align;ctx.textBaseline='top';
- ctx.shadowColor=accent?'#043a40':'#070a0b';ctx.shadowBlur=display?2:1;ctx.shadowOffsetY=display?2:1;
- if(ctx.createLinearGradient){
-  const g=ctx.createLinearGradient(0,y,0,y+size);
-  for(const [stop,color] of accent?[[0,'#efffff'],[.23,'#adf6ef'],[.48,'#3e9e9b'],[.6,'#d4ffff'],[1,'#54aaa4']]:[[0,'#fff5c4'],[.23,'#ffe19c'],[.46,'#bc7a28'],[.56,'#fff1bb'],[.76,'#e9b65b'],[1,'#99642b']])g.addColorStop(stop,color);
-  ctx.fillStyle=g;
- }else ctx.fillStyle=accent?'#b4f4e9':'#f1d69a';
- if(ctx.strokeText&&size>=16){ctx.lineJoin='round';ctx.lineWidth=display?Math.max(.7,size*.065):.65;ctx.strokeStyle=display?'#392512':'#152c2b';ctx.strokeText(line,x,y);}
+ ctx.shadowColor='#0a2029b3';ctx.shadowBlur=1;ctx.shadowOffsetY=1;
+ ctx.fillStyle=accent?'#b9e7da':display?'#ffe7b6':'#f4e9d4';
+ if(ctx.strokeText&&size>=18){ctx.lineJoin='round';ctx.lineWidth=display?1.05:.65;ctx.strokeStyle='#192c32';ctx.strokeText(line,x,y);}
  ctx.fillText(line,x,y);
 }
 export function textImage(text,{width=420,size=18,color='#eadfca',align='left',bold=false}={}){
