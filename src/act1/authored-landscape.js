@@ -1,8 +1,10 @@
 import * as T from '../../assets/vendor/three.module.js';
-import { obstacleOutline, segmentDistance, walkableLayout } from './area-geometry.js?v=roads-018';
+import { bridgeAt, nearRiverBank, obstacleOutline, riverAt, riverSections, segmentDistance, walkableLayout } from './area-geometry.js?v=rivers-0181';
+import { buildRiverBridges, riverGeometry } from './river-crossings.js?v=rivers-0181';
 import { TerrainMaterials } from './terrain-material.js?v=painted-20261114-r2';
 
 export function buildAuthoredRoad(world, road) {
+  const layout = world.area.layout;
   const curve = new T.CatmullRomCurve3(road.points.map(([x,z]) => new T.Vector3(x,0,z)));
   const samples = curve.getSpacedPoints(Math.max(10, Math.ceil(curve.getLength() / 1.1)));
   const positions = [], uv = [], edges = [], indices = [];
@@ -18,7 +20,8 @@ export function buildAuthoredRoad(world, road) {
       const x = point.x - dz / length * across * width, z = point.z + dx / length * across * width;
       positions.push(x, world.height(x,z) + .12, z);
       uv.push(x / 8, z / 8);
-      edges.push(Math.max(Math.abs(across), 1 - Math.min(i, samples.length - 1 - i) * .32));
+      const covered = riverAt(layout, x, z, .25) || bridgeAt(layout, x, z, .07);
+      edges.push(covered ? 1.12 : Math.max(Math.abs(across), 1 - Math.min(i, samples.length - 1 - i) * .32));
       if (!i || !j) continue;
       const d = i * (columns + 1) + j, c = d - 1, b = d - columns - 1, a = b - 1;
       indices.push(a,b,c,b,d,c);
@@ -38,12 +41,24 @@ export function buildAuthoredRoad(world, road) {
   return {mesh,samples};
 }
 
-function surfaceGeometry(outline, holes, height) {
+function edgeNeedsSplit(layout, a, b) {
+  const length = (a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2;
+  if (length > 36) return length;
+  if (length <= 1.65 || !layout?.rivers) return 0;
+  const distance = length > 6.25 ? 3.8 : 1.35;
+  const nearBank = ([x,z]) => nearRiverBank(layout, x, z, distance);
+  return nearBank(a) || nearBank(b) || nearBank(midpoint(a,b)) ? length : 0;
+}
+
+function midpoint(a, b) {
+  return [(a[0] + b[0]) * .5, (a[1] + b[1]) * .5];
+}
+
+function surfaceGeometry(outline, holes, height, layout) {
   const vertices = [...outline, ...holes.flat()];
   const vectorize = ring => ring.map(([x, z]) => new T.Vector2(x, z));
   const faces = T.ShapeUtils.triangulateShape(vectorize(outline), holes.map(vectorize));
   const positions = [], uvs = [], indices = [], points = new Map();
-  const lengthSq = (p, q) => (p[0] - q[0]) ** 2 + (p[1] - q[1]) ** 2;
   function index(x, z) {
     const key = x.toFixed(6) + ':' + z.toFixed(6);
     if (points.has(key)) return points.get(key);
@@ -58,12 +73,12 @@ function surfaceGeometry(outline, holes, height) {
     const pending = [[a, b, c]];
     while (pending.length) {
       const [p, q, r] = pending.pop();
-      const lengths = [lengthSq(p, q), lengthSq(q, r), lengthSq(r, p)];
+      const lengths = [edgeNeedsSplit(layout, p, q), edgeNeedsSplit(layout, q, r), edgeNeedsSplit(layout, r, p)];
       const longest = Math.max(...lengths);
-      if (longest > 36) {
+      if (longest > 0) {
         const i = lengths.indexOf(longest), points = [p, q, r];
         const u = points[i], v = points[(i + 1) % 3], w = points[(i + 2) % 3];
-        const middle = [(u[0] + v[0]) * .5, (u[1] + v[1]) * .5];
+        const middle = midpoint(u, v);
         pending.push([u, middle, w], [middle, v, w]);
       } else {
         const up = (q[1] - p[1]) * (r[0] - p[0]) - (q[0] - p[0]) * (r[1] - p[1]);
@@ -83,13 +98,18 @@ function surfaceGeometry(outline, holes, height) {
   return geometry;
 }
 
-function shorelineGeometry(ring, height, drop) {
+function shorelineGeometry(ring, height, drop, layout) {
   const positions = [], indices = [];
   const samples = [];
+  function append(a, b) {
+    if (edgeNeedsSplit(layout, a, b)) {
+      const middle = midpoint(a, b);
+      append(a, middle);
+      append(middle, b);
+    } else samples.push(a);
+  }
   for (let i = 0; i < ring.length; i++) {
-    const a = ring[i], b = ring[(i + 1) % ring.length];
-    const count = 2 ** Math.max(0, Math.ceil(Math.log2(Math.hypot(a[0] - b[0], a[1] - b[1]) / 6)));
-    for (let j = 0; j < count; j++) samples.push([a[0] + (b[0] - a[0]) * j / count, a[1] + (b[1] - a[1]) * j / count]);
+    append(ring[i], ring[(i + 1) % ring.length]);
   }
   for (let i = 0; i < samples.length; i++) {
     const [x, z] = samples[i];
@@ -146,7 +166,8 @@ export function buildAuthoredOcean(world) {
 }
 
 export function buildAuthoredGround(world) {
-  const { outline, obstacles } = world.area.layout;
+  const layout = world.area.layout;
+  const { outline, obstacles } = layout;
   const pools = obstacles.filter(obstacle => obstacle.kind === 'water');
   const holes = pools.map(pool => obstacleOutline(pool, 48));
   const height = (x, z) => world.height(x, z);
@@ -155,8 +176,8 @@ export function buildAuthoredGround(world) {
   const terrain = world.meshyTerrainId();
   world.terrainMaterials ??= new TerrainMaterials(world);
   const ground = authoredGroundMaterial(world, terrain);
-  world.ground = attach(world, surfaceGeometry(outline, holes, height), ground, 'Authored ground', 'ground');
-  attach(world, shorelineGeometry(outline, height, 2.8), world.materials.get('cliff'), 'Outer bank', 'bank');
+  world.ground = attach(world, surfaceGeometry(outline, holes, height, layout), ground, 'Authored ground', 'ground');
+  attach(world, shorelineGeometry(outline, height, 2.8, layout), world.materials.get('cliff'), 'Outer bank', 'bank');
 
   const waterSource = world.meshyParts('water_strip').parts[0].material;
   const sourceMap = Array.isArray(waterSource) ? waterSource[0] : waterSource;
@@ -172,6 +193,11 @@ export function buildAuthoredGround(world) {
     const material = world.worldElements.material(sourceMap, true, pool, pool.rx, pool.rz);
     attach(world, geometry, material, 'Pool ' + index, 'water');
     attach(world, shorelineGeometry(outline, height, .6), world.materials.get('cliff'), 'Pool bank ' + index, 'bank');
+  }
+  if (layout.rivers) {
+    const material = world.worldElements.material(sourceMap, true, { x: 0, z: 0 }, world.radiusX, world.radiusZ, false, true);
+    for (const river of layout.rivers) attach(world, riverGeometry(river), material, 'River ' + river.id, 'water');
+    buildRiverBridges(world);
   }
 }
 
@@ -214,7 +240,8 @@ export function buildAuthoredLandscape(world) {
       const group = slot === 'tree' && forests.length && world.rng() < .72 ? forests[attempt % forests.length] : null;
       const x = group ? group[0] + (world.rng() * 2 - 1) * group[2] : (world.rng() * 2 - 1) * world.radiusX;
       const z = group ? group[1] + (world.rng() * 2 - 1) * group[3] : (world.rng() * 2 - 1) * world.radiusZ;
-      if (!walkableLayout(layout, x, z) || onRoad(layout.roads, x, z, margin) ||
+      if (!walkableLayout(layout, x, z) || riverAt(layout, x, z, margin) ||
+          bridgeAt(layout, x, z, -margin) || onRoad(layout.roads, x, z, margin) ||
           world.critical.some(p => Math.hypot(p.x - x, p.z - z) < margin + 2.8) ||
           layout.props.some(p => Math.hypot(x - p.x, z - p.z) < (p.scale || 1) * 1.8 + margin)) continue;
       if (slot === 'tree' && groups.get(slot)?.some(p => Math.hypot(x - p.x, z - p.z) < 3.8)) continue;
@@ -229,8 +256,22 @@ export function buildAuthoredLandscape(world) {
     for (let u = -rx; u <= rx; u += 2.5) for (let v = -rz; v <= rz; v += 1.9) {
       const a = u + (world.rng() - .5) * .6, b = v + (world.rng() - .5) * .6;
       const x = cx + a * cosine - b * sine, z = cz + a * sine + b * cosine;
-      if (walkableLayout(layout, x, z) && !onRoad(layout.roads, x, z, 1.6) &&
-          !world.critical.some(p => Math.hypot(p.x - x, p.z - z) < 3.5)) emit('wheat', x, z, .45 + world.rng() * .3, yaw);
+      if (walkableLayout(layout, x, z) && !riverAt(layout, x, z, 1.3) &&
+          !bridgeAt(layout, x, z, -1) && !onRoad(layout.roads, x, z, 1.6) &&
+          !world.critical.some(p => Math.hypot(p.x - x, p.z - z) < 3.5)) emit('wheat', x, z, .65 + world.rng() * .32, yaw);
+    }
+  }
+  const bounds = world.area.bounds;
+  for (const river of layout.rivers || []) {
+    const sections = riverSections(river, bounds.z - bounds.rz, bounds.z + bounds.rz, 2.6);
+    for (const {left, right, z} of sections) for (const side of [-1, 1]) {
+      if (world.rng() < .34) continue;
+      const x = (side < 0 ? left : right) + side * (.85 + world.rng() * 1.4);
+      if (!walkableLayout(layout, x, z) || bridgeAt(layout, x, z, -2) ||
+          onRoad(layout.roads, x, z, 1.3) || world.critical.some(p => Math.hypot(p.x - x, p.z - z) < 3.5) ||
+          layout.props.some(p => Math.hypot(p.x - x, p.z - z) < 2.2)) continue;
+      const isRock = world.rng() < .26;
+      emit(isRock ? 'rock' : 'grass', x, z, isRock ? .3 + world.rng() * .32 : .39 + world.rng() * .4, world.rng() * 6.28);
     }
   }
   for (const [slot, transforms] of groups) world.meshyInstances(slot, transforms);

@@ -2,9 +2,11 @@ const road = (width, ...points) => ({width, points});
 const obstacle = (kind, x, z, rx, rz) => ({kind, x, z, rx, rz});
 const prop = (slot, x, z, scale = 1, yaw = 0) => ({slot, x, z, scale, yaw});
 const landmark = (id, label, x, z) => ({id, label, x, z, kind:'landmark'});
+const river = (id, level, ...points) => ({id, level, points});
+const bridge = (id, label, riverId, z, width, style = 'timber') => ({id, label, riverId, z, width, style});
 
-// Coordinates are X/Z in world units. Roads join at shared points. Water pools
-// remain separate where the road crosses between them on a raised causeway.
+// Coordinates are X/Z in world units. River points are [x, z, half-width], upstream first.
+// A crossing's span is measured between the two banks at its road.
 export const AREA_LAYOUTS = {
   monastery: {
     // Two cloisters surround the collapsed nave. The eastern aisle reaches the reliquary.
@@ -136,7 +138,7 @@ export const AREA_LAYOUTS = {
     landmarks:[landmark('quarry_open_pit','Провал восьмой смены',12,-8),landmark('quarry_north_shelf','Северная полка',-13,-55),landmark('quarry_south_tracks','Южный вагонеточный путь',-27,55),landmark('quarry_freight_crane','Грузовая площадка',75,-38)]
   },
   fen: {
-    // Two staggered crossings run east through a chain of pools. Three banks host distinct loops.
+    // Two channels divide the marsh. Bridges connect the arrival road and the northern detour.
     outline:[[-96,-24],[-87,-49],[-69,-65],[-51,-75],[-29,-72],[-11,-84],[14,-86],[34,-79],[57,-86],[78,-76],[92,-56],[96,-30],[105,-11],[97,8],[101,29],[93,47],[77,63],[60,70],[45,65],[22,81],[1,84],[-17,75],[-36,91],[-61,86],[-82,72],[-94,53],[-87,31],[-100,11]],
     spawn:[-76,28],
     positions:{
@@ -149,7 +151,7 @@ export const AREA_LAYOUTS = {
     groves:[[-81,-24,12,26],[-75,60,11,15],[-3,-53,13,12],[14,53,16,19],[77,35,13,19]],
     roads:[
       road(6,[-87,22],[-76,28],[-65,21],[-53,17],[-42,17],[-27,17],[-12,16],[0,9],[9,-1],[12,-11],[26,-8],[42,-8],[58,-8],[67,-12],[74,-25],[79,-38],[86,-50]),
-      road(4.7,[-65,21],[-79,6],[-74,-9],[-74,-32],[-60,-51],[-56,-62],[-37,-65],[-14,-62],[-2,-44],[5,-29],[12,-11]),
+      road(4.7,[-65,21],[-79,6],[-74,-9],[-74,-32],[-60,-51],[-56,-63],[-43,-64],[-28,-64],[-14,-62],[-2,-44],[5,-29],[12,-11]),
       road(4.8,[-76,28],[-70,38],[-73,49],[-66,58],[-65,71],[-63,34],[-53,17]),
       road(4.7,[-12,16],[-7,37],[4,34],[12,24],[14,9],[12,-11]),
       road(4.7,[-7,37],[0,54],[5,65],[18,63],[22,51],[19,44],[16,35],[15,22],[16,9],[9,-1]),
@@ -157,20 +159,31 @@ export const AREA_LAYOUTS = {
       road(4.5,[12,-11],[15,-19],[20,-21]),
       road(4.6,[74,-25],[71,-32],[69,-41])
     ],
-    obstacles:[
+    previousObstacles:[
       obstacle('water',-43,-20,21,33),obstacle('water',-41,54,21,32),
       obstacle('water',42,-42,22,30),obstacle('water',42,25,24,29),
+    ],
+    rivers:[
+      river('fen-west',-1.03,[-53,-120,10],[-48,-86,8],[-43,-64,7.3],[-47,-40,9.5],[-39,-15,10.8],[-43,17,7.8],[-45,42,10.2],[-40,66,8.8],[-44,102,11],[-49,125,11]),
+      river('fen-east',-1.03,[53,-122,10.8],[47,-86,8.5],[40,-57,9.5],[45,-30,8.6],[42,-8,8.5],[38,18,9.8],[43,47,10.8],[40,75,9.7],[44,111,12]),
+    ],
+    bridges:[
+      bridge('fen_reed_crossing','Камышовые мостки','fen-west',17,5.9),
+      bridge('fen_north_crossing','Мост у тропы сборщиков','fen-west',-64,5.3),
+      bridge('fen_archive_crossing','Архивная переправа','fen-east',-8,6.1,'stone'),
+    ],
+    obstacles:[
       obstacle('water',-15,-26,6.5,9),obstacle('water',12,47,5,7),
       obstacle('structure',19,-34,5,4)
     ],
     props:[
-      prop('bridge',-43,17,.83,0),prop('bridge',42,-8,.8,0),prop('house',19,-34,.7,-.78),
-      prop('tree',-72,34,1.05),prop('tree',-84,-20,1),prop('tree',-52,-66,.79),
-      prop('tree',-8,-56,.85),prop('tree',-5,62,.85),prop('tree',28,64,.77),prop('tree',85,41,.76),
+      prop('house',19,-34,.7,-.78),
+      prop('tree',-72,34,1.05),prop('tree',-84,-20,1),prop('tree',-59,-70,.79),
+      prop('tree',-8,-56,.85),prop('tree',-5,62,.85),prop('tree',24,64,.77),prop('tree',85,41,.76),
       prop('grass',-62,-39,.72),prop('grass',9,56,.78),prop('grass',63,-27,.8),
-      prop('lantern',-27,19),prop('lantern',58,-9),prop('basket',-71,53,.82),prop('barrel',14,-18,.76)
+      prop('lantern',-30,20.8),prop('lantern',55,-4),prop('basket',-71,53,.82),prop('barrel',14,-18,.76)
     ],
-    landmarks:[landmark('fen_willow_bank','Ивовый берег',-70,30),landmark('fen_reed_bridge','Камышовые мостки',-43,17),landmark('fen_ferry_bank','Пристань Герда',12,-11),landmark('fen_archive_causeway','Архивная насыпь',42,-8)]
+    landmarks:[landmark('fen_willow_bank','Ивовый берег',-70,30),landmark('fen_ferry_bank','Пристань Герда',12,-11)]
   },
   archive: {
     // Ring galleries enclose a dry basin, with a long eastern annex and a quieter bindery.
@@ -208,7 +221,7 @@ export const AREA_LAYOUTS = {
     landmarks:[landmark('archive_dry_basin','Сухой бассейн',2,-5),landmark('archive_catalogue_hall','Зал согласий',-54,-16),landmark('archive_bindery','Переплётная мастерская',-28,48),landmark('archive_east_gallery','Восточная галерея',57,-34)]
   },
   sunfields: {
-    // Irrigation channels cross the crescent of fields. Raised field roads connect granary and mill.
+    // The mill river and the irrigation channel cross the fields. Field roads meet their bridges.
     outline:[[-98,-38],[-90,-59],[-75,-75],[-52,-82],[-31,-77],[-14,-89],[8,-86],[25,-79],[47,-85],[69,-75],[83,-55],[88,-34],[103,-19],[100,4],[105,26],[97,49],[91,69],[69,82],[47,79],[32,69],[10,85],[-16,84],[-36,69],[-56,74],[-76,61],[-84,38],[-90,20],[-100,-2]],
     spawn:[-76,-58],
     positions:{
@@ -222,27 +235,40 @@ export const AREA_LAYOUTS = {
     roads:[
       road(7,[-83,-59],[-76,-58],[-67,-50],[-63,-31],[-57,-17],[-57,2],[-59,11],[-52,19],[-52,34],[-41,34],[-29,34],[-20,23],[-5,11],[10,5],[22,-6],[27,-15],[37,-15],[50,-15],[57,-4],[58,17],[60,30],[68,43],[80,50],[85,60]),
       road(5,[-63,-31],[-76,-24],[-75,-12],[-69,12],[-61,34],[-52,34]),
-      road(5,[-57,-17],[-36,-20],[-26,-32],[-18,-42],[0,-48],[18,-47],[15,-29],[27,-15]),
-      road(5,[-29,34],[-18,46],[-9,57],[17,61],[37,57],[60,48],[68,43]),
+      road(5,[-57,-17],[-48,-20],[-38,-20],[-27,-20],[-26,-32],[-18,-42],[0,-48],[18,-47],[15,-29],[27,-15]),
+      road(5,[-29,34],[-18,46],[-9,57],[17,59],[25,57],[37,57],[49,57],[60,48],[68,43]),
       road(5,[50,-15],[57,-30],[68,-34],[79,-20],[74,-5],[65,4],[58,17])
     ],
-    obstacles:[
+    previousObstacles:[
       obstacle('water',-41,10,6.5,20),obstacle('water',-41,54,6.5,14),
       obstacle('water',37,-44,6.5,25),obstacle('water',37,13,6.5,24),
+    ],
+    rivers:[
+      river('mill',-.83,[-61,-172,7],[-54,-113,6.5],[-46,-80,5.8],[-48,-49,5.9],[-38,-20,5.1],[-42,8,6.3],[-41,34,5.7],[-45,58,6.7],[-40,88,7],[-47,119,7.2],[-36,177,8]),
+      river('sluice',-.88,[49,-175,6.3],[46,-114,5.7],[33,-87,5.4],[41,-60,6.2],[34,-39,5.5],[37,-15,5.4],[42,10,6.3],[35,35,5.7],[37,57,5.4],[40,89,6.5],[35,126,7.1],[42,175,7.4]),
+    ],
+    bridges:[
+      bridge('sunfields_mill_crossing','Мельничная перемычка','mill',34,6.4),
+      bridge('sunfields_granary_crossing','Амбарный мост','mill',-20,5.3),
+      bridge('sunfields_east_channel','Восточный шлюз','sluice',-15,6.4,'stone'),
+      bridge('sunfields_south_crossing','Мост у южных полей','sluice',57,5.4),
+    ],
+    obstacles:[
       obstacle('structure',-81,-2,4.5,5),obstacle('structure',-51,8,3.5,4),
       obstacle('structure',-1,-31,7,5),obstacle('structure',80,28,8,5),
       obstacle('cliff',-74,48,6,8)
     ],
     props:[
-      prop('bridge',-41,34,.72,0),prop('bridge',37,-15,.72,0),prop('house',-81,-2,.77,1.25),
-      prop('waterwheel',-48,9,.85,.5),prop('house',-1,-31,.87,-.15),prop('house',80,28,.88,1.02),
+      prop('house',-81,-2,.85,1.25),
+      prop('waterwheel',-50,8,1,0),prop('house',-1,-31,.87,-.15),prop('house',80,28,.88,1.02),
       prop('cart',-71,-42,.92,.34),prop('cart',65,51,.92,1.57),prop('rock',-74,48,3.1),
       prop('wheat',-24,-11,1),prop('wheat',-19,-9,.95),prop('wheat',-14,-7,1.1),prop('wheat',-9,-5,.95),
       prop('wheat',4,23,.95),prop('wheat',9,26,1.1),prop('wheat',14,29,1),prop('wheat',19,32,.96),
       prop('wheat',62,-48,.9),prop('wheat',67,-45,1),prop('wheat',72,-42,.95),
-      prop('banner',52,30,.72,.25),prop('tree',-62,50,.81),prop('tree',81,59,.81)
+      prop('banner',52,30,.82,.25),prop('tree',-62,50,.81),prop('tree',81,59,.81),
+      prop('lantern',-51,37.9,.95),prop('lantern',-31.8,30.4,.95)
     ],
-    landmarks:[landmark('sunfields_granary_road','Амбарный тракт',-75,-12),landmark('sunfields_mill_crossing','Мельничная перемычка',-41,34),landmark('sunfields_reaper_strip','Межи жнецов',-5,11),landmark('sunfields_east_channel','Восточный шлюз',37,-15)]
+    landmarks:[landmark('sunfields_granary_road','Амбарный тракт',-75,-12),landmark('sunfields_reaper_strip','Межи жнецов',-5,11)]
   },
   fortress: {
     // A public approach, a lower service court and an upper dam road form unequal loops.
@@ -256,22 +282,28 @@ export const AREA_LAYOUTS = {
     },
     side:{npc:[-70,-14],objective:[-65,-43],encounter:[-17,-64],reward:[15,-64]},
     roads:[
-      road(7,[-82,10],[-66,8],[-56,7],[-39,3],[-15,1],[-2,-5],[12,-19],[27,-38],[36,-52],[57,-57],[78,-56]),
+      road(7,[-82,10],[-66,8],[-56,7],[-39,3],[-15,1],[-2,-5],[12,-19],[27,-38],[36,-52],[46,-56],[61,-57],[75,-57],[78,-56]),
       road(5,[-66,8],[-70,-14],[-72,-31],[-65,-43],[-52,-33],[-30,-44],[-17,-64],[0,-69],[15,-64],[24,-55],[36,-52]),
       road(6,[-56,7],[-57,24],[-51,45],[-31,55],[-11,53],[10,49],[25,45],[32,29],[30,16],[25,4],[12,-8],[12,-19]),
       road(5,[-57,24],[-38,28],[-21,25],[-16,13],[-15,1]),
       road(4.8,[-39,3],[-42,-13],[-52,-33]),
       road(5,[-30,-44],[-18,-43],[-10,-38],[-3,-27],[12,-19])
     ],
+    previousObstacles:[
+      obstacle('water',64,-5,15,36),obstacle('water',60,43,14,11),obstacle('structure',71,-71,6,5),
+    ],
+    rivers:[
+      river('dam-spillway',-1.03,[60,-119,10],[58,-85,8.5],[61,-57,8],[65,-34,10.9],[65,-7,12.8],[62,22,10.4],[60,46,10.7],[60,66,13],[66,101,15]),
+    ],
+    bridges:[bridge('fortress_dam_bridge','Мост над водосбросом','dam-spillway',-57,7,'stone')],
     obstacles:[
-      obstacle('water',64,-5,15,36),obstacle('water',60,43,14,11),
       obstacle('structure',-3,17,10,8),obstacle('structure',12,29,9,7),
       obstacle('structure',-26,-12,9,6),obstacle('structure',-20,-28,6,6),
-      obstacle('cliff',43,-28,7,8),obstacle('structure',71,-71,6,5)
+      obstacle('cliff',43,-28,7,8),{...obstacle('structure',75,-66,4.4,3.8),introduced:2}
     ],
     props:[
       prop('wall',-7,16,1.26,.25),prop('wall',3,16,1.05,.2),prop('tower',11,29,.83),
-      prop('wall',-26,-13,1.4,.38),prop('tower',-20,-28,.88),prop('tower',71,-71,.88),prop('rock',42,-29,4.3),
+      prop('wall',-26,-13,1.4,.38),prop('tower',-20,-28,.88),prop('tower',75,-66,.82),prop('rock',42,-29,4.3),
       prop('banner',-17,6,.84),prop('banner',22,-13,.9,1.57),prop('banner',44,-55,.9,1.57),
       prop('cart',-45,31,.85,.57),prop('barrel',26,18,.94),prop('tree',-71,49,.74),prop('tree',-29,68,.82),
       prop('pillar',48,40,.9)

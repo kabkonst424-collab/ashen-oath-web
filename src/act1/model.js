@@ -1,8 +1,8 @@
-import {AREA_GEOMETRY_REVISION, legacyPosition, migratePosition, returnArrival, walkableLayout} from './area-geometry.js?v=roads-018';
+import {AREA_GEOMETRY_REVISION, legacyPosition, migratePosition, nearestLand, returnArrival, walkableLayout} from './area-geometry.js?v=rivers-0181';
 import {roleCatalog} from './hero-abilities.js';
-import * as CONTENT from './content.js?v=roads-018';
+import * as CONTENT from './content.js?v=rivers-0181';
 
-export const VERSION='0.18.0-demo-act1';
+export const VERSION='0.18.1-demo-act1';
 export const SCHEMA=2;
 export const BAG_SIZE=30;
 const list=value=>Array.isArray(value)?value:Object.values(value||{});
@@ -361,16 +361,23 @@ export function snapshot(s){const out=clone(s);out.events=[];delete out.shopId;r
 export function upgradeMapState(state) {
  if(state.mapRevision===AREA_GEOMETRY_REVISION)return state;
  const area=AREAS[state.areaId], campArea=AREAS[state.lastCamp.areaId];
- const focus=state.mode==='battle'?state.battle.encounterId:state.mode==='dialogue'?state.dialogue.npcId:null;
- state.position=migratePosition(area,state.position,focus);
- const campAnchor=campArea.legacyMap.anchors.find(a=>a.x===state.lastCamp.position.x&&a.z===state.lastCamp.position.z);
- state.lastCamp.position=migratePosition(campArea,state.lastCamp.position,campAnchor?.id);
+ if(state.mapRevision===1){
+  state.position=nearestLand(area.layout,state.position)||{...area.spawn};
+  state.lastCamp.position=nearestLand(campArea.layout,state.lastCamp.position)||{...campArea.spawn};
+ }else{
+  const focus=state.mode==='battle'?state.battle.encounterId:state.mode==='dialogue'?state.dialogue.npcId:null;
+  state.position=migratePosition(area,state.position,focus);
+  const campAnchor=campArea.legacyMap.anchors.find(a=>a.x===state.lastCamp.position.x&&a.z===state.lastCamp.position.z);
+  state.lastCamp.position=migratePosition(campArea,state.lastCamp.position,campAnchor?.id);
+ }
  state.mapRevision=AREA_GEOMETRY_REVISION;
  return state;
 }
 
 function validSavedPosition(s,areaId,position) {
- if(s.mapRevision===undefined)return legacyPosition(AREAS[areaId],position);
+ const area=AREAS[areaId];
+ if(s.mapRevision===undefined)return legacyPosition(area,position);
+ if(s.mapRevision===1)return position && walkableLayout(area.layout,position.x,position.z,{previous:true});
  return s.mapRevision===AREA_GEOMETRY_REVISION && position && walkable(areaId,position.x,position.z);
 }
 

@@ -1,7 +1,8 @@
-import { obstacleOutline } from './area-geometry.js?v=roads-018';
+import { bridgeSpans, obstacleOutline, outlineBounds, riverSections } from './area-geometry.js?v=rivers-0181';
 
 const NS = 'http://www.w3.org/2000/svg';
 const outlines = new WeakMap();
+let nextClip = 0;
 const tones = {
   water: ['#254c5c', '#79a8b0'], cliff: ['#34383b', '#8b8272'],
   structure: ['#484338', '#a19779'],
@@ -27,28 +28,60 @@ const line = (points, project) => points.map(([x, z]) => {
 
 function rings(layout) {
   if (!outlines.has(layout)) {
-    outlines.set(layout, layout.obstacles.map(obstacle => ({ kind: obstacle.kind, points: obstacleOutline(obstacle) })));
+    const { z, rz } = outlineBounds(layout.outline);
+    const polygons = layout.obstacles.map(obstacle => ({ kind: obstacle.kind, points: obstacleOutline(obstacle) }));
+    for (const river of layout.rivers || []) {
+      const banks = riverSections(river, z - rz, z + rz, 2.4);
+      polygons.push({ kind: 'water', river: river.id, points: [
+        ...banks.map(({ left, z }) => [left, z]),
+        ...banks.reverse().map(({ right, z }) => [right, z]),
+      ] });
+    }
+    outlines.set(layout, polygons);
   }
   return outlines.get(layout);
 }
 
-export function terrainShapes(layout, project) {
+export function createTerrainClip(svg) {
+  const id = 'act-area-terrain-' + ++nextClip;
+  const clip = draw(draw(svg, 'defs', {}), 'clipPath', { id });
+  const polygon = draw(clip, 'polygon', {});
+  return {
+    id,
+    update(layout, project) {
+      polygon.setAttribute('points', line(layout.outline, project));
+    },
+  };
+}
+
+export function terrainShapes(layout, project, clip) {
   if (!layout) return [];
+  if (layout.rivers) clip?.update(layout, project);
   const terrain = [['outline', 'polygon', {
     points: line(layout.outline, project), fill: '#263a32', stroke: '#ae9b69', 'stroke-width': 1.1, 'stroke-linejoin': 'round',
   }]];
-  for (const [i, shape] of rings(layout).entries()) {
-    const [fill, stroke] = tones[shape.kind] || tones.structure;
-    terrain.push(['obstacle-' + i, 'polygon', {
-      points: line(shape.points, project), fill, stroke, 'stroke-width': .7, 'data-terrain': shape.kind,
-    }]);
-  }
   for (const [i, road] of layout.roads.entries()) {
     const { scale } = project({ x: 0, z: 0 });
     terrain.push(['road-' + i, 'polyline', {
       points: line(road.points, project), stroke: '#b59862', fill: 'none',
       'stroke-width': Math.max(.65, Math.min(4, road.width * scale * .72)),
       'stroke-linejoin': 'round', 'stroke-linecap': 'round', opacity: .74, 'data-terrain': 'road',
+    }]);
+  }
+  for (const [i, shape] of rings(layout).entries()) {
+    const [fill, stroke] = tones[shape.kind] || tones.structure;
+    terrain.push([shape.river ? 'river-' + shape.river : 'obstacle-' + i, 'polygon', {
+      points: line(shape.points, project), fill, stroke, 'stroke-width': .7, 'data-terrain': shape.kind,
+      ...(shape.river && clip ? { 'clip-path': 'url(#' + clip.id + ')' } : {}),
+    }]);
+  }
+  for (const bridge of bridgeSpans(layout)) {
+    const w = bridge.width / 2;
+    terrain.push(['bridge-' + bridge.id, 'polygon', {
+      points: line([[bridge.left,bridge.z-w],[bridge.right,bridge.z-w],
+        [bridge.right,bridge.z+w],[bridge.left,bridge.z+w]], project),
+      fill: '#c99865', stroke: '#f3d8a0', 'stroke-width': .7,
+      'stroke-linejoin': 'round', 'data-terrain': 'bridge', 'aria-label': bridge.label,
     }]);
   }
   return terrain;
@@ -82,10 +115,11 @@ export function drawAreaSchematic({ area, markers, position, target, route, docu
   svg.classList.add('nav50-svg', 'act-area-schematic');
   svg.setAttribute('viewBox', '0 0 460 310');
   svg.setAttribute('role', 'img');
-  svg.setAttribute('aria-label', area.title + '. Контур области, дороги и ориентиры. Север сверху.');
+  svg.setAttribute('aria-label', area.title + '. Контур области, дороги, переправы и ориентиры. Север сверху.');
   const b = area.bounds, scale = Math.min(415 / (b.rx * 2), 270 / (b.rz * 2));
   const project = ({ x, z }) => ({ x: 230 + (x - b.x) * scale, y: 156 + (z - b.z) * scale, scale });
-  for (const [, tag, attrs] of terrainShapes(area.layout, project)) draw(svg, tag, attrs);
+  const clip = area.layout?.rivers ? createTerrainClip(svg) : null;
+  for (const [, tag, attrs] of terrainShapes(area.layout, project, clip)) draw(svg, tag, attrs, attrs['aria-label']);
   if (route?.length > 1) draw(svg, 'polyline', {
     points: line(route.map(p => [p.x, p.z]), project), fill: 'none', stroke: '#a9dfb8',
     'stroke-width': 2.1, 'stroke-dasharray': '4 3', 'stroke-linecap': 'round',

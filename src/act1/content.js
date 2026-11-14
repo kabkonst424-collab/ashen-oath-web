@@ -1,6 +1,6 @@
-import { AREA_LAYOUTS } from './area-layouts.js?v=roads-018';
-import { applyAreaLayouts } from './area-geometry.js?v=roads-018';
-import { extendRoadsContent } from './roads-content.js?v=roads-018';
+import { AREA_LAYOUTS } from './area-layouts.js?v=rivers-0181';
+import { applyAreaLayouts } from './area-geometry.js?v=rivers-0181';
+import { extendRoadsContent } from './roads-content.js?v=rivers-0181';
 
 // Ashen Oath — original first act. Immutable authored data; runtime owns all state.
 export const CONTENT_VERSION = '1.0.0';
@@ -266,7 +266,7 @@ export const AREAS = [
   },
   {
     id:'fortress',title:'Крепость медного затвора',biome:'fortress',description:'Стены повторяют изгиб старой плотины. Крепостной двор держится на арках, а за воротами виден красный купол аббатства.',radiusX:44,radiusZ:48,spawn:{x:-25,z:25},
-    exits:[exit('fortress_sunfields','sunfields','Спуститься к полям',-31,27),exit('fortress_abbey','abbey','Мост над сухим водосбросом',28,-38,['warden_key'])],
+    exits:[exit('fortress_sunfields','sunfields','Спуститься к полям',-31,27),exit('fortress_abbey','abbey','Дорога к аббатству за водосбросом',28,-38,['warden_key'])],
     npcs:[npc('dagan_gate','Даган',13,-11,15,'dagan_gate',{variants:[{requiresFlags:['warden_key'],dialogue:'dagan_after'},{requiresFlags:['warden_defeated'],dialogue:'dagan_defeated'},{requiresFlags:['gate_terms'],dialogue:'dagan_wait'}]})],
     nodes:[
       puzzle('fortress_gate_node','Затвор трёх противовесов',5,-3,'fortress_gate','Три таблички: «Плотина держится общим весом». Указатели показывают: тяжёлая клеть, пустая клеть, русло. Как открыть проход, сохранив плотину?',[["Уравнять клети, закрыть русло, поднять пешеходную створку",true],["Освободить тяжёлую клеть и раскрыть всё русло",false],["Сбросить противовесы с цепей",false]],'Пешеходная створка поднимается. Вода остаётся за главным затвором; у Дагана больше нет довода об опасности для слободы.',{requiresFlags:['gate_terms']}),

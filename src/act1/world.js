@@ -1,25 +1,25 @@
 import {installRefresh} from './graphics-refresh.js?v=roads-018';
-import {installMeshyWorld} from './meshy-world.js?v=roads-018';
-import {WorldElements,installWorldElements} from './water-fire.js?v=roads-018';
+import {installMeshyWorld} from './meshy-world.js?v=rivers-0181';
+import {WorldElements,installWorldElements} from './water-fire.js?v=rivers-0181';
 import {MagicVfx} from './magic-vfx.js?v=painted-20261114-r2';
 import {advancePaintedPose, orientPaintedActors, paintedActionAge, resetPaintedPose} from './painted-motion.js?v=painted-20261114-r2';
-import {CharacterAnimationLibrary} from './character-animation.js?v=roads-018';
+import {CharacterAnimationLibrary} from './character-animation.js?v=rivers-0181';
 import {installBrowserPerformance} from './browser-performance.js?v=0.16.0-demo';
 import * as T from '../../assets/vendor/three.module.js';
 import { GLTFLoader } from '../../assets/vendor/GLTFLoader.js';
 import { clone as cloneSkeleton } from '../../assets/vendor/SkeletonUtils.js';
-import * as Content from './content.js?v=roads-018';
+import * as Content from './content.js?v=rivers-0181';
 import { battleFormation, fitBattleCamera, facingToward, oppositionFacing, wrapFacing } from './battle-stage.js?v=0.16.0-demo';
 import { combatMotionPolicy, actionLunge } from './presentation-motion.js?v=0.16.0-demo';
 import { actionTimeline, actionClipPhase } from './presentation-timing.js?v=0.16.0-demo';
 import { reactionPhase, contactReaction, transitionBlend, hasUnsettledDeath } from './combat200-animation-policy.js?v=0.16.0-demo';
 import { PartyTrail, loopTiming, COMBAT_MOTION, combatPlaybackRate } from './party-motion.js?v=0.16.0-demo';
-import { walkable } from './model.js?v=roads-018';
+import { walkable } from './model.js?v=rivers-0181';
 import { BattleLayoutCache } from './ui-framing.js?v=0.16.0-demo';
 import { paintGildedLine } from './bitmap.js?v=painted-20261114-r2';
 
-import { buildAuthoredRoad } from './authored-landscape.js?v=roads-018';
-import { nearestLand, terrainElevation } from './area-geometry.js?v=roads-018';
+import { buildAuthoredRoad } from './authored-landscape.js?v=rivers-0181';
+import { bridgeAt, bridgeHeight, nearestLand, terrainElevation } from './area-geometry.js?v=rivers-0181';
 
 const UP = new T.Vector3(0, 1, 0);
 const TAU = Math.PI * 2;
@@ -268,6 +268,11 @@ export class World {
 
   height(x, z) {
     return terrainElevation(this.area?.layout, x, z, this.seedPhase);
+  }
+
+  walkHeight(x, z) {
+    const bridge = this.area?.layout && bridgeAt(this.area.layout, x, z, .30);
+    return bridge ? bridgeHeight(bridge, x, z, (a, b) => this.height(a, b)) : this.height(x, z);
   }
 
   loadArea(id, state) {
@@ -1105,7 +1110,8 @@ export class World {
 
   constrainFollower(position) {
     if(walkable(this.areaId,position.x,position.z))return {...position};
-    return nearestLand(this.area.layout, position, 6) || point(this.state?.position || this.area.spawn);
+    const land = nearestLand(this.area.layout, position, 6) || point(this.state?.position || this.area.spawn);
+    return {...position, ...land};
   }
 
   syncParty(state, dt, battle) {
@@ -1136,10 +1142,10 @@ export class World {
         facing = oppositionFacing('party', { x, z }, battle.enemies || [], this.battleCenter);
         animation=state.battle?.status?.[member.id]?.guard>0?'Block':'Idle';
       } else if (index) {
-        const follower=this.partyTrail.step(member.id,index,dt);
+        const follower=this.constrainFollower(this.partyTrail.step(member.id,index,dt));
         x=follower.x;z=follower.z;facing=follower.angle;animation=follower.animation;actor.motionSpeed=follower.speed;
       }
-      const target = (this.actorTarget ||= new T.Vector3()).set(x, this.height(x, z), z);
+      const target = (this.actorTarget ||= new T.Vector3()).set(x, battle ? this.height(x, z) : this.walkHeight(x, z), z);
       this.animate(actor, target, facing, animation, member.hp, dt, reset);
       if (actor.ring) {
         actor.ring.visible = !!battle && state.battle?.activeHeroId === member.id && member.hp > 0;

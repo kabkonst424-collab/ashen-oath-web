@@ -1,6 +1,6 @@
 {
   "id": "ashen-oath",
-  "version": "0.18.0-demo",
+  "version": "0.18.1-demo",
   "releaseStatus": "demo",
   "demo": true,
   "posterArtRevision": {
@@ -9,7 +9,7 @@
     "coverSHA256": "e7f492f4d6d5fc4c90316ffbe52d75bd3d9441ce5dda0910cfeda68721bbea95"
   },
   "level": "act1",
-  "graphics": "Authored Act I geometry and Diorama-style roads, painted terrain, animated 3D characters",
+  "graphics": "Authored Act I terrain, continuous flowing rivers, usable timber and stone bridges, and proportional scenery",
   "presentation": {
     "baselineAuthoredBlenderActions": 314,
     "baselineCompatibilityAliases": 45,
@@ -19,8 +19,8 @@
     "skillProfiles": 30,
     "enemyVariants": 31,
     "posesPerClip": 25,
-    "surface": "Authored terrain perimeter, banks, water cutouts and roads. Reuses ImageGen maps and existing Meshy material sources.",
-    "water": "Animated pond and shore surfaces bounded by the area plan. Authored inland surroundings.",
+    "surface": "Authored terrain perimeter, sloped river banks, standalone ponds, roads and usable bridges.",
+    "water": "Five continuous channels with directional water shading and clipped river outlines on both maps.",
     "browser": "Adaptive resolution; spatial instance chunks; shadow budgets; shared raster HUD observers",
     "poseRateHzAtNormalSpeed": 25,
     "poseIntervalMs": 40,
@@ -29,7 +29,7 @@
       "campfire": 25
     },
     "characterArt": "Existing rigs with ImageGen pigment textures and banded lighting",
-    "collision": "Polygon boundary, footprint obstacles, and path routing share the map plan."
+    "collision": "The area plan defines river collision, bridge decks, approach ramps, followers and routed paths."
   },
   "combatAnimationMagic200": {
     "requested": 200,
@@ -2121,7 +2121,7 @@
     "status": "DESIGN_ESTIMATE_NOT_MEASURED"
   },
   "platform": "WebGL2",
-  "builtAt": "2026-11-14T12:06:07.641Z",
+  "builtAt": "2026-11-14T13:04:15.181Z",
   "files": [
     {
       "path": "act1.css",
@@ -2130,8 +2130,8 @@
     },
     {
       "path": "act1.html",
-      "bytes": 1471,
-      "sha256": "fb305b37e3456b0d15d07ef3acad93d716d7ed117885afabe54fae21c5023f10"
+      "bytes": 1473,
+      "sha256": "eb90f74f9ffb63778eb7cadf0e27a53f1dde4bcdf0d219e73001c87e13ddab68"
     },
     {
       "path": "assets/act1/animation/animation-library.json",
@@ -2920,8 +2920,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 1471,
-      "sha256": "fb305b37e3456b0d15d07ef3acad93d716d7ed117885afabe54fae21c5023f10"
+      "bytes": 1473,
+      "sha256": "eb90f74f9ffb63778eb7cadf0e27a53f1dde4bcdf0d219e73001c87e13ddab68"
     },
     {
       "path": "interface-windows.css",
@@ -2960,23 +2960,23 @@
     },
     {
       "path": "src/act1/area-geometry.js",
-      "bytes": 6638,
-      "sha256": "d36327f4bf80ffac996953185495e9fa980a64290fa1534870876494261fb13f"
+      "bytes": 11374,
+      "sha256": "6c834a105a2748a009ce5bb54c43e5cdc1de91d172627108d7da02148d23312e"
     },
     {
       "path": "src/act1/area-layouts.js",
-      "bytes": 22426,
-      "sha256": "780c8667bb4aa9fc79c752a6c3a8850f5c25cfb151500733dc254026e626e9ad"
+      "bytes": 24156,
+      "sha256": "2717a95b355d6f16cf8956efb55b1daaff55b3dfd581b56763f89402c11e8dfc"
     },
     {
       "path": "src/act1/area-schematic.js",
-      "bytes": 5393,
-      "sha256": "43e9b1d4ffadaa26ddbbfacd5776ca031dadd10ad73dfc43d028f065992c26ca"
+      "bytes": 6904,
+      "sha256": "ad42cb898511144a49ad126cb6b42afebe7a52efd4be1b9b4381346d92a12042"
     },
     {
       "path": "src/act1/authored-landscape.js",
-      "bytes": 12148,
-      "sha256": "663507fafc21e391e3ae314316d5f0ae37cee5f749c272bdbaf05be123da7be9"
+      "bytes": 14091,
+      "sha256": "75f730148253e13108e1671bab2a23b907f840ed67788203a6a8c760bd091bba"
     },
     {
       "path": "src/act1/battle-stage.js",
@@ -3000,8 +3000,8 @@
     },
     {
       "path": "src/act1/character-animation.js",
-      "bytes": 16376,
-      "sha256": "379b1195e1cfe12ab0929c7ed5ba9abc7e86de17d4e8806dc3ca92244bf167eb"
+      "bytes": 16378,
+      "sha256": "72cd27191ba76fef64c6bb531f7670762142e7fe1f1783f98cd1951200f7eaa0"
     },
     {
       "path": "src/act1/combat200-animation-policy.js",
@@ -3015,8 +3015,8 @@
     },
     {
       "path": "src/act1/content.js",
-      "bytes": 208318,
-      "sha256": "b38e228323643ee579e5531bc3ce1204bfc5b529383c895c92095db0584aec91"
+      "bytes": 208337,
+      "sha256": "bdfdb32481493ce10255231ba6832114b2a4607a8d4f7b4fec180a577fe4faf5"
     },
     {
       "path": "src/act1/data/ground-clearance.js",
@@ -3070,28 +3070,28 @@
     },
     {
       "path": "src/act1/main.js",
-      "bytes": 101413,
-      "sha256": "b8009ae0d7de24a8882704d571b4b17a21030d1262d153181961c8b6d1f74398"
+      "bytes": 101425,
+      "sha256": "b7bc95ac31a958ce9f61a8ce7904569133d0e90a2e83cb901f2ba67d679cce60"
     },
     {
       "path": "src/act1/meshy-world.js",
-      "bytes": 40203,
-      "sha256": "8d0dab049c2b8d9570a436f72000577ab4545937bfdcd3b256642f95b47b2cdb"
+      "bytes": 40250,
+      "sha256": "617657770eb505e6da31837fb6910885b93cef210fb4cc42d5cb90de4369f563"
     },
     {
       "path": "src/act1/minimap.js",
-      "bytes": 13491,
-      "sha256": "38a64fbc0a9b948e1f90538cc4d0ecbcf1fc119388e026d81331ed85b274b6df"
+      "bytes": 13616,
+      "sha256": "2b360d932af4715c32223ede2398b85d439c0ec653f3969579778e3de19b9a25"
     },
     {
       "path": "src/act1/model.js",
-      "bytes": 109128,
-      "sha256": "27555b335588179d2040d26dbee71369658c0b14f4c2609f7d97af19f11ec9fe"
+      "bytes": 109497,
+      "sha256": "534df5dbc24f26e45658b12dbd82d702d26b841708838e450f58c9fc77626fcc"
     },
     {
       "path": "src/act1/navigation.js",
-      "bytes": 15851,
-      "sha256": "5c044e4f1ea6253441aefa0480fa6967db24ec5f17c3abf20bcc3c2385ecb8bf"
+      "bytes": 15855,
+      "sha256": "a8a79ad617b466c9953623cda6fc713a66b4c8ce93560343c0afe17ff4a5046b"
     },
     {
       "path": "src/act1/painted-material.js",
@@ -3154,6 +3154,11 @@
       "sha256": "d106f86d70e289d7da8c5894b69d35c2ea7c652062d85bb80f84395c8fe5afc7"
     },
     {
+      "path": "src/act1/river-crossings.js",
+      "bytes": 8395,
+      "sha256": "6da7bebc0b8bb43b4b33a00d74429bf2bd8df32a9b9b4690aabbed2a7c6d5370"
+    },
+    {
       "path": "src/act1/road-actor-looks.js",
       "bytes": 2791,
       "sha256": "b53a110f50714b333965f4e2033e78976dbc44f7f4856b0bf92ad41340bbcf68"
@@ -3165,8 +3170,8 @@
     },
     {
       "path": "src/act1/save.js",
-      "bytes": 13198,
-      "sha256": "7c400913c4bfb4fbec751051b916e6ca17f3da2a0f5c2cefe6bb9420b0c1513c"
+      "bytes": 13202,
+      "sha256": "38b92906e819f83f18e0720e3507b5dd1fea6423fc45ff94920caaddb5ca2102"
     },
     {
       "path": "src/act1/source-facing.js",
@@ -3195,13 +3200,13 @@
     },
     {
       "path": "src/act1/water-fire.js",
-      "bytes": 14944,
-      "sha256": "c4e7a7f00919ea140edc8f9e73e47590c9f76b897c4b9cb8fc856152cafae0bc"
+      "bytes": 15788,
+      "sha256": "b2c50deb974d2e1a300e03a0957b7827d52703744e985ead971e0d7934b3b6c9"
     },
     {
       "path": "src/act1/world.js",
-      "bytes": 103018,
-      "sha256": "8390dfd517d59caf923a86a0ecd5b2c366f62f526e50d544f009e01e520b2cd6"
+      "bytes": 103362,
+      "sha256": "6515d17d7fac602edbc6ddfd356510b04ed1030afaabd3ebe959885ef5e0aa2f"
     },
     {
       "path": "src/act1/writer-session.js",
@@ -3273,5 +3278,19 @@
     "modelSaveSchema": 2,
     "oldPositionMigration": "0.17 coordinates map to nearby authored anchors",
     "cover": "assets/act1/painted/roads-cover.webp"
+  },
+  "riversRevision": {
+    "id": "rivers-0181",
+    "baseCommit": "400cef0b5d404c72a1911c6ed6bcf84d3ed7209f",
+    "areas": [
+      "sunfields",
+      "fen",
+      "fortress"
+    ],
+    "rivers": 5,
+    "bridges": 8,
+    "mapRevision": 2,
+    "modelSaveSchema": 2,
+    "migration": "Revision 1 retains valid positions and relocates exposed positions to nearby walkable ground or a deck"
   }
 }

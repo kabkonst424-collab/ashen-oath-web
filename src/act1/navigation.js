@@ -1,5 +1,5 @@
-import * as M from './model.js?v=roads-018';
-import * as CONTENT from './content.js?v=roads-018';
+import * as M from './model.js?v=rivers-0181';
+import * as CONTENT from './content.js?v=rivers-0181';
 
 // Routes and the schematic take their boundaries from the movement model.
 const PHASES=[];

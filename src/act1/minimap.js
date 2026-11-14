@@ -1,5 +1,5 @@
-import {drawAreaSchematic,markerShape,terrainShapes} from './area-schematic.js?v=roads-018';
-import {areaMapMarkers,createNavigationService} from './navigation.js?v=roads-018';
+import {createTerrainClip,drawAreaSchematic,markerShape,terrainShapes} from './area-schematic.js?v=rivers-0181';
+import {areaMapMarkers,createNavigationService} from './navigation.js?v=rivers-0181';
 const INITIALIZERS=[],RENDERERS=[];
 const initialize=run=>INITIALIZERS.push(run),renderer=(order,run)=>RENDERERS.push({order,run});
 const NS='http://www.w3.org/2000/svg';
@@ -10,7 +10,7 @@ export function createMinimap({el,text,button,onQuestSelect=()=>{},onDetails=()=
  const element=el('section','nav50-minimap'),header=el('div','nav50-header'),body=el('div','nav50-body'),copy=el('div','nav50-copy'),controls=el('div','nav50-controls'),extra=el('div','nav50-extra');
  element.setAttribute('aria-label','Мини-карта и подсказка задания');element.dataset.focusKey='navigation';
  const svg=document.createElementNS(NS,'svg');svg.setAttribute('viewBox','0 0 200 160');svg.setAttribute('role','img');svg.setAttribute('aria-label','Текущая область');svg.classList.add('nav50-svg');
- const layers={};for(const key of ['terrain','route','landmarks','target','player']){const group=document.createElementNS(NS,'g');group.setAttribute('data-layer',key);svg.append(group);layers[key]=group;}
+ const terrainClip=createTerrainClip(svg),layers={};for(const key of ['terrain','route','landmarks','target','player']){const group=document.createElementNS(NS,'g');group.setAttribute('data-layer',key);svg.append(group);layers[key]=group;}
  body.append(svg,copy,controls,extra);element.append(header,body);
  const captions=new Map(),shapes=new Map(),buttons=new Map(),handlers=new Map();let latest=null,destroyed=false;
  function caption(key,value,{width=220,size=13,parent=copy,color='#e9ce93',bold=false}={}){let entry=captions.get(key);if(!entry){entry={node:el('div','nav50-caption nav50-'+key),value:null};captions.set(key,entry);parent.append(entry.node);}entry.node.hidden=!value;const signature=JSON.stringify([value,width,size,color,bold,latest?.selection?.textScale||1]);if(entry.signature!==signature){entry.node.replaceChildren(text(value||'',width,size,color,bold));entry.value=value;entry.signature=signature;metrics.labelsPainted++;}return entry.node;}
@@ -21,7 +21,7 @@ export function createMinimap({el,text,button,onQuestSelect=()=>{},onDetails=()=
  // Registrations are fixed after module evaluation; retain one ordered pipeline per instance.
  const renderSteps=[...RENDERERS].sort((a,b)=>a.order-b.order);
  const api={element,metrics,service,prefs,update(state,selection={}){if(destroyed)return null;metrics.updates++;const view=service.update(state,selection);latest={state,selection,view};env.view=view;env.state=state;env.selection=selection;element.hidden=state.mode!=='explore';for(const step of renderSteps)step.run(env);element.dataset.route=view.route.status;return view;},destroy(){destroyed=true;element.remove();captions.clear();shapes.clear();metrics.shapeEntries=0;buttons.clear();handlers.clear();}};
- const env={el,element,header,body,svg,layers,copy,controls,extra,prefs,metrics,caption,shape,removeShape,attr,control,project:point=>projectPoint(env.view,point,prefs),onQuestSelect,onDetails,refresh:()=>latest&&api.update(latest.state,latest.selection),choose:id=>{if(latest)latest.selection={...latest.selection,questId:id};onQuestSelect(id);env.refresh();}};
+ const env={el,element,header,body,svg,terrainClip,layers,copy,controls,extra,prefs,metrics,caption,shape,removeShape,attr,control,project:point=>projectPoint(env.view,point,prefs),onQuestSelect,onDetails,refresh:()=>latest&&api.update(latest.state,latest.selection),choose:id=>{if(latest)latest.selection={...latest.selection,questId:id};onQuestSelect(id);env.refresh();}};
  for(const run of INITIALIZERS)run(env);
  return api;
 }
@@ -30,7 +30,7 @@ renderer(0,e=>{
  const key=e.view.area.id+':'+e.prefs.zoom+(e.prefs.zoom===2?':'+e.view.player.x.toFixed(2)+':'+e.view.player.z.toFixed(2):'');
  if(e.terrainKey!==key){
   e.terrainKey=key;
-  const shapes=terrainShapes(layout,e.project),live=new Set(shapes.map(shape=>shape[0]));
+  const shapes=terrainShapes(layout,e.project,e.terrainClip),live=new Set(shapes.map(shape=>shape[0]));
   if(!layout){
    const b=e.view.area.bounds,center=e.project({x:b.x,z:b.z}),edge=e.project({x:b.x+b.rx,z:b.z+b.rz});
    live.add('bounds');
@@ -113,7 +113,7 @@ initialize(e=>e.control('details','Журнал',()=>e.onDetails(e.view.quest?.i
 renderer(97,e=>{const node=e.control('details','Журнал',()=>e.onDetails(e.view.quest?.id||null));node.ariaLabel='Открыть задание в журнале · '+(e.view.quest?.title||'Текущая задача');});
 
 initialize(e=>e.control('legend','Значки',()=>{e.prefs.legend=!e.prefs.legend;e.refresh();}));
-renderer(98,e=>{e.attr(e.control('legend','Значки',()=>{e.prefs.legend=!e.prefs.legend;e.refresh();}),'aria-expanded',String(e.prefs.legend));e.caption('legend',e.prefs.legend?'Светлая стрелка — отряд · Золотой ромб — цель\nАрка — выход · Шатёр — лагерь · Сумка — торговец\nКрасный крест — враги · Синий — вода · Линия — дорога':'',{parent:e.extra,size:12});e.attr(e.svg,'aria-label',[e.view.area.title,e.view.quest?.title,e.view.hint,e.view.route.reason,e.view.distance!==null?'Примерно '+e.view.distance+' шагов':'',e.view.direction].filter(Boolean).join('. '));});
+renderer(98,e=>{e.attr(e.control('legend','Значки',()=>{e.prefs.legend=!e.prefs.legend;e.refresh();}),'aria-expanded',String(e.prefs.legend));e.caption('legend',e.prefs.legend?'Светлая стрелка — отряд · Золотой ромб — цель\nАрка — выход · Шатёр — лагерь · Сумка — торговец\nКрасный крест — враги · Синий — вода\nЛиния — дорога · Светлый настил — мост':'',{parent:e.extra,size:12});e.attr(e.svg,'aria-label',[e.view.area.title,e.view.quest?.title,e.view.hint,e.view.route.reason,e.view.distance!==null?'Примерно '+e.view.distance+' шагов':'',e.view.direction].filter(Boolean).join('. '));});
 
 
 

@@ -1,5 +1,5 @@
-import {VERSION,SCHEMA,validate,snapshot,upgradeCombatState,upgradeMapState} from './model.js?v=roads-018';
-import {CONTENT_VERSION} from './content.js?v=roads-018';
+import {VERSION,SCHEMA,validate,snapshot,upgradeCombatState,upgradeMapState} from './model.js?v=rivers-0181';
+import {CONTENT_VERSION} from './content.js?v=rivers-0181';
 import {parseSaveJSON} from '../strict-json.js?v=0.16.0-demo';
 
 // Act I deliberately has its own database. The 0.2.0 save is never opened here.

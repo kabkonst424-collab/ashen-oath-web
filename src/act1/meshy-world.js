@@ -6,15 +6,20 @@ import {TerrainMaterials} from './terrain-material.js?v=painted-20261114-r2';
 import {paintMeshes} from './painted-material.js?v=painted-20261114-r2';
 import {fetchBytes} from './resource-loader.js?v=0.16.0-demo';
 
-import { buildAuthoredGround, buildAuthoredLandscape } from './authored-landscape.js?v=roads-018';
+import { buildAuthoredGround, buildAuthoredLandscape } from './authored-landscape.js?v=rivers-0181';
 
 // This module is installed after graphics-refresh. It changes presentation only;
 // authoritative movement and campaign state stay in model.js.
 export const WORLD_SLOTS=Object.freeze(['tree','rock','grass','wheat','house','tower','wall','pillar','arch','altar_inspect','brazier','well','chest','crate','barrel','camp','puzzle','bookshelf_book','merchant_stall','bridge','cart','crane','waterwheel','banner','satchel','basket','lantern','terrain_village','terrain_forest','terrain_marsh','terrain_ruin','path_strip','water_strip']);
 export const EXEMPT_WEAPONS=Object.freeze(['Sword','Shield','Staff','Spear','Censer','Hammer','Bow','Crossbow','Oar']);
 export const PROP_SLOTS=Object.freeze({Rock:'rock',House:'house',Tower:'tower',Wall:'wall',Pillar:'pillar',Arch:'arch',Altar:'altar_inspect',Inspect:'altar_inspect',Brazier:'brazier',Well:'well',Chest:'chest',Crate:'crate',Barrel:'barrel',Camp:'camp',Puzzle:'puzzle',Bookshelf:'bookshelf_book',Book:'book',Stall:'merchant_stall',Bridge:'bridge',Cart:'cart',Crane:'crane',Waterwheel:'waterwheel',BannerFrame:'banner',Satchel:'satchel',Basket:'basket',Lantern:'lantern',Tree:'tree',Grass:'grass',Wheat:'wheat'});
-// Comparable to the existing library's dimensions, independent of Meshy's arbitrary units.
-const HEIGHT={tree:7.5,rock:1,grass:1,wheat:1,house:7,tower:11,wall:3.5,pillar:3.8,arch:4.7,altar_inspect:1.35,brazier:1.5,well:2.2,chest:1.2,crate:1.1,barrel:1.1,camp:.6,puzzle:1.7,bookshelf_book:4.8,merchant_stall:3,bridge:1.2,cart:2.1,crane:7,waterwheel:5.6,banner:5,satchel:.48,basket:.55,lantern:.55,book:.5};
+// Props read against a standing humanoid (about 2.8 world units).
+const HEIGHT = {
+  tree:8.1, rock:1, grass:.78, wheat:1.2, house:8.1, tower:12.8, wall:3.9, pillar:4.3, arch:5.45,
+  altar_inspect:1.45, brazier:1.05, well:1.65, chest:.92, crate:1.05, barrel:1.26, camp:.50,
+  puzzle:1.7, bookshelf_book:3.65, merchant_stall:3.78, bridge:1.2, cart:2.14, crane:7.4,
+  waterwheel:5.12, banner:4.5, satchel:.46, basket:.56, lantern:.52, book:.43,
+};
 const UI_KEY=/^(proxy:|ring:|selection:|selection-gold:|target-arrow$|exit-glyph$|inspect-glyph$|fire$|effect-ring$)/;
 const ORIGINS=new Set(['authored-landscape','actor-accessory','meshy-world','meshy-character','exempt-weapon','ui-marker','vfx','interaction-proxy']);
 const TAU=Math.PI*2;
