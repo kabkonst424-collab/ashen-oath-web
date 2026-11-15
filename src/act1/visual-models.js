@@ -1,4 +1,5 @@
 import * as T from '../../assets/vendor/three.module.js';
+import { motionCurve } from './reference-motion.js?v=motion-190';
 import { mergeGeometries } from '../../assets/vendor/BufferGeometryUtils.js';
 
 const BRONZE = 0xba854d;
@@ -258,13 +259,20 @@ function animateWisp(actor, time, reducedMotion) {
   const clock = reducedMotion ? 0 : time;
   const action = actor.actions[actor.current];
   const phase = action?.getClip().duration ? Math.min(1, action.time / action.getClip().duration) : 0;
-  const collapse = actor.current === 'Death' ? phase : 0;
-  const charge = actor.current === actor.pulseAnimation && time < actor.pulseUntil && !reducedMotion ? Math.sin(phase * Math.PI) : 0;
-  wisp.rig.position.y = (wisp.hover * (1 - collapse * .76) + .13 * Math.sin(clock * 4.1)) * wisp.inverse;
+  const collapse = actor.current === 'Death' ? motionCurve('fall', phase / .83) : 0;
+  const hit = actor.current === 'Hit' && !reducedMotion ? motionCurve('bowFollow', phase) : 0;
+  const guard = actor.current === 'Block' ? motionCurve('quick', phase) : 0;
+  const travelling = actor.current === 'Run' ? .9 : actor.current === 'Walk' ? .46 : 0;
+  const active = actor.current === actor.pulseAnimation && time < actor.pulseUntil;
+  const charge = active && !reducedMotion ? Math.sin(phase * Math.PI) : 0;
+  const bob = Math.sin(clock * (4.1 + travelling * 2)) * (.13 - travelling * .065) * (1 - collapse);
+  wisp.rig.position.y = (wisp.hover * (1 - collapse * .76) + bob - hit * .12) * wisp.inverse;
   wisp.rig.scale.setScalar((1 - .72 * collapse) * wisp.inverse);
-  wisp.shell.rotation.set(.28 + .16 * Math.sin(clock * 2), clock * .83 + 1.1 * charge, .44 * collapse);
-  wisp.spark.rotation.y = -clock * 1.37;
-  wisp.spark.scale.setScalar(1 + .29 * charge);
+  if (actor.current !== 'Death' || wisp.spinClock === undefined) wisp.spinClock = clock;
+  wisp.shell.rotation.set(.28 + (.16 * Math.sin(clock * 2) + travelling * .28 + hit * .28) * (1 - collapse),
+    wisp.spinClock * .83 + 1.1 * charge, .44 * collapse + guard * .33);
+  wisp.spark.rotation.y = -wisp.spinClock * 1.37;
+  wisp.spark.scale.setScalar(1 + .29 * charge - .12 * hit);
 }
 
 export function animateCostume(actor, time, dt, reducedMotion) {

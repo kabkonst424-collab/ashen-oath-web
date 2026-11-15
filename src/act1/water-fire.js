@@ -1,7 +1,7 @@
 import { buildAuthoredOcean } from './authored-landscape.js?v=campaign-180';
 import * as T from '../../assets/vendor/three.module.js';
 import { environmentalTime, fireDistanceFade, waterReadability } from './presentation-environment.js?v=0.16.0-demo';
-import { tileTerrainGeometry } from './meshy-world.js?v=visual-180';
+import { tileTerrainGeometry } from './meshy-world.js?v=motion-190';
 
 // The old radial shore serves the battle arenas. Authored zones set their own banks.
 export const SHORE = Object.freeze({radius: Math.sqrt(.9) + .018, noise: .22});

@@ -6,7 +6,8 @@ import { SOURCE_BASES, SOURCE_FRONT_YAW, resolveBaseFrontYaw, resolveProfileFron
 
 import { actorAnimationIdentity } from './graphics-refresh.js?v=campaign-140';
 import { motionPatchDescriptor, applyMotionPatch } from './motion-clip-corrections.js?v=motion-110';
-import { bowClip } from './bow-presentation.js?v=visual-180';
+import { bowClip } from './bow-presentation.js?v=motion-190';
+import { refineReferenceMotion } from './reference-motion.js?v=motion-190';
 import { normalizeBattleEquipment, applyBattleEquipment } from './equipment-presentation.js?v=0.16.0-demo';
 
 const ROOT = new URL('../../assets/act1/animation/', import.meta.url);
@@ -131,6 +132,7 @@ export class CharacterAnimationLibrary {
       if (signal?.aborted) throw signal.reason;
       if (correction) applyMotionPatch(data, correction, descriptor.sha256);
       if (data.schema !== 1 || data.profile !== key || data.base !== descriptor.base || !Array.isArray(data.clips)) throw new Error('Profile identity mismatch');
+      refineReferenceMotion(data);
       const clips = new Map();
       for (const json of data.clips) {
         if (!CLIP_NAME.test(json.name) || clips.has(json.name)) throw new Error('Invalid character clip name');

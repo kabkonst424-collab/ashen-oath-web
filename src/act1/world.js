@@ -1,11 +1,11 @@
 import {installRefresh} from './graphics-refresh.js?v=campaign-140';
-import {installMeshyWorld} from './meshy-world.js?v=visual-180';
+import {installMeshyWorld} from './meshy-world.js?v=motion-190';
 import {areaBiome} from './area-asset-plan.js?v=campaign-170';
 import {WorldElements,installWorldElements} from './water-fire.js?v=campaign-180';
-import {MagicVfx} from './magic-vfx.js?v=visual-180';
-import { installVisualEdition, updateVisualEdition } from './visual-scene.js?v=visual-180';
+import {MagicVfx} from './magic-vfx.js?v=motion-190';
+import { installVisualEdition, updateVisualEdition } from './visual-scene.js?v=motion-190';
 import {advancePaintedPose, orientPaintedActors, paintedActionAge, resetPaintedPose, paintedHeading} from './painted-motion.js?v=gait-111';
-import {CharacterAnimationLibrary} from './character-animation.js?v=visual-180';
+import {CharacterAnimationLibrary} from './character-animation.js?v=motion-190';
 import {installBrowserPerformance} from './browser-performance.js?v=campaign-180';
 import * as T from '../../assets/vendor/three.module.js';
 import { GLTFLoader } from '../../assets/vendor/GLTFLoader.js';
@@ -16,11 +16,11 @@ import { combatMotionPolicy, actionLunge, impactRecoil, meleeTiming, meleeTravel
 import { actionTimeline, actionClipPhase } from './presentation-timing.js?v=campaign-170';
 import { reactionPhase, contactReaction, transitionBlend, hasUnsettledDeath } from './combat200-animation-policy.js?v=0.16.0-demo';
 import { PartyTrail, loopTiming, COMBAT_MOTION, combatPlaybackRate } from './party-motion.js?v=motion-110';
-import { walkable } from './model.js?v=campaign-180';
+import { walkable } from './model.js?v=motion-190';
 import { gaitForSpeed, gaitRate, gaitEntryPhase } from './actor-locomotion.js?v=motion-110';
 import { applyFootContact, resetFootContact } from './foot-contact.js?v=motion-110';
 import { applyPartyGait, leavePartyGait, resetPartyGait } from './party-gait.js?v=campaign-140';
-import { updateBow, disposeBow } from './bow-presentation.js?v=visual-180';
+import { updateBow, disposeBow } from './bow-presentation.js?v=motion-190';
 import { BattleLayoutCache } from './ui-framing.js?v=0.16.0-demo';
 import { paintGildedLine } from './bitmap.js?v=campaign-180';
 

@@ -1,6 +1,6 @@
 import * as T from '../../assets/vendor/three.module.js';
-import { animateCostume, buildEquipment, canBuildEquipment, dressActor, markProcedural, waylightGeometry } from './visual-models.js?v=visual-180';
-import { bindTreeSight, buildRouteBorders, updateTreeSight } from './visual-landscape.js?v=visual-180';
+import { animateCostume, buildEquipment, canBuildEquipment, dressActor, markProcedural, waylightGeometry } from './visual-models.js?v=motion-190';
+import { bindTreeSight, buildRouteBorders, updateTreeSight } from './visual-landscape.js?v=motion-190';
 import { impactSigilGeometry } from './visual-impact.js?v=visual-180';
 
 const WATERFRONTS = new Set(['salt_coast', 'drowned_beacon', 'wind_cape']);

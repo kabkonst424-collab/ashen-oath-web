@@ -1,5 +1,5 @@
 import * as T from '../../assets/vendor/three.module.js';
-import { markProcedural } from './visual-models.js?v=visual-180';
+import { markProcedural } from './visual-models.js?v=motion-190';
 
 function colorize(geometry, paint) {
   const points = geometry.attributes.position;

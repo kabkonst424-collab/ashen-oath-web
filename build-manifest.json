@@ -1,6 +1,6 @@
 {
   "id": "ashen-oath",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "releaseStatus": "release",
   "demo": false,
   "posterArtRevision": {
@@ -2126,7 +2126,7 @@
     "act1PriorDesignTargetMinutes": 180
   },
   "platform": "WebGL2",
-  "builtAt": "2026-11-15T16:28:50.950Z",
+  "builtAt": "2026-11-15T18:12:05+00:00",
   "files": [
     {
       "path": ".nojekyll",
@@ -2135,8 +2135,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 5537,
-      "sha256": "494c6735111aa736a59b5d30904d74a1b9a7c5a9c74facc5fc10027fce93a32b"
+      "bytes": 5853,
+      "sha256": "d9cdd3a63aa88bf548847572e3848a9fd7e51cbb4f2ad9eace2f81e0c00ffa5f"
     },
     {
       "path": "act1.css",
@@ -2146,7 +2146,7 @@
     {
       "path": "act1.html",
       "bytes": 2487,
-      "sha256": "eb880e4f80917fe0b2c85c1f3bf47599aa032b7ef9789107127bd06494f3d097"
+      "sha256": "f3c846904e8be7d770af57e50ecb1da17c1ab303bac3726b813ca6666a7846a8"
     },
     {
       "path": "assets/act1/animation/animation-library.json",
@@ -4089,6 +4089,11 @@
       "sha256": "006a2889b455b0980aea8eef0dee10606ea8ba5a404980e518518399b8e5d757"
     },
     {
+      "path": "docs/improvements/1.9.0-motion.md",
+      "bytes": 6339,
+      "sha256": "067b04ba2a0755e94e64664a5c0bd36c6597655df35ea6f001ec5562aa18bf2a"
+    },
+    {
       "path": "docs/improvements/PLAN.txt",
       "bytes": 8511,
       "sha256": "e6eef9dbdf9aa279b5c3bdc056b2625f9960a8826615c07506f6bcc93128fb71"
@@ -4131,7 +4136,7 @@
     {
       "path": "index.html",
       "bytes": 2487,
-      "sha256": "eb880e4f80917fe0b2c85c1f3bf47599aa032b7ef9789107127bd06494f3d097"
+      "sha256": "f3c846904e8be7d770af57e50ecb1da17c1ab303bac3726b813ca6666a7846a8"
     },
     {
       "path": "interface-windows.css",
@@ -4225,8 +4230,8 @@
     },
     {
       "path": "src/act1/bow-presentation.js",
-      "bytes": 6053,
-      "sha256": "239217b4c860f260af48d1c38fd344b395916b286657f4819a8d9683e53f9f2d"
+      "bytes": 6454,
+      "sha256": "86272a09281465875ac2eaaa194bd231685220da27ab82be664a75365efb3929"
     },
     {
       "path": "src/act1/browser-performance.js",
@@ -4271,7 +4276,7 @@
     {
       "path": "src/act1/campaign-ui.js",
       "bytes": 16715,
-      "sha256": "108bb496ac4580f4e7ae709560e710acfb127fed6c009e8cf95e0a623b447314"
+      "sha256": "53f45a7fb0b1d4caeee3845d4c157ec38fed8f15f2f971057cc686dcc941ebfc"
     },
     {
       "path": "src/act1/campaign-visuals.js",
@@ -4285,8 +4290,8 @@
     },
     {
       "path": "src/act1/character-animation.js",
-      "bytes": 15945,
-      "sha256": "bb74e85a10ae3ef863c5248f4f31c971905a02cd0c0cab18c0f5d9254b70cb1a"
+      "bytes": 16058,
+      "sha256": "afd4c7de1f7b373cbbb0223988a73737ea7403c56e3c518e3d421cd593b4d991"
     },
     {
       "path": "src/act1/combat200-animation-policy.js",
@@ -4426,12 +4431,12 @@
     {
       "path": "src/act1/magic-vfx.js",
       "bytes": 51357,
-      "sha256": "e44ec65477afd702762323defc861b1a7c7f15b6d2de7e052e1b5aa8118b1d67"
+      "sha256": "d649a2ccf72f17b2c331f6d7883f92c601641fe856b6aac2cea17c61490a7b05"
     },
     {
       "path": "src/act1/main.js",
-      "bytes": 131151,
-      "sha256": "52be4f844b1dd7c251732d44eb7a23318f7e2a3fa04699f1d02ced23629d6a36"
+      "bytes": 131145,
+      "sha256": "741b8b5f23606830b342dade9bb6ad7c8abd436829900c2bcecaf060ddbf4179"
     },
     {
       "path": "src/act1/meshy-world.js",
@@ -4446,7 +4451,7 @@
     {
       "path": "src/act1/model.js",
       "bytes": 136254,
-      "sha256": "7e5ffa3638c05d4d2f29bb7a28bdae345f60e5709b84b068e4027273cc7f2f3a"
+      "sha256": "446fec34a98c9c6d9515247be76c10f1e88ca791fbfb64be0b0a2106e313d6f6"
     },
     {
       "path": "src/act1/motion-clip-corrections.js",
@@ -4455,8 +4460,8 @@
     },
     {
       "path": "src/act1/navigation.js",
-      "bytes": 16347,
-      "sha256": "887ab23c6bc4822a34b3d32f64fd97a0b3032a37515b6c6a799649f474a46cf5"
+      "bytes": 16345,
+      "sha256": "e77575bd06fe99af620155e72065f43ce6df42802005849427f70ae769dd612e"
     },
     {
       "path": "src/act1/painted-material.js",
@@ -4519,6 +4524,16 @@
       "sha256": "c3d457f46fac14576dc20e601893b62123fcfa8d17851a63d55b3f598a371de7"
     },
     {
+      "path": "src/act1/reference-curves.js",
+      "bytes": 3058,
+      "sha256": "ff0dedc51fe7cfd2084ed8f7f2eaee712182980cfc046bb7359a612e3793768f"
+    },
+    {
+      "path": "src/act1/reference-motion.js",
+      "bytes": 9206,
+      "sha256": "469d7e5de2405439fdae175db757d4701f621311f0d873ee9bd76ca1c7645814"
+    },
+    {
       "path": "src/act1/regional-equipment.js",
       "bytes": 9612,
       "sha256": "d1850ecd2df94d9b9d30be09d3f1070f2df252151e687b5ae22dcceafaa9c251"
@@ -4545,8 +4560,8 @@
     },
     {
       "path": "src/act1/save.js",
-      "bytes": 13425,
-      "sha256": "7d4c7b015170c039844a39adfa707df5021da06c9341993bdc4f6f7502fd7b47"
+      "bytes": 13423,
+      "sha256": "1f251424082c359fda81d9268f0307ab51c2e1e109ecb56d7149ff597543f808"
     },
     {
       "path": "src/act1/source-facing.js",
@@ -4591,27 +4606,27 @@
     {
       "path": "src/act1/visual-landscape.js",
       "bytes": 8205,
-      "sha256": "8f4a16520f2c194d88ac9a8d39593a6a9fb23b719bded0151289cd1780ae3f26"
+      "sha256": "0edd2f562c8dba2417e9879f5c34c5b28ea8d9441eb2b8b515df8c4281272925"
     },
     {
       "path": "src/act1/visual-models.js",
-      "bytes": 13689,
-      "sha256": "114e11d9839f71b844849f035744b9cf8e4d746303558564231d30121107be09"
+      "bytes": 14343,
+      "sha256": "7d034d1b752408d0f8480450cefa56e6d0fe1c467d45990497b56bc1e8e39df3"
     },
     {
       "path": "src/act1/visual-scene.js",
       "bytes": 13362,
-      "sha256": "5bb2372765ddd338f4e57d907068a43da6bd78186c40c865b3c0bf1fa13d0c13"
+      "sha256": "a6dda1e9678b66c05b0c33bf7ad4fda4120478a57f5726b075af63299fe19bbb"
     },
     {
       "path": "src/act1/water-fire.js",
       "bytes": 16124,
-      "sha256": "6443ab8367823c85c55ac9bba0b2cc794d3da5eee787ee9be894dbe9446eb41b"
+      "sha256": "7b609172b0df2fa21e1fc3e096f467a0c0368015bb813e3013bf8cc4fc68dbfb"
     },
     {
       "path": "src/act1/world.js",
-      "bytes": 110309,
-      "sha256": "6df11f46a1367bc2d0f9ab3c02cad098ce23661bc87078c7bfde7fa0e94c4955"
+      "bytes": 110307,
+      "sha256": "fc076cb3d3780bf49663b7c7ee5415fd231dcbddd2e9e3374a7b3154aa1bb1f4"
     },
     {
       "path": "src/act1/writer-session.js",
@@ -4664,6 +4679,11 @@
       "sha256": "f383bacfbdd1a485b1a66d40fdfedfec4cf8e0b0ce0683a8aa995a8bf060c9dd"
     },
     {
+      "path": "tests/reference-motion.test.mjs",
+      "bytes": 6698,
+      "sha256": "b7cd08a3f4c7661ae86e3e29ce49799d93e93a0912ec7c86272c75811966f83a"
+    },
+    {
       "path": "tests/stage001-model.test.mjs",
       "bytes": 10820,
       "sha256": "b24d7978816f6bb4d269120f6c5259ceb83d55354555f1790e97a480a82e8cb3"
@@ -4707,6 +4727,11 @@
       "path": "tests/stage007-talents.test.mjs",
       "bytes": 17619,
       "sha256": "5043be0ed9b434a42c500c9d68297a4a89deb8eecefd1220b807e3cbc1e160fc"
+    },
+    {
+      "path": "tools/bake_reference_curves.py",
+      "bytes": 3265,
+      "sha256": "38c9b6af035790c545049502ae84a065fde29fc6354c5803b34fc77dfe624665"
     },
     {
       "path": "tools/serve.mjs",
@@ -4923,5 +4948,18 @@
     "research": "docs/visual-1.8/ИССЛЕДОВАНИЕ.md",
     "entry": "Играть.cmd",
     "sourceManifestSha256": "df0e52b036d69f789c6dd7d2c7ec84e1b98f88dcb548785b2c97221638e4b014"
+  },
+  "referenceMotion": {
+    "baseCommit": "2bfb2fea9822bb2f16dc258a10567fe1ad1eb802",
+    "blender": "4.5.10 LTS",
+    "curveCount": 13,
+    "samplesPerCurve": 25,
+    "profileFiles": 82,
+    "clips": 798,
+    "referenceReport": "docs/improvements/1.9.0-motion.md",
+    "procedural": [
+      "Myrt bow",
+      "Mill Wisp"
+    ]
   }
 }
