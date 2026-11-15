@@ -7,6 +7,8 @@ import { FORGE_ITEMS } from './loot-tables.js?v=forged-019';
 import { addStartingHeroes } from './campaign-starters.js?v=campaign-140';
 import { extendCampaign } from './campaign-content.js?v=campaign-140';
 import { addCampaignPatrols } from './campaign-patrols.js?v=campaign-130';
+import { addRegionalEquipment } from './regional-equipment.js?v=campaign-150';
+import { applyEncounterBalance } from './encounter-balance.js?v=campaign-150';
 export { CAMPAIGN_ACTS, CAMPAIGN_COMICS, CAMPAIGN_ENDINGS } from './campaign-content.js?v=campaign-140';
 
 // Ashen Oath — original first act. Immutable authored data; runtime owns all state.
@@ -1426,5 +1428,7 @@ extendCampaign({ areas:AREAS, layouts:AREA_LAYOUTS, quests:QUESTS, dialogues:DIA
 applyAreaLayouts(AREAS, AREA_LAYOUTS);
 extendRoadsContent({areas:AREAS,quests:QUESTS,dialogues:DIALOGUES,targets:QUEST_TARGETS,enemies:ENEMIES});
 addCampaignPatrols(AREAS);
+addRegionalEquipment(ITEMS, AREAS);
+applyEncounterBalance(ENEMIES);
 ACT_INFO.optionalQuestCount = QUESTS.filter(quest => quest.optional).length;
 ACT_INFO.encounterCount = AREAS.reduce((sum, area) => sum + area.encounters.length, 0);

@@ -1,16 +1,18 @@
 import {AREA_GEOMETRY_REVISION, legacyPosition, migratePosition, nearestLand, returnArrival, walkableLayout} from './area-geometry.js?v=rivers-0181';
 import {roleCatalog} from './hero-abilities.js?v=campaign-v1';
-import * as CONTENT from './content.js?v=campaign-140';
+import * as CONTENT from './content.js?v=campaign-150';
 import {chestLoot,encounterLoot,enemyLoot,rollLoot} from './loot-tables.js?v=forged-019';
 import {ACT_ENTRY_LEVELS, BOSS_CHAPTER_PRESSURE, LEVEL_CAP, STARTERS, experienceAtLevel, experienceThreshold, runedSkill, talentBonuses, talentCatalog, validTalents} from './campaign-progression.js?v=campaign-130';
+import {BAG_SIZE, LEGACY_BAG_SIZE, EQUIPMENT_SLOTS, LEGACY_EQUIPMENT_SLOTS, emptyEquipment, isEquipmentKind, RESISTANCE_KEYS, effectiveResistance} from './equipment-slots.js?v=campaign-150';
 
-export const VERSION='1.4.0';
-export const SCHEMA=2;
-export const BAG_SIZE=30;
+export const VERSION='1.5.0';
+export const SCHEMA=3;
+export const LEGACY_SCHEMA=2;
+export {BAG_SIZE};
 const list=value=>Array.isArray(value)?value:Object.values(value||{});
 const index=value=>Object.fromEntries(list(value).map(v=>[v.id,v]));
 const PARTY=index(CONTENT.PARTY),ITEMS=index(CONTENT.ITEMS),SKILLS=index(CONTENT.SKILLS),ENEMIES=index(CONTENT.ENEMIES),AREAS=index(CONTENT.AREAS),DIALOGUES=index(CONTENT.DIALOGUES);
-const QUESTS=list(CONTENT.QUESTS),SLOTS=['weapon','armor','charm'];
+const QUESTS=list(CONTENT.QUESTS),SLOTS=EQUIPMENT_SLOTS;
 const ACT_ONE_ENDINGS=Object.keys(CONTENT.ENDINGS||{});
 const CAMPAIGN_ENDINGS=Object.keys(CONTENT.CAMPAIGN_ENDINGS||{campaign_return:null,campaign_council:null});
 const KNOWN_FLAGS=new Set(['act1_complete','campaign_complete',...CAMPAIGN_ENDINGS]),KNOWN_RECEIPTS=new Set(),KNOWN_REWARDS=new Set();
@@ -39,7 +41,7 @@ function setFlags(s,flags){if(Array.isArray(flags))for(const flag of flags)s.fla
 function receipt(s,id){if(s.claimed.includes(id))return false;s.claimed.push(id);return true;}
 function itemDefinition(id){return ITEMS[id]||fail('Неизвестный предмет: '+id);}
 const MAX_DURABILITY=100, WORN_DURABILITY=25;
-const isEquipment=def=>SLOTS.includes(kind(def));
+const isEquipment=def=>isEquipmentKind(kind(def));
 function stackMax(def){return isEquipment(def)?1:Math.max(1,Math.min(999,def.stackMax||def.maxStack||99));}
 function itemRecord(runId,sequence,id,qty){
  const item={uid:runId+':i'+sequence,defId:id,qty};
@@ -70,18 +72,21 @@ function insertItems(s,items){
   while(qty){const free=bag.indexOf(null);if(free<0)fail('В сумке нет места. Освободите ячейку.');const moved=Math.min(qty,max);bag[free]=itemRecord(s.runId,next++,id,moved);qty-=moved;}
  }s.bag=bag;s.nextUid=next;
 }
-function heroBase(def,level){const b=def.stats||def;return {hp:(b.hp||b.maxHp||120)+(level-1)*16,mp:(b.mp||b.maxMp||30)+(level-1)*5,atk:(b.atk||20)+(level-1)*3,def:(b.def||12)+(level-1)*2,speed:(b.speed||12)+(level-1),initiative:(b.initiative??b.speed??12)+(level-1)};}
-const STAT_KEYS=['hp','mp','atk','def','speed','initiative'];
+function resistanceStats(source={},factor=1){
+ return Object.fromEntries(RESISTANCE_KEYS.map(key=>[key,Math.floor((source[key]||0)*factor)]));
+}
+function heroBase(def,level){const b=def.stats||def;return {hp:(b.hp||b.maxHp||120)+(level-1)*16,mp:(b.mp||b.maxMp||30)+(level-1)*5,atk:(b.atk||20)+(level-1)*3,def:(b.def||12)+(level-1)*2,speed:(b.speed||12)+(level-1),initiative:(b.initiative??b.speed??12)+(level-1),...resistanceStats(b)};}
+const STAT_KEYS=['hp','mp','atk','def','speed','initiative',...RESISTANCE_KEYS];
 function gearBonuses(item){
  const stats=ITEMS[item.defId]?.stats||{},factor=durabilityInfo(item)?.combatFactor??1;
  return {hp:stats.hp??stats.maxHp??0,mp:stats.mp??stats.maxMp??0,
   atk:stats.atk>0?Math.floor(stats.atk*factor):stats.atk||0,
   def:stats.def>0?Math.floor(stats.def*factor):stats.def||0,
-  speed:stats.speed||0,initiative:stats.initiative??stats.speed??0};
+  speed:stats.speed||0,initiative:stats.initiative??stats.speed??0,...resistanceStats(stats,factor)};
 }
 export function stats(s,heroId){const hero=s.party.find(h=>h.id===heroId);if(!hero)return null;const out=heroBase(PARTY[heroId],hero.level);for(const slot of SLOTS){const item=s.gear[heroId]?.[slot];if(!item)continue;const bonuses=gearBonuses(item);for(const key of STAT_KEYS)out[key]+=bonuses[key];}const talents=talentBonuses(heroId,learnedTalents(s,heroId));for(const key of STAT_KEYS)out[key]+=talents[key]||0;out.initiative=Math.max(1,Math.round(out.initiative));out.maxHp=out.hp;out.maxMp=out.mp;return out;}
 function refresh(s,full=false){for(const hero of s.party){const value=stats(s,hero.id);hero.maxHp=value.hp;hero.maxMp=value.mp;hero.hp=full?value.hp:clamp(hero.hp,0,value.hp);hero.mp=full?value.mp:clamp(hero.mp,0,value.mp);}}
-function recruit(s,id){if(s.party.some(hero=>hero.id===id))return;if(!PARTY[id]||s.party.length>=4)fail('Этот спутник недоступен');const level=Math.max(1,Math.floor(s.party.reduce((sum,h)=>sum+h.level,0)/(s.party.length||1)));const base=heroBase(PARTY[id],level);s.party.push({id,level,xp:0,hp:base.hp,mp:base.mp,maxHp:base.hp,maxMp:base.mp});s.gear[id]={weapon:null,armor:null,charm:null};const starting=PARTY[id].startingGear||{};for(const slot of SLOTS)if(starting[slot]){const defId=typeof starting[slot]==='string'?starting[slot]:starting[slot].id;itemDefinition(defId);s.gear[id][slot]=createItem(s,defId);}refresh(s);const joined=s.party.find(h=>h.id===id);joined.hp=joined.maxHp;joined.mp=joined.maxMp;emit(s,'recruit',PARTY[id].name+' присоединяется к отряду.',{heroId:id});}
+function recruit(s,id){if(s.party.some(hero=>hero.id===id))return;if(!PARTY[id]||s.party.length>=4)fail('Этот спутник недоступен');const level=Math.max(1,Math.floor(s.party.reduce((sum,h)=>sum+h.level,0)/(s.party.length||1)));const base=heroBase(PARTY[id],level);s.party.push({id,level,xp:0,hp:base.hp,mp:base.mp,maxHp:base.hp,maxMp:base.mp});s.gear[id]=emptyEquipment();const starting=PARTY[id].startingGear||{};for(const slot of SLOTS)if(starting[slot]){const defId=typeof starting[slot]==='string'?starting[slot]:starting[slot].id;itemDefinition(defId);s.gear[id][slot]=createItem(s,defId);}refresh(s);const joined=s.party.find(h=>h.id===id);joined.hp=joined.maxHp;joined.mp=joined.maxMp;emit(s,'recruit',PARTY[id].name+' присоединяется к отряду.',{heroId:id});}
 export function progressionInfo(s,heroId){
  const hero=s.party.find(h=>h.id===heroId);if(!hero)return null;const capped=hero.level>=LEVEL_CAP,threshold=experienceThreshold(hero.level),next=clone(s),future=next.party.find(h=>h.id===heroId);if(!capped)future.level++;
  const current=stats(s,heroId),nextStats=stats(next,heroId),gains=Object.fromEntries(Object.keys(current).map(k=>[k,nextStats[k]-current[k]]));
@@ -152,6 +157,19 @@ function rewardWithLoot(s,value,id,table){
  if(s.claimed.includes('reward:'+id))return null;
  const drops=rollLoot(table,()=>lootRandom(s));
  return reward(s,drops.length?{...value,items:[...(value?.items||[]),...drops]}:value,id);
+}
+export function upgradeEquipmentState(s){
+ if(s?.schema!==LEGACY_SCHEMA)return s;
+ const invalid=()=>fail('Повреждена старая сумка или экипировка.');
+ if(!Array.isArray(s.bag)||s.bag.length!==LEGACY_BAG_SIZE||!plainAbilityStatus(s.gear))invalid();
+ for(const [id,gear] of Object.entries(s.gear)){
+  if(!plainAbilityStatus(gear)||Object.keys(gear).length!==LEGACY_EQUIPMENT_SLOTS.length||
+     !LEGACY_EQUIPMENT_SLOTS.every(slot=>Object.hasOwn(gear,slot)))invalid();
+  s.gear[id]={...emptyEquipment(),...gear};
+ }
+ s.bag.push(...Array(BAG_SIZE-LEGACY_BAG_SIZE).fill(null));
+ s.schema=SCHEMA;
+ return s;
 }
 export function upgradeLootState(s){
  s.lootRng??=lootSeed(s.runId);
@@ -252,7 +270,7 @@ function restInternal(s,node){refresh(s,true);s.lastCamp={areaId:s.areaId,positi
 export function rest(s,nodeId){return transact(s,next=>{const node=objectById(next,nodeId)||nearby(next).find(o=>o.kind==='camp');checkNear(next,node);if(node.kind!=='camp')fail('Отдохнуть можно в лагере');return restInternal(next,node);});}
 
 function rng(s){let value=s.rng|0;value^=value<<13;value^=value>>>17;value^=value<<5;s.rng=value>>>0;return s.rng/4294967296;}
-function enemyStats(def){return {hp:def.stats?.hp||def.hp||80,mp:def.stats?.mp||0,atk:def.stats?.atk||def.atk||20,def:def.stats?.def||def.def||8,speed:def.stats?.speed||12,initiative:Math.max(1,Math.round(def.stats?.initiative??def.stats?.speed??12))};}
+function enemyStats(def){return {hp:def.stats?.hp||def.hp||80,mp:def.stats?.mp||0,atk:def.stats?.atk||def.atk||20,def:def.stats?.def||def.def||8,speed:def.stats?.speed||12,initiative:Math.max(1,Math.round(def.stats?.initiative??def.stats?.speed??12)),...resistanceStats(def.stats)};}
 const isBoss=def=>def.kind==='boss'||!!def.boss;
 const DEFAULT_BOSS_PHASE=[{at:.5,damage:1.16,text:'Снимает печать'}];
 const phaseList=def=>def.phases||(isBoss(def)?DEFAULT_BOSS_PHASE:[]);
@@ -342,9 +360,14 @@ export function reviveCompanion(s,targetId,request={}){return transact(s,next=>{
  return {message:PARTY[targetId].name+' возрождён: '+target.hp+' / '+target.maxHp+' HP.'};
 });}
 function heroStatus(s,id){return s.battle.status[id]||(s.battle.status[id]={});}
-function rolledDamage(attacker,defender,power,magic,roll){const raw=attacker.atk*(power||1)-(magic?.3:.55)*defender.def;return Math.max(3,Math.round(raw*(.94+roll*.12)));}
+function rolledDamage(attacker,defender,power,magic,roll){const raw=attacker.atk*(power||1)-(magic?.22:.55)*defender.def;return Math.max(3,Math.round(raw*(.94+roll*.12)));}
 function damage(s,attacker,defender,power,magic=false){return rolledDamage(attacker,defender,power,magic,rng(s));}
-function enemyMultiplier(enemy,element,ignoreGuard=false){const def=ENEMIES[enemy.kind],weak=def.weakness||def.weakElement,vulnerable=!!element&&(weak===element||(Array.isArray(weak)&&weak.includes(element)));return {vulnerable,multiplier:(vulnerable?1.5:1)*(enemy.status.break>0?1.2:1)*(!ignoreGuard&&enemy.status.guard>0?.55:1)};}
+function enemyMultiplier(enemy,element='physical',ignoreGuard=false){
+ const def=ENEMIES[enemy.kind],weak=def.weakness||def.weakElement;
+ const vulnerable=!!element&&(weak===element||Array.isArray(weak)&&weak.includes(element));
+ const resistance=effectiveResistance(def.stats,element);
+ return {vulnerable,resistance,multiplier:(1-resistance/100)*(vulnerable?1.5:1)*(enemy.status.break>0?1.2:1)*(!ignoreGuard&&enemy.status.guard>0?.55:1)};
+}
 function applyBreak(enemy,turns=2){if(enemy.status.break>0||enemy.status.breakRecovery>0)return false;enemy.status.break=clamp(turns,1,2);return true;}
 function hitEnemy(s,enemy,amount,element,options={}){
  const def=ENEMIES[enemy.kind],{vulnerable,multiplier}=enemyMultiplier(enemy,element,options.ignoreGuard);
@@ -361,6 +384,12 @@ const abilityEffects=skill=>skill?.heroEffects||{};
 const skillCost=skill=>skill?.mp??skill?.cost??0;
 const periodicDamageName=(bleed)=>bleed?'Кровотечение':'Горение';
 const abilityAmount=(spec,st)=>Math.max(1,Math.min(999,Math.round((spec?.base||0)+(spec?.scale||0)*st.atk)));
+function resistDamage(amount,defender,element){
+ return Math.round(amount*(1-effectiveResistance(defender,element)/100));
+}
+function periodicDamage(enemy,fx,attacker){
+ return Math.max(1,resistDamage(abilityAmount(fx.burn,attacker),ENEMIES[enemy.kind].stats,fx.bleed?'physical':'fire'));
+}
 function abilityEnemyStats(enemy){const out=enemyStats(ENEMIES[enemy.kind]);if(enemy.status.fracture>0)out.def*=.75;return out;}
 function abilityPower(skill,enemy,secondary=false){const fx=abilityEffects(skill);return (skill?.power||1)*(fx.heavyPunish&&['heavy','all'].includes(enemy.intent)?1.45:1)*(secondary?.55:1);}
 function abilityFoes(s,skill,targetId){const living=(s.battle?.enemies||[]).filter(e=>e.hp>0);if(skill?.target==='allEnemies'||targetId==null)return living.map(enemy=>({enemy,secondary:false}));const primary=living.find(e=>e.uid===targetId);if(!primary)return [];const result=[{enemy:primary,secondary:false}];if(abilityEffects(skill).chain){const second=living.find(e=>e.uid!==primary.uid);if(second)result.push({enemy:second,secondary:true});}return result;}
@@ -371,7 +400,7 @@ function abilityLowestMana(s,casterId){return s.party.filter(h=>h.hp>0&&h.id!==c
 function abilityLowestHealth(s){return s.party.filter(h=>h.hp>0&&h.hp<h.maxHp).sort((a,b)=>a.hp/a.maxHp-b.hp/b.maxHp)[0];}
 function abilityPreviewEffects(s,hero,skill,targetId,targets){
  const fx=abilityEffects(skill),st=stats(s,hero.id),result=[],friends=abilityFriends(s,hero,skill,targetId),foes=abilityFoes(s,skill,targetId),add=(targetId,kind,label,extra={})=>{let detail='';if(extra.amount!==undefined)detail=kind==='mana'?extra.amount+' MP':kind==='chill'?extra.amount+'%':kind==='burn'?extra.amount+' урона':kind==='barrier'?extra.amount+' поглощения':kind==='regen'||kind==='triage'?extra.amount+' HP':kind==='counter'?'1 ответ':'';if(extra.min!==undefined)detail=extra.min+'–'+extra.max+' HP';if(extra.duration)detail+=(detail?' · ':'')+extra.duration+' ход.';result.push({targetId,kind,label:label+(detail?' · '+detail:''),...extra});};
- for(const {enemy}of foes){if(fx.ignoreGuard&&enemy.status.guard>0)add(enemy.uid,'ignoreGuard','Удар обходит защитную стойку');if(fx.stripGuard&&enemy.status.guard>0)add(enemy.uid,'stripGuard','Снимет защитную стойку');if(fx.burn)add(enemy.uid,'burn',periodicDamageName(fx.bleed)+' перед действиями противника',{amount:abilityAmount(fx.burn,st),duration:fx.burn.turns,bleed:!!fx.bleed});if(fx.chill)add(enemy.uid,'chill','Ослабит следующую атаку',{amount:Math.max(enemy.status.chill>0?enemy.status.chillPower||0:0,fx.chill.percent),duration:1});if(fx.fracture)add(enemy.uid,'fracture','Броня ослаблена на 25%',{amount:25,duration:2});if(fx.disrupt)add(enemy.uid,'disrupt','Следующая магия заменится обычной атакой',{duration:2});if(fx.heavyPunish&&['heavy','all'].includes(enemy.intent))add(enemy.uid,'break','Прервёт тяжёлую подготовку, если нет восстановления равновесия',{duration:1});}
+ for(const {enemy}of foes){if(fx.ignoreGuard&&enemy.status.guard>0)add(enemy.uid,'ignoreGuard','Удар обходит защитную стойку');if(fx.stripGuard&&enemy.status.guard>0)add(enemy.uid,'stripGuard','Снимет защитную стойку');if(fx.burn)add(enemy.uid,'burn',periodicDamageName(fx.bleed)+' перед действиями противника',{amount:periodicDamage(enemy,fx,st),duration:fx.burn.turns,bleed:!!fx.bleed});if(fx.chill)add(enemy.uid,'chill','Ослабит следующую атаку',{amount:Math.max(enemy.status.chill>0?enemy.status.chillPower||0:0,fx.chill.percent),duration:1});if(fx.fracture)add(enemy.uid,'fracture','Броня ослаблена на 25%',{amount:25,duration:2});if(fx.disrupt)add(enemy.uid,'disrupt','Следующая магия заменится обычной атакой',{duration:2});if(fx.heavyPunish&&['heavy','all'].includes(enemy.intent))add(enemy.uid,'break','Прервёт тяжёлую подготовку, если нет восстановления равновесия',{duration:1});}
  if(skill.kind==='break')for(const {enemy}of foes)add(enemy.uid,'break','Нарушит равновесие: противник пропустит два действия',{duration:2});
  if(fx.chain&&targetId!=null&&foes.length>1)add(foes[1].enemy.uid,'chain','Цепь: дополнительный разряд 55% мощности');
  for(const ally of friends){if(ally.hp<=0&&skill.kind!=='revive')continue;if(fx.emergencyBarrier&&ally.hp>0&&ally.hp/ally.maxHp<=fx.emergencyBarrier.threshold)add(ally.id,'barrier','Экстренный барьер после лечения; не складывается',{amount:Math.max(abilityAmount(fx.emergencyBarrier,st),s.battle.status[ally.id]?.barrier||0),duration:fx.emergencyBarrier.turns});if(fx.triage&&ally.hp>0&&ally.hp/ally.maxHp<=fx.triage.threshold)add(ally.id,'triage','Экстренное исцеление: дополнительный предел',{amount:fx.triage.bonus});if(fx.manaTransfer&&ally.hp>0&&ally.id!==hero.id)add(ally.id,'mana','Восстановит ману',{amount:Math.min(fx.manaTransfer,ally.maxMp-ally.mp)});if(fx.barrier&&ally.hp>0)add(ally.id,'barrier','Барьер поглотит урон; не складывается',{amount:Math.max(abilityAmount(fx.barrier,st),s.battle.status[ally.id]?.barrier||0),duration:fx.barrier.turns});if(fx.regen&&ally.hp>0)add(ally.id,'regen','Восстановление в начале ходов союзника',{amount:Math.max(s.battle.status[ally.id]?.regen>0?s.battle.status[ally.id].regenPower||0:0,abilityAmount(fx.regen,st)),duration:fx.regen.turns});if(fx.reviveGuard&&ally.hp===0)add(ally.id,'guard','После возрождения урон снижен на 35% до хода союзника',{duration:1});}
@@ -386,7 +415,7 @@ function abilitySetBarrier(s,ally,spec,st){const effect=heroStatus(s,ally.id);ef
 function abilityRestoreMana(s,hero,amount,actorId){const actual=Math.min(hero.maxMp-hero.mp,amount);if(actual<=0)return;hero.mp+=actual;battleLog(s,PARTY[hero.id].name+' восстанавливает '+actual+' MP.');emit(s,'mana',String(actual),{actorId,targetId:hero.id,amount:actual});}
 function applyAbilityEffects(s,hero,skill,targetId,dealt,priorHp={}){
  const fx=abilityEffects(skill),st=stats(s,hero.id),friends=abilityFriends(s,hero,skill,targetId);
- for(const {enemy}of abilityFoes(s,skill,targetId)){if(enemy.hp<=0)continue;if(fx.burn){enemy.status.burn=fx.burn.turns;enemy.status.burnPower=abilityAmount(fx.burn,st);if(fx.bleed)enemy.status.bleed=1;else delete enemy.status.bleed;}if(fx.chill){enemy.status.chillPower=Math.max(enemy.status.chill>0?enemy.status.chillPower||0:0,fx.chill.percent);enemy.status.chill=1;}if(fx.fracture)enemy.status.fracture=2;if(fx.disrupt)enemy.status.disrupt=2;if(fx.heavyPunish&&['heavy','all'].includes(enemy.intent))applyBreak(enemy,1);}
+ for(const {enemy}of abilityFoes(s,skill,targetId)){if(enemy.hp<=0)continue;if(fx.burn){enemy.status.burn=fx.burn.turns;enemy.status.burnPower=periodicDamage(enemy,fx,st);if(fx.bleed)enemy.status.bleed=1;else delete enemy.status.bleed;}if(fx.chill){enemy.status.chillPower=Math.max(enemy.status.chill>0?enemy.status.chillPower||0:0,fx.chill.percent);enemy.status.chill=1;}if(fx.fracture)enemy.status.fracture=2;if(fx.disrupt)enemy.status.disrupt=2;if(fx.heavyPunish&&['heavy','all'].includes(enemy.intent))applyBreak(enemy,1);}
  for(const ally of friends)if(ally.hp>0){if(fx.emergencyBarrier&&priorHp[ally.id]>0&&priorHp[ally.id]/ally.maxHp<=fx.emergencyBarrier.threshold)abilitySetBarrier(s,ally,fx.emergencyBarrier,st);if(fx.manaTransfer&&ally.id!==hero.id)abilityRestoreMana(s,ally,fx.manaTransfer,hero.id);if(fx.barrier)abilitySetBarrier(s,ally,fx.barrier,st);if(fx.regen){const effect=heroStatus(s,ally.id);effect.regenPower=Math.max(effect.regen>0?effect.regenPower||0:0,abilityAmount(fx.regen,st));effect.regen=Math.max(effect.regen||0,fx.regen.turns);}if(fx.reviveGuard){const effect=heroStatus(s,ally.id);effect.guard=1;effect.guardMultiplier=.65;delete effect.guardUntilRound;}}
  if(fx.counter){const effect=heroStatus(s,hero.id);effect.counter=2;effect.counterCharges=1;effect.counterPower=.65;}
  if(fx.cover&&targetId!==hero.id&&s.party.some(h=>h.id===targetId&&h.hp>0)){const effect=heroStatus(s,hero.id);effect.cover=2;effect.coverTargetId=targetId;}
@@ -397,11 +426,21 @@ function applyAbilityEffects(s,hero,skill,targetId,dealt,priorHp={}){
 }
 function abilityHeroTurnStart(s,heroId){const hero=s.party.find(h=>h.id===heroId),effect=heroStatus(s,heroId);if(hero.hp<=0)return;if(effect.regen>0){const amount=Math.min(hero.maxHp-hero.hp,effect.regenPower);hero.hp+=amount;effect.regen--;if(amount){battleLog(s,PARTY[heroId].name+': восстановление '+amount+' HP.');emit(s,'heal',String(amount),{actorId:heroId,targetId:heroId,amount,source:'regen'});}}for(const key of ['barrierTurns','counter','cover'])if(effect[key]>0)effect[key]--;if(effect.barrierTurns!==undefined&&!effect.barrierTurns)effect.barrier=0;if(effect.counter!==undefined&&!effect.counter)effect.counterCharges=0;}
 function abilityAbsorb(s,hero,amount){const effect=heroStatus(s,hero.id),absorbed=Math.min(amount,effect.barrier||0);if(absorbed){effect.barrier-=absorbed;battleLog(s,PARTY[hero.id].name+': барьер поглотил '+absorbed+'.');}return {amount:amount-absorbed,absorbed};}
-function abilityTakeHit(s,enemy,hero,amount,magic=false){
- const effect=heroStatus(s,hero.id);if(effect.guard>0)amount=Math.max(1,Math.round(amount*(effect.guardMultiplier??.42)));const coverer=s.party.find(h=>h.id!==hero.id&&h.hp>0&&heroStatus(s,h.id).cover>0&&heroStatus(s,h.id).coverTargetId===hero.id),share=coverer?Math.min(coverer.hp,Math.round(amount*.3)):0;
- const hit=(target,incoming,redirected=false)=>{const reduced=abilityAbsorb(s,target,incoming),actual=Math.min(target.hp,reduced.amount);target.hp-=actual;battleLog(s,ENEMIES[enemy.kind].name+' → '+PARTY[target.id].name+': '+actual+' урона.');emit(s,'hit',String(actual),{actorId:enemy.uid,targetId:target.id,amount:actual,rolledAmount:reduced.amount,overkill:reduced.amount-actual,absorbed:reduced.absorbed,redirected});if(actual>0)wearEquipment(s,target.id,'armor',2);if(target.hp===0){const status=heroStatus(s,target.id);for(const key of ['regen','barrier','barrierTurns','counter','counterCharges','cover'])if(status[key]!==undefined)status[key]=0;}return actual;};
+const ADDITIONAL_WEAR_SLOTS=SLOTS.filter(slot=>!LEGACY_EQUIPMENT_SLOTS.includes(slot));
+function wearDefence(s,id){
+ wearEquipment(s,id,'armor',2);
+ const equipped=ADDITIONAL_WEAR_SLOTS.filter(slot=>s.gear[id]?.[slot]);
+ if(equipped.length)wearEquipment(s,id,equipped[(s.battle.round+s.battle.turnIndex)%equipped.length],1);
+}
+function guardedDamage(amount,effect){
+ return effect.guard>0?Math.max(1,Math.round(amount*(effect.guardMultiplier??.42))):amount;
+}
+const redirectedShare=(amount,coverer)=>coverer?Math.min(coverer.hp,Math.round(amount*.3)):0;
+function abilityTakeHit(s,enemy,hero,amount,element,defences){
+ const effect=heroStatus(s,hero.id);amount=guardedDamage(amount,effect);const coverer=s.party.find(h=>h.id!==hero.id&&h.hp>0&&heroStatus(s,h.id).cover>0&&heroStatus(s,h.id).coverTargetId===hero.id),share=redirectedShare(amount,coverer);
+ const hit=(target,incoming,redirected=false)=>{const defended=resistDamage(incoming,defences[target.id],element),reduced=abilityAbsorb(s,target,defended),actual=Math.min(target.hp,reduced.amount);target.hp-=actual;battleLog(s,ENEMIES[enemy.kind].name+' → '+PARTY[target.id].name+': '+actual+' урона.');emit(s,'hit',String(actual),{actorId:enemy.uid,targetId:target.id,amount:actual,rolledAmount:reduced.amount,overkill:reduced.amount-actual,absorbed:reduced.absorbed,redirected,element,resistance:effectiveResistance(defences[target.id],element)});if(actual>0)wearDefence(s,target.id);if(target.hp===0){const status=heroStatus(s,target.id);for(const key of ['regen','barrier','barrierTurns','counter','counterCharges','cover'])if(status[key]!==undefined)status[key]=0;}return actual;};
  const actual=hit(hero,amount-share);if(coverer&&share>0)hit(coverer,share,true);
- if(actual>0&&!magic&&hero.hp>0&&enemy.hp>0&&effect.counter>0&&effect.counterCharges>0){effect.counterCharges--;const before=enemy.hp,retaliation=damage(s,stats(s,hero.id),abilityEnemyStats(enemy),effect.counterPower);emit(s,'action','Ответный удар',{actorId:hero.id,targetId:enemy.uid,kind:'attack',source:'counter'});hitEnemy(s,enemy,retaliation);emit(s,'hit',String(before-enemy.hp),{actorId:hero.id,targetId:enemy.uid,amount:before-enemy.hp,source:'counter'});if(before>enemy.hp)wearEquipment(s,hero.id,'weapon',1);}
+ if(actual>0&&element==='physical'&&hero.hp>0&&enemy.hp>0&&effect.counter>0&&effect.counterCharges>0){effect.counterCharges--;const before=enemy.hp,retaliation=damage(s,stats(s,hero.id),abilityEnemyStats(enemy),effect.counterPower);emit(s,'action','Ответный удар',{actorId:hero.id,targetId:enemy.uid,kind:'attack',source:'counter'});hitEnemy(s,enemy,retaliation);emit(s,'hit',String(before-enemy.hp),{actorId:hero.id,targetId:enemy.uid,amount:before-enemy.hp,source:'counter'});if(before>enemy.hp)wearEquipment(s,hero.id,'weapon',1);}
 }
 function plainAbilityStatus(value){return !!value&&typeof value==='object'&&!Array.isArray(value)&&(Object.getPrototypeOf(value)===Object.prototype||Object.getPrototypeOf(value)===null);}
 function validAbilityEnemyStatus(status,int){return plainAbilityStatus(status)&&Object.entries(status).every(([key,value])=>['break','breakRecovery','guard','burn','chill','fracture','disrupt'].includes(key)?int(value,0,3):key==='burnPower'?int(value,0,999):key==='chillPower'?int(value,0,60):key==='bleed'?value===1&&status.burn>0:false)&&(!(status.burn>0)||status.burnPower>0)&&(!(status.chill>0)||status.chillPower>0);}
@@ -414,7 +453,12 @@ export function battlePreview(s,action={},targetId=action.targetId){
  const effect=skill?.kind||action.kind||'attack',st=stats(s,hero.id),fx=abilityEffects(skill);out.kind=effect;out.cost=skillCost(skill);out.affordable=hero.mp>=out.cost;out.description=skill?.description||'';
  if(['attack','damage','break'].includes(effect)){
   const targets=abilityFoes(s,skill,targetId);if(!targets.length){out.message='Выберите живого противника';return out;}if(effect==='attack'&&s.battle.status[hero.id]?.attack>0)st.atk*=1.3;
-  for(const {enemy,secondary}of targets){const magic=!!skill?.element&&skill.element!=='physical',mult=enemyMultiplier(enemy,skill?.element,fx.ignoreGuard||fx.stripGuard),amount=roll=>Math.min(enemy.hp,Math.round(rolledDamage(st,abilityEnemyStats(enemy),abilityPower(skill,enemy,secondary),magic,roll)*mult.multiplier));out.targets.push({id:enemy.uid,side:'enemy',name:ENEMIES[enemy.kind].name,min:amount(0),max:amount(1),effect:'damage',vulnerable:mult.vulnerable,secondary});}
+  for(const {enemy,secondary}of targets){
+   const element=skill?.element||'physical',magic=element!=='physical';
+   const mult=enemyMultiplier(enemy,element,fx.ignoreGuard||fx.stripGuard);
+   const amount=roll=>Math.min(enemy.hp,Math.round(rolledDamage(st,abilityEnemyStats(enemy),abilityPower(skill,enemy,secondary),magic,roll)*mult.multiplier));
+   out.targets.push({id:enemy.uid,side:'enemy',name:ENEMIES[enemy.kind].name,min:amount(0),max:amount(1),effect:'damage',vulnerable:mult.vulnerable,resistance:mult.resistance,element,secondary});
+  }
  }else if(['heal','revive','guard','buff','taunt'].includes(effect)){
   const friends=abilityFriends(s,hero,skill,targetId);if(!friends.length){out.message='Выберите спутника';return out;}for(const ally of friends){let amount=0;if(effect==='heal')amount=abilityHealAmount(s,hero,skill,ally);if(effect==='revive'&&ally.hp===0)amount=Math.max(1,Math.round(ally.maxHp*((skill.power||.35)>1?.35:skill.power)));out.targets.push({id:ally.id,side:'party',name:PARTY[ally.id].name,min:amount,max:amount,effect,alive:ally.hp>0});}
  }else if(effect==='defend')out.message='Урон снижен на 58% до следующего хода этого героя.';else{out.message='Для этого действия нет прогноза';return out;}
@@ -518,7 +562,13 @@ function enemyActionBody(s,enemy){
  }
  const taunt=living.find(h=>heroStatus(s,h.id).taunt>0),targets=enemy.intent==='all'?living:[taunt||living[Math.floor(rng(s)*living.length)]],power=enemyActionPower(enemy,skill,enemy.intent);
  emit(s,'action',def.name,{actorId:enemy.uid,targetId:targets[0].id,kind:enemy.intent==='all'||(skill?.element&&skill.element!=='physical')?'skill':'attack',skillId:enemy.skillId,...(enemy.intent==='heavy'?{heavy:true}:{})});
- for(const hero of targets){let amount=damage(s,enemyStats(def),stats(s,hero.id),power,!!skill?.element&&skill.element!=='physical');if(enemy.status.chill>0)amount=Math.max(1,Math.round(amount*(1-enemy.status.chillPower/100)));abilityTakeHit(s,enemy,hero,amount,!!skill?.element&&skill.element!=='physical');}if(enemy.status.chill>0)enemy.status.chill--;
+ const element=skill?.element||'physical',attack=enemyStats(def),defences=Object.fromEntries(living.map(h=>[h.id,stats(s,h.id)]));
+ for(const hero of targets){
+  let amount=damage(s,attack,defences[hero.id],power,element!=='physical');
+  if(enemy.status.chill>0)amount=Math.max(1,Math.round(amount*(1-enemy.status.chillPower/100)));
+  abilityTakeHit(s,enemy,hero,amount,element,defences);
+ }
+ if(enemy.status.chill>0)enemy.status.chill--;
 }
 function resolveInitiative(s){
  while(s.battle){
@@ -852,17 +902,18 @@ export function enemyThreatPreview(s,enemyId){
  const info=enemyIntentInfo(s,enemyId);if(!info)return null;const enemy=s.battle.enemies.find(e=>e.uid===enemyId),skill=SKILLS[info.skillId],out={...info,estimate:true,scenarios:[],targets:[],message:'Текущее состояние с учётом собственного горения до действия; предыдущие ходы могут изменить цель и защиту.'};
  if(!info.alive||info.effectiveIntent==='skip'||info.effectiveIntent==='guard')return out;
  if(info.effectiveIntent==='heal'){const target=s.battle.enemies.find(e=>e.uid===info.targetIds[0]),hp=target.uid===enemyId?enemyPreActionHp(target):target.hp,amount=Math.min(target.maxHp-hp,skill?.power||45);out.targets=[{id:target.uid,side:'enemy',effect:'heal',min:amount,max:amount}];return out;}
- const magical=!!skill?.element&&skill.element!=='physical',power=enemyActionPower(enemy,skill,info.effectiveIntent);
+ const element=skill?.element||'physical',magical=element!=='physical',power=enemyActionPower(enemy,skill,info.effectiveIntent);
+ const attacker=enemyStats(ENEMIES[enemy.kind]),defences=Object.fromEntries(s.party.map(h=>[h.id,stats(s,h.id)]));
  const groups=info.effectiveIntent==='all'?[info.targetIds]:info.targetIds.map(id=>[id]);
  for(const ids of groups){
   const endpoint=roll=>{const heroes=clone(s.party),effects=clone(s.battle.status),hits={};
-   const receive=(hero,amount,redirected)=>{const effect=effects[hero.id]||{},absorbed=Math.min(amount,effect.barrier||0),actual=Math.min(hero.hp,amount-absorbed);effect.barrier=(effect.barrier||0)-absorbed;hero.hp-=actual;const hit=hits[hero.id]||(hits[hero.id]={id:hero.id,amount:0,absorbed:0,redirected:false});hit.amount+=actual;hit.absorbed+=absorbed;hit.redirected||=redirected;if(!hero.hp){effect.cover=0;effect.barrier=0;}effects[hero.id]=effect;};
-   for(const id of ids){const hero=heroes.find(h=>h.id===id),effect=effects[id]||{};let amount=rolledDamage(enemyStats(ENEMIES[enemy.kind]),stats(s,id),power,magical,roll);if(enemy.status.chill>0)amount=Math.max(1,Math.round(amount*(1-enemy.status.chillPower/100)));if(effect.guard>0)amount=Math.max(1,Math.round(amount*(effect.guardMultiplier??.42)));const coverer=heroes.find(h=>h.id!==id&&h.hp>0&&(effects[h.id]?.cover||0)>0&&effects[h.id].coverTargetId===id),share=coverer?Math.min(coverer.hp,Math.round(amount*.3)):0;receive(hero,amount-share,false);if(share)receive(coverer,share,true);}
+   const receive=(hero,amount,redirected)=>{amount=resistDamage(amount,defences[hero.id],element);const effect=effects[hero.id]||{},absorbed=Math.min(amount,effect.barrier||0),actual=Math.min(hero.hp,amount-absorbed);effect.barrier=(effect.barrier||0)-absorbed;hero.hp-=actual;const hit=hits[hero.id]||(hits[hero.id]={id:hero.id,amount:0,absorbed:0,redirected:false});hit.amount+=actual;hit.absorbed+=absorbed;hit.redirected||=redirected;if(!hero.hp){effect.cover=0;effect.barrier=0;}effects[hero.id]=effect;};
+   for(const id of ids){const hero=heroes.find(h=>h.id===id),effect=effects[id]||{};let amount=rolledDamage(attacker,defences[id],power,magical,roll);if(enemy.status.chill>0)amount=Math.max(1,Math.round(amount*(1-enemy.status.chillPower/100)));amount=guardedDamage(amount,effect);const coverer=heroes.find(h=>h.id!==id&&h.hp>0&&(effects[h.id]?.cover||0)>0&&effects[h.id].coverTargetId===id),share=redirectedShare(amount,coverer);receive(hero,amount-share,false);if(share)receive(coverer,share,true);}
    return hits;
   };
-  const low=endpoint(0),high=endpoint(1),targets=[...new Set([...Object.keys(low),...Object.keys(high)])].map(id=>({id,side:'party',effect:'damage',min:Math.min(low[id]?.amount||0,high[id]?.amount||0),max:Math.max(low[id]?.amount||0,high[id]?.amount||0),absorbedMin:Math.min(low[id]?.absorbed||0,high[id]?.absorbed||0),absorbedMax:Math.max(low[id]?.absorbed||0,high[id]?.absorbed||0),redirected:!!(low[id]?.redirected||high[id]?.redirected)}));out.scenarios.push({primaryTargetIds:[...ids],targets});
+  const low=endpoint(0),high=endpoint(1),targets=[...new Set([...Object.keys(low),...Object.keys(high)])].map(id=>({id,side:'party',effect:'damage',min:Math.min(low[id]?.amount||0,high[id]?.amount||0),max:Math.max(low[id]?.amount||0,high[id]?.amount||0),absorbedMin:Math.min(low[id]?.absorbed||0,high[id]?.absorbed||0),absorbedMax:Math.max(low[id]?.absorbed||0,high[id]?.absorbed||0),redirected:!!(low[id]?.redirected||high[id]?.redirected),element,resistance:effectiveResistance(defences[id],element)}));out.scenarios.push({primaryTargetIds:[...ids],targets});
  }
- out.targets=[...new Set(out.scenarios.flatMap(p=>p.targets.map(t=>t.id)))].map(id=>{const values=out.scenarios.map(p=>p.targets.find(t=>t.id===id));return {id,side:'party',effect:'damage',min:Math.min(...values.map(t=>t?.min||0)),max:Math.max(...values.map(t=>t?.max||0)),possible:values.some(Boolean),guaranteed:values.every(Boolean)};});out.magical=magical;out.power=power;return out;
+ out.targets=[...new Set(out.scenarios.flatMap(p=>p.targets.map(t=>t.id)))].map(id=>{const values=out.scenarios.map(p=>p.targets.find(t=>t.id===id));return {id,side:'party',effect:'damage',min:Math.min(...values.map(t=>t?.min||0)),max:Math.max(...values.map(t=>t?.max||0)),possible:values.some(Boolean),guaranteed:values.every(Boolean),element,resistance:effectiveResistance(defences[id],element)};});out.magical=magical;out.power=power;return out;
 }
 
 

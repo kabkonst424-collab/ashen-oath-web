@@ -7,6 +7,7 @@ import * as UI from '../src/act1/interface-100.js';
 import {PARTY,ITEMS,SKILLS,ENEMIES} from '../src/act1/content.js';
 import {windowValidSelection} from '../src/act1/interface-presentation.js';
 import {captureSurface,restoreSurface,bindSearchEditing,itemStatLine} from '../src/act1/ui-feedback.js';
+import {RESISTANCE_KEYS} from '../src/act1/equipment-slots.js';
 
 const partyDefs=Object.fromEntries(PARTY.map(hero=>[hero.id,hero])),deps={M,SKILLS,itemDefs:ITEMS};
 const main=readFileSync(new URL('../src/act1/main.js',import.meta.url),'utf8');
@@ -15,7 +16,7 @@ function partyState(){
  const state=M.newGame();
  for(const id of ['iona','radan','leia']){
   state.party.push({id,level:6,xp:0,hp:1,mp:1,maxHp:1,maxMp:1});
-  state.gear[id]={weapon:null,armor:null,charm:null};
+  state.gear[id]=Object.fromEntries(Object.keys(state.gear[state.party[0].id]).map(slot=>[slot,null]));
   state.talents[id]=[];
   for(const [slot,defId] of Object.entries(partyDefs[id].startingGear))state.gear[id][slot]=instance(state,defId);
  }
@@ -144,8 +145,8 @@ test('A006 live drag nodes stay inside modal, use viewport coordinates and cance
  const modal=node(),slot=node(),drop=node();drop.dataset.location=JSON.stringify(to);drop.closest=()=>drop;
  let moves=0;
  let hovered=drop,checks=0;
- const context={ui,state,M:{previewMoveItem(...args){checks++;return M.previewMoveItem(...args);},moveItem(){moves++;}},UI100:UI,itemDefs:ITEMS,itemStatLine,locationItem:loc=>state.bag[loc.index],canStartInventoryDrag:()=>true,icon:()=>node(),el:()=>node(),text:value=>value,$:()=>modal,document:{querySelectorAll:()=>nodes.filter(n=>n.dataset.dropState),elementFromPoint:()=>hovered},innerWidth:1280,performance:{now:()=>1},commit(){},renderModal(){},sameLocation:(a,b)=>JSON.stringify(a)===JSON.stringify(b)};
- const dragCode=main.slice(main.indexOf('function paintDropTarget('),main.indexOf('const GEAR_LABELS='));
+ const context={ui,state,M:{previewMoveItem(...args){checks++;return M.previewMoveItem(...args);},moveItem(){moves++;}},UI100:UI,itemDefs:ITEMS,itemStatLine,RESISTANCE_KEYS,locationItem:loc=>state.bag[loc.index],canStartInventoryDrag:()=>true,icon:()=>node(),el:()=>node(),text:value=>value,$:()=>modal,document:{querySelectorAll:()=>nodes.filter(n=>n.dataset.dropState),elementFromPoint:()=>hovered},innerWidth:1280,performance:{now:()=>1},commit(){},renderModal(){},sameLocation:(a,b)=>JSON.stringify(a)===JSON.stringify(b)};
+ const dragCode=main.slice(main.indexOf('function paintDropTarget('),main.indexOf('function equipmentChanges('));
  const comparisonCode=main.slice(main.indexOf('function equipmentChanges('),main.indexOf('function companionView('));
  vm.createContext(context);vm.runInContext(dragCode+comparisonCode,context);
  context.startDrag({pointerId:1,clientX:118,clientY:118},slot,from);

@@ -1,22 +1,23 @@
 import {resolveInitialQuality} from './browser-performance.js?v=campaign-140';
 import {createQuestArrow} from './quest-arrow-view.js?v=0.16.0-demo-webperf20261106';
-import {approachTarget,areaBounds,planPath,validSegment} from './navigation.js?v=campaign-140';
-import {createMinimap,createAreaSchematic} from './minimap.js?v=campaign-140';
+import {approachTarget,areaBounds,planPath,validSegment} from './navigation.js?v=campaign-150';
+import {createMinimap,createAreaSchematic} from './minimap.js?v=campaign-150';
 import * as HUD50 from './hud-presentation.js?v=0.16.0-demo';
-import * as UI100 from './interface-100.js?v=companion-120';
+import * as UI100 from './interface-100.js?v=campaign-150';
 import {ownsMovementKey,ignoreGameShortcut,canBattleShortcut,canStartInventoryDrag,worldTapStart,worldTapComplete} from './input-policy.js?v=0.16.0-demo';
-import {normalizeSettings,bindSearchEditing,captureSurface,restoreSurface,captureDisclosures,restoreDisclosures,heroSummary,slotSummary,saveWarning,itemStatLine,feedbackSurface,normalizePresentationSettings,statusDescription,createAudioEventCursor,eventAudioCues,presentationAudioCue} from './ui-feedback.js?v=companion-120';
-import * as M from './model.js?v=campaign-140';
-import {PARTY,ITEMS,SKILLS,ENEMIES,AREAS,QUESTS,DIALOGUES,CAMPAIGN_ACTS,CAMPAIGN_COMICS,CAMPAIGN_ENDINGS} from './content.js?v=campaign-140';
-import {Saves} from './save.js?v=campaign-140';
-import {World} from './world.js?v=campaign-140';
+import {normalizeSettings,bindSearchEditing,captureSurface,restoreSurface,captureDisclosures,restoreDisclosures,heroSummary,slotSummary,saveWarning,itemStatLine,resistanceDeltaCopy,damageResistanceCopy,feedbackSurface,normalizePresentationSettings,statusDescription,createAudioEventCursor,eventAudioCues,presentationAudioCue} from './ui-feedback.js?v=campaign-150';
+import * as M from './model.js?v=campaign-150';
+import {PARTY,ITEMS,SKILLS,ENEMIES,AREAS,QUESTS,DIALOGUES,CAMPAIGN_ACTS,CAMPAIGN_COMICS,CAMPAIGN_ENDINGS} from './content.js?v=campaign-150';
+import {Saves} from './save.js?v=campaign-150';
+import {World} from './world.js?v=campaign-150';
 import {WriterSession} from './writer-session.js?v=0.16.0-demo';
 import {Audio} from './act-audio.js?v=campaign-v1';
 import {bridgeAt,riverSection} from './area-geometry.js?v=rivers-0181';
 import {magicProfile} from './data/magic-profiles.js?v=motion-110';
-import {durabilityLabel,durabilityMeter,itemRarity,renderChestLoot,renderSmithy} from './forged-ui.js?v=forged-019';
+import {durabilityLabel,durabilityMeter,itemRarity,renderChestLoot,renderSmithy} from './forged-ui.js?v=campaign-150';
 import {textImage,sprite,atlasCell,loadTypography} from './bitmap.js?v=campaign-140';
-import {RELEASE,areaLoadingPresentation,campaignPortrait,renderStarterSelection,renderCompanionBar,renderTalentTree,renderCampaignComic} from './campaign-ui.js?v=campaign-140';
+import {RELEASE,areaLoadingPresentation,campaignPortrait,renderStarterSelection,renderCompanionBar,renderTalentTree,renderCampaignComic} from './campaign-ui.js?v=campaign-150';
+import {EQUIPMENT_SLOTS,SLOT_LABELS,isEquipmentKind,RESISTANCE_KEYS,RESISTANCE_LABELS,RESISTANCE_CAP,ELEMENT_RESISTANCE,effectiveResistance} from './equipment-slots.js?v=campaign-150';
 
 const $=id=>document.getElementById(id),list=v=>Array.isArray(v)?v:Object.values(v||{}),dict=v=>Object.fromEntries(list(v).map(x=>[x.id,x]));
 const partyDefs=dict(PARTY),itemDefs=dict(ITEMS),areaDefs=dict(AREAS),dialogueDefs=dict(DIALOGUES),enemyDefs=dict(ENEMIES);
@@ -99,7 +100,7 @@ const store=new Saves((kind,message)=>{if(kind==='error'){saveError=true;saveFai
 const WRITER_WAIT='Игра открыта в другой вкладке. Закройте её — кнопки запуска здесь включатся автоматически.';
 let writerRefresh=Promise.resolve(),writerRefreshSerial=0,startupError='';
 const writerSession=new WriterSession({onChange:writerChanged});
-import {windowBagView,windowValidSelection,windowQuantity,windowOwnership,windowQuestView} from './interface-presentation.js?v=forged-019';
+import {windowBagView,windowValidSelection,windowQuantity,windowOwnership,windowQuestView} from './interface-presentation.js?v=campaign-150';
 
 function windowDisclosure(key,label,...children){
   const box=el('details','window-disclosure'),head=el('summary','',text(label,600,17,'#e9ca91',true));
@@ -183,7 +184,19 @@ function portrait(index,cls=''){
  if(!source)return sprite(Number(index)||0,'portraits',cls);
  const picture=new Image();picture.src=source;picture.alt='';picture.decoding='async';picture.className='sprite campaign-portrait '+cls;return picture;
 }
-function icon(def){const id=(def?.id||'').toLowerCase();let i=def?.icon;if(!Number.isInteger(i))i=/shield/.test(id)?1:/staff/.test(id)?2:/bow/.test(id)?3:/dagger/.test(id)?4:def?.kind==='armor'?(/robe/.test(id)?6:5):def?.kind==='charm'?7:/ether|mana/.test(id)?9:/reviv/.test(id)?10:/herb/.test(id)?11:def?.kind==='quest'?12:def?.kind==='material'?14:def?.kind==='consumable'?8:0;return sprite(i,'icons');}
+const NEW_GEAR_GLYPHS=new Set(['helmet','gloves','belt','leggings','boots','ring']);
+const BASIC_GEAR_GLYPHS={weapon:0,armor:5,charm:7};
+function icon(def){
+ if(NEW_GEAR_GLYPHS.has(def?.kind)){
+   const glyph=el('span','sprite icons gear-icon');
+   glyph.dataset.gearIcon=def.kind;
+   glyph.setAttribute('aria-hidden','true');
+   return glyph;
+ }
+ const id=(def?.id||'').toLowerCase();let i=def?.icon;
+ if(!Number.isInteger(i))i=/shield/.test(id)?1:/staff/.test(id)?2:/bow/.test(id)?3:/dagger/.test(id)?4:def?.kind==='armor'&&/robe/.test(id)?6:BASIC_GEAR_GLYPHS[def?.kind]??(/ether|mana/.test(id)?9:/reviv/.test(id)?10:/herb/.test(id)?11:def?.kind==='quest'?12:def?.kind==='material'?14:def?.kind==='consumable'?8:0);
+ return sprite(i,'icons');
+}
 function clearInput(){ui.worldTap=null;keys.clear();clearDestination();}
 function toast(message){if(!message)return;const surface=feedbackSurface({modalOpen:!!ui.modal&&$('gameModal').open,paused});if(surface==='modal'){ui.modalNotice=message;const status=$('modalFeedback');if(status)status.replaceChildren(text(message,850,15,'#f3d69e',true));return;}if(surface==='menu'){ui.menuNotice=message;renderMenu();return;}clearTimeout(toastTimer);$('actToast').replaceChildren(text(message,Math.min(740,innerWidth-80),16));$('actToast').hidden=false;toastTimer=setTimeout(()=>$('actToast').hidden=true,4200);}
 function setSaveStatus(message){const n=$('saveStatus');if(n)n.replaceChildren(text(message||'',250,12,'#a9b8a7'));}
@@ -517,7 +530,7 @@ function renderHud(behindOverlay=false){
 }
 
 function interactionLabel(node){return (node.kind==='encounter'||node.type==='encounter'?'Бой · ':node.smith?'Ремонт · ':'')+(node.label||node.name||'Взаимодействовать');}
-function itemDescription(def){if(def.description)return def.description;const effect=def.effect||def.use||{},power=Number(effect.power);if(effect.kind==='heal')return 'Восстанавливает здоровье'+(Number.isFinite(power)?': '+power:'')+'.';if(effect.kind==='mp')return 'Восстанавливает ману'+(Number.isFinite(power)?': '+power:'')+'.';if(effect.kind==='revive')return 'Возвращает павшего спутника'+(Number.isFinite(power)&&power>0?' с '+Math.round(power*100)+'% здоровья':'')+'.';return ({weapon:'Оружие отряда.',armor:'Доспех отряда.',charm:'Талисман отряда.',material:'Материал.',quest:'Предмет задания.',consumable:'Расходуемый предмет.'})[def.kind]||'Предмет отряда.';}
+function itemDescription(def){if(def.description)return def.description;const effect=def.effect||def.use||{},power=Number(effect.power);if(effect.kind==='heal')return 'Восстанавливает здоровье'+(Number.isFinite(power)?': '+power:'')+'.';if(effect.kind==='mp')return 'Восстанавливает ману'+(Number.isFinite(power)?': '+power:'')+'.';if(effect.kind==='revive')return 'Возвращает павшего спутника'+(Number.isFinite(power)&&power>0?' с '+Math.round(power*100)+'% здоровья':'')+'.';if(isEquipmentKind(def.kind))return SLOT_LABELS[def.kind]+' отряда.';return ({material:'Материал.',quest:'Предмет задания.',consumable:'Расходуемый предмет.'})[def.kind]||'Предмет отряда.';}
 function interact(id){
  if(ui.presentationLock)return;
  clearInput();
@@ -549,7 +562,18 @@ function chosenSkill(){
  return skillSelection.skill;
 }
 function pendingBattleAction(){const t=ui.target;if(!t||t.kind==='items')return null;if(t.kind==='defend')return {kind:'defend'};if(t.kind==='flee')return state.battle.boss||state.battle.forced?null:{kind:'flee'};if(t.kind==='item'){const forecast=M.previewUseItem?.(state,t.slot);if(forecast?.scope==='allAllies'&&forecast.canCommit)return {kind:'item',slot:t.slot};return ui.allyId?{kind:'item',slot:t.slot,targetId:ui.allyId}:null;}const skill=chosenSkill();if(skill&&['allEnemies','allAllies','self'].includes(skill.target))return {kind:'skill',skillId:skill.id,targetId:state.battle.activeHeroId};const targetId=t.ally?ui.allyId:ui.enemyId;return targetId?{kind:t.kind,skillId:t.skillId,targetId}:null;}
-function previewLines(action,targetId){const preview=M.battlePreview(state,action,targetId);if(!preview.ok)return preview.message;const result=preview.targets.map(t=>{const enemy=state.battle.enemies.find(e=>e.uid===t.id),prefix=t.side==='enemy'?'№'+(state.battle.enemies.indexOf(enemy)+1)+' ':'';return prefix+t.name+': '+(t.effect==='damage'?'урон ≈ '+t.min+'–'+t.max+'':t.effect==='heal'?'лечение до '+t.max+' HP':t.effect==='revive'?'возвращение '+t.max+' HP':t.effect==='guard'?'защита':t.effect==='buff'?'усиление и защита':t.effect==='taunt'?'провокация':t.effect==='mp'?'мана до '+t.max+' MP':t.effect==='barrier'?'барьер до '+t.max:t.effect==='cover'?'прикрытие':'эффект умения');});return result.length?result.join(' · '):preview.message;}
+function previewLines(action,targetId){
+ const preview=M.battlePreview(state,action,targetId);
+ if(!preview.ok)return preview.message;
+ const result=preview.targets.map(t=>{
+  const enemy=state.battle.enemies.find(e=>e.uid===t.id);
+  const prefix=t.side==='enemy'?'№'+(state.battle.enemies.indexOf(enemy)+1)+' ':'';
+  const labels={damage:'урон ≈ '+t.min+'–'+t.max,heal:'лечение до '+t.max+' HP',revive:'возвращение '+t.max+' HP',guard:'защита',buff:'усиление и защита',taunt:'провокация',mp:'мана до '+t.max+' MP',barrier:'барьер до '+t.max,cover:'прикрытие'};
+  const resistance=damageResistanceCopy(t);
+  return prefix+t.name+': '+(labels[t.effect]||'эффект умения')+(resistance?' · '+resistance:'');
+ });
+ return result.length?result.join(' · '):preview.message;
+}
 function paintBattleInfo(hoverSkill=null){if(hoverSkill?.id===chosenSkill()?.id)hoverSkill=null;const box=document.querySelector('.combat-info');if(!box)return;if(hoverSkill&&HUD50.preserveArmedChoice(ui.target,pendingBattleAction())){hud50InspectSkill(box,hoverSkill);return;}hud50InspectSkill(box,null);const key=JSON.stringify([settings.textScale,state.runId,state.revision,state.battle?.activeHeroId,ui.target,ui.enemyId,ui.allyId,hoverSkill?.id||null]);/* Blur must keep an unchanged Apply node alive until its click. */if(box._combatInfoKey===key)return;box._combatInfoKey=key;box.replaceChildren();const copy=el('div','combat-info-copy');box.append(copy);if(ui.target&&!hoverSkill)copy.append(el('div','hud50-selection-summary',text(hud50SelectionSummary(),640,14,'#efce8d',true)));const skill=hoverSkill||chosenSkill(),action=skill?{kind:'skill',skillId:skill.id}:ui.target?.kind==='attack'?{kind:'attack'}:null,chosen=ui.target&&pendingBattleAction();if(skill&&!ui.target)copy.append(text(skill.name+' · '+(skill.mp||skill.cost||0)+' MP',640,17,'#efce8d',true));const itemForecast=ui.target?.kind==='item'?M.previewUseItem?.(state,ui.target.slot,ui.allyId):null;const caster=state.party.find(h=>h.id===state.battle?.activeHeroId),shortage=skill?Math.max(0,(skill.mp??skill.cost??0)-(caster?.mp||0)):0;if(skill)copy.append(text(HUD50.resourceLine({mp:caster?.mp||0,cost:skill.mp??skill.cost??0}),640,13,'#8ed2c1'));if(ui.target?.kind==='item')copy.append(text(HUD50.resourceLine({quantity:state.bag[ui.target.slot]?.qty||0}),640,13,'#8ed2c1'));if(shortage)copy.append(text(HUD50.availability(caster?.mp||0,skill.mp??skill.cost??0).label+' · Только описание',640,14,'#efc296'));const scope=skill?.target||itemForecast?.scope;if(scope){const scopedPreview=action?M.battlePreview(state,action,undefined):itemForecast,scopeLine=HUD50.scopeLabel(scope,scopedPreview?.targets);if(scopeLine)copy.append(text(scopeLine,640,14,'#8ed2c1',true));}if(action)copy.append(el('div','hud50-forecast',text(previewLines(action,hoverSkill?undefined:ui.target?.ally?ui.allyId:ui.enemyId),640,13,'#8ed2c1')));else if(ui.target?.kind==='item'){const item=itemDefs[state.bag[ui.target.slot]?.defId];copy.append(text(item?.name||'Припас',640,17,'#efce8d',true),text(item?itemDescription(item):'',640,13));if(itemForecast)copy.append(text('Расход: 1 · '+(itemForecast.message||itemForecast.reason),640,14,'#b9ddc4'));if((item?.effect||item?.use)?.kind==='revive'&&ui.allyId){const forecast=M.revivalOptions(state,ui.allyId),method=forecast.options.find(o=>o.kind==='item'&&o.slot===ui.target.slot);if(method)copy.append(text(forecast.target.name+': после возрождения '+method.amount+' / '+forecast.target.maxHp+' HP · расход 1 порция',640,13,'#9de1c5'));}}else copy.append(text('Выберите действие, затем цель. Урон и стоимость показаны до применения.',640,13));if(action&&typeof nav50EffectLines==='function'){const extra=nav50EffectLines(M.battlePreview(state,action,hoverSkill?undefined:ui.target?.ally?ui.allyId:ui.enemyId));if(extra.length)copy.append(el('div','nav50-skill-effects',text('Дополнительные эффекты',640,12,'#e5c785',true),...extra.map(line=>text(line,640,13,'#b7ddcb'))));}if(action){const weak=HUD50.weaknessLines(M.battlePreview(state,action,hoverSkill?undefined:ui.target?.ally?ui.allyId:ui.enemyId));if(weak.length)copy.append(el('div','hud50-weakness',text('Известная слабость',640,12,'#8ed2c1',true),...weak.map(line=>text(line,640,12,'#8ed2c1'))));}if(skill){const description=el('details','hud50-action-description');description.dataset.disclosure='action-description:'+skill.id;description.open=!!hoverSkill;description.append(el('summary','',text('Описание умения',640,12)),text(skill.description||'',640,13));copy.append(description);}if(action&&chosen&&!shortage){const availability=M.battlePreview(state,action,chosen.targetId);if(availability.canCommit===false&&availability.reason)copy.append(text(availability.reason,640,14,'#efbb9a'));}if(ui.target&&!hoverSkill){copy.append(text(UI100.battleChoicePrompt(state,ui,chosen,{M,SKILLS,itemDefs}),640,12));const row=el('div','combat-choice-controls');if(chosen)row.append(button(HUD50.confirmLabel(ui.target.kind==='item'?'item':skill?.kind||ui.target.kind),()=>battle(pendingBattleAction()),{small:true,width:130,primary:true,ariaLabel:HUD50.confirmLabel(ui.target.kind==='item'?'item':skill?.kind||ui.target.kind)+' · '+hud50SelectionSummary(),focusKey:'battle:confirm',disabled:shortage>0||!!itemForecast&&!itemForecast.canCommit||!!action&&M.battlePreview(state,action,chosen?.targetId).canCommit===false}));row.append(button('Отмена',cancelBattleChoice,{small:true,width:100}));box.append(row);}box.classList.toggle('expanded',!!skill||!!ui.target);ui100Decorate(box,'battle-info');}
 function chooseAttack(){ui.target={kind:'attack'};ui.allyId=null;renderHud();}
 function battlePanel(){const b=state.battle,hero=state.party.find(h=>h.id===b.activeHeroId),def=partyDefs[hero?.id],p=panel(0,'battle-panel');p.classList.toggle('choosing',!!ui.target);const stage=HUD50.choiceStage(ui.target,pendingBattleAction()),caption=compactUI?['Выберите действие','Выберите цель','Подтвердите'][stage.index]:stage.label;p.append(el('div','combat-heading',text('Раунд '+b.round+' · '+(def?.name||'отряд')+' · '+caption,compactUI?680:430,compactUI?11:13,'#e9c883',true)));const targets=el('div','battle-targets');for(const enemy of b.enemies.filter(e=>e.hp>0)){const d=enemyDefs[enemy.kind],hp=Math.ceil(enemy.hp)+' / '+(enemy.maxHp||d.stats?.hp||d.hp),identity=HUD50.enemyIdentity(enemy,b.enemies,enemyDefs),selected=UI100.battleTargetSelected(state,ui,'enemy',enemy.uid,{M,SKILLS,itemDefs}),n=button((compactUI?'№'+identity.number:identity.label)+'\n'+hp,()=>targetEnemy(enemy.uid),{small:true,width:128,textSize:compactUI?10:11,ariaLabel:'№'+(b.enemies.indexOf(enemy)+1)+' · '+(d.name||enemy.kind)+' · '+hp+(selected?' · Выбрана цель':'')});n.classList.toggle('chosen-target',selected);n.setAttribute('aria-pressed',String(selected));targets.append(n);}p.append(targets);const intel=el('details','battle-intel'),intelHead=el('summary','',text('Намерения врагов',170,12));intel.dataset.disclosure='intel';intel.append(intelHead);for(const enemy of HUD50.orderedIntel(b.enemies,ui.enemyId))intel.append(text((enemy.uid===ui.enemyId?'Выбрана · ':'')+'№'+(b.enemies.indexOf(enemy)+1)+' · '+(enemyDefs[enemy.kind]?.name||enemy.kind)+' · '+enemyIntent(enemy)+(enemyStatusText(enemy)?' · '+enemyStatusText(enemy):'')+(M.statusInfo?'\n'+statusDescription(M.statusInfo(state,enemy.uid)):''),260,13));p.append(intel);const info=el('div','combat-info');info.role='status';info.ariaLive='polite';p.append(info);const actions=el('div','battle-actions');const attack=button('Атака',chooseAttack,{width:90,textSize:13,combatIcon:'attack',primary:true});attack.classList.toggle('chosen-action',ui.target?.kind==='attack');attack.setAttribute('aria-pressed',String(ui.target?.kind==='attack'));actions.append(attack,button('Защита',()=>{UI100.armUtility(ui,'defend');renderHud();},{width:90,textSize:13,combatIcon:'defend',primary:true,hint:'Снижает урон на 58% до следующего хода героя.'}));for(const skill of M.availableSkills(state,hero?.id)){const cost=skill.mp??skill.cost??0,n=button(HUD50.shortSkillName(skill.name),()=>selectSkill(skill),{small:true,width:100,textSize:11,iconOnly:false,costBadge:cost+' MP',combatIcon:combatSkillIcon(skill),ariaLabel:skill.name+' · '+cost+' MP'+((hero?.mp||0)<cost?' · Не хватает '+(cost-(hero?.mp||0))+' MP. Нажмите для описания.':''),focusKey:'skill:'+skill.id});n.classList.add('hud50-skill');const selected=ui.target?.skillId===skill.id,availability=HUD50.availability(hero?.mp||0,cost);n.classList.toggle('hud50-unaffordable',!availability.available);if(!availability.available)n.append(el('span','hud50-shortage',text('−'+availability.shortage+' MP',70,10,'#efce8d',true)));n.classList.toggle('chosen-action',selected);n.setAttribute('aria-pressed',String(selected));n.onpointerenter=()=>paintBattleInfo(skill);n.onfocus=()=>paintBattleInfo(skill);n.onpointerleave=()=>paintBattleInfo();n.onblur=()=>paintBattleInfo();actions.append(n);}if(state.party.some(h=>h.hp<=0)){actions.classList.add('has-revival');actions.append(button('Возродить',()=>openRevival(),{small:true,width:100,textSize:13,combatIcon:'heal',hint:'Вернуть павшего спутника с помощью соли или заклинания.'}));}actions.append(button('Предметы',()=>{ui.target={kind:'items'};ui.enemyId=null;ui.allyId=null;renderHud();},{small:true,width:110,textSize:13,combatIcon:'item'}),button('Отступить',()=>{UI100.armUtility(ui,'flee');renderHud();},{small:true,width:110,textSize:13,ariaLabel:b.boss||b.forced?'Отступить нельзя: сюжетный бой':'Отступить',hint:b.boss||b.forced?'Отступить нельзя: сюжетный бой':null,disabled:b.boss||b.forced,combatIcon:'flee'}));hud50MarkActionGroups(actions);p.append(actions);if(ui.target?.kind==='items'){const items=el('div','battle-items');state.bag.forEach((item,i)=>{if(item&&itemDefs[item.defId].kind==='consumable'){const plans=M.previewUseItem?state.party.map(h=>M.previewUseItem(state,i,h.id)):[],usable=!plans.length||plans.some(p=>p.canCommit);items.append(button(itemDefs[item.defId].name+' ×'+item.qty,()=>{ui.target={kind:'item',slot:i};ui.allyId=null;renderHud();},{small:true,width:350,disabled:!usable,focusKey:'battle-item:'+i}));if(!usable)items.append(text(plans[0]?.reason||'Нет подходящих целей для этого припаса.',350,12,'#efbb9a'));}});if(!items.childElementCount)items.append(text('В сумке нет боевых припасов. Купите их у торговца или найдите в пути.',350,14),button('К действиям',cancelBattleChoice,{small:true,width:180}));p.append(items);}const log=el('details','battle-log'),logState=HUD50.logNotice(b.log,ui.hud50LogRead?.key===state.runId+':'+b.encounterId?ui.hud50LogRead.entries:[]),logHead=el('summary','',text(logState.label,160,12));log.ontoggle=()=>{if(log.open){ui.hud50LogRead={key:state.runId+':'+b.encounterId,count:b.log.length,entries:[...b.log]};logHead.replaceChildren(text('Журнал боя',160,12));}};log.dataset.disclosure='log';log.append(logHead,text('Последнее: '+(logState.last||'Бой начался'),280,13,'#8ed2c1'),text((b.log||[]).slice(-8).join('\n'),280,13));p.append(log);queueMicrotask(()=>paintBattleInfo());return p;}
@@ -630,6 +654,8 @@ function itemSlot(loc){
   slot.append(icon(itemDefs[item.defId]));
   if(item.qty>1){const quantity=text(item.qty,40,15,'#fff2cf',true);quantity.classList.add('qty');slot.append(quantity);}
   if(condition&&condition.ratio<1)slot.append(durabilityMeter(condition,el,text,{tiny:true}));
+ }else if(loc.kind==='gear'){
+  const empty=icon({kind:loc.slot});empty.classList.add('empty-slot-symbol');slot.append(empty);
  }
  slot.classList.toggle('selected',selected);
  slot.onclick=()=>{
@@ -669,16 +695,16 @@ function startDrag(event,node,from){const item=locationItem(from);if(ui.drag){if
 function dragMove(event){const d=ui.drag;if(!d||event.pointerId!==d.pointer)return;if(!d.active&&Math.hypot(event.clientX-d.start.x,event.clientY-d.start.y)>7){d.active=true;d.preview=icon(itemDefs[locationItem(d.from)?.defId]);d.preview.classList.add('drag-preview');$('gameModal').append(d.preview);}if(!d.active)return;event.preventDefault();const position=UI100.dragPreviewPosition(event,d.anchor,d.preview.getBoundingClientRect());d.preview.style.left=position.x+'px';d.preview.style.top=position.y+'px';d.lastEvent={clientX:event.clientX,clientY:event.clientY};UI100.autoScrollDrag($('gameModal'),event);paintDropTarget(d,event);}
 function dragEnd(event){const d=ui.drag;if(!d||event.pointerId!==d.pointer)return;let destinationLocation=null;if(d.active){const n=document.elementFromPoint(event.clientX,event.clientY)?.closest('[data-location]');if(n)destinationLocation=JSON.parse(n.dataset.location);ui.suppressClickUntil=performance.now()+350;}const active=d.active;cancelDrag();if(active&&destinationLocation&&!sameLocation(d.from,destinationLocation))commit(M.moveItem(state,d.from,destinationLocation,d.uid,d.revision),{keepModal:true});else if(active)renderModal();}
 function cancelDrag(){const d=ui.drag;if(!d)return;ui.drag=null;d.preview?.remove();d.feedback?.remove();try{if(d.node.hasPointerCapture(d.pointer))d.node.releasePointerCapture(d.pointer);}catch{}ui.drag=null;document.querySelectorAll('[data-drop-state]').forEach(n=>{delete n.dataset.dropState;n.classList.remove('drag-over');});}
-const GEAR_LABELS={weapon:'Оружие',armor:'Доспех',charm:'Талисман'};
 function equipmentChanges(delta){
- const keys=['hp','mp','atk','def','initiative'];
+ const keys=['hp','mp','atk','def','initiative',...RESISTANCE_KEYS];
  return itemStatLine({stats:Object.fromEntries(keys.filter(key=>delta?.[key]).map(key=>[key,delta[key]]))});
 }
 
 function companionView(body,surface){
  const hero=state.party.find(h=>h.id===ui.hero)||state.party[0];
  ui.hero=hero.id;
- renderCompanionBar(body,{el,button,portrait,party:state.party,partyDefs,heroId:hero.id,surface,
+ const barButton=(label,action,options)=>button(label,action,{...options,textSize:compactUI?11:undefined});
+ renderCompanionBar(body,{el,button:barButton,portrait,party:state.party,partyDefs,heroId:hero.id,surface,
    select:id=>{UI100.selectInventoryHero(state,ui,id,windowValidSelection);renderModal();},
    switchView:()=>openModal(surface==='inventory'?'party':'inventory')});
  return hero;
@@ -703,19 +729,33 @@ function heroStats(stats){
  return cards;
 }
 
+function heroResistancePanel(stats,id){
+ const general=effectiveResistance(stats,'magic');
+ const panel=windowDisclosure('resistances:'+id,'Сопротивления · Магия '+general+'%');
+ panel.classList.add('sheet-resistances');
+ const cards=el('div','sheet-resistance-grid');
+ for(const [element,key] of Object.entries(ELEMENT_RESISTANCE)){
+   const label=RESISTANCE_LABELS[key],value=effectiveResistance(stats,element);
+   const card=el('div','sheet-stat',text(value+'%',90,18,'#8ed2c1',true),text(label,106,12));
+   card.role='group';card.ariaLabel=label+' · сопротивление '+value+'%';cards.append(card);
+ }
+ panel.append(cards,text('Общая защита складывается с защитой от стихии. Предел — '+RESISTANCE_CAP+'%.',300,13));
+ return panel;
+}
+
 function renderHeroEquipment(hero){
  const def=partyDefs[hero.id],stats=M.stats(state,hero.id);
  const sheet=el('section','workbench-panel equipment-sheet',
-   el('header','workbench-heading',text(def.name,140,24,'#efd599',true),text('Ур. '+hero.level,72,14,'#8ed2c1')));
+   el('header','workbench-heading',text(def.name,140,compactUI?18:24,'#efd599',true),text('Ур. '+hero.level,72,compactUI?12:14,'#8ed2c1')));
  const paper=el('div','equipment-paper',portrait(def.portrait,'sheet-portrait'));
- for(const [slot,label] of Object.entries(GEAR_LABELS)){
-   const worn=state.gear[hero.id]?.[slot];
-   const cell=el('div','equipment-cell',itemSlot({kind:'gear',heroId:hero.id,slot}),text(slot==='charm'?'Амулет':label,82,12));
+ for(const slot of EQUIPMENT_SLOTS){
+   const caption=textImage(SLOT_LABELS[slot],{width:90,size:Math.min(11,10*settings.textScale),align:'center'});
+   caption.classList.add('equipment-caption');caption.setAttribute('aria-hidden','true');
+   const cell=el('div','equipment-cell',itemSlot({kind:'gear',heroId:hero.id,slot}),caption);
    cell.dataset.slot=slot;
-   if(!worn)cell.firstChild.append(el('span','empty-slot-symbol combat-icon combat-icon-'+({weapon:'attack',armor:'defend',charm:'arcane'}[slot])));
    paper.append(cell);
  }
- sheet.append(paper,heroVitals(hero,stats),heroStats(stats));
+ sheet.append(paper,heroVitals(hero,stats),heroStats(stats),heroResistancePanel(stats,'equipment:'+hero.id));
  if(hero.hp<=0)sheet.append(button('Возродить '+def.name,()=>openRevival(hero.id),{small:true,width:186,combatIcon:'heal'}));
  return sheet;
 }
@@ -723,11 +763,11 @@ function renderHeroEquipment(hero){
 function renderBackpack(){
  const inventoryRevision=state.revision,used=state.bag.filter(Boolean).length;
  const bag=el('section','workbench-panel backpack-sheet',el('header','workbench-heading',
-   text('Сумка',170,22,'#efd599',true),text(`${used} / ${state.bag.length} · ${state.gold} зол.`,157,14,'#8ed2c1')));
+   text('Сумка',compactUI?96:170,compactUI?17:22,'#efd599',true),text(`${used} / ${state.bag.length} · ${state.gold} зол.`,157,compactUI?12:14,'#8ed2c1')));
  ui.windowBagFilter??='all';
  const filters=el('div','backpack-filters');filters.role='group';filters.ariaLabel='Типы предметов';
- for(const [id,label,short] of [['all','Все','Все'],['equipment','Снаряжение','Экип.'],['supplies','Припасы','Запас'],['trophy','Материалы','Мат.'],['quest','Задания','Квест']]){
-   const tab=button(short,()=>{ui.windowBagFilter=id;renderModal();},{small:true,width:90,ariaLabel:label,focusKey:'bag-filter:'+id});
+ for(const [id,label,short,width] of [['all','Все','Все',40],['equipment','Снаряжение','Экип.',56],['supplies','Припасы','Запас',58],['trophy','Материалы','Мат.',50],['quest','Задания','Квест',58]]){
+   const tab=button(short,()=>{ui.windowBagFilter=id;renderModal();},{small:true,width:compactUI?width:76,textSize:compactUI?10.5:14,ariaLabel:label,focusKey:'bag-filter:'+id});
    tab.setAttribute('aria-pressed',String(ui.windowBagFilter===id));filters.append(tab);
  }
  const grid=el('div','bag-grid'),empty=el('div','backpack-empty');
@@ -776,7 +816,7 @@ function renderInventory(body){
       text(itemDescription(def),205,15));
     if(ui.selected){
       const from=ui.selected.from,instance=locationItem(from),condition=M.durabilityInfo(instance);
-      detail.append(text(from.kind==='gear'?'Носит: '+partyDefs[from.heroId].name+' · '+({weapon:'Оружие',armor:'Доспех',charm:'Талисман'}[from.slot]||from.slot):'В сумке · ячейка '+(from.index+1),300,14));
+      detail.append(text(from.kind==='gear'?'Носит: '+partyDefs[from.heroId].name+' · '+(SLOT_LABELS[from.slot]||from.slot):'В сумке · ячейка '+(from.index+1),300,14));
       if(condition){
         detail.append(durabilityMeter(condition,el,text));
         if(condition.combatFactor<1)detail.append(text('Бонус атаки и защиты от этой вещи: '+Math.round(condition.combatFactor*100)+'%. Починить можно у кузнеца.',260,14,'#efbc9f'));
@@ -785,10 +825,12 @@ function renderInventory(body){
       if(price>0)detail.append(text('Продажа: '+price+' золота за шт.',230,14));
     }
     if(def.stats)detail.append(text(itemStatLine(def),205,14));
-    if(ui.selected&&['weapon','armor','charm'].includes(def.kind)){
-      const destination={kind:'gear',heroId:hero.id,slot:def.kind},forecast=M.previewMoveItem(state,ui.selected.from,destination),current=state.gear[hero.id]?.[def.kind],delta=forecast.heroes?.find(h=>h.id===hero.id)?.delta;
+    if(ui.selected&&isEquipmentKind(def.kind)){
+      const destination={kind:'gear',heroId:hero.id,slot:def.kind},forecast=M.previewMoveItem(state,ui.selected.from,destination),current=state.gear[hero.id]?.[def.kind],change=forecast.heroes?.find(h=>h.id===hero.id);
       const compare=el('div','window-compare',text('Сравнение · '+partyDefs[hero.id].name,300,17,'#e9ca91',true),text('Сейчас: '+(current?itemDefs[current.defId].name:'Пустой слот')+'\nВыбрано: '+def.name,300,15));
-      compare.append(text(forecast.ok?(equipmentChanges(delta)||'Характеристики без изменений'):forecast.reason||forecast.message,300,14,'#8ed2c1'));
+      compare.append(text(forecast.ok?(equipmentChanges(change?.delta)||'Характеристики без изменений'):forecast.reason||forecast.message,300,14,'#8ed2c1'));
+      const resistance=resistanceDeltaCopy(change?.before,change?.after);
+      if(forecast.ok&&resistance)compare.append(text(resistance,300,13,'#8ed2c1'));
       const source=ui.selected;
       compare.append(button('Надеть · '+partyDefs[hero.id].name,()=>commit(M.moveItem(state,source.from,destination,source.uid,source.revision),{keepModal:true}),{small:true,width:280,disabled:!forecast.ok,focusKey:'equip:'+hero.id+':'+def.id}));
       detail.append(compare);
@@ -848,7 +890,7 @@ function renderParty(body){
  const profile=el('section','workbench-panel hero-sheet',
    el('header','workbench-heading',text(def.name,205,24,'#efd599',true),text('Ур. '+hero.level,65,14,'#8ed2c1')),
    el('div','hero-profile',portrait(def.portrait,'sheet-portrait'),text(def.role,222,16,'#8ed2c1')),
-   heroVitals(hero,stats),heroStats(stats));
+   heroVitals(hero,stats),heroStats(stats),heroResistancePanel(stats,'party:'+id));
  const progress=M.progressionInfo(state,id);
  const growth=windowDisclosure('party-growth:'+id,'Рост героя');growth.classList.add('hero-growth');
  if(progress){

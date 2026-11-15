@@ -49,7 +49,7 @@
   gap: 10px;
   align-items: start;
 }
-.workbench-inventory { grid-template-columns: minmax(220px, .9fr) minmax(306px, 1.5fr) minmax(218px, .9fr); }
+.workbench-inventory { grid-template-columns: minmax(224px, 1fr) minmax(342px, 1.4fr) minmax(204px, .78fr); }
 .workbench-development { grid-template-columns: minmax(220px, .82fr) minmax(0, 2fr); }
 .workbench-panel {
   min-width: 0;
@@ -74,11 +74,15 @@
 
 .equipment-paper {
   display: grid;
-  grid-template-columns: minmax(44px, 1fr) minmax(78px, 2.2fr) minmax(44px, 1fr);
-  grid-template-areas: "weapon portrait armor" "charm portrait armor";
+  grid-template-columns: minmax(66px, 1fr) minmax(48px, 1.55fr) minmax(66px, 1fr);
+  grid-template-areas:
+    "helmet portrait charm"
+    "weapon portrait ring"
+    "gloves portrait armor"
+    "belt leggings boots";
   align-items: center;
-  gap: 6px;
-  padding: 10px 4px;
+  gap: 8px 4px;
+  padding: 8px 4px;
   border: 1px solid #5f4b36;
   background: radial-gradient(ellipse, #464138, #14151b 72%);
 }
@@ -94,11 +98,26 @@
   border-radius: 6px;
   box-shadow: 0 4px 20px #0009;
 }
-.equipment-cell { min-width: 0; display: grid; justify-items: center; gap: 2px; }
+.equipment-cell { min-width: 0; display: grid; grid-template-columns: minmax(0,1fr); justify-items: center; align-content: start; gap: 2px; }
+.equipment-cell[data-slot="helmet"] { grid-area: helmet; }
 .equipment-cell[data-slot="weapon"] { grid-area: weapon; }
 .equipment-cell[data-slot="armor"] { grid-area: armor; }
 .equipment-cell[data-slot="charm"] { grid-area: charm; }
-.equipment-cell > .bitmap-text { margin: 0; }
+.equipment-cell[data-slot="gloves"] { grid-area: gloves; }
+.equipment-cell[data-slot="ring"] { grid-area: ring; }
+.equipment-cell[data-slot="belt"] { grid-area: belt; }
+.equipment-cell[data-slot="leggings"] { grid-area: leggings; }
+.equipment-cell[data-slot="boots"] { grid-area: boots; }
+
+.sprite.icons.gear-icon {
+  display: inline-block;
+  background-image: url("assets/act1/painted/equipment.webp?v=campaign-150");
+  background-size: 300% 200%;
+  background-position: var(--gear-x, 0%) var(--gear-y, 0%);
+}
+.gear-icon[data-gear-icon="gloves"],.gear-icon[data-gear-icon="boots"] { --gear-x: 50%; }
+.gear-icon[data-gear-icon="belt"],.gear-icon[data-gear-icon="ring"] { --gear-x: 100%; }
+.gear-icon:is([data-gear-icon="leggings"],[data-gear-icon="boots"],[data-gear-icon="ring"]) { --gear-y: 100%; }
 
 .sheet-vitals { display: grid; gap: 4px; margin: 8px 0; }
 .sheet-meter { display: block; height: 8px; border: 1px solid #715b43; border-radius: 3px; background: #121317; box-shadow: inset 0 1px 3px #0009; }
@@ -109,18 +128,21 @@
 .sheet-experience { margin-block: 9px; }
 .sheet-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
 .sheet-stat { padding: 3px; border: 1px solid #6c5238; background: linear-gradient(#2d2726, #191a1e); }
+.sheet-resistances { margin-block: 7px 0; }
+.sheet-resistance-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; margin-block: 5px; }
+.sheet-resistance-grid .sheet-stat { min-width: 0; background: linear-gradient(#233632, #172323); border-color: #516b58; }
 .hero-profile { display: flex; align-items: center; gap: 8px; }
 #gameModal .hero-profile .sprite.sheet-portrait { flex: 0 0 42%; width: 42%; }
 .hero-sheet > .window-disclosure { margin: 6px 0 0; }
 
 .backpack-filters { display: flex; flex-wrap: wrap; align-items: stretch; gap: 4px; margin-bottom: 6px; }
-#gameModal .backpack-filters .paint-button { flex: 1 1 62px; min-height: 44px; padding: 4px 5px; }
+#gameModal .backpack-filters .paint-button { flex: 1 0 auto; min-width: 0; min-height: 44px; padding: 4px 5px; }
 #gameModal .backpack-filters .paint-button[aria-pressed="true"] { border-color: var(--sheet-pale); background: linear-gradient(#755137, #33241f); }
 .backpack-search { display: grid; grid-template-columns: minmax(0, 1fr) 44px; gap: 4px; margin-block: 6px; }
 #gameModal .backpack-search .window-search { background: #14161a; min-height: 44px; }
 #gameModal .backpack-search input { height: 44px; }
 #gameModal .backpack-search button { padding: 5px 10px; }
-#gameModal .backpack-sheet .bag-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; padding: 3px; background: #101216; border: 1px solid #5f4c36; }
+#gameModal .backpack-sheet .bag-grid { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; padding: 3px; background: #101216; border: 1px solid #5f4c36; }
 #gameModal .backpack-sheet .bag-grid:empty { display: none; }
 .backpack-tools { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
 #gameModal .backpack-tools .paint-button { flex: 1 1 100px; }
@@ -203,6 +225,7 @@
 @media (max-width: 880px) {
   .workbench-inventory { grid-template-columns: minmax(210px, .95fr) minmax(280px, 1.35fr); }
   .workbench-inventory .item-detail { grid-column: 1 / -1; }
+  #gameModal .backpack-sheet .bag-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
 }
 
 @media (max-width: 630px) {
@@ -218,8 +241,8 @@
   .workbench-inventory, .workbench-development { grid-template-columns: minmax(0, 1fr); gap: 8px; }
   .workbench-development .talent-sheet { grid-row: 1; }
   .workbench-panel { padding: 8px; }
-  .equipment-paper { grid-template-columns: 72px repeat(3,minmax(0,1fr)); grid-template-areas: "portrait weapon armor charm"; padding: 5px; }
-  #gameModal .equipment-paper .sprite.sheet-portrait { width: 64px; }
+  .equipment-paper { padding: 5px; }
+  #gameModal .equipment-paper .sprite.sheet-portrait { max-width: 115px; }
   .equipment-cell { width: 100%; }
   .equipment-sheet .sheet-vitals { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 7px; }
   .equipment-sheet .sheet-stats { display: none; }
@@ -241,6 +264,12 @@
   #gameModal .talent-add { width: 44px; min-height: 44px; margin: 0; }
   #gameModal .backpack-sheet .bag-grid { grid-template-columns: repeat(5, minmax(0,1fr)); }
 }
+
+html[data-compact-ui] #gameModal .companion-bar { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
+html[data-compact-ui] #gameModal .companion-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; padding: 2px; }
+html[data-compact-ui] #gameModal .companion-tab { flex-shrink: 0; }
+html[data-compact-ui] #gameModal .companion-switch { align-self: start; }
+html[data-compact-ui] #gameModal .backpack-filters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; padding: 2px; }
 
 @media (hover: hover) and (pointer: fine) {
   #gameModal .touch-drag-switch { display: none; }

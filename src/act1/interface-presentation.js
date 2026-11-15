@@ -1,10 +1,12 @@
+import {isEquipmentKind} from './equipment-slots.js?v=campaign-150';
+
 // Pure presentation selectors: never mutate model state or invent inventory objects.
 export function windowBagView(bag,defs,category='all',query='') {
   const term=String(query).trim().toLocaleLowerCase('ru-RU');
   return bag.map((item,index)=>({item,index})).filter(({item})=>{
     if(!item)return category==='all'&&!term;
     const def=defs[item.defId]||{},kind=def.kind;
-    const match=category==='all'||category==='equipment'&&['weapon','armor','charm'].includes(kind)||category==='supplies'&&kind==='consumable'||category==='trophy'&&kind==='material'||category==='quest'&&['quest','key'].includes(kind);
+    const match=category==='all'||category==='equipment'&&isEquipmentKind(kind)||category==='supplies'&&kind==='consumable'||category==='trophy'&&kind==='material'||category==='quest'&&['quest','key'].includes(kind);
     return match&&(!term||String(def.name||'').toLocaleLowerCase('ru-RU').includes(term));
   });
 }

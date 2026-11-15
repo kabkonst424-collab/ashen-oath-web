@@ -19,7 +19,7 @@ function addHero(state, id, level) {
   assert.ok(C.PARTY.some(hero => hero.id === id));
   const hero = { id, level, xp: 0, hp: 1, mp: 0, maxHp: 1, maxMp: 0 };
   state.party.push(hero);
-  state.gear[id] = { weapon: null, armor: null, charm: null };
+  state.gear[id] = Object.fromEntries(Object.keys(state.gear[state.party[0].id]).map(slot => [slot, null]));
   refreshHero(state, hero);
   return hero;
 }

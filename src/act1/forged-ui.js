@@ -1,4 +1,5 @@
-const SLOT_NAMES = { weapon:'оружие', armor:'доспех', charm:'талисман' };
+import {SLOT_LABELS} from './equipment-slots.js?v=campaign-150';
+
 const RARITY = { common:'Обычный', uncommon:'Необычный', rare:'Редкий' };
 
 export function itemRarity(def) {
@@ -49,7 +50,7 @@ export function renderSmithy(body, { model, state, smith, items, party, el, text
   for (const entry of quote.entries) {
     const { location, durability, price } = entry;
     const item = location.kind === 'bag' ? state.bag[location.index] : state.gear[location.heroId]?.[location.slot];
-    const owner = location.kind === 'bag' ? 'Сумка' : party[location.heroId]?.name+' · '+SLOT_NAMES[location.slot];
+    const owner = location.kind === 'bag' ? 'Сумка' : party[location.heroId]?.name+' · '+(SLOT_LABELS[location.slot] || location.slot);
     const info = el('div','grow',text(entry.name,460,17,'#eed29a',true),text(owner,300,13),
       durabilityMeter(durability,el,text));
     const fix = button('Чинить · '+price,()=>repair({uid:entry.uid,revision:quote.revision}),
@@ -66,7 +67,7 @@ export function renderChestLoot(body, { grant, label, defs, el, text, button, ic
   for (const found of grant.items||[]) {
     const def = defs[found.id ?? found.defId];
     if (!def) continue;
-    const role = SLOT_NAMES[def.kind] ? 'Снаряжение · '+SLOT_NAMES[def.kind] : def.kind==='material'?'Можно продать':'Припасы';
+    const role = SLOT_LABELS[def.kind] ? 'Снаряжение · '+SLOT_LABELS[def.kind] : def.kind==='material'?'Можно продать':'Припасы';
     const delivery = found.pending ? '\nВ сумке: '+(found.delivered||0)+' · Отложено: '+found.pending : '';
     list.append(el('div','shop-entry',icon(def),el('div','grow',text(def.name+' ×'+found.qty,520,17,'#eed29a',true),
       text([itemRarity(def),role].filter(Boolean).join(' · ')+delivery,500,14))));

@@ -8,7 +8,7 @@ import {fetchBytes} from './resource-loader.js?v=0.16.0-demo';
 
 import { buildAuthoredGround, buildAuthoredLandscape } from './authored-landscape.js?v=campaign-v1';
 import { NEW_CHARACTERS } from './campaign-visuals.js?v=campaign-v1';
-import { PROP_SLOTS, areaAssetPlan, terrainSlot } from './area-asset-plan.js?v=campaign-140';
+import { PROP_SLOTS, areaAssetPlan, terrainSlot } from './area-asset-plan.js?v=campaign-150';
 
 // This module is installed after graphics-refresh. It changes presentation only;
 // authoritative movement and campaign state stay in model.js.
