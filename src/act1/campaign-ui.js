@@ -2,7 +2,7 @@ import { STARTERS } from './campaign-starters.js?v=campaign-140';
 
 import {itemStatLine} from './ui-feedback.js?v=campaign-170';
 
-export const RELEASE = '1.7.0';
+export const RELEASE = '1.8.0';
 const portraits = new Set(STARTERS.map(hero => hero.id));
 
 const LOADING_TIPS = {

@@ -1,22 +1,22 @@
-import {resolveInitialQuality} from './browser-performance.js?v=campaign-140';
+import {resolveInitialQuality} from './browser-performance.js?v=campaign-180';
 import {createQuestArrow} from './quest-arrow-view.js?v=0.16.0-demo-webperf20261106';
-import {approachTarget,areaBounds,planPath,validSegment} from './navigation.js?v=campaign-170';
-import {createMinimap,createAreaSchematic} from './minimap.js?v=campaign-170';
+import {approachTarget,areaBounds,planPath,validSegment} from './navigation.js?v=campaign-180';
+import {createMinimap,createAreaSchematic} from './minimap.js?v=campaign-180';
 import * as HUD50 from './hud-presentation.js?v=0.16.0-demo';
 import * as UI100 from './interface-100.js?v=campaign-170';
 import {ownsMovementKey,ignoreGameShortcut,canBattleShortcut,canStartInventoryDrag,worldTapStart,worldTapComplete} from './input-policy.js?v=0.16.0-demo';
 import {normalizeSettings,bindSearchEditing,captureSurface,restoreSurface,captureDisclosures,restoreDisclosures,heroSummary,slotSummary,saveWarning,itemStatLine,resistanceDeltaCopy,damageResistanceCopy,feedbackSurface,normalizePresentationSettings,statusDescription,createAudioEventCursor,eventAudioCues,presentationAudioCue} from './ui-feedback.js?v=campaign-170';
-import * as M from './model.js?v=campaign-170';
+import * as M from './model.js?v=campaign-180';
 import {PARTY,ITEMS,SKILLS,ENEMIES,AREAS,QUESTS,DIALOGUES,CAMPAIGN_ACTS,CAMPAIGN_COMICS,CAMPAIGN_ENDINGS} from './content.js?v=campaign-170';
-import {Saves} from './save.js?v=campaign-170';
-import {World} from './world.js?v=campaign-170';
+import {Saves} from './save.js?v=campaign-180';
+import {World} from './world.js?v=visual-180';
 import {WriterSession} from './writer-session.js?v=0.16.0-demo';
 import {Audio} from './act-audio.js?v=campaign-v1';
 import {bridgeAt,riverSection} from './area-geometry.js?v=rivers-0181';
 import {magicProfile} from './data/magic-profiles.js?v=campaign-170';
 import {durabilityLabel,durabilityMeter,itemRarity,renderChestLoot,renderSmithy} from './forged-ui.js?v=campaign-170';
-import {textImage,sprite,atlasCell,loadTypography} from './bitmap.js?v=campaign-140';
-import {RELEASE,areaLoadingPresentation,campaignPortrait,renderStarterSelection,renderCompanionBar,renderTalentTree,renderCampaignComic} from './campaign-ui.js?v=campaign-170';
+import {textImage,sprite,atlasCell,loadTypography} from './bitmap.js?v=campaign-180';
+import {RELEASE,areaLoadingPresentation,campaignPortrait,renderStarterSelection,renderCompanionBar,renderTalentTree,renderCampaignComic} from './campaign-ui.js?v=campaign-180';
 import {POWER_KEYS} from './hero-attributes.js?v=campaign-170';
 import {ITEM_QUALITIES, itemQuality} from './item-quality.js?v=campaign-170';
 import {EQUIPMENT_SLOTS,SLOT_LABELS,isEquipmentKind,RESISTANCE_KEYS,RESISTANCE_LABELS,RESISTANCE_CAP,ELEMENT_RESISTANCE,effectiveResistance} from './equipment-slots.js?v=campaign-150';
@@ -178,8 +178,10 @@ function writerChanged(owned){
 
 
 function el(tag,cls='',...children){const n=document.createElement(tag);n.className=cls;for(const c of children.flat())if(c)n.append(c);return n;}
-function text(value,width=420,size=17,color='#eadfca',bold=false,display){return textImage(value,{width,size:size*settings.textScale,color,bold,display});}
-function button(label,callback,{small=false,disabled=false,width=210,combatIcon=null,primary=false,ariaLabel=null,costBadge=null,textSize=null,iconOnly=false,hint=null,focusKey=null}={}){const b=el('button','paint-button'+(small?' small':'')+(primary?' combat-primary':''));if(combatIcon!==null){const icon=el('span','combat-icon combat-icon-'+combatIcon);icon.setAttribute('aria-hidden','true');b.append(icon);}if(iconOnly){b.classList.add('icon-only');const tip=el('span','combat-tooltip',text(label,150,13,'#f5d99e',true));tip.setAttribute('aria-hidden','true');b.append(tip);}else b.append(text(label,width,textSize??(small?14:17)));if(hint){const tip=el('span','combat-tooltip',text(hint,180,13,'#f5d99e',true));tip.setAttribute('aria-hidden','true');b.append(tip);}if(costBadge!==null){const badge=el('span','combat-cost',text(costBadge,45,11,'#f5d99e',true));badge.setAttribute('aria-hidden','true');b.append(badge);}b.dataset.focusKey=focusKey||ariaLabel||label;b.type='button';b.ariaLabel=ariaLabel||label;b.disabled=disabled;b.onclick=async()=>{if(b.disabled||b.dataset.pending)return;const wasDisabled=b.disabled;b.dataset.pending='true';b.disabled=true;try{audio.play('seal');await callback();}catch(error){toast('Действие не выполнено: '+(error?.message||error));}finally{delete b.dataset.pending;b.disabled=wasDisabled;}};return b;}
+function text(value,width=420,size=17,color='#eadfca',bold=false,display=bold&&size>=20,align='left'){
+ return textImage(value,{width,size:size*settings.textScale,color,bold,display,align});
+}
+function button(label,callback,{small=false,disabled=false,width=210,combatIcon=null,primary=false,ariaLabel=null,costBadge=null,textSize=null,iconOnly=false,hint=null,focusKey=null}={}){const b=el('button','paint-button'+(small?' small':'')+(primary?' combat-primary':''));if(combatIcon!==null){const icon=el('span','combat-icon combat-icon-'+combatIcon);icon.setAttribute('aria-hidden','true');b.append(icon);}if(iconOnly){b.classList.add('icon-only');const tip=el('span','combat-tooltip',text(label,150,13,'#f5d99e',true));tip.setAttribute('aria-hidden','true');b.append(tip);}else b.append(text(label,width,textSize??(small?14:17),'#f3e3c2',true,false,'center'));if(hint){const tip=el('span','combat-tooltip',text(hint,180,13,'#f5d99e',true));tip.setAttribute('aria-hidden','true');b.append(tip);}if(costBadge!==null){const badge=el('span','combat-cost',text(costBadge,45,11,'#f5d99e',true));badge.setAttribute('aria-hidden','true');b.append(badge);}b.dataset.focusKey=focusKey||ariaLabel||label;b.type='button';b.ariaLabel=ariaLabel||label;b.disabled=disabled;b.onclick=async()=>{if(b.disabled||b.dataset.pending)return;const wasDisabled=b.disabled;b.dataset.pending='true';b.disabled=true;try{audio.play('seal');await callback();}catch(error){toast('Действие не выполнено: '+(error?.message||error));}finally{delete b.dataset.pending;b.disabled=wasDisabled;}};return b;}
 function panel(cell,cls='',...children){return atlasCell(el('section','panel '+cls,...children),cell);}
 function portrait(index,cls=''){
  const source=campaignPortrait(index);
@@ -313,7 +315,7 @@ function prepareScene(){
   try{
    await paintBeforeWork();
    if(!world||world.disposed){
-    world=new World($('actWorld'));world.onPresentationCue=playPresentationCue;
+    world=new World($('actWorld'),{quality:settings.quality});world.onPresentationCue=playPresentationCue;
     applySettings();
    }
    if(!world.loaded)await world.load(value=>measure(value*.18));
@@ -1133,10 +1135,51 @@ function finishSceneEntry(){
  }
  if(state.mode==='explore'&&!ui.modal)$('actWorld').focus({preventScroll:true});
 }
-function renderMenu(status=''){const card=$('menuCard'),menuFocus=captureSurface(card),menuDisclosures=captureDisclosures(card);const service=windowDisclosure('menu-save','Сохранения и восстановление',text('Экспорт — копия прохождения в файл. Импорт — проверка файла и замена текущего прохождения. При сбое записи сначала экспортируйте прогресс.',330,14));if(saveError||store.corrupt||ui.importing)service.open=true;const brand=new Image();brand.src='assets/act1/painted/title.webp?v=painted-20261114-r2';brand.alt='Пепельная клятва';brand.className='gilded-brand';const actTitle=text('Хроника шести актов',330,25,'#e9cb84',true);actTitle.classList.add('painted-act-title');card.replaceChildren(brand,actTitle,text('КАМПАНИЯ · '+RELEASE,330,16,'#b6e7e0',true),el('div','intro',text('Рассвет не исчез: его продают. Соберите отряд, выслушайте свидетелей и решите, кому достанется свет.',330,18)),text(sceneError||status||startupError||(ready&&readOnly?writerMessage():'Пошаговое путешествие с отрядом\nШесть актов · девятнадцать областей'),330,14,'#c1c5b2'));if(sceneError&&!readOnly&&!contextLost)card.append(button('Повторить загрузку',resume,{width:290}));else if(startupError||writerSession.error)card.append(button('Повторить загрузку',()=>location.reload(),{width:290}));if(contextLost){card.append(text(contextRecovering?'Восстанавливаем графику. Прогресс остаётся в памяти.':contextError||'Графика недоступна. Возврат в мир включится после восстановления; экспорт доступен.',330,15,'#f0bc98',true),button('Повторить графику',restoreGraphics,{width:290,disabled:contextRecovering}));}if(ui.menuNotice)card.append(text(ui.menuNotice,330,15,'#f3d69e',true));if(store.corrupt&&typeof store.exportRaw==='function')service.append(button('Экспорт исходных записей',()=>exportProgress(true),{small:true,width:290}));if(saveError){card.append(text(saveWarning({failure:saveFailure,conflict:saveConflict}),330,16,'#f0bc98',true));if(running&&!loadFailed&&!saveConflict)service.append(button('Повторить сохранение',retrySave,{width:290,disabled:readOnly||saving,focusKey:'retry-save'}));}if(running&&!sceneError)card.append(button('Вернуться в путь',resume,{disabled:!ready||readOnly||contextLost||contextRecovering,width:290}));if(saved&&!running)card.append(button('Продолжить кампанию',()=>{resetPresentation();state=structuredClone(saved);ui.hero=state.party[0].id;audioEventCursor.prime(state);ui.trackedQuestId=null;running=true;resume();},{disabled:!ready||readOnly||contextLost||contextRecovering,width:290}));card.append(button('Новая история',()=>{ui.starter='alar';openModal('starter');},{disabled:!ready||readOnly||loadFailed||ui.importing||contextLost||contextRecovering,width:290,focusKey:'new-story'}));service.append(button('Экспорт сохранения',()=>exportProgress(),{small:true,width:290}),button('Импорт сохранения',()=>$('saveFile').click(),{small:true,width:290,disabled:readOnly||ui.importing}));const fullscreen=fullscreenControl();
+const GRAPHICS_PRESETS={
+ low:{label:'Минимум',description:'Меньше пикселей и частиц. Динамические тени отключены.'},
+ high:{label:'Максимум',description:'Выше разрешение сцены, мягкие тени, чётче текстуры и подробнее эффекты.'},
+};
+function graphicsSettings(){
+ const active=GRAPHICS_PRESETS[settings.quality],info=world?.graphicsInfo?.();
+ const options=el('div','graphics-options');
+ options.role='group';options.ariaLabel='Качество графики';
+ for(const [quality,preset] of Object.entries(GRAPHICS_PRESETS)){
+  const choice=button(preset.label,()=>{
+   if(settings.quality===quality)return;
+   settings.quality=quality;
+   applySettings();
+   renderMenu();
+  },{small:true,width:135,focusKey:'graphics:'+quality});
+  choice.setAttribute('aria-pressed',String(quality===settings.quality));
+  options.append(choice);
+ }
+ const contents=el('div','graphics-presets',options,text(active.description,330,14));
+ if(info?.width&&info?.height){
+  const shadows=info.shadowSize?' · Тени '+info.shadowSize+'²':'';
+  contents.append(text(info.width+' × '+info.height+shadows,330,12,'#b9dbcc'));
+ }
+ return windowDisclosure('menu-graphics','Графика · '+active.label,contents);
+}
+
+function renderMenu(status=''){
+ const card=$('menuCard'),menuFocus=captureSurface(card),menuDisclosures=captureDisclosures(card);
+ const service=windowDisclosure('menu-save','Сохранения и восстановление',
+  text('Экспорт сохраняет копию прохождения в файл. Импорт проверяет этот файл и заменяет текущее прохождение.',330,14));
+ if(saveError||store.corrupt||ui.importing)service.open=true;
+ const brand=textImage('Пепельная\nклятва',{width:360,size:compactUI?26:41,align:'center',bold:true,display:true});
+ brand.classList.add('gilded-brand');
+ const actTitle=text('Хроника шести актов',330,25,'#e9cb84',true,true,'center');
+ actTitle.classList.add('painted-act-title');
+ const menuStatus=sceneError||status||startupError||(ready&&readOnly?writerMessage():'');
+ const description=text(menuStatus||'Пошаговое путешествие с отрядом\nШесть актов · девятнадцать областей',330,14,'#ddccb6');
+ if(!menuStatus)description.classList.add('menu-description');
+ card.replaceChildren(brand,actTitle,text('Кампания · '+RELEASE,330,14,'#dab985',false,false,'center'),
+  el('div','intro',text('Соберите отряд, выслушайте свидетелей и решите, кому достанется свет.',330,18)),
+  description);
+ if(sceneError&&!readOnly&&!contextLost)card.append(button('Повторить загрузку',resume,{width:290}));else if(startupError||writerSession.error)card.append(button('Повторить загрузку',()=>location.reload(),{width:290}));if(contextLost){card.append(text(contextRecovering?'Восстанавливаем графику. Прогресс остаётся в памяти.':contextError||'Графика недоступна. Возврат в мир включится после восстановления; экспорт доступен.',330,15,'#f0bc98',true),button('Повторить графику',restoreGraphics,{width:290,disabled:contextRecovering}));}if(ui.menuNotice)card.append(text(ui.menuNotice,330,15,'#f3d69e',true));if(store.corrupt&&typeof store.exportRaw==='function')service.append(button('Экспорт исходных записей',()=>exportProgress(true),{small:true,width:290}));if(saveError){card.append(text(saveWarning({failure:saveFailure,conflict:saveConflict}),330,16,'#f0bc98',true));if(running&&!loadFailed&&!saveConflict)service.append(button('Повторить сохранение',retrySave,{width:290,disabled:readOnly||saving,focusKey:'retry-save'}));}if(running&&!sceneError)card.append(button('Вернуться в путь',resume,{disabled:!ready||readOnly||contextLost||contextRecovering,width:290}));if(saved&&!running)card.append(button('Продолжить кампанию',()=>{resetPresentation();state=structuredClone(saved);ui.hero=state.party[0].id;audioEventCursor.prime(state);ui.trackedQuestId=null;running=true;resume();},{disabled:!ready||readOnly||contextLost||contextRecovering,width:290}));card.append(button('Новая история',()=>{ui.starter='alar';openModal('starter');},{disabled:!ready||readOnly||loadFailed||ui.importing||contextLost||contextRecovering,width:290,focusKey:'new-story'}));service.append(button('Экспорт сохранения',()=>exportProgress(),{small:true,width:290}),button('Импорт сохранения',()=>$('saveFile').click(),{small:true,width:290,disabled:readOnly||ui.importing}));const fullscreen=fullscreenControl();
 if(fullscreen)card.append(fullscreen);
 if(phoneDisplayHint)card.append(text(phoneDisplayHint,330,14,'#b8d6c4'));
-card.append(service);const settingsBox=windowDisclosure('menu-settings','Настройки изображения, текста и звука');settingsBox.append(audioControls());settingsBox.append(button('Размер текста: '+Math.round(settings.textScale*100)+'%',()=>{settings.textScale=settings.textScale===1?1.25:settings.textScale===1.25?1.5:1;applySettings();renderMenu();},{small:true,width:290,focusKey:'text-scale'}),button('Качество: '+(settings.quality==='high'?'высокое':'низкое'),()=>{settings.quality=settings.quality==='high'?'low':'high';applySettings();renderMenu();},{small:true,width:290,focusKey:'quality'}));settingsBox.append(button('Снижение движения: '+(settings.reducedMotion?'включено':'выключено'),()=>{settings.reducedMotion=!settings.reducedMotion;applySettings();renderMenu();},{small:true,width:290,focusKey:'reduced-motion'}),button('Скорость показа боя: ×'+settings.presentationSpeed,()=>{settings.presentationSpeed=settings.presentationSpeed===1?1.5:settings.presentationSpeed===1.5?2:1;applySettings();renderMenu();},{small:true,width:290,focusKey:'presentation-speed'}));card.append(settingsBox);card.append(button('Об игре и лицензии',()=>openModal('about'),{small:true,width:290}));card.append(text(phoneViewport.matches?'Коснитесь земли, чтобы идти. Команды и окна находятся по краям экрана.':'WASD или клик — движение · E — разговор\nI — сумка · J — журнал · M — карта · P — отряд\nКампания продолжает сохранения первого акта.',330,12,'#9db2a3'));const link=el('a','');link.href='https://theforgeforall.ru/game.html?id=ashen-oath';link.append(text('Авторская кузница · Страница игры',330,14,'#d6bb7d'));card.append(link);const legacy=el('a','');legacy.href='legacy-level1.html';legacy.append(text('Предыдущее демо · 0.2',330,13,'#a5b5a8'));card.append(legacy);ui100Decorate(card,'menu');restoreDisclosures(card,menuDisclosures);if(saveError||store.corrupt||ui.importing)service.open=true;restoreSurface(card,menuFocus);}
+card.append(graphicsSettings(),service);const settingsBox=windowDisclosure('menu-settings','Текст, звук и движение');settingsBox.append(audioControls());settingsBox.append(button('Размер текста: '+Math.round(settings.textScale*100)+'%',()=>{settings.textScale=settings.textScale===1?1.25:settings.textScale===1.25?1.5:1;applySettings();renderMenu();},{small:true,width:290,focusKey:'text-scale'}));settingsBox.append(button('Снижение движения: '+(settings.reducedMotion?'включено':'выключено'),()=>{settings.reducedMotion=!settings.reducedMotion;applySettings();renderMenu();},{small:true,width:290,focusKey:'reduced-motion'}),button('Скорость показа боя: ×'+settings.presentationSpeed,()=>{settings.presentationSpeed=settings.presentationSpeed===1?1.5:settings.presentationSpeed===1.5?2:1;applySettings();renderMenu();},{small:true,width:290,focusKey:'presentation-speed'}));card.append(settingsBox);card.append(button('Об игре и лицензии',()=>openModal('about'),{small:true,width:290}));card.append(text(phoneViewport.matches?'Коснитесь земли, чтобы идти. Команды и окна находятся по краям экрана.':'WASD или клик — движение · E — разговор\nI — сумка · J — журнал · M — карта · P — отряд\nКампания продолжает сохранения первого акта.',330,12,'#9db2a3'));const link=el('a','');link.href='https://theforgeforall.ru/game.html?id=ashen-oath';link.append(text('Авторская кузница · Страница игры',330,14,'#d6bb7d'));card.append(link);const legacy=el('a','');legacy.href='legacy-level1.html';legacy.append(text('Предыдущее демо · 0.2',330,13,'#a5b5a8'));card.append(legacy);ui100Decorate(card,'menu');restoreDisclosures(card,menuDisclosures);if(saveError||store.corrupt||ui.importing)service.open=true;restoreSurface(card,menuFocus);}
 function saveAudioMix(){
  audio.setVolume(settings.volume);audio.setMix(settings);
  try{localStorage.setItem('ashen-oath-act1-settings',JSON.stringify(settings));}catch{}
@@ -1248,7 +1291,7 @@ function enableAudio(event){
 $('actMenu').addEventListener('pointerdown',enableAudio);
 $('actMenu').addEventListener('keydown',enableAudio);
 
-window.__ashen={getState:()=>M.snapshot(state),getStatus:()=>({ready,running,paused,readOnly,saveError,contextLost,contextRecovering,mode:state.mode,areaLoading:!!areaLoad,sceneReady:!areaLoad&&sceneKey===state.runId+':'+state.areaId,version:RELEASE}),save};
+window.__ashen={getState:()=>M.snapshot(state),getGraphics:()=>world?.graphicsInfo?.()??null,getStatus:()=>({ready,running,paused,readOnly,saveError,contextLost,contextRecovering,mode:state.mode,areaLoading:!!areaLoad,sceneReady:!areaLoad&&sceneKey===state.runId+':'+state.areaId,version:RELEASE}),save};
 init();
 
 function ui100Decorate(root,surface){UI100.decorate(root,surface,{state,menuState:running?state:saved,ui,M,partyDefs,enemyDefs,itemDefs,areaDefs,dialogueDefs,SKILLS,el,text,button,panel,settings,redraw:()=>{lastHudSignature='';renderHud();},renderModal,openModal,openObjective:ui100OpenObjective,targetEnemy,targetHero,pendingBattleAction,chosenSkill,battle,chooseAttack,selectSkill,cancelBattleChoice,toast,commit,locationItem,cancelDrag,nav50SelectQuest,storage:localStorage,window:globalThis,document});}

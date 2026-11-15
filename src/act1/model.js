@@ -8,7 +8,7 @@ import {POWER_KEYS, attributeBonuses, attributeCatalog, validAttributeRanks} fro
 import {ACT_ENTRY_LEVELS, BOSS_CHAPTER_PRESSURE, LEVEL_CAP, STARTERS, experienceAtLevel, experienceThreshold, runedSkill, talentBonuses, talentCatalog, validTalents} from './campaign-progression.js?v=campaign-170';
 import {BAG_SIZE, LEGACY_BAG_SIZE, EQUIPMENT_SLOTS, LEGACY_EQUIPMENT_SLOTS, emptyEquipment, isEquipmentKind, RESISTANCE_KEYS, effectiveResistance} from './equipment-slots.js?v=campaign-150';
 
-export const VERSION='1.7.0';
+export const VERSION='1.8.0';
 export const SCHEMA=3;
 export const LEGACY_SCHEMA=2;
 export {BAG_SIZE};

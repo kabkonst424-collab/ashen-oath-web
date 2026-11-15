@@ -1,4 +1,4 @@
-import {VERSION,SCHEMA,LEGACY_SCHEMA,validate,snapshot,upgradeEquipmentState,upgradeCombatState,upgradeLootState,upgradeMapState,upgradeCampaignState} from './model.js?v=campaign-170';
+import {VERSION,SCHEMA,LEGACY_SCHEMA,validate,snapshot,upgradeEquipmentState,upgradeCombatState,upgradeLootState,upgradeMapState,upgradeCampaignState} from './model.js?v=campaign-180';
 import {CONTENT_VERSION} from './content.js?v=campaign-170';
 import {parseSaveJSON} from '../strict-json.js?v=0.16.0-demo';
 

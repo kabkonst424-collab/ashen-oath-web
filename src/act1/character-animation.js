@@ -6,7 +6,7 @@ import { SOURCE_BASES, SOURCE_FRONT_YAW, resolveBaseFrontYaw, resolveProfileFron
 
 import { actorAnimationIdentity } from './graphics-refresh.js?v=campaign-140';
 import { motionPatchDescriptor, applyMotionPatch } from './motion-clip-corrections.js?v=motion-110';
-import { bowClip } from './bow-presentation.js?v=motion-110';
+import { bowClip } from './bow-presentation.js?v=visual-180';
 import { normalizeBattleEquipment, applyBattleEquipment } from './equipment-presentation.js?v=0.16.0-demo';
 
 const ROOT = new URL('../../assets/act1/animation/', import.meta.url);

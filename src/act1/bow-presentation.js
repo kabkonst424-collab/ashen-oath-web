@@ -19,7 +19,8 @@ function attachBow(actor, world) {
   // Replace the straight string in the source prop with a string that follows
   // the draw hand. Keep the existing limbs, tips, grip and materials.
   bow.traverse(mesh=>{
-    if(mesh.isMesh&&mesh.material?.name==='Refresh_Ivory'&&mesh.geometry.attributes.position.count<100)mesh.visible=false;
+    if (mesh.isMesh && (mesh.userData.stowedBowString ||
+      mesh.material?.name === 'Refresh_Ivory' && mesh.geometry.attributes.position.count < 100)) mesh.visible = false;
   });
   const stringGeometry=new T.BufferGeometry().setAttribute('position',new T.BufferAttribute(new Float32Array(9),3));
   const string=new T.Line(stringGeometry,new T.LineBasicMaterial({color:0xc6b69c}));

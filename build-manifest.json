@@ -1,6 +1,6 @@
 {
   "id": "ashen-oath",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "releaseStatus": "release",
   "demo": false,
   "posterArtRevision": {
@@ -11,7 +11,7 @@
     "coverSHA256": "f924a7c3a14cc7cec2b2adb1405c223060e9de9bb00a56482e6291521524d883"
   },
   "level": "campaign",
-  "graphics": "Authored layouts across six acts, ten new biome profiles, ImageGen illustrations and Meshy 3D actors.",
+  "graphics": "Three.js procedural equipment, Mill Wisp, route dressing, costume motion and combat VFX over the Ashen Oath 1.8.0 campaign.",
   "presentation": {
     "baselineAuthoredBlenderActions": 314,
     "baselineCompatibilityAliases": 45,
@@ -2126,12 +2126,17 @@
     "act1PriorDesignTargetMinutes": 180
   },
   "platform": "WebGL2",
-  "builtAt": "2026-11-15T14:02:41Z",
+  "builtAt": "2026-11-15T16:28:50.950Z",
   "files": [
     {
+      "path": ".nojekyll",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
       "path": "README.md",
-      "bytes": 3998,
-      "sha256": "025e4879806397818aa4c915cb00bc9e2e54a72cd54720531f6810a2e1daf997"
+      "bytes": 5537,
+      "sha256": "494c6735111aa736a59b5d30904d74a1b9a7c5a9c74facc5fc10027fce93a32b"
     },
     {
       "path": "act1.css",
@@ -2140,8 +2145,8 @@
     },
     {
       "path": "act1.html",
-      "bytes": 2219,
-      "sha256": "7e33a2db2c173cddb021a3c4d2ac828c411019e853a2d8b402d90dfe7150f2c2"
+      "bytes": 2487,
+      "sha256": "eb880e4f80917fe0b2c85c1f3bf47599aa032b7ef9789107127bd06494f3d097"
     },
     {
       "path": "assets/act1/animation/animation-library.json",
@@ -2819,6 +2824,11 @@
       "sha256": "78f70c79b5c0a1e66641d4b4a2e2ed32e1a45774b3de94e56f8de68510219177"
     },
     {
+      "path": "assets/act1/fonts/CormorantSC-Bold.woff",
+      "bytes": 201348,
+      "sha256": "aff7d8226a2b61b1386922da56fef95d0339abbabae5316de87c00e8db5f3742"
+    },
+    {
       "path": "assets/act1/fonts/CormorantSC-OFL.txt",
       "bytes": 4387,
       "sha256": "60700d351cac4650c51f3f9db318d2a420f8b45052dba2715eb5fec41f0f6956"
@@ -2834,9 +2844,14 @@
       "sha256": "822a6621ccbe8d97d20ac88c1c41f5615c9c2c202eaa75f272cd452aac6475a7"
     },
     {
+      "path": "assets/act1/fonts/Lora-Variable.woff",
+      "bytes": 106808,
+      "sha256": "c2f9f0d69a91d9aa0db97eeb918fbdfd83e290829873fed4ec7607174eb1879f"
+    },
+    {
       "path": "assets/act1/fonts/provenance.json",
-      "bytes": 969,
-      "sha256": "c82d65e46239d34c14223301e8c0e590fe3516fba118c2071d0b75413159942f"
+      "bytes": 1633,
+      "sha256": "eb1e5830a6e6e39e687a95cebb17ca66492e3446b08a0107e023babc31de05df"
     },
     {
       "path": "assets/act1/gilded-menu-background.png",
@@ -4094,14 +4109,29 @@
       "sha256": "bb08666c65e77cecafeea93e30b8b707c9015f4d32b5f067f83846e5c80579aa"
     },
     {
+      "path": "docs/visual-1.8/ИССЛЕДОВАНИЕ.md",
+      "bytes": 8196,
+      "sha256": "9d30cfb6d853738e93744037f18aa3f88b3b2bf7e8159d640fa6fd3e81667a8e"
+    },
+    {
+      "path": "docs/visual-1.8/Проверки/result-effects.json",
+      "bytes": 2408,
+      "sha256": "0591a0e153eb1f2e32b3e29df809bb37fa45af97a27b7af59692bac38310e687"
+    },
+    {
+      "path": "docs/visual-1.8/Проверки/result-world.json",
+      "bytes": 3866,
+      "sha256": "35e6dd883036d7f76a2710da77c358177ceeceee7221814e0400d260d3908faa"
+    },
+    {
       "path": "forged.css",
       "bytes": 1343,
       "sha256": "60cd819b0a9da5c4926210079ca722a90fb179e7a65ff8c1453003cd2b268a4a"
     },
     {
       "path": "index.html",
-      "bytes": 2219,
-      "sha256": "7e33a2db2c173cddb021a3c4d2ac828c411019e853a2d8b402d90dfe7150f2c2"
+      "bytes": 2487,
+      "sha256": "eb880e4f80917fe0b2c85c1f3bf47599aa032b7ef9789107127bd06494f3d097"
     },
     {
       "path": "interface-windows.css",
@@ -4132,6 +4162,11 @@
       "path": "painted.css",
       "bytes": 6032,
       "sha256": "3a756802cfbc74e8cbcbf62fd879047c6b5c9e2f435e8d60553075050b38a3ce"
+    },
+    {
+      "path": "panel-theme.css",
+      "bytes": 10330,
+      "sha256": "0d683f25382caaa34911032c91275b4bae3153aa639fcabef703b8ecd8ac4682"
     },
     {
       "path": "phone.css",
@@ -4175,8 +4210,8 @@
     },
     {
       "path": "src/act1/authored-landscape.js",
-      "bytes": 15554,
-      "sha256": "c460b661b883d92383c644bd4208a66c1b8a2b4da6998e2e127387d3fa2666b2"
+      "bytes": 15553,
+      "sha256": "de9a2f062d6eca9a83b5c87fe52c1b90d4269a4e45f1c6c3909e847171bec87d"
     },
     {
       "path": "src/act1/battle-stage.js",
@@ -4185,18 +4220,18 @@
     },
     {
       "path": "src/act1/bitmap.js",
-      "bytes": 7090,
-      "sha256": "7ed38f08a07737204d7bd39a22d181a1d640411e26e01cac98b6b64edff45101"
+      "bytes": 7679,
+      "sha256": "eff40451692d8ba2d5abdcf4fbb822ead099d505aae509122e72fa2e59c5c6b7"
     },
     {
       "path": "src/act1/bow-presentation.js",
-      "bytes": 6000,
-      "sha256": "07c67157749233f4f51c36076c24096ce6720da162b780430f69bfee5c5b9308"
+      "bytes": 6053,
+      "sha256": "239217b4c860f260af48d1c38fd344b395916b286657f4819a8d9683e53f9f2d"
     },
     {
       "path": "src/act1/browser-performance.js",
-      "bytes": 6296,
-      "sha256": "127e44d16da7bbc72ee7d381179b8ddc02c17be8410133a7e3a6ede3bd341eab"
+      "bytes": 8422,
+      "sha256": "71a33ad518e51f6df1ef84103ce2644a040d24790ea02aa88768ba2d7a746be6"
     },
     {
       "path": "src/act1/campaign-acts/chapters.js",
@@ -4236,7 +4271,7 @@
     {
       "path": "src/act1/campaign-ui.js",
       "bytes": 16715,
-      "sha256": "90f0817a6fd77f84f57d42e2764b2cc329f0257184cec0b63eb0541d2b6d0259"
+      "sha256": "108bb496ac4580f4e7ae709560e710acfb127fed6c009e8cf95e0a623b447314"
     },
     {
       "path": "src/act1/campaign-visuals.js",
@@ -4251,7 +4286,7 @@
     {
       "path": "src/act1/character-animation.js",
       "bytes": 15945,
-      "sha256": "5f8345add8f3bbf9b611ab26e36a77f23a6d6c5c3fabd98518048f6270c6e1c7"
+      "sha256": "bb74e85a10ae3ef863c5248f4f31c971905a02cd0c0cab18c0f5d9254b70cb1a"
     },
     {
       "path": "src/act1/combat200-animation-policy.js",
@@ -4340,8 +4375,8 @@
     },
     {
       "path": "src/act1/groundcover.js",
-      "bytes": 18879,
-      "sha256": "954c50c42dbe6662b7964b963944bd7c3b7346a8b4d8b656e370e2d9fa815336"
+      "bytes": 18933,
+      "sha256": "fa6b9994f1f063d88892aabe39cad9c69b39c2fcedeb9a65fc3d9ab94f6100d5"
     },
     {
       "path": "src/act1/hero-abilities.js",
@@ -4390,28 +4425,28 @@
     },
     {
       "path": "src/act1/magic-vfx.js",
-      "bytes": 51860,
-      "sha256": "2c43c87e532b36d0bc7f538b43e299f4232c7648395d0b68ddd442fb83139031"
+      "bytes": 51357,
+      "sha256": "e44ec65477afd702762323defc861b1a7c7f15b6d2de7e052e1b5aa8118b1d67"
     },
     {
       "path": "src/act1/main.js",
-      "bytes": 129818,
-      "sha256": "a41f44f82e0cb78271212679b4793286f4bd94ba0bd3bac33d28095e22752405"
+      "bytes": 131151,
+      "sha256": "52be4f844b1dd7c251732d44eb7a23318f7e2a3fa04699f1d02ced23629d6a36"
     },
     {
       "path": "src/act1/meshy-world.js",
-      "bytes": 46808,
-      "sha256": "ac7abdaf355b8323a77a6e02f3c5139263a9a749622f06ea018e7ddc75f68532"
+      "bytes": 46895,
+      "sha256": "e33969852d0da18fbce48a1f1fab9512f57c0c6fa471c5216a7ba2f297ee4e2b"
     },
     {
       "path": "src/act1/minimap.js",
       "bytes": 13796,
-      "sha256": "1d5ec4e554f180357c93684d2e36bf6c5e3718de623f057c7151437b8378415c"
+      "sha256": "9023684e059bc3b04100a190833bf0b12c8415b58514cd4ec705616c89628b5a"
     },
     {
       "path": "src/act1/model.js",
       "bytes": 136254,
-      "sha256": "74bf1df57bec014a5a471e3d6270ef21b2aef009d8dfc9354dfa91b0ea477ce3"
+      "sha256": "7e5ffa3638c05d4d2f29bb7a28bdae345f60e5709b84b068e4027273cc7f2f3a"
     },
     {
       "path": "src/act1/motion-clip-corrections.js",
@@ -4421,7 +4456,7 @@
     {
       "path": "src/act1/navigation.js",
       "bytes": 16347,
-      "sha256": "9bb858fb9ed0b534da52b8ca984d569fb5aa0ef0e0df60e7bc506cf60074d130"
+      "sha256": "887ab23c6bc4822a34b3d32f64fd97a0b3032a37515b6c6a799649f474a46cf5"
     },
     {
       "path": "src/act1/painted-material.js",
@@ -4511,7 +4546,7 @@
     {
       "path": "src/act1/save.js",
       "bytes": 13425,
-      "sha256": "4f098d224b89a73ad8b832fab42baa8f052db06040affbd258c4fea3981371cf"
+      "sha256": "7d4c7b015170c039844a39adfa707df5021da06c9341993bdc4f6f7502fd7b47"
     },
     {
       "path": "src/act1/source-facing.js",
@@ -4530,8 +4565,8 @@
     },
     {
       "path": "src/act1/terrain-material.js",
-      "bytes": 12774,
-      "sha256": "df5c1e7e988ab3646856b5457212145c1bd57f14e7d9eb4680e8c2dc646a4095"
+      "bytes": 13254,
+      "sha256": "427e406827f75e2cb20c42af4a87f7e92dfad3640a346885a17a7ce1814b46db"
     },
     {
       "path": "src/act1/terrain-sampling.js",
@@ -4549,14 +4584,34 @@
       "sha256": "6989b6d420b3090e7eee9e28875c11f9bff4580887c37162073ecb3973cf7428"
     },
     {
+      "path": "src/act1/visual-impact.js",
+      "bytes": 6516,
+      "sha256": "e085e83dd5f2d72031796e1f2ca2a611a15f6700ce5cb1f46d13868f966726cc"
+    },
+    {
+      "path": "src/act1/visual-landscape.js",
+      "bytes": 8205,
+      "sha256": "8f4a16520f2c194d88ac9a8d39593a6a9fb23b719bded0151289cd1780ae3f26"
+    },
+    {
+      "path": "src/act1/visual-models.js",
+      "bytes": 13689,
+      "sha256": "114e11d9839f71b844849f035744b9cf8e4d746303558564231d30121107be09"
+    },
+    {
+      "path": "src/act1/visual-scene.js",
+      "bytes": 13362,
+      "sha256": "5bb2372765ddd338f4e57d907068a43da6bd78186c40c865b3c0bf1fa13d0c13"
+    },
+    {
       "path": "src/act1/water-fire.js",
-      "bytes": 15789,
-      "sha256": "9f159f8192f26f82d1a713b8a2fbaeefffc4173925566a6200b7b42afd5e6e44"
+      "bytes": 16124,
+      "sha256": "6443ab8367823c85c55ac9bba0b2cc794d3da5eee787ee9be894dbe9446eb41b"
     },
     {
       "path": "src/act1/world.js",
-      "bytes": 109932,
-      "sha256": "fd6ad07f89a64580906cfabe6551ea34cecc2af001a6d9bd93f0370318ed4666"
+      "bytes": 110309,
+      "sha256": "6df11f46a1367bc2d0f9ab3c02cad098ce23661bc87078c7bfde7fa0e94c4955"
     },
     {
       "path": "src/act1/writer-session.js",
@@ -4604,6 +4659,11 @@
       "sha256": "879615f8dcf700f612c736e16a2da70d93b75a698f6fdf7c04a8f25242c881bb"
     },
     {
+      "path": "tests/graphics-presets.test.mjs",
+      "bytes": 3184,
+      "sha256": "f383bacfbdd1a485b1a66d40fdfedfec4cf8e0b0ce0683a8aa995a8bf060c9dd"
+    },
+    {
       "path": "tests/stage001-model.test.mjs",
       "bytes": 10820,
       "sha256": "b24d7978816f6bb4d269120f6c5259ceb83d55354555f1790e97a480a82e8cb3"
@@ -4647,6 +4707,16 @@
       "path": "tests/stage007-talents.test.mjs",
       "bytes": 17619,
       "sha256": "5043be0ed9b434a42c500c9d68297a4a89deb8eecefd1220b807e3cbc1e160fc"
+    },
+    {
+      "path": "tools/serve.mjs",
+      "bytes": 2681,
+      "sha256": "17e78851db2d38a96e6b6490e5c833cf7058709234d52fbc827de77f220d5a03"
+    },
+    {
+      "path": "Играть.cmd",
+      "bytes": 67,
+      "sha256": "86e2741aaf156f53789e3b693302ce390ac10501e826440f7f402ab2499d6be9"
     }
   ],
   "paintedRevision": {
@@ -4762,12 +4832,12 @@
     "saveSchema": 2
   },
   "campaignRevision": {
-    "id": "campaign-170",
-    "baseCommit": "433a9ae7048078d48c1bdc5c33fefb0da9a18eac",
+    "id": "campaign-180",
+    "baseCommit": "bb9e3163b1b949a20d7dd33e72f79f5632553753",
     "saveSchema": 3,
     "improvements": 125,
     "ledger": "docs/improvements/ledger.json",
-    "summary": "docs/improvements/1.7.0.md"
+    "summary": "README.md"
   },
   "motionRevision": {
     "id": "motion-110",
@@ -4840,5 +4910,18 @@
     "improvements": 12,
     "ledger": "docs/improvements/ledger.json",
     "summary": "docs/improvements/1.2.0.md"
+  },
+  "visualRevision": {
+    "reference": "Torchlight III gameplay",
+    "baselineManifestSha256": "863694c63e548df3b92a00acb00720b682b6c2d9a232055e0dffeeab9afc363e",
+    "runtime": [
+      "visual-models.js",
+      "visual-scene.js",
+      "visual-landscape.js",
+      "visual-impact.js"
+    ],
+    "research": "docs/visual-1.8/ИССЛЕДОВАНИЕ.md",
+    "entry": "Играть.cmd",
+    "sourceManifestSha256": "df0e52b036d69f789c6dd7d2c7ec84e1b98f88dcb548785b2c97221638e4b014"
   }
 }

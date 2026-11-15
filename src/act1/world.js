@@ -1,11 +1,12 @@
 import {installRefresh} from './graphics-refresh.js?v=campaign-140';
-import {installMeshyWorld} from './meshy-world.js?v=campaign-170';
+import {installMeshyWorld} from './meshy-world.js?v=visual-180';
 import {areaBiome} from './area-asset-plan.js?v=campaign-170';
-import {WorldElements,installWorldElements} from './water-fire.js?v=campaign-170';
-import {MagicVfx} from './magic-vfx.js?v=campaign-170';
+import {WorldElements,installWorldElements} from './water-fire.js?v=campaign-180';
+import {MagicVfx} from './magic-vfx.js?v=visual-180';
+import { installVisualEdition, updateVisualEdition } from './visual-scene.js?v=visual-180';
 import {advancePaintedPose, orientPaintedActors, paintedActionAge, resetPaintedPose, paintedHeading} from './painted-motion.js?v=gait-111';
-import {CharacterAnimationLibrary} from './character-animation.js?v=campaign-170';
-import {installBrowserPerformance} from './browser-performance.js?v=campaign-140';
+import {CharacterAnimationLibrary} from './character-animation.js?v=visual-180';
+import {installBrowserPerformance} from './browser-performance.js?v=campaign-180';
 import * as T from '../../assets/vendor/three.module.js';
 import { GLTFLoader } from '../../assets/vendor/GLTFLoader.js';
 import { clone as cloneSkeleton } from '../../assets/vendor/SkeletonUtils.js';
@@ -15,17 +16,17 @@ import { combatMotionPolicy, actionLunge, impactRecoil, meleeTiming, meleeTravel
 import { actionTimeline, actionClipPhase } from './presentation-timing.js?v=campaign-170';
 import { reactionPhase, contactReaction, transitionBlend, hasUnsettledDeath } from './combat200-animation-policy.js?v=0.16.0-demo';
 import { PartyTrail, loopTiming, COMBAT_MOTION, combatPlaybackRate } from './party-motion.js?v=motion-110';
-import { walkable } from './model.js?v=campaign-170';
+import { walkable } from './model.js?v=campaign-180';
 import { gaitForSpeed, gaitRate, gaitEntryPhase } from './actor-locomotion.js?v=motion-110';
 import { applyFootContact, resetFootContact } from './foot-contact.js?v=motion-110';
 import { applyPartyGait, leavePartyGait, resetPartyGait } from './party-gait.js?v=campaign-140';
-import { updateBow, disposeBow } from './bow-presentation.js?v=motion-110';
+import { updateBow, disposeBow } from './bow-presentation.js?v=visual-180';
 import { BattleLayoutCache } from './ui-framing.js?v=0.16.0-demo';
-import { paintGildedLine } from './bitmap.js?v=campaign-140';
+import { paintGildedLine } from './bitmap.js?v=campaign-180';
 
-import { buildAuthoredRoad } from './authored-landscape.js?v=campaign-v1';
+import { buildAuthoredRoad } from './authored-landscape.js?v=campaign-180';
 import { bridgeAt, bridgeHeight, nearestLand, terrainElevation } from './area-geometry.js?v=rivers-0181';
-import { Groundcover } from './groundcover.js?v=campaign-140';
+import { Groundcover } from './groundcover.js?v=campaign-180';
 import { CHAPTER_BIOMES } from './campaign-visuals.js?v=campaign-v1';
 
 const UP = new T.Vector3(0, 1, 0);
@@ -90,11 +91,9 @@ function lockStaticTransforms(root, animated) {
 
 /** Read-only Three.js presentation. All movement, flags and combat belong to the model. */
 export class World {
-  constructor(canvas) {
+  constructor(canvas, { quality = 'high' } = {}) {
     this.canvas = canvas;
     this.renderer = new T.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
-    this.renderer.setPixelRatio(Math.min(globalThis.devicePixelRatio || 1, 1.5));
-    this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = T.PCFShadowMap;
     this.renderer.outputColorSpace = T.SRGBColorSpace;
     this.renderer.toneMapping = T.ACESFilmicToneMapping;
@@ -111,16 +110,14 @@ export class World {
     this.zoomHeight = 14;
     this.sun = new T.DirectionalLight(0xffe4bd, 3.1);
     this.sun.position.set(-18, 30, 12);
-    this.sun.castShadow = true;
-    this.sun.shadow.mapSize.set(2048, 2048);
     Object.assign(this.sun.shadow.camera, { left: -30, right: 30, top: 30, bottom: -30, near: 1, far: 95 });
     this.sun.shadow.bias = -0.0003;
     this.sun.shadow.normalBias = 0.06;
     this.scene.add(this.sun, this.sun.target);
-    this.scene.add(new T.HemisphereLight(0xd1e0dc, 0x454437, 2.25));
-    const rim = new T.DirectionalLight(0x9abec6, 1.15);
-    rim.position.set(16, 14, -25);
-    this.scene.add(rim);
+    this.hemi = new T.HemisphereLight(0xd1e0dc, 0x454437, 2.25);
+    this.rim = new T.DirectionalLight(0x9abec6, 1.15);
+    this.rim.position.set(16, 14, -25);
+    this.scene.add(this.hemi, this.rim);
     this.groundcover = new Groundcover(this);
     this.areaGroup = new T.Group();
     this.actorGroup = new T.Group();
@@ -144,10 +141,9 @@ export class World {
     this.time = 0;
     this.loaded = false;
     this.disposed = false;
-    this.qualityLevel = 'high';
     this.resizeHandler = () => this.resize();
     globalThis.addEventListener?.('resize', this.resizeHandler);
-    this.resize();
+    this.quality(quality);
   }
 
   async load(onProgress) {
@@ -196,7 +192,7 @@ export class World {
     this.atlas = await new T.TextureLoader().loadAsync(new URL('../../assets/act1/terrain-atlas.png', import.meta.url).href);
     this.atlas.colorSpace = T.SRGBColorSpace;
     this.atlas.wrapS = this.atlas.wrapT = T.ClampToEdgeWrapping;
-    this.atlas.anisotropy = Math.min(8, this.renderer.capabilities.getMaxAnisotropy());
+    this.atlas.anisotropy = this.textureAnisotropy;
     this.atlas.generateMipmaps = true;
     this.makeMaterials();
     this.loaded = true;
@@ -1724,6 +1720,7 @@ export class World {
       if (actor.wrapper.visible) updateBow(actor,this);
       actor.poseSampled=false;
     }
+    updateVisualEdition(this, animationDelta);
     this.magicVfx?.update(animationDelta);
     this.worldElements?.update();
     this.groundcover.update(inBattle, animationDelta);
@@ -1822,15 +1819,27 @@ export class World {
     this.camera.updateProjectionMatrix();
   }
 
-  quality(value) {
-    value = ['low', 'medium', 'high'].includes(value) ? value : 'high';
-    if (this.qualityLevel === value) { this.resize(); return this; }
-    this.qualityLevel = value;
-    if (!this.browserPerformance) this.renderer.setPixelRatio(Math.min(globalThis.devicePixelRatio || 1, value === 'low' ? 1 : value === 'medium' ? 1.25 : 1.5));
-    this.renderer.shadowMap.enabled = value !== 'low';
-    this.sun.shadow.mapSize.set(value === 'medium' ? 1024 : 2048, value === 'medium' ? 1024 : 2048);
-    this.sun.shadow.map?.dispose();
-    this.sun.shadow.map = null;
+  quality(profile) {
+    if (this.disposed) return this;
+    if (this.graphicsProfile === profile) { this.resize(); return this; }
+    this.graphicsProfile = profile;
+    this.qualityLevel = profile.quality;
+    const availableAnisotropy = this.renderer.capabilities.getMaxAnisotropy();
+    this.textureAnisotropy = Math.max(1, Math.min(profile.anisotropy, availableAnisotropy));
+    if (this.atlas && this.atlas.anisotropy !== this.textureAnisotropy) {
+      this.atlas.anisotropy = this.textureAnisotropy;
+      this.atlas.needsUpdate = true;
+    }
+    this.terrainMaterials?.setQuality(profile.quality);
+    const shadowSize = Math.min(profile.shadowSize, this.browserPerformance.hardware.shadow);
+    const shadow = this.sun.shadow;
+    this.sun.castShadow = this.renderer.shadowMap.enabled = shadowSize > 0;
+    if (shadowSize) {
+      shadow.mapSize.set(shadowSize, shadowSize);
+      shadow.radius = profile.quality === 'high' ? 1.7 : 1;
+    }
+    shadow.map?.dispose();
+    shadow.map = null;
     this.resize();
     return this;
   }
@@ -1918,3 +1927,4 @@ installRefresh(World);
 installMeshyWorld(World);
 installWorldElements(World);
 installBrowserPerformance(World);
+installVisualEdition(World);

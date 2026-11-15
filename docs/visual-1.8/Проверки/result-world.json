@@ -1,0 +1,185 @@
+{
+  "label": "release",
+  "mode": "world",
+  "scenes": [
+    {
+      "scenario": "salt_coast",
+      "mode": "explore",
+      "profile": "high",
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "calls": 118,
+      "triangles": 1014145,
+      "actors": [
+        [
+          "npc:c2_npc_a",
+          "Idle"
+        ],
+        [
+          "encounter:c2_road_fight",
+          "Walk"
+        ],
+        [
+          "encounter:patrol_salt_coast_nets",
+          "Walk"
+        ],
+        [
+          "encounter:patrol_salt_coast_moorings",
+          "Walk"
+        ],
+        [
+          "party:alar",
+          "Idle"
+        ],
+        [
+          "party:iona",
+          "Idle"
+        ],
+        [
+          "party:radan",
+          "Idle"
+        ],
+        [
+          "party:leia",
+          "Idle"
+        ]
+      ],
+      "procedural": {
+        "authored-landscape": 43,
+        "meshy-world": 29,
+        "ui-marker": 9,
+        "procedural-scenery": 14,
+        "meshy-character": 8,
+        "procedural-equipment": 7,
+        "exempt-weapon": 9,
+        "procedural-costume": 1
+      },
+      "unknownModels": [],
+      "wispAnchorError": null
+    },
+    {
+      "scenario": "ember_forge",
+      "mode": "battle",
+      "profile": "high",
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "calls": 128,
+      "triangles": 1141740,
+      "actors": [
+        [
+          "enemy:c4_climax:0",
+          "Idle"
+        ],
+        [
+          "enemy:c4_climax:1",
+          "Idle"
+        ],
+        [
+          "party:alar",
+          "Idle"
+        ],
+        [
+          "party:iona",
+          "Idle"
+        ],
+        [
+          "party:radan",
+          "Idle"
+        ],
+        [
+          "party:leia",
+          "Idle"
+        ]
+      ],
+      "procedural": {
+        "procedural-scenery": 6,
+        "ui-marker": 3,
+        "meshy-character": 6,
+        "procedural-equipment": 7,
+        "procedural-costume": 1,
+        "meshy-world": 24,
+        "exempt-weapon": 6,
+        "vfx": 8,
+        "authored-landscape": 23
+      },
+      "unknownModels": [],
+      "wispAnchorError": null
+    },
+    {
+      "scenario": "sunfields",
+      "mode": "explore",
+      "profile": "high",
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "calls": 150,
+      "triangles": 1578212,
+      "actors": [
+        [
+          "npc:nara_fields",
+          "Idle"
+        ],
+        [
+          "npc:forge_sunfields",
+          "Idle"
+        ],
+        [
+          "npc:road_seed_npc",
+          "Idle"
+        ],
+        [
+          "encounter:enc21",
+          "Idle"
+        ],
+        [
+          "encounter:enc22",
+          "Idle"
+        ],
+        [
+          "encounter:enc23",
+          "Idle"
+        ],
+        [
+          "encounter:enc24",
+          "Idle"
+        ],
+        [
+          "encounter:forged_mill_wisp_bank",
+          "Walk"
+        ],
+        [
+          "encounter:patrol_sunfields_fallow",
+          "Walk"
+        ],
+        [
+          "party:alar",
+          "Idle"
+        ],
+        [
+          "party:iona",
+          "Idle"
+        ],
+        [
+          "party:radan",
+          "Idle"
+        ],
+        [
+          "party:leia",
+          "Idle"
+        ]
+      ],
+      "procedural": {
+        "authored-landscape": 94,
+        "meshy-world": 72,
+        "ui-marker": 17,
+        "procedural-scenery": 14,
+        "meshy-character": 12,
+        "exempt-weapon": 18,
+        "actor-accessory": 2,
+        "procedural-equipment": 7,
+        "procedural-creature": 2,
+        "procedural-costume": 1
+      },
+      "unknownModels": [],
+      "wispAnchorError": 0
+    }
+  ],
+  "requestsFailed": [],
+  "errors": []
+}

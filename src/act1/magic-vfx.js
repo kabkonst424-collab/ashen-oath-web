@@ -5,11 +5,12 @@ import { arcPoint } from './presentation-paths.js?v=0.16.0-demo';
 import { actionTimeline } from './presentation-timing.js?v=campaign-170';
 import { COMBAT_MOTION } from './party-motion.js?v=motion-110';
 import { magicProfile } from './data/magic-profiles.js?v=campaign-170';
-import { bowNock } from './bow-presentation.js?v=motion-110';
+import { bowNock } from './bow-presentation.js?v=visual-180';
 import { fetchBytes } from './resource-loader.js?v=0.16.0-demo';
 import { resolveCastAnchor } from './cast-anchors.js?v=forged-019';
 import { heavyAnimation } from './combat200-animation-policy.js?v=0.16.0-demo';
 import { ensureCombat200Assets, combat200Material, combat200Windup, combat200Launch, combat200Impact } from './combat200-vfx.js?v=0.16.0-demo';
+import { contactArcGeometry, fireFringeGeometry, impactSigilGeometry, playContactArc, playImpactSigil, playRuneTrail } from './visual-impact.js?v=visual-180';
 
 const TAU = Math.PI * 2;
 const UP = new T.Vector3(0, 1, 0);
@@ -57,6 +58,9 @@ export class MagicVfx {
       'c200-orb': new T.IcosahedronGeometry(1, 2),
       'c200-taper': new T.CylinderGeometry(1, .62, 1, 8, 1, true),
       'c200-plane': new T.PlaneGeometry(1, 1),
+      'visual-contact-arc': contactArcGeometry(),
+      'visual-impact-sigil': impactSigilGeometry(),
+      'visual-fire-fringe': fireFringeGeometry(),
     };
     this.scratch = { a: new T.Vector3(), b: new T.Vector3(), delta: new T.Vector3(), mid: new T.Vector3(), hand: new T.Vector3(), target: new T.Vector3() };
     this.softTexture = this.makeSoftTexture();
@@ -242,8 +246,8 @@ export class MagicVfx {
     return animation;
   }
 
-  get budget() { return this.world.qualityLevel === 'low' ? 100 : this.world.qualityLevel === 'medium' ? 170 : 250; }
-  get detail() { return (this.world.qualityLevel === 'low' ? .5 : this.world.qualityLevel === 'medium' ? .75 : 1)*(this.world.reducedMotion?.35:1); }
+  get budget() { return this.world.graphicsProfile.effectBudget; }
+  get detail() { return this.world.graphicsProfile.effectDetail * (this.world.reducedMotion ? .35 : 1); }
 
   acquire(kind, color, additive = true, essential = false) {
     // Pool allocations are strictly bounded even after changing quality settings.
@@ -281,8 +285,9 @@ export class MagicVfx {
       if (atlas) { map.generateMipmaps=false;map.minFilter=T.LinearFilter;map.magFilter=T.LinearFilter;map.needsUpdate=true; }
       const options = { color, transparent: true, opacity: 0, depthWrite: false, depthTest: true, toneMapped: false,
         blending: additive ? T.AdditiveBlending : T.NormalBlending };
-      const material = sprite ? new T.SpriteMaterial({ ...options, map, alphaMap: authored?.alphaMap || null }) : new T.MeshBasicMaterial({ ...options, map, alphaMap: authored?.alphaMap || null, side: T.DoubleSide, wireframe: kind === 'shield' });
-      const object = origin(sprite ? new T.Sprite(material) : new T.Mesh(this.geometries[authored?.geometry || kind], material));
+      const geometry = this.geometries[authored?.geometry || kind];
+      const material = sprite ? new T.SpriteMaterial({ ...options, map, alphaMap: authored?.alphaMap || null }) : new T.MeshBasicMaterial({ ...options, map, alphaMap: authored?.alphaMap || null, side: T.DoubleSide, wireframe: kind === 'shield', vertexColors: !!geometry?.attributes.color });
+      const object = origin(sprite ? new T.Sprite(material) : new T.Mesh(geometry, material));
       object.castShadow = object.receiveShadow = false;
       object.renderOrder = additive ? 8 : 7;
       item = { object, material, map: atlas ? map : null, atlasMeta: authored?.atlasMeta, kind, active: false };
@@ -341,7 +346,7 @@ export class MagicVfx {
 
   hand(actor, target = this.scratch.hand, animation = actor.current) {
     actor.root.updateWorldMatrix(true, true);
-    const anchor = animation==='ShootBow'&&bowNock(actor) || resolveCastAnchor(actor, animation);
+    const anchor = animation==='ShootBow'&&bowNock(actor) || actor.visualCastAnchor || resolveCastAnchor(actor, animation);
     anchor.getWorldPosition(target);
     if (anchor === actor.root) this.point(actor, target, .65);
     return target;
@@ -528,6 +533,9 @@ export class MagicVfx {
       this.effectOwner = { source, phase: 'travel' };
       combat200Launch(this, sequence, targets);
       const launch = this.hand(source, new T.Vector3(), animation);
+      if (p.family === 'runes') {
+        for (const target of targets) this.withTarget(target, () => playRuneTrail(this, launch, target, p, at + RELEASE, at + timing.impact));
+      }
       if (p.projectile) for (const target of targets) this.withTarget(target, () => this.projectile(launch, target, p, at + RELEASE, at + timing.impact, rng));
       if (p.family === 'fire' && p.style === 'wave') {
         this.fanWave(launch, targets, p, at + RELEASE, at + timing.impact);
@@ -711,20 +719,7 @@ export class MagicVfx {
       this.sparks(position,p,start,.19,rng,4);
       return;
     }
-    const from = this.hand(source, new T.Vector3(), animation);
-    const count = p.style === 'claw' ? 3 : p.style === 'sweep' ? 2 : 1;
-    const forward = new T.Vector3().subVectors(position, from); if (forward.lengthSq() < .0001) forward.set(0, 0, 1); forward.normalize();
-    const side = new T.Vector3().crossVectors(forward, UP); if (side.lengthSq() < .0001) side.set(1, 0, 0); side.normalize();
-    for (let i = 0; i < count; i++) {
-      const a = position.clone().addScaledVector(side, -.5 + i * .15).addScaledVector(UP, p.style === 'sweep' ? .12 : .6);
-      const b = position.clone().addScaledVector(side, .5 + i * .15).addScaledVector(UP, p.style === 'sweep' ? -.12 : -.45);
-      if (p.style === 'thrust') { a.copy(position).addScaledVector(forward, -.8); b.copy(position).addScaledVector(forward, .12); }
-      const strike = this.effect('beam', p.color, start + i * .018, .16, (item, t) => {
-        this.beam(item, a, b, (.04 + Math.sin(t * Math.PI) * .045) * p.scale);
-        item.material.opacity = Math.sin(t * Math.PI);
-      });
-      if (strike) strike.role = 'directional-strike';
-    }
+    playContactArc(this, source, target, p, start, animation);
     this.ring(this.point(target, new T.Vector3(), .025), p, start, .22, .42);
     this.sparks(position, p, start, .28, rng, p.style === 'hammer' ? 12 : 6);
     if (p.style === 'hammer' || p.style === 'sun') this.ring(this.point(target, new T.Vector3(), .025), p, start, .3, .85);
@@ -734,6 +729,7 @@ export class MagicVfx {
     combat200Impact(this, source, target, p, start, animation);
     const position = this.point(target, new T.Vector3(), .5), floor = this.point(target, new T.Vector3(), .02);
     if (p.family === 'physical') { this.physical(source, target, p, start, rng, animation); return; }
+    playImpactSigil(this, target, p, start);
     if (p.family === 'fire') {
       this.effect('explosion', 0xffffff, start, .45, (item, t) => {
         item.object.position.copy(position);

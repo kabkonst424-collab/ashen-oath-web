@@ -1,7 +1,7 @@
 import * as T from '../../assets/vendor/three.module.js';
 import { bridgeAt, nearRiverBank, obstacleOutline, riverAt, riverSections, segmentDistance, walkableLayout } from './area-geometry.js?v=rivers-0181';
 import { buildRiverBridges, riverGeometry } from './river-crossings.js?v=rivers-0181';
-import { TerrainMaterials } from './terrain-material.js?v=campaign-v1';
+import { TerrainMaterials } from './terrain-material.js?v=visual-180';
 import { CHAPTER_BIOMES } from './campaign-visuals.js?v=campaign-v1';
 
 export function buildAuthoredRoad(world, road) {

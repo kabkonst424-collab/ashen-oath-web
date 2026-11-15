@@ -2,11 +2,11 @@ import * as T from '../../assets/vendor/three.module.js';
 import {GLTFLoader} from '../../assets/vendor/GLTFLoader.js';
 import {BASE_MODELS} from './graphics-refresh.js?v=campaign-140';
 import {mergeGeometries} from '../../assets/vendor/BufferGeometryUtils.js';
-import {TerrainMaterials} from './terrain-material.js?v=campaign-v1';
+import {TerrainMaterials} from './terrain-material.js?v=visual-180';
 import {paintMeshes} from './painted-material.js?v=painted-20261114-r2';
 import {fetchBytes} from './resource-loader.js?v=0.16.0-demo';
 
-import { buildAuthoredGround, buildAuthoredLandscape } from './authored-landscape.js?v=campaign-v1';
+import { buildAuthoredGround, buildAuthoredLandscape } from './authored-landscape.js?v=campaign-180';
 import { NEW_CHARACTERS } from './campaign-visuals.js?v=campaign-v1';
 import { PROP_SLOTS, areaAssetPlan, terrainSlot } from './area-asset-plan.js?v=campaign-170';
 
@@ -23,7 +23,7 @@ const HEIGHT = {
   waterwheel:5.12, banner:4.5, satchel:.46, basket:.56, lantern:.52, book:.43,
 };
 const UI_KEY=/^(proxy:|ring:|selection:|selection-gold:|target-arrow$|exit-glyph$|inspect-glyph$|fire$|effect-ring$)/;
-const ORIGINS=new Set(['authored-landscape','actor-accessory','meshy-world','meshy-character','exempt-weapon','ui-marker','vfx','interaction-proxy']);
+const ORIGINS=new Set(['authored-landscape','actor-accessory','meshy-world','meshy-character','exempt-weapon','ui-marker','vfx','interaction-proxy','procedural-equipment','procedural-costume','procedural-scenery','procedural-creature']);
 const TAU=Math.PI*2;
 const TERRAIN_TEMPLATES=new WeakMap();
 const NO_CAST_SHADOW=new Set(['grass','wheat','book','satchel','basket','lantern','camp']);

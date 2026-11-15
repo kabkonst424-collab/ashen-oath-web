@@ -1,0 +1,109 @@
+{
+  "label": "release",
+  "mode": "effects",
+  "scenes": [
+    {
+      "scenario": "ember_forge",
+      "mode": "battle",
+      "profile": "high",
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "calls": 128,
+      "triangles": 1141740,
+      "actors": [
+        [
+          "enemy:c4_climax:0",
+          "Idle"
+        ],
+        [
+          "enemy:c4_climax:1",
+          "Idle"
+        ],
+        [
+          "party:alar",
+          "Idle"
+        ],
+        [
+          "party:iona",
+          "Idle"
+        ],
+        [
+          "party:radan",
+          "Idle"
+        ],
+        [
+          "party:leia",
+          "Idle"
+        ]
+      ],
+      "procedural": {
+        "procedural-scenery": 6,
+        "ui-marker": 3,
+        "meshy-character": 6,
+        "procedural-equipment": 7,
+        "procedural-costume": 1,
+        "meshy-world": 24,
+        "exempt-weapon": 6,
+        "vfx": 8,
+        "authored-landscape": 23
+      },
+      "unknownModels": [],
+      "wispAnchorError": null
+    },
+    {
+      "name": "меч",
+      "count": 1,
+      "animation": "Attack",
+      "timing": {
+        "kind": "sword",
+        "duration": 1.24,
+        "release": 0.28,
+        "impact": 0.64,
+        "spacing": 1.37,
+        "releasePose": 0.2916666666666667,
+        "impactPose": 0.5
+      },
+      "opacity": 0.6965388989728577,
+      "budget": 300,
+      "countActive": 18,
+      "offset": 0.64
+    },
+    {
+      "name": "руны",
+      "count": 3,
+      "animation": "CastScatterRunes",
+      "timing": {
+        "kind": "ward",
+        "duration": 0.98,
+        "release": 0.3,
+        "impact": 0.53,
+        "spacing": 1.1099999999999999,
+        "releasePose": 0.2916666666666667,
+        "impactPose": 0.5
+      },
+      "opacity": 0.5945652173913074,
+      "budget": 300,
+      "countActive": 16,
+      "offset": 0.30000000000000004
+    },
+    {
+      "name": "огонь",
+      "count": 1,
+      "animation": "CastNova",
+      "timing": {
+        "kind": "fire",
+        "duration": 1.1,
+        "release": 0.34,
+        "impact": 0.64,
+        "spacing": 1.23,
+        "releasePose": 0.2916666666666667,
+        "impactPose": 0.5
+      },
+      "opacity": 0.45500199042977274,
+      "budget": 300,
+      "countActive": 34,
+      "offset": 0.6399999999999999
+    }
+  ],
+  "requestsFailed": [],
+  "errors": []
+}

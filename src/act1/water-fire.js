@@ -1,7 +1,7 @@
-import { buildAuthoredOcean } from './authored-landscape.js?v=campaign-v1';
+import { buildAuthoredOcean } from './authored-landscape.js?v=campaign-180';
 import * as T from '../../assets/vendor/three.module.js';
 import { environmentalTime, fireDistanceFade, waterReadability } from './presentation-environment.js?v=0.16.0-demo';
-import { tileTerrainGeometry } from './meshy-world.js?v=campaign-170';
+import { tileTerrainGeometry } from './meshy-world.js?v=visual-180';
 
 // The old radial shore serves the battle arenas. Authored zones set their own banks.
 export const SHORE = Object.freeze({radius: Math.sqrt(.9) + .018, noise: .22});
@@ -145,9 +145,11 @@ export class WorldElements {
   update(){
     const w=this.world,t=environmentalTime(this.motionClock,w.time,!!w.reducedMotion);
     for(const material of this.water){material.uniforms.sunDirection.value.copy(w.sun.position).sub(w.sun.target.position).normalize();material.uniforms.clock.value=t;material.uniforms.rippleDetail.value=w.qualityLevel==='low'?0:1;const readability=waterReadability(w.reducedMotion);material.uniforms.glintStrength.value=readability.glint;material.uniforms.foamCap.value=readability.foam;}
-    // Only the four nearest visible fires receive real lights. No extra shadow maps.
-    const camera=w.activeCamera||w.camera,position=camera.position,lightLimit=w.qualityLevel==='low'?1:4;
-    if(w.time>=this.nextLightSelection){
+    // Keep camp and brazier flames in every preset. Lights, smoke and sparks are decorative.
+    const camera=w.activeCamera||w.camera,position=camera.position;
+    const {fireLights:lightLimit,fireSparks:sparkLimit,quality}=w.graphicsProfile;
+    if(lightLimit!==this.fireLightLimit||w.time>=this.nextLightSelection){
+      this.fireLightLimit=lightLimit;
       this.nextLightSelection=w.time+.12;this.nearest.fill(null);this.nearestDistance.fill(Infinity);
       this.viewProjection.multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse);this.frustum.setFromProjectionMatrix(this.viewProjection);
       for(const fire of this.fires){
@@ -160,10 +162,12 @@ export class WorldElements {
     }
     for(const fire of this.fires){
       const fade=fire.visible?fireDistanceFade(fire.distance):0;
-      for(const s of fire.sprites)s.material.opacity=s.opacity*fade;
-      if(fade<=0){fire.light.visible=false;fire.light.intensity=0;for(const spark of fire.sparks)spark.material.opacity=0;continue;}
+      if(fade<=0){fire.light.visible=false;fire.light.intensity=0;for(const s of fire.sprites)s.object.visible=false;for(const spark of fire.sparks)spark.visible=false;continue;}
       const p=fire.phase,clock=t*(.88+p*.17)+p*8;
       for(const s of fire.sprites){
+        s.object.visible=quality!=='low'||s.key!=='smoke';
+        if(!s.object.visible)continue;
+        s.material.opacity=s.opacity*fade;
         const frame=s.key==='flame'
           ? Math.floor((t+p)*25)%25
           : Math.floor(clock*6)%25;
@@ -172,7 +176,12 @@ export class WorldElements {
         s.object.position.x=s.x+Math.sin(clock*1.9)*.045;
         s.object.scale.set(s.size*(1+flutter),s.size*1.4*(1+Math.sin(clock*4.7)*.035),1);
       }
-      for(let i=0;i<fire.sparks.length;i++){const spark=fire.sparks[i];spark.visible=!w.reducedMotion;const cycle=(clock*.32+i*.197)%1;spark.position.set(Math.sin(i*4.17+clock*.7)*(.10+cycle*.21),.4+cycle*1.65,Math.cos(i*2.3+clock*.4)*.17);spark.material.opacity=Math.sin(cycle*Math.PI)*.58*fade;}
+      for(let i=0;i<fire.sparks.length;i++){
+        const spark=fire.sparks[i];spark.visible=i<sparkLimit&&!w.reducedMotion;if(!spark.visible)continue;
+        const cycle=(clock*.32+i*.197)%1;
+        spark.position.set(Math.sin(i*4.17+clock*.7)*(.10+cycle*.21),.4+cycle*1.65,Math.cos(i*2.3+clock*.4)*.17);
+        spark.material.opacity=Math.sin(cycle*Math.PI)*.58*fade;
+      }
       fire.light.visible=false;for(let i=0;i<lightLimit;i++)if(this.nearest[i]===fire){fire.light.visible=true;break;}
       fire.light.intensity=fire.light.visible?(w.reducedMotion?1.25:1.25+Math.sin(clock*3.1)*.09+Math.sin(clock*5.7+.8)*.055)*fade:0;
     }

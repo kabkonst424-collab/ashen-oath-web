@@ -23,6 +23,10 @@ const BIOMES = Object.freeze({
 });
 
 const COMMON=TERRAIN_GLSL;
+const ART_TONES = {
+  village: [0x8392a0, 0xa87b58], forest: [0x6e735e, 0xa27960],
+  marsh: [0x6e8180, 0x9a846b], abbey: [0x86859d, 0x9a7e70],
+};
 
 // Broad painted vegetation blends remain at every viewing distance. Narrow
 // blades come from the nearby meshes, so distant grass needs no extra texture.
@@ -44,6 +48,12 @@ const MAP = `
   float macroB=terrainNoise(mat2(.3846,.9231,-.9231,.3846)*vTerrainWorld.xz*.061+vec2(21.,7.));
   sampledDiffuseColor.rgb*=(1.+(macroA-.5)*terrainMacro+(macroB-.5)*terrainMacro*.28);
   ${GROUNDCOVER}
+  float pigmentY = dot(sampledDiffuseColor.rgb, vec3(.2126, .7152, .0722));
+  #ifdef TERRAIN_PATH
+    sampledDiffuseColor.rgb = mix(terrainArtTone * (.62 + pigmentY * 1.24), sampledDiffuseColor.rgb, .53) * .79;
+  #else
+    sampledDiffuseColor.rgb = mix(terrainArtTone * (.68 + pigmentY * 1.06), sampledDiffuseColor.rgb, .61) * (.94 - .20 * pigmentY);
+  #endif
   diffuseColor*=sampledDiffuseColor;
 #endif
 #ifdef TERRAIN_PATH
@@ -70,8 +80,8 @@ const NORMAL = `
 `;
 
 export class TerrainMaterials {
-  constructor(world){this.world=world;this.qualityLevel=world.qualityLevel==='low'?'low':'high';this.cache=new Map();this.uniforms=[];this.textures=new Set();this.samplers=new Map();this.samplerState=new Map();this.disposed=false;}
-  _anisotropy(quality=this.qualityLevel){let max=this.world.renderer?.capabilities?.getMaxAnisotropy?.()??1;return Math.max(1,Math.min(Number.isFinite(max)?max:1,quality==='low'?2:8));}
+  constructor(world){this.world=world;this.qualityLevel=world.qualityLevel;this.cache=new Map();this.uniforms=[];this.textures=new Set();this.samplers=new Map();this.samplerState=new Map();this.disposed=false;}
+  _anisotropy(){return this.world.textureAnisotropy??1;}
   _sampler(source){if(!source)return null;if(this.samplers.has(source))return this.samplers.get(source);const texture=source.clone();texture.wrapS=texture.wrapT=T.ClampToEdgeWrapping;texture.magFilter=T.LinearFilter;if(!source.isCompressedTexture){texture.minFilter=T.LinearMipmapLinearFilter;texture.generateMipmaps=true;}texture.anisotropy=this._anisotropy();this.textures.add(texture);this.samplers.set(source,texture);this.samplerState.set(source,{version:source.version,source:source.source});return texture;}
   syncTextures(){if(this.disposed)return;for(const [source,texture]of this.samplers){const state=this.samplerState.get(source);if(state.version!==source.version||state.source!==source.source){texture.source=source.source;texture.colorSpace=source.colorSpace;texture.flipY=source.flipY;texture.mipmaps=source.mipmaps.slice();texture.needsUpdate=true;this.samplerState.set(source,{version:source.version,source:source.source});}}}
   material(source,id,{path=false,groundcover=false}={}){
@@ -109,7 +119,8 @@ export class TerrainMaterials {
     const scale = themed ? (path?.21:.18) : painted && !path ? (id === 'terrain_forest' ? .23 : settings.scale * 1.13) : settings.scale;
     const turf=groundcover ? (themed ? (['orchard','moor'].includes(this.world.theme)?.42:.06) :
       {terrain_forest:.82,terrain_marsh:.61,terrain_village:.53,terrain_ruin:.15}[id] || 0) : 0;
-    const uniforms={terrainMean:{value:mean},terrainRect:{value:new T.Vector4(...domain)},terrainScale:{value:scale},terrainMacro:{value:settings.macro},terrainDetail:{value:this.qualityLevel==='low'?0:1},terrainRoughness:{value:settings.roughness},terrainTurf:{value:turf}};
+    const tone = (ART_TONES[this.world.biome] ?? ART_TONES.abbey)[path ? 1 : 0];
+    const uniforms={terrainMean:{value:mean},terrainRect:{value:new T.Vector4(...domain)},terrainScale:{value:scale},terrainMacro:{value:settings.macro},terrainDetail:{value:this.qualityLevel==='low'?0:1},terrainRoughness:{value:settings.roughness},terrainTurf:{value:turf},terrainArtTone:{value:new T.Color(tone)}};
     material.name=`${source.name||'Meshy'}_continuous_${id}`;
     material.userData={...material.userData,terrainSource:source.uuid,terrainSampling:painted?'ImageGen atlas; world XZ; 3 mirrored stochastic samples':'Original embedded PBR; world XZ; 3 continuous stochastic samples'};
     material.defines={...material.defines,...(material.aoMap&&material.aoMap===material.roughnessMap&&material.aoMap===material.metalnessMap?{TERRAIN_AO_ORM:1}:{}),...(material.roughnessMap&&material.roughnessMap===material.metalnessMap?{TERRAIN_SHARED_ORM:1}:{}),...(path?{TERRAIN_PATH:1}:{})};
@@ -126,7 +137,7 @@ export class TerrainMaterials {
       Object.assign(shader.uniforms,uniforms);
       shader.vertexShader=`varying vec3 vTerrainWorld;\n${path?'attribute float waterEdge; varying float vTerrainEdge;\n':''}${shader.vertexShader}`;
       shader.vertexShader=shader.vertexShader.replace('#include <project_vertex>',`vec4 terrainPosition=vec4(transformed,1.);\n#ifdef USE_BATCHING\nterrainPosition=batchingMatrix*terrainPosition;\n#endif\n#ifdef USE_INSTANCING\nterrainPosition=instanceMatrix*terrainPosition;\n#endif\nvTerrainWorld=(modelMatrix*terrainPosition).xyz;\n${path?'vTerrainEdge=waterEdge;':''}\n#include <project_vertex>`);
-      shader.fragmentShader='uniform float terrainTurf;\n'+COMMON+shader.fragmentShader;
+      shader.fragmentShader='uniform float terrainTurf; uniform vec3 terrainArtTone;\n'+COMMON+shader.fragmentShader;
       shader.fragmentShader=shader.fragmentShader.replace('#include <clipping_planes_fragment>','#include <clipping_planes_fragment>\nterrainPrepare(vTerrainWorld.xz*terrainScale);');
       shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',MAP);
       shader.fragmentShader=shader.fragmentShader.replace('#include <normal_fragment_maps>',NORMAL);
@@ -139,9 +150,9 @@ export class TerrainMaterials {
       this.syncTextures();let rebound=false;for(const key of bindings){const next=this._sampler(sourceTexture(key));if(material[key]!==next){material[key]=next;rebound=true;}}
       if(rebound){delete material.defines.TERRAIN_SHARED_ORM;delete material.defines.TERRAIN_AO_ORM;if(material.roughnessMap&&material.roughnessMap===material.metalnessMap)material.defines.TERRAIN_SHARED_ORM=1;if(material.aoMap&&material.aoMap===material.roughnessMap&&material.aoMap===material.metalnessMap)material.defines.TERRAIN_AO_ORM=1;material.needsUpdate=true;}source.onBeforeRender?.apply(material,args);
     };
-    material.customProgramCacheKey=()=>JSON.stringify(['ashen-terrain-stochastic-v4',path?'path':turf?'groundcover':'ground',source.customProgramCacheKey?.()??String(upstreamCompile),!!material.defines.TERRAIN_SHARED_ORM,!!material.defines.TERRAIN_AO_ORM]);
+    material.customProgramCacheKey=()=>JSON.stringify(['ashen-terrain-stochastic-v6',path?'path':turf?'groundcover':'ground',source.customProgramCacheKey?.()??String(upstreamCompile),!!material.defines.TERRAIN_SHARED_ORM,!!material.defines.TERRAIN_AO_ORM]);
     this.uniforms.push(uniforms);this.cache.set(key,material);return material;
   }
-  setQuality(value){value=value==='low'?'low':'high';if(this.qualityLevel===value)return this;this.qualityLevel=value;for(const uniforms of this.uniforms)uniforms.terrainDetail.value=value==='low'?0:1;for(const texture of this.textures){const anisotropy=this._anisotropy(value);if(texture.anisotropy!==anisotropy){texture.anisotropy=anisotropy;texture.needsUpdate=true;}}return this;}
+  setQuality(value){if(this.qualityLevel===value)return this;this.qualityLevel=value;for(const uniforms of this.uniforms)uniforms.terrainDetail.value=value==='low'?0:1;const anisotropy=this._anisotropy();for(const texture of this.textures){if(texture.anisotropy!==anisotropy){texture.anisotropy=anisotropy;texture.needsUpdate=true;}}return this;}
   dispose(){if(this.disposed)return;this.disposed=true;for(const material of this.cache.values())material.dispose();this.cache.clear();this.uniforms.length=0;for(const texture of this.textures)texture.dispose();this.textures.clear();this.samplers.clear();this.samplerState.clear();}
 }

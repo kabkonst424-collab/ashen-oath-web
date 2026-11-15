@@ -292,14 +292,15 @@ export class Groundcover {
     const cover = inBattle ? this.arena : this.surface;
     if (!cover) return;
     const low = world.qualityLevel === 'low';
-    if (!world.reducedMotion) uniforms.coverClock.value += dt;
-    uniforms.coverMotion.value = world.reducedMotion ? 0 : 1;
+    const movingPlants = !low && !world.reducedMotion;
+    if (movingPlants) uniforms.coverClock.value += dt;
+    uniforms.coverMotion.value = movingPlants ? 1 : 0;
     const focus = inBattle ? world.battleCenter : world.focus;
     uniforms.coverFocus.value.set(focus.x, 0, focus.z);
     const halfWidth = clamp(world.camera.right, 5, 47);
     if (inBattle) uniforms.coverRange.value.set(18, 34, 18, 36);
     else uniforms.coverRange.value.set(halfWidth * .96, halfWidth + 8, 23, 32);
-    const reach = inBattle ? 38 : halfWidth * .88 + 27;
+    const reach = (inBattle ? 38 : halfWidth * .88 + 27) * (low ? .82 : 1);
     const bounds = cover.bounds;
     const minX = Math.max(Math.floor((focus.x - reach) / CHUNK), Math.floor((bounds.x - bounds.rx) / CHUNK));
     const maxX = Math.min(Math.floor((focus.x + reach) / CHUNK), Math.floor((bounds.x + bounds.rx) / CHUNK));
@@ -332,7 +333,7 @@ export class Groundcover {
     // Bending uses the visual roots of living heroes and is independent of movement rules.
     const passers = uniforms.coverPassers.value;
     for (const passer of passers) passer.w = 0;
-    if (world.reducedMotion) return;
+    if (!movingPlants) return;
     let index = 0;
     for (const unit of world.state.party || []) {
       const actor = world.actors.get('party:' + unit.id);

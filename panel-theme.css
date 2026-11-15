@@ -1,0 +1,295 @@
+/* Painted views and bitmap labels share these bronze frames and dark surfaces. */
+:root {
+  --bronze-rim: #a68753;
+  --bronze-bright: #eccb8b;
+  --bronze-seam: #684c32;
+  --bronze-shade: #2b1b16;
+  --panel-stone:
+    radial-gradient(ellipse at 50% -12%, #64503848, transparent 64%),
+    repeating-linear-gradient(103deg, #b48d5410 0 1px, transparent 1px 7px),
+    linear-gradient(155deg, #2d231d, #191619 72%, #141318);
+  --panel-inset:
+    radial-gradient(ellipse at 50% 0%, #47332455, transparent 85%),
+    linear-gradient(158deg, #252021, #141419);
+  --panel-corners:
+    linear-gradient(135deg, #d1ae72 0 23%, #725029 24% 38%, transparent 39%) left top / var(--corner-size, 12px) var(--corner-size, 12px) no-repeat,
+    linear-gradient(225deg, #d1ae72 0 23%, #725029 24% 38%, transparent 39%) right top / var(--corner-size, 12px) var(--corner-size, 12px) no-repeat,
+    linear-gradient(45deg, #d1ae72 0 23%, #725029 24% 38%, transparent 39%) left bottom / var(--corner-size, 12px) var(--corner-size, 12px) no-repeat,
+    linear-gradient(315deg, #d1ae72 0 23%, #725029 24% 38%, transparent 39%) right bottom / var(--corner-size, 12px) var(--corner-size, 12px) no-repeat;
+  --panel-bevel:
+    inset 0 0 0 1px #160f12,
+    inset 0 0 0 3px #735533,
+    inset 0 0 0 4px #211719;
+  --title-plate:
+    linear-gradient(90deg, #9c7330, #f3d69a 43%, #dcb778 59%, #73512a) center bottom / 100% 1px no-repeat,
+    radial-gradient(ellipse at 44% -60%, #96673b77, transparent 88%),
+    linear-gradient(#382a22, #21191b);
+  --button-bronze:
+    linear-gradient(100deg, #cba56b14, transparent 27%, transparent 73%, #cba56b12),
+    linear-gradient(#49382c, #281f1d 61%, #241b1b);
+  --button-ruby: linear-gradient(155deg, #854a35, #502a29 57%, #351d22);
+  --button-bevel:
+    inset 0 1px 0 #f2d19751,
+    inset 0 0 0 2px #170f13,
+    inset 0 -2px 0 #09070a8a;
+}
+
+body { font-family: Lora, Georgia, serif; }
+
+.menu-card, #gameModal #modalContent {
+  background: var(--panel-corners), var(--panel-stone);
+  border-color: var(--bronze-rim);
+  border-radius: 5px;
+  box-shadow: var(--panel-bevel), 0 10px 27px #090608a8;
+}
+
+.menu-card::before, #gameModal #modalContent::before, #actHud .panel::before {
+  content: none;
+}
+
+#gameModal[data-companion-view] {
+  --sheet-gold: var(--bronze-rim);
+  --sheet-pale: var(--bronze-bright);
+  border-color: var(--bronze-rim);
+  border-radius: 5px;
+  box-shadow: 0 0 0 2px var(--bronze-shade), 0 0 0 3px #6f5436, 0 16px 45px #060409d9;
+}
+
+#gameModal[data-companion-view] #modalContent { border-radius: 4px; }
+#gameModal #modalContent .modal-header {
+  background: var(--title-plate);
+  border-color: var(--bronze-rim);
+  box-shadow: inset 0 1px 0 #d4ad714d, 0 1px 0 #170f12;
+}
+
+.menu-card > .painted-act-title {
+  background: var(--title-plate);
+  padding-block: 2px;
+}
+
+:is(.menu-card, #gameModal, #actHud) .paint-button {
+  border-color: var(--bronze-rim);
+  border-radius: 4px;
+  background: var(--button-bronze);
+  box-shadow: var(--button-bevel);
+}
+
+:is(.menu-card, #gameModal, #actHud) .paint-button:hover:not(:disabled) {
+  border-color: #d5ab71;
+  background: linear-gradient(#624a36, #36271f);
+}
+
+:is(.menu-card, #gameModal, #actHud) .paint-button:active:not(:disabled) {
+  border-color: var(--bronze-bright);
+  background: linear-gradient(#35241f, #53402b);
+}
+
+:is(.menu-card, #gameModal, #actHud) .paint-button:focus-visible,
+#gameModal #modalContent summary:focus-visible {
+  outline: 2px solid #f8dfad;
+  outline-offset: 2px;
+}
+
+:is(.menu-card, #gameModal, #actHud) .paint-button:is([aria-pressed="true"], .selected, .chosen-action, .chosen-target):not(:disabled),
+#actHud .paint-button[data-hud-fold][aria-expanded="true"] {
+  border-color: var(--bronze-bright);
+  background: var(--button-ruby);
+  box-shadow: var(--button-bevel), inset 0 -3px 0 #d7a65c;
+}
+
+:is(.menu-card, #gameModal, #actHud) .paint-button:disabled {
+  opacity: .63;
+  border-color: #746450;
+  background: linear-gradient(#363031, #242126);
+  box-shadow: inset 0 0 0 1px #17151a;
+}
+
+.menu-card > .paint-button[data-focus-key="new-story"]:not(:disabled),
+#gameModal #modalContent .modal-close:not(:disabled),
+#gameModal #modalContent .talent-add:not(:disabled) {
+  background: var(--button-ruby);
+  border-color: #d1a269;
+}
+
+.menu-card > .paint-button[data-focus-key="new-story"]:hover:not(:disabled),
+#gameModal #modalContent .modal-close:hover:not(:disabled),
+#gameModal #modalContent .talent-add:hover:not(:disabled) {
+  background: linear-gradient(#97533a, #552b2b);
+  border-color: var(--bronze-bright);
+}
+
+.menu-card .graphics-presets,
+.menu-card .window-disclosure, #gameModal #modalContent .window-disclosure {
+  border-color: var(--bronze-seam);
+  background: var(--panel-inset);
+  box-shadow: inset 0 0 0 1px #141017;
+}
+
+.menu-card .graphics-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.menu-card .graphics-options > .paint-button {
+  min-width: 0;
+  margin: 0;
+}
+
+html[data-compact-ui] #gameModal .talent-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 430px) {
+  html[data-compact-ui] #gameModal .talent-tabs {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.menu-card .window-disclosure[open] > summary,
+#gameModal #modalContent .window-disclosure[open] > summary {
+  background: var(--title-plate);
+}
+
+#gameModal #modalContent :is(.workbench-panel, .item-detail, .talent-inspector, .window-compare, .window-choice-card,
+  .ui100-summary, .act-map-detail, .window-wallet, .attribute-row, .bag-quality-options, .field-healing) {
+  background: var(--panel-inset);
+  border-color: var(--bronze-seam);
+}
+
+#gameModal #modalContent .dialogue-row {
+  background: var(--panel-inset);
+  box-shadow: inset 0 0 0 1px var(--bronze-seam);
+  border-radius: 4px;
+  padding: clamp(7px, 1.4vw, 14px);
+}
+
+#gameModal #modalContent :is(.window-dialogue-advance, .window-dialogue-decisions) {
+  border-color: var(--bronze-rim);
+}
+
+.combat-tooltip, .drag-feedback {
+  background: var(--panel-inset);
+  border-color: var(--bronze-rim);
+}
+
+#gameModal #modalContent .workbench-panel {
+  background: var(--panel-corners), var(--panel-stone);
+  border-color: var(--bronze-rim);
+  box-shadow: inset 0 0 0 1px #171014, inset 0 0 0 3px #805d363f;
+}
+
+#gameModal #modalContent :is(.workbench-heading, .talent-tier) {
+  background: var(--title-plate);
+  border-color: var(--bronze-seam);
+}
+
+#gameModal #modalContent .equipment-paper {
+  background:
+    radial-gradient(ellipse at 51% 31%, #bd916264, transparent 70%),
+    repeating-linear-gradient(75deg, #391d1720 0 1px, transparent 1px 6px),
+    linear-gradient(155deg, #684a32, #432e25 64%, #2b201f);
+  border-color: #977049;
+  box-shadow: inset 0 0 0 2px #322117, inset 0 0 0 3px #cca16b52;
+}
+
+#gameModal #modalContent :is(.sheet-portrait, .companion-thumb, .item-detail > .sprite.icons) {
+  border-color: #c09a65;
+  background-color: #22171b;
+  box-shadow: 0 0 0 1px #231516, 0 0 0 2px #8d653c76;
+}
+
+#gameModal #modalContent .backpack-sheet .bag-grid {
+  background: repeating-linear-gradient(90deg, #382824 0 1px, #1a161a 1px 6px);
+  border-color: #74583b;
+  box-shadow: inset 0 0 0 1px #151116;
+}
+
+#gameModal #modalContent .workbench-inventory .item-slot {
+  --slot-light: #49392b;
+  --slot-dark: #211a1f;
+  --slot-border: #8c6844;
+  background: radial-gradient(ellipse at 50% 34%, var(--slot-light), var(--slot-dark) 83%);
+  border-color: var(--slot-border);
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 1px #0d0b0e, inset 0 -2px 0 #875c343f;
+}
+
+#gameModal #modalContent .workbench-inventory .item-slot[data-filled="false"] {
+  --slot-light: #292124;
+  --slot-dark: #1c181d;
+  --slot-border: #6b523c;
+}
+
+#gameModal #modalContent .workbench-inventory .item-slot[data-rarity="uncommon"] {
+  --slot-light: #375147; --slot-dark: #202a24; --slot-border: #90a978;
+}
+#gameModal #modalContent .workbench-inventory .item-slot[data-rarity="rare"] {
+  --slot-light: #384b6a; --slot-dark: #232538; --slot-border: #87a6d2;
+}
+#gameModal #modalContent .workbench-inventory .item-slot[data-rarity="epic"] {
+  --slot-light: #564171; --slot-dark: #2c2038; --slot-border: #b68ad1;
+}
+#gameModal #modalContent .workbench-inventory .item-slot[data-rarity="legendary"] {
+  --slot-light: #775031; --slot-dark: #362320; --slot-border: #e3ad76;
+}
+
+#gameModal #modalContent .workbench-inventory .item-slot:hover {
+  border-color: #d2b481;
+}
+
+#gameModal #modalContent .workbench-inventory .item-slot.selected {
+  border-color: var(--bronze-bright);
+  box-shadow: inset 0 0 0 2px #ddac61, inset 0 0 10px #cf8c4b70;
+}
+
+#gameModal #modalContent .talent-step {
+  background: var(--panel-inset);
+  border-color: #675540;
+}
+#gameModal #modalContent .talent-step[data-state="available"] {
+  background: linear-gradient(#63382c, #2a2023);
+  border-color: #d09865;
+}
+#gameModal #modalContent .talent-step[data-state="learned"] {
+  background: linear-gradient(#45452e, #272a22);
+  border-color: #b2a36c;
+}
+#gameModal .talent-tabs .paint-button:not([aria-pressed="true"]) { background: var(--button-bronze); }
+
+.loading-card, #actHud[data-mode] .panel, #actHud[data-mode] .nav50-minimap {
+  --corner-size: 8px;
+  background: var(--panel-corners), var(--panel-inset);
+  border-color: var(--bronze-rim);
+  box-shadow: inset 0 0 0 1px #171014, 0 3px 10px #0603098c;
+}
+
+#actHud[data-mode] .battle-panel { background: var(--panel-corners), var(--panel-inset); }
+#actHud[data-mode="battle"] :is(.combat-info, .battle-log, .battle-intel, .turn-order, .battle-items) {
+  background: var(--panel-inset);
+  border-color: var(--bronze-rim);
+}
+
+#actHud .party-card.active {
+  border-color: var(--bronze-bright);
+  box-shadow: inset 0 0 0 2px #794333, 0 0 0 1px #be8c56;
+}
+
+#actHud[data-mode="battle"] .turn-entry.enemy:not(.current) { background: linear-gradient(#58342d, #2e2126); }
+#actHud[data-mode="battle"] .turn-entry.current {
+  background: linear-gradient(#74523a, #392722);
+  border-color: var(--bronze-bright);
+}
+
+@media (max-width: 760px), (max-height: 510px) {
+  :root { --corner-size: 8px; }
+  .menu-card, #gameModal #modalContent {
+    box-shadow: inset 0 0 0 1px #1b1218, inset 0 0 0 2px #785733;
+  }
+  #gameModal[data-companion-view] { box-shadow: 0 0 0 1px #59412e; }
+}
+
+@media (orientation: landscape) and (max-height: 390px) {
+  .menu-card > .painted-act-title, .menu-card > .menu-description { display: none; }
+}

@@ -24,35 +24,120 @@ function watchRaster(image,draw){
  }
  if(!pendingFrame){pendingFrame=true;requestAnimationFrame(()=>{pendingFrame=false;for(const label of pendingLabels)if(!label.isConnected)unwatchRaster(label);pendingLabels.clear();});}
 }
+const TITLE_FACE='Cormorant SC',BODY_FACE='Lora';
+const FACES=[
+ [TITLE_FACE,'CormorantSC-Bold.woff',{weight:'700'}],
+ [BODY_FACE,'Lora-Variable.woff',{weight:'400 700'}],
+];
 let typographyReady,typographyEpoch=0;
 function refreshTypography(){typographyEpoch++;cache.clear();cacheBytes=0;refreshRasterDensity();}
-export function loadTypography({timeoutMs=30000}={}){
+
+export function loadTypography({timeoutMs=4000}={}){
  if(typographyReady)return typographyReady;
- if(typeof FontFace==='undefined'||!document.fonts)return Promise.resolve();
- document.fonts.addEventListener?.('loadingdone',refreshTypography);
- const fontLoads=Promise.allSettled([
-  ['RiftDisplay','CormorantSC-Bold.ttf',{weight:'700'}],
-  ['RiftText','Lora-Variable.ttf',{weight:'400 700'}]
- ].map(async([name,file,options])=>{const face=new FontFace(name,`url("${new URL('../../assets/act1/fonts/'+file,import.meta.url).href}")`,options);await face.load();document.fonts.add(face);refreshTypography();})).then(results=>{const loaded=results.every(r=>r.status==='fulfilled');if(!loaded)console.warn('Локальные шрифты недоступны: используется резервная кириллица.');return loaded;});
- typographyReady=new Promise(resolve=>{const timer=setTimeout(()=>resolve(false),Math.min(30000,Math.max(1,Number(timeoutMs)||30000)));fontLoads.then(loaded=>{clearTimeout(timer);resolve(loaded);});});
+ if(typeof FontFace==='undefined'||!globalThis.document?.fonts)return Promise.resolve(false);
+ const fontLoads=Promise.allSettled(FACES.map(async([name,file,options])=>{
+  const url=new URL('../../assets/act1/fonts/'+file,import.meta.url).href;
+  const face=new FontFace(name,`url("${url}") format("woff")`,options);
+  await face.load();
+  document.fonts.add(face);
+  refreshTypography();
+ })).then(results=>results.every(result=>result.status==='fulfilled'));
+ typographyReady=new Promise(resolve=>{
+  const timer=setTimeout(()=>resolve(false),Math.min(30000,Math.max(1,Number(timeoutMs)||4000)));
+  fontLoads.then(loaded=>{clearTimeout(timer);resolve(loaded);});
+ });
  return typographyReady;
 }
-export function paintGildedLine(ctx,line,x,y,size,{align='left',display=true,accent=false}={}){
- ctx.font=`${display?'700':'600'} ${size}px ${display?'RiftDisplay':'RiftText'}, Georgia, serif`;
- ctx.textAlign=align;ctx.textBaseline='top';
- ctx.shadowColor='#0a2029b3';ctx.shadowBlur=1;ctx.shadowOffsetY=1;
- ctx.fillStyle=accent?'#b9e7da':display?'#ffe7b6':'#f4e9d4';
- if(ctx.strokeText&&size>=18){ctx.lineJoin='round';ctx.lineWidth=display?1.05:.65;ctx.strokeStyle='#192c32';ctx.strokeText(line,x,y);}
+
+function useTypeface(ctx,size,display,bold){
+ const family=display?TITLE_FACE:BODY_FACE;
+ ctx.font=`${display?700:bold?600:400} ${size}px "${family}", Georgia, serif`;
+ if('letterSpacing' in ctx)ctx.letterSpacing=display?Math.min(1.65,size*.034)+'px':'0px';
+}
+
+export function paintGildedLine(ctx,line,x,y,size,{align='left',display=true,bold=false,color,accent=false}={}){
+ useTypeface(ctx,size,display,bold);
+ ctx.textAlign=align;
+ ctx.textBaseline='top';
+ ctx.shadowColor='#1b100dd0';
+ ctx.shadowBlur=1;
+ ctx.shadowOffsetY=1;
+ if(display){
+  const brass=ctx.createLinearGradient(0,y+size*.14,0,y+size);
+  brass.addColorStop(0,'#fff4da');
+  brass.addColorStop(.46,'#fbe4b3');
+  brass.addColorStop(.78,'#e6bc78');
+  brass.addColorStop(1,'#bf914e');
+  ctx.fillStyle=brass;
+  ctx.lineJoin='round';
+  ctx.lineWidth=Math.max(.6,size*.024);
+  ctx.strokeStyle='#3f2715';
+  ctx.strokeText(line,x,y);
+ }else ctx.fillStyle=color??(accent?'#b9e7da':'#f4e9d4');
  ctx.fillText(line,x,y);
 }
-export function textImage(text,{width=420,size=18,color='#eadfca',align='left',bold=false,display=bold||size>=21}={}){
- text=String(text??'');width=Math.max(40,Math.round(width));
- const image=new Image();image.alt=text;image.className='bitmap-text';image.draggable=false;image.style.width=width+'px';let renderedWidth=0,renderedDensity=0,renderedTypography=-1;
- function draw(actual){actual=Math.max(24,Math.round(actual));const ratio=rasterDensity();if(actual===renderedWidth&&ratio===renderedDensity&&renderedTypography===typographyEpoch)return;renderedWidth=actual;renderedDensity=ratio;renderedTypography=typographyEpoch;const palette=['#8ed2c1','#9edbd3','#b6e7e0'].includes(color)?'teal':'gold';const key=[text,actual,size,palette,align,display,ratio,typographyEpoch].join('|');let value=cachedImage(key);
-  if(!value){const c=document.createElement('canvas'),ctx=c.getContext('2d'),font=`${display?'700':'600'} ${size}px ${display?'RiftDisplay':'RiftText'}, Georgia, serif`;ctx.font=font;const lines=[];for(const paragraph of text.split('\n')){let line='';for(const word of paragraph.split(/\s+/)){if(!word)continue;const candidate=line?line+' '+word:word;if(ctx.measureText(candidate).width<=actual-8){line=candidate;continue;}if(line){lines.push(line);line='';}for(const char of word){if(line&&ctx.measureText(line+char).width>actual-8){lines.push(line);line='';}line+=char;}}lines.push(line);}const lineHeight=Math.ceil(size*1.48),height=Math.max(lineHeight,lines.length*lineHeight+6),density=ratio;c.width=Math.ceil(actual*density);c.height=Math.ceil(height*density);ctx.scale(density,density);ctx.font=font;ctx.textBaseline='top';ctx.textAlign=align;const x=align==='center'?actual/2:align==='right'?actual-4:4;lines.forEach((line,i)=>paintGildedLine(ctx,line,x,3+i*lineHeight,size,{align,display,accent:['#8ed2c1','#9edbd3','#b6e7e0'].includes(color)}));value={src:c.toDataURL('image/png'),width:actual,height};storeImage(key,value);}
-  image.src=value.src;image.width=value.width;image.height=value.height;
+
+function wrapLines(ctx,text,available){
+ const lines=[];
+ for(const paragraph of text.split('\n')){
+  let line='';
+  for(const word of paragraph.split(/\s+/)){
+   if(!word)continue;
+   const candidate=line?line+' '+word:word;
+   if(ctx.measureText(candidate).width<=available){line=candidate;continue;}
+   if(line){lines.push(line);line='';}
+   for(const character of word){
+    if(line&&ctx.measureText(line+character).width>available){lines.push(line);line='';}
+    line+=character;
+   }
+  }
+  lines.push(line);
  }
- draw(width);watchRaster(image,draw);return image;
+ return lines;
+}
+
+export function textImage(text,{width=420,size=18,color='#eadfca',align='left',bold=false,display=false}={}){
+ text=String(text??'');
+ const copy=display?text.toLocaleUpperCase('ru-RU'):text;
+ width=Math.max(40,Math.round(width));
+ const image=new Image();
+ image.alt=text;
+ image.className='bitmap-text';
+ image.dataset.fontRole=display?'heading':'body';
+ image.draggable=false;
+ image.style.width=width+'px';
+ let renderedWidth=0,renderedDensity=0,renderedTypography=-1;
+ function draw(actual){
+  actual=Math.max(24,Math.round(actual));
+  const density=rasterDensity();
+  if(actual===renderedWidth&&density===renderedDensity&&renderedTypography===typographyEpoch)return;
+  renderedWidth=actual;
+  renderedDensity=density;
+  renderedTypography=typographyEpoch;
+  const key=JSON.stringify([text,actual,size,color,align,bold,display,density,typographyEpoch]);
+  let value=cachedImage(key);
+  if(!value){
+   const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
+   useTypeface(ctx,size,display,bold);
+   const padding=display?Math.max(4,Math.ceil(size*.09)):4;
+   const lines=wrapLines(ctx,copy,Math.max(1,actual-padding*2));
+   const lineHeight=Math.ceil(size*(display?1.27:1.45));
+   const height=lines.length*lineHeight+6;
+   canvas.width=Math.ceil(actual*density);
+   canvas.height=Math.ceil(height*density);
+   ctx.scale(density,density);
+   const x=align==='center'?actual/2:align==='right'?actual-padding:padding;
+   lines.forEach((line,i)=>paintGildedLine(ctx,line,x,3+i*lineHeight,size,{align,display,bold,color}));
+   value={src:canvas.toDataURL('image/png'),width:actual,height};
+   storeImage(key,value);
+  }
+  image.src=value.src;
+  image.width=value.width;
+  image.height=value.height;
+ }
+ draw(width);
+ watchRaster(image,draw);
+ return image;
 }
 export function sprite(index,kind='icons',className=''){const node=document.createElement('div');node.className='sprite '+kind+' '+className;node.style.backgroundPosition=`${(index%4)*100/3}% ${Math.floor(index/4)*100/3}%`;node.setAttribute('aria-hidden','true');return node;}
 // Panels use a neutral frame; the generated atlas is not a regular grid.
