@@ -14,6 +14,8 @@ const CHARACTER_GAIT = {
 const { clamp, lerp, smoothstep } = T.MathUtils;
 const cycle = value => (value % 1 + 1) % 1;
 const turn = angle => Math.atan2(Math.sin(angle), Math.cos(angle));
+const shoeVertices = new WeakMap();
+const EMPTY_VERTICES = Object.freeze([]);
 
 function sampleCycle(clip, phase, result) {
   const index = cycle(phase) * clip.keys.length;
@@ -44,19 +46,41 @@ function mean(points) {
   return centre.multiplyScalar(1 / points.length);
 }
 
+function shoeVertexIndices(mesh, names) {
+  const { geometry, skeleton } = mesh;
+  const indices = geometry.getAttribute('skinIndex');
+  const weights = geometry.getAttribute('skinWeight');
+  if (!indices || !weights) return EMPTY_VERTICES;
+
+  const boneIds = skeleton.bones.flatMap((bone, index) => names.includes(bone.name) ? [index] : []);
+  if (!boneIds.length) return EMPTY_VERTICES;
+  let byBone = shoeVertices.get(geometry);
+  if (!byBone) {
+    byBone = new Map();
+    shoeVertices.set(geometry, byBone);
+  }
+  const key = boneIds.join(':');
+  if (!byBone.has(key)) {
+    const matches = [], bones = new Set(boneIds);
+    for (let index = 0; index < indices.count; index++) {
+      let weight = 0;
+      for (let component = 0; component < 4; component++) {
+        if (bones.has(indices.getComponent(index, component))) weight += weights.getComponent(index, component);
+      }
+      if (weight >= .57) matches.push(index);
+    }
+    byBone.set(key, matches);
+  }
+  return byBone.get(key);
+}
+
 function shoeMarkers(meshes, names, forward) {
   const points = [];
   const point = new T.Vector3();
   for (const mesh of meshes) {
-    const indices = mesh.geometry.getAttribute('skinIndex');
-    const weights = mesh.geometry.getAttribute('skinWeight');
-    if (!indices || !weights) continue;
-    const bones = new Set(mesh.skeleton.bones.flatMap((bone, i) => names.includes(bone.name) ? [i] : []));
-    if (!bones.size) continue;
-    for (let i = 0; i < indices.count; i++) {
-      let weight = 0;
-      for (let j = 0; j < 4; j++) if (bones.has(indices.getComponent(i, j))) weight += weights.getComponent(i, j);
-      if (weight >= .57) points.push(mesh.getVertexPosition(i, point).applyMatrix4(mesh.matrixWorld).clone());
+    // Vertex identities come from the shared rig. Their world positions depend on this clone's pose.
+    for (const index of shoeVertexIndices(mesh, names)) {
+      points.push(mesh.getVertexPosition(index, point).applyMatrix4(mesh.matrixWorld).clone());
     }
   }
   if (points.length < 12) return null;

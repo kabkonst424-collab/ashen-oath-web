@@ -1,5 +1,5 @@
 import {createTerrainClip,drawAreaSchematic,markerShape,terrainShapes} from './area-schematic.js?v=forged-019';
-import {areaMapMarkers,createNavigationService} from './navigation.js?v=campaign-130';
+import {areaMapMarkers,createNavigationService} from './navigation.js?v=campaign-140';
 const INITIALIZERS=[],RENDERERS=[];
 const initialize=run=>INITIALIZERS.push(run),renderer=(order,run)=>RENDERERS.push({order,run});
 const NS='http://www.w3.org/2000/svg';
@@ -20,7 +20,7 @@ export function createMinimap({el,text,button,onQuestSelect=()=>{},onDetails=()=
  function control(key,label,callback,parent=controls){let node=buttons.get(key);handlers.set(key,callback);if(!node){node=button(label,()=>handlers.get(key)?.(),{small:true,width:100,focusKey:'navigation:'+key});node.classList.add('nav50-control');node.dataset.navControl=key;buttons.set(key,node);parent.append(node);}if(node._navLabel!==label){node.ariaLabel=label;node._navLabel=label;}const captionKey=label+'|'+(latest?.selection?.textScale||1);if(node._navCaption!==captionKey){node.replaceChildren(text(label,100,12,'#ead49f',true));node._navCaption=captionKey;}return node;}
  // Registrations are fixed after module evaluation; retain one ordered pipeline per instance.
  const renderSteps=[...RENDERERS].sort((a,b)=>a.order-b.order);
- const api={element,metrics,service,prefs,update(state,selection={}){if(destroyed)return null;metrics.updates++;const view=service.update(state,selection);latest={state,selection,view};env.view=view;env.state=state;env.selection=selection;element.hidden=state.mode!=='explore';for(const step of renderSteps)step.run(env);element.dataset.route=view.route.status;return view;},destroy(){destroyed=true;element.remove();captions.clear();shapes.clear();metrics.shapeEntries=0;buttons.clear();handlers.clear();}};
+ const api={element,metrics,service,prefs,update(state,selection={}){if(destroyed)return null;metrics.updates++;const view=service.update(state,selection);latest={state,selection,view};env.view=view;env.state=state;env.selection=selection;element.hidden=state.mode!=='explore';if(selection.paint!==false){for(const step of renderSteps)step.run(env);element.dataset.route=view.route.status;}return view;},destroy(){destroyed=true;element.remove();captions.clear();shapes.clear();metrics.shapeEntries=0;buttons.clear();handlers.clear();}};
  const env={el,element,header,body,svg,terrainClip,layers,copy,controls,extra,prefs,metrics,caption,shape,removeShape,attr,control,project:point=>projectPoint(env.view,point,prefs),onQuestSelect,onDetails,refresh:()=>latest&&api.update(latest.state,latest.selection),choose:id=>{if(latest)latest.selection={...latest.selection,questId:id};onQuestSelect(id);env.refresh();}};
  for(const run of INITIALIZERS)run(env);
  return api;
@@ -107,7 +107,15 @@ renderer(96,e=>{e.attr(e.control('zoom','Масштаб: '+e.prefs.zoom+'×',()=
 renderer(65,e=>e.caption('direction','Север ↑'+(e.view.direction?' · '+e.view.direction:''),{size:12,color:'#bfd6c7'}));
 
 initialize(e=>e.control('expand','Мини-карта',()=>{const compact=e.selection?.compact??((globalThis.innerWidth||1280)<=760||(globalThis.innerHeight||720)<=460);e.prefs.expanded=!(e.prefs.expanded??!compact);e.refresh();},e.header));
-renderer(99,e=>{const compact=e.selection.compact??((globalThis.innerWidth||1280)<=760||(globalThis.innerHeight||720)<=460),expanded=e.prefs.expanded??!compact;e.body.hidden=!expanded;e.element.classList.toggle('nav50-collapsed',!expanded);e.attr(e.control('expand',expanded?'Свернуть':'Мини-карта',()=>{e.prefs.expanded=!(e.prefs.expanded??!compact);e.refresh();},e.header),'aria-expanded',String(expanded));});
+renderer(99,e=>{
+ const compact=e.selection.compact??((globalThis.innerWidth||1280)<=760||(globalThis.innerHeight||720)<=460);
+ const managed=!!e.selection.managedPanel,expanded=managed||(e.prefs.expanded??!compact);
+ e.body.hidden=!expanded;
+ e.element.classList.toggle('nav50-collapsed',!expanded);
+ const control=e.control('expand',expanded?'Свернуть':'Мини-карта',()=>{e.prefs.expanded=!(e.prefs.expanded??!compact);e.refresh();},e.header);
+ control.hidden=managed;
+ e.attr(control,'aria-expanded',String(expanded));
+});
 
 initialize(e=>e.control('details','Журнал',()=>e.onDetails(e.view.quest?.id||null)));
 renderer(97,e=>{const node=e.control('details','Журнал',()=>e.onDetails(e.view.quest?.id||null));node.ariaLabel='Открыть задание в журнале · '+(e.view.quest?.title||'Текущая задача');});

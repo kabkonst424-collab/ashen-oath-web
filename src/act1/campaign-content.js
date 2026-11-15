@@ -1,5 +1,5 @@
 import {CAMPAIGN_LAYOUTS} from './campaign-layouts.js?v=campaign-1';
-import {CHAPTERS} from './campaign-acts/chapters.js?v=campaign-130';
+import {CHAPTERS} from './campaign-acts/chapters.js?v=campaign-140';
 
 export const CAMPAIGN_ACTS = [
   {id:'act1', number:1, title:'Право на последний голос', areas:['monastery','village','briarwood','quarry','fen','archive','sunfields','fortress','abbey'], bossId:'bellkeeper'},
@@ -9,9 +9,9 @@ export const CAMPAIGN_ACTS = [
 
 export const CAMPAIGN_ENDINGS = {
   campaign_return:{id:'campaign_return', title:'Голоса по домам', comicId:'final_return',
-    summary:'Центральный узел разобран. Записи уходят их владельцам по отливной дороге. Порты и зимние станции договариваются друг с другом напрямую; работа спасательных служб продолжается.'},
+    summary:'Отряд разобрал центральный узел. Отливная почта возвращает записи владельцам. Порты и зимние станции передают сигналы друг другу напрямую, и спасатели продолжают выходить на вызовы.'},
   campaign_council:{id:'campaign_council', title:'Зал открытого круга', comicId:'final_council',
-    summary:'Амфитеатр остаётся общим залом. Ни у одного города нет главного ключа. В первый круг допускают только послания, которые можно забрать обратно, оставив у себя оригинал.'},
+    summary:'Амфитеатр открыт для встреч. Вран снял ключ, который давал власть над всеми станциями. Жители приносят копии своих посланий и могут забрать их в любой момент.'},
 };
 
 const comic = (id,title,lines,illustrationId=id) => ({id,title,illustration:`assets/campaign/comics/${illustrationId}.webp`,panels:lines.map(text=>({text}))});
@@ -20,12 +20,12 @@ export const CAMPAIGN_COMICS = Object.fromEntries(CHAPTERS.flatMap(chapter=>{
   return [[arrival,comic(arrival,chapter.title,chapter.arrival)], [depths,comic(depths,chapter.areas[1][1],chapter.crossing)]];
 }).concat([
   ['final_return',comic('final_return','Голоса по домам',[
-    'Отряд снял центральный ключ. Пластины амфитеатра разошлись по портам и зимним станциям вместе с книгами возврата.',
-    'На месте старого приказа осталось несколько разных сигналов. Ночью Сима доставляет последнее письмо лично. У окна её ждут двое, и каждый называет своё имя сам.',
+    'Отряд разобрал узел в амфитеатре. Вран отправил пластины по портам и зимним станциям, чтобы те могли передавать сигналы напрямую.',
+    'Сима разносит послания отливной почтой. Получатель сам решает, забрать катушку или оставить на хранение. Сигнал с дальнего берега впервые приходит без подписи Дирижёра.',
   ])],
   ['final_council',comic('final_council','Зал открытого круга',[
-    'Вран отпирает все входы амфитеатра. Никто не получает центрального ключа; он лежит разомкнутым в витрине.',
-    'Первый спор начинается ещё до рассвета. Нель просит повторить чужую поправку, а Ирма уходит допаивать больничную трубу. Двери остаются открытыми с обеих сторон.',
+    'Вран вынимает центральный ключ и открывает двери амфитеатра. Теперь станции могут приходить на общий круг, когда хотят обсудить решение.',
+    'Первый спор начинается до рассвета. Нель ждёт, пока путник объяснит поправку к карте. Ирма забирает свою запись и уходит к больничной трубе. Дверь за ней остаётся открытой.',
   ])],
 ]));
 
@@ -85,11 +85,12 @@ function promptNode(layout,anchor,id,flag,record,requiresFlags,sequence) {
   const choices=answers.map((text,i)=>({text,correct:i===0}));
   const offset=sequence%choices.length;
   return stage(layout,anchor,{id,type:'puzzle',label,flag,requiresFlags,successText,puzzle:{prompt,choices:[...choices.slice(offset),...choices.slice(0,offset)],
-    failureText:'Порядок не сработал. Сверьте записку в журнале и попробуйте ещё раз.'}});
+    failureText:'Механизм не принял ответ. Перечитайте запись, которую только что нашли, и попробуйте снова.'}});
 }
 
 function addChapter({areas,layouts,quests,dialogues,targets,enemies,skills,items},chapter) {
   const {act,title,areas:[[first,firstTitle,firstDescription],[second,secondTitle,secondDescription]],people:[personA,personB]}=chapter;
+  const [sideTitle,sideRequest,sideThanks,sideClue,sideFind]=chapter.side;
   const prefix=`c${act}`, id=tag=>`${prefix}_${tag}`;
   const previousAct=CAMPAIGN_ACTS[act-2], nextAct=CAMPAIGN_ACTS[act], previous=previousAct.areas.at(-1), next=nextAct?.areas[0];
   const shallow=structuredClone(CAMPAIGN_LAYOUTS[first]), deep=structuredClone(CAMPAIGN_LAYOUTS[second]);
@@ -107,26 +108,26 @@ function addChapter({areas,layouts,quests,dialogues,targets,enemies,skills,items
   const link=(areaId,key,untilFlag,requiresFlags)=>target(areaId,key,untilFlag,requiresFlags);
 
   const localStats=act-2;
-  const sidePuzzle=act===3?['Сигнальная доска старой стоянки','В старом караване Нель два коротких удара означают просьбу о тихом проходе. Как подать знак?',['Два коротких удара','Два долгих удара','Три коротких удара'],'Караульные отходят проверять гребень. До стоянки можно дойти без боя.']:
-      act===5?['Пустая бирка-проходка','Покажите зеркалам бирку, на которую ещё никто не дал ответ.',['Пустая бирка','Старое имя','Зеркальный ответ'],'Ловчие пропускают чистую бирку. Саженец теперь доступен без боя.']:null;
+  const sidePuzzle=act===3?['Сигнальная доска старой стоянки','Как попросить о тихом проходе по знаку Нель?',['Два коротких удара','Два долгих удара','Три коротких удара'],'Караульные отходят к гребню. Теперь до стоянки можно дойти без боя.']:
+      act===5?['Бирка для дозора','Какую бирку показать зеркалу, чтобы оно не сверяло имя?',['Пустая бирка','Бирка со старым именем','Бирка с ответом зеркала'],'Ловчие пропускают отряд. Теперь можно осмотреть ящик без боя.']:null;
   const readClue=stage(shallow,'clue',{id:id('read_clue'),type:'inspect',label:chapter.trail[0],flag:clueFlag,requiresFlags:[brief],dialogue:id('read_clue_text'),successText:chapter.trail[1]});
   const openRoute=promptNode(shallow,'device',id('device'),opened,chapter.switch,[clueFlag],act);
   const roadFight=stage(shallow,'roadFight',{id:id('road_fight'),label:'Караул перехода',enemies:[mobA,mobB],level:chapter.levels[0],required:true,
     requiresFlags:[opened],flagOnWin:fightFlag,stroll:[1.8,.7], rewards:{xp:250+act*25,gold:54+act*12},lootTable:{choices:[{...loot(gear.armor),weight:1},{...loot(gear.material,2),weight:2}]}});
-  const aidDossier=stage(shallow,'side',{id:id('side_dossier'),type:'inspect',label:chapter.side[0],flag:sideLearned,requiresFlags:[sideStarted],dialogue:id('side_dossier_text'),successText:chapter.side[1]});
+  const aidDossier=stage(shallow,'side',{id:id('side_dossier'),type:'inspect',label:sideTitle,flag:sideLearned,requiresFlags:[sideStarted],dialogue:id('side_dossier_text'),successText:sideClue});
   const sideFight=stage(shallow,'sideFight',{id:id('side_fight'),label:'Дозор у старой тропы',enemies:[mobA],level:chapter.levels[0],flagOnWin:sideAccess,stroll:[.6,.8],
     requiresFlags:[sideLearned],forbidFlags:[sideAccess],rewards:{xp:90,gold:35},lootTable:{guaranteed:[loot(gear.material,2)]}});
   const sideBypass=sidePuzzle?promptNode(shallow,'side',id('side_bypass'),sideAccess,sidePuzzle,[sideLearned],act+1):null;
   if(sideBypass){sideBypass.x+=3.3;sideBypass.z+=2.8;sideBypass.forbidFlags=[sideAccess];}
-  const sideCache=stage(shallow,'cache',{id:id('side_cache'),type:'chest',label:'Ящик со свидетельством',flag:sideFound,requiresFlags:[sideAccess],
-    successText:'Свидетельство найдено. Его ждут до следующей смены.',items:[loot('healing_draught',2)],lootTable:{guaranteed:[loot(gear.material,2)]}});
+  const sideCache=stage(shallow,'cache',{id:id('side_cache'),type:'chest',label:sideFind,flag:sideFound,requiresFlags:[sideAccess],
+    successText:`Находка у вас. На дороге её ждёт ${personA[0]}.`,items:[loot('healing_draught',2)],lootTable:{guaranteed:[loot(gear.material,2)]}});
 
   const readEvidence=stage(deep,'evidence',{id:id('read_evidence'),type:'inspect',label:chapter.evidence[0],flag:evidence,requiresFlags:[audit],dialogue:id('read_evidence_text'),successText:chapter.evidence[1]});
   const mechanism=promptNode(deep,'mechanism',id('mechanism'),lockFlag,chapter.lock,[evidence],act+1);
   const climax=stage(deep,'climax',{id:id('climax'),label:chapter.foes[2][0],enemies:act===6?[boss]:[boss,mobB],level:chapter.levels[1],required:true,boss:true,
     requiresFlags:[lockFlag],flagOnWin:beaten,rewards:{xp:310+act*33,gold:72+act*13},lootTable:{guaranteed:[loot(gear.charm)]}});
   const verdict=stage(deep,'verdict',{id:id('verdict'),type:'inspect',label:chapter.scene[0],flag:id('heard_verdict'),requiresFlags:[beaten],dialogue:id('verdict_text'),
-    successText:'У этого разговора осталось одно решение.'});
+    successText:'После боя здесь собрались люди. Выслушайте их и решите, что сделать первым.'});
   const cache=stage(deep,'cache',{id:id('cache'),type:'chest',label:'Запасной дорожный сундук',flag:id('cache_open'),
     lootTable:{guaranteed:[loot('ether_drop',2),loot('revival_salt')],choices:[{...loot(gear.material),weight:3},{...loot(gear.armor),weight:1}]},rewards:{xp:75+localStats*15,gold:46+localStats*7}});
   const shop=[gear.weapon,gear.armor,gear.charm,'healing_draught','ether_drop','revival_salt','travel_stew','campaign_tonic'];
@@ -158,31 +159,30 @@ function addChapter({areas,layouts,quests,dialogues,targets,enemies,skills,items
   const branchChoice=(which)=>choice(`road_${which}`,chapter.outcomes[which][0],{[settled]:true,[id(which?'outcome_b':'outcome_a')]:true},{
     next:id(which?'after_b':'after_a'),items:[which?loot('ether_drop',2):loot('campaign_tonic'),loot(gear.material)],
   });
-  const answer=choice('done','Вернуться к дороге.');
-  const description=chapter.trail[1];
-  const sideChoices=[choice('help','Разобраться и вернуться с вестью.',mark(sideStarted),{forbidFlags:[sideStarted]}),choice('later','Продолжить путь.')];
+  const answer=choice('done','Продолжить.');
+  const sideChoices=[choice('help','Согласиться помочь.',mark(sideStarted),{forbidFlags:[sideStarted]}),choice('later','Продолжить путь.')];
 
-  speech('brief',npcA,personA[1],[[personA[2],personA[3]],['Герой','Проверим след, пока дорога открыта.']],
-    [choice('listen','Осмотреть свидетельство у тропы.',mark(brief))]);
+  speech('brief',npcA,personA[1],[[personA[2],personA[3]],['Герой',`Начнём с записи у тропы. Она отмечена как «${chapter.trail[0]}».`]],
+    [choice('listen',`Искать запись «${chapter.trail[0]}».`,mark(brief))]);
   for(const [index, echo] of (chapter.echoes||[]).entries()){
     const prior=index?'b':'a', variant=id(`brief_echo_${prior}`);
     const source=dialogues[id('brief')];
     dialogues[variant]={...source,id:variant,lines:[{speaker:personA[2],text:echo},...source.lines]};
     guide.variants.push({requiresFlags:[`c${act-1}_outcome_${prior}`],forbidFlags:[brief],dialogue:variant});
   }
-  speech('guide_again',npcA,chapter.side[0],[[personA[2],chapter.side[1]]],sideChoices);
-  speech('side_dossier_text',npcA,chapter.side[0],[[personA[2],chapter.side[1]],['Герой',sidePuzzle?'Проверю знак здесь, у тропы. Если дозор не поверит, придётся идти через его пост.':'Отряд проверит дорогу и заберёт свидетельство.']],[answer]);
-  speech('side_return',npcA,chapter.side[0],[[personA[2],chapter.side[2]]],
-    [choice('return','Передать найденное свидетельство.',mark(sideDone),{forbidFlags:[sideDone]}),choice('leave','Попрощаться.')]);
-  speech('read_clue_text',npcA,chapter.trail[0],[['Герой',description]],[answer]);
-  speech('audit',npcB,personB[1],[[personB[2],personB[3]],['Герой','Покажите записи и порядок работы механизма.']],[choice('see','Проверить документ.',mark(audit))]);
-  speech('curator_again',npcB,personB[1],[[personB[2],evidenceHint(chapter)],[personB[2],'Верстак у лагеря открыт. Припасы можно взять здесь.']],[answer]);
+  speech('guide_again',npcA,sideTitle,[[personA[2],sideRequest]],sideChoices);
+  speech('side_dossier_text',npcA,sideTitle,[['Герой',sideClue],['Герой',sidePuzzle?'Попробуем пройти тихо. Если не выйдет, разберёмся с дозором.':'Сначала освободим проход. Потом осмотрим ящик.']],[answer]);
+  speech('side_return',npcA,sideTitle,[[personA[2],sideThanks]],
+    [choice('return','Отдать находку.',mark(sideDone),{forbidFlags:[sideDone]}),choice('leave','Попрощаться.')]);
+  speech('read_clue_text',npcA,chapter.trail[0],[['Герой',chapter.trail[1]]],[answer]);
+  speech('audit',npcB,personB[1],[[personB[2],personB[3]],['Герой','Хорошо. Прочтём запись, прежде чем трогать механизм.']],[choice('see',`Осмотреть запись «${chapter.evidence[0]}».`,mark(audit))]);
+  speech('curator_again',npcB,personB[1],[[personB[2],`Если понадобится подсказка, перечитайте запись «${chapter.evidence[0]}».`],[personB[2],'У лагеря есть верстак. Если нужны припасы, спросите меня.']],[answer]);
   speech('read_evidence_text',npcB,chapter.evidence[0],[['Герой',chapter.evidence[1]]],[answer]);
   speech('curator_after',npcB,chapter.scene[0],[[personB[2],chapter.epilogue]],[answer]);
   speech('verdict_text',npcB,chapter.scene[0],[['Герой',chapter.scene[1]],[personB[2],chapter.scene[2]]],next?
     [branchChoice(0),branchChoice(1),choice('leave','Подумать ещё.')]:[
-      choice('return','Разобрать центральный узел. Вернуть записи владельцам.',{campaign_complete:true,campaign_return:true},{next:'ending_campaign_return',forbidFlags:['campaign_complete']}),
-      choice('council','Оставить зал для открытого круга. Отозвать центральный ключ.',{campaign_complete:true,campaign_council:true},{next:'ending_campaign_council',forbidFlags:['campaign_complete']}),
+      choice('return','Разобрать узел и отправить записи владельцам.',{campaign_complete:true,campaign_return:true},{next:'ending_campaign_return',forbidFlags:['campaign_complete']}),
+      choice('council','Оставить зал для встреч и снять ключ Дирижёра.',{campaign_complete:true,campaign_council:true},{next:'ending_campaign_council',forbidFlags:['campaign_complete']}),
       choice('leave','Подумать ещё.'),
     ]);
   if(next){
@@ -198,24 +198,20 @@ function addChapter({areas,layouts,quests,dialogues,targets,enemies,skills,items
   };
 
   addQuest(act===2?'north_letter':'journey',act===2?'Катушка с чужим гербом':`Дорога · ${title}`,previous,
-    act===2?'Поднимитесь по северной лестнице аббатства и выйдите на почтовый тракт.':`Отправляйтесь в область «${firstTitle}».`,[gateFlag],[started],.035,[link(previous,entry.id,started)]);
-  addQuest('trace',chapter.trail[0],first,`Поговорите с ${personA[0]} и прочтите документ у тропы. ${chapter.trail[1]}`,[started],[brief,clueFlag],.13,
+    act===2?'По северному тракту аббатства выйдите на Соляное взморье. Сима может узнать почтовую печать на катушке.':`Идите в область «${firstTitle}» по следу, который указали в предыдущем разговоре.`,[gateFlag],[started],.035,[link(previous,entry.id,started)]);
+  addQuest('trace',chapter.trail[0],first,`${personA[0]} ждёт у дороги. Поговорите и прочтите запись «${chapter.trail[0]}» у тропы.`,[started],[brief,clueFlag],.13,
     [link(first,npcA,brief),link(first,readClue.id,clueFlag)]);
-  addQuest('pass',chapter.switch[0],first,chapter.switch[1],[clueFlag],[opened,fightFlag,reached],.17,
+  addQuest('pass',chapter.switch[0],first,`Решите загадку у прохода, одолейте караул и идите в область «${secondTitle}». Подсказка в записи «${chapter.trail[0]}». ${chapter.trail[1]}`,[clueFlag],[opened,fightFlag,reached],.17,
     [link(first,openRoute.id,opened),link(first,roadFight.id,fightFlag),link(first,leaveFirst.id,reached)]);
-  addQuest('audit_task',chapter.evidence[0],second,`Поговорите с ${personB[0]} и осмотрите документ. ${chapter.evidence[1]}`,[reached],[audit,evidence],.125,
+  addQuest('audit_task',chapter.evidence[0],second,`${personB[0]} ждёт у входа. Поговорите и осмотрите запись «${chapter.evidence[0]}».`,[reached],[audit,evidence],.125,
     [link(second,npcB,audit),link(second,readEvidence.id,evidence)]);
-  addQuest('clash',chapter.lock[0],second,`${chapter.lock[1]} Когда механизм открыт, одолейте противника, который держит участок.`,[evidence],[lockFlag,beaten],.20,
+  addQuest('clash',chapter.lock[0],second,`Настройте механизм по записи «${chapter.evidence[0]}». После этого противник у прохода вступит в бой. ${chapter.evidence[1]}`,[evidence],[lockFlag,beaten],.20,
     [link(second,mechanism.id,lockFlag),link(second,climax.id,beaten)]);
-  addQuest('decision',chapter.scene[0],second,next?'Завершите дело здесь и узнайте, куда переносили записи.':'Решите судьбу центрального зала.',[beaten],[settled],.12,
+  addQuest('decision',chapter.scene[0],second,next?`Откройте разговор «${chapter.scene[0]}». Решите, что сделать здесь, и узнайте, куда ведёт следующий след.`:'Выслушайте Врана. Решите, разобрать центральный узел или оставить амфитеатр для добровольных встреч.',[beaten],[settled],.12,
     [link(second,verdict.id,settled)],{items:[loot('ether_drop',2),loot('healing_draught',2)]});
-  addQuest('side_story',chapter.side[0],first,sideBypass?`${chapter.side[1]} Можно договориться о тихом проходе или одолеть дозор.`:chapter.side[1],[brief],[sideStarted,sideLearned,sideAccess,sideFound,sideDone],.14,
+  addQuest('side_story',sideTitle,first,`Узнайте, о чём просит ${personA[0]}. Осмотрите след у тропы. ${sideBypass?'Пройдите мимо дозора с помощью знака или в бою. ':'Одолейте дозор. '}Заберите находку «${sideFind}» и отнесите тому, кто её ищет.`,[brief],[sideStarted,sideLearned,sideAccess,sideFound,sideDone],.14,
     [link(first,npcA,sideStarted),link(first,aidDossier.id,sideLearned),link(first,sideBypass?.id||sideFight.id,sideAccess),link(first,sideCache.id,sideFound),link(first,npcA,sideDone)],
     {optional:true,items:[loot(gear.armor),loot('revival_salt')]});
-}
-
-function evidenceHint(chapter) {
-  return 'До решения перечитайте документ, на который я указал. '+chapter.evidence[1];
 }
 
 export function extendCampaign({areas,layouts,quests,dialogues,targets,enemies,skills,items,actInfo}) {
@@ -230,8 +226,8 @@ export function extendCampaign({areas,layouts,quests,dialogues,targets,enemies,s
     const epilogue=dialogues[`ending_${branch}`];
     const line=epilogue.lines.at(-1);
     line.text=branch==='public_truth'
-      ?'Утром на северном тракте нашли катушку с чужим гербом. Внутри голос просит о встрече. На обороте сургуча — знак отливной почты. Идём на взморье, пока дорога открыта.'
-      :'Утром с северного тракта принесли катушку с чужим гербом. Внутри голос назначил встречу. На обороте сургуча — знак отливной почты. Пусть возьмём копию нового договора: покажем, чьё согласие теперь нужно.';
+      ?'У северного тракта нашли катушку с записанным голосом. Кто-то просит о встрече. На печати знак отливной почты. Пойдём на Соляное взморье и спросим, кому принадлежит запись.'
+      :'У северного тракта нашли катушку с записанным голосом и печатью отливной почты. На Соляном взморье узнаем, кто просит о встрече. Возьмём копию договора о трёх ключах.';
   }
 
   items.campaign_tonic={id:'campaign_tonic',name:'Настой грозового цветка',kind:'consumable',price:58,effect:{kind:'heal',power:215},
@@ -243,10 +239,10 @@ export function extendCampaign({areas,layouts,quests,dialogues,targets,enemies,s
 
   for(const [id,ending] of Object.entries(CAMPAIGN_ENDINGS)){
     const lines=id==='campaign_return'?
-      [['Вран','Сегодня вперёд не уйдёт ни один запертый голос. Ключ снимем при свидетелях, потом разнесём пластины.'],
-      ['Герой','Первую посылку отдайте отливной почте. Доставку подтверждает тот, кто её получит.']]:
-      [['Вран','Пусть зал держит звук, но не вмещает чужую власть. Оставим открытым каждый боковой вход.'],
-      ['Герой','Первым делом голос из слободы. Он вправе передумать, забрать запись и уйти.']];
+      [['Вран','Разберём узел при свидетелях. Пластины раздадим местным станциям, чтобы они могли вызывать помощь напрямую.'],
+      ['Герой','Первую катушку отдайте Симе. Пусть человек, которому она принадлежит, подтвердит доставку сам.']]:
+      [['Вран','Сниму ключ Дирижёра и отопру боковые двери. Когда станциям нужно будет договориться, они смогут собраться в зале.'],
+      ['Герой','Позовём человека из слободы. Если передумает, он сможет забрать запись и уйти до конца разговора.']];
     dialogues[`ending_${id}`]=page(`ending_${id}`,'c6_npc_b',ending.title,lines,[choice('end','Открыть финальный комикс.')]);
   }
 
@@ -255,8 +251,8 @@ export function extendCampaign({areas,layouts,quests,dialogues,targets,enemies,s
   const guide=areas.find(a=>a.id==='salt_coast').npcs[0];
   const base=dialogues.c2_brief;
   for(const [flag,text] of [
-    ['public_truth','У вас знают, что колокол остановлен. Рыбаки спрашивают, как теперь получать помощь. Расскажите им у костра, что уже работает без колокола.'],
-    ['stewardship','Сюда дошла копия договора о трёх ключах. Смотрителю можно её показать. Он помнит, как одна рука забирала обратно весь отданный свет.'],
+    ['public_truth','До нас дошла весть, что вы остановили колокол. Рыбаки хотят знать, как слобода теперь помогает людям. Когда будет время, расскажите у костра.'],
+    ['stewardship','Я получила копию вашего договора о трёх ключах. Покажите её Матиасу. Сейчас его маяк может требовать плату с тех, кого сам спас.'],
   ]){
     const id=`c2_brief_${flag}`;
     dialogues[id]={...base,id,lines:[{speaker:'Сима',text},...base.lines]};

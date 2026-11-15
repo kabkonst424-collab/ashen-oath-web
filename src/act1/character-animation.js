@@ -1,10 +1,10 @@
 import * as T from '../../assets/vendor/three.module.js';
-import { PARTY } from './content.js?v=campaign-130';
+import { PARTY } from './content.js?v=campaign-140';
 import { fetchBytes } from './resource-loader.js?v=0.16.0-demo';
 import { validateCastHands } from './cast-anchors.js?v=forged-019';
 import { SOURCE_BASES, SOURCE_FRONT_YAW, resolveBaseFrontYaw, resolveProfileFrontYaw, actorSourceBase, isSourceBase, sourceValue, normalizeSourceHash, normalizeSourceYaw, sourceFacingBasis, applySourceFacing } from './source-facing.js?v=campaign-v1';
 
-import { actorAnimationIdentity } from './graphics-refresh.js?v=stride-112';
+import { actorAnimationIdentity } from './graphics-refresh.js?v=campaign-140';
 import { motionPatchDescriptor, applyMotionPatch } from './motion-clip-corrections.js?v=motion-110';
 import { bowClip } from './bow-presentation.js?v=motion-110';
 import { normalizeBattleEquipment, applyBattleEquipment } from './equipment-presentation.js?v=0.16.0-demo';

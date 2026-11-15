@@ -1,35 +1,36 @@
-import {installRefresh} from './graphics-refresh.js?v=stride-112';
-import {installMeshyWorld} from './meshy-world.js?v=campaign-130';
-import {areaBiome} from './area-asset-plan.js?v=campaign-130';
-import {WorldElements,installWorldElements} from './water-fire.js?v=campaign-130';
+import {installRefresh} from './graphics-refresh.js?v=campaign-140';
+import {installMeshyWorld} from './meshy-world.js?v=campaign-140';
+import {areaBiome} from './area-asset-plan.js?v=campaign-140';
+import {WorldElements,installWorldElements} from './water-fire.js?v=campaign-140';
 import {MagicVfx} from './magic-vfx.js?v=motion-110';
 import {advancePaintedPose, orientPaintedActors, paintedActionAge, resetPaintedPose, paintedHeading} from './painted-motion.js?v=gait-111';
-import {CharacterAnimationLibrary} from './character-animation.js?v=campaign-130';
-import {installBrowserPerformance} from './browser-performance.js?v=0.16.0-demo';
+import {CharacterAnimationLibrary} from './character-animation.js?v=campaign-140';
+import {installBrowserPerformance} from './browser-performance.js?v=campaign-140';
 import * as T from '../../assets/vendor/three.module.js';
 import { GLTFLoader } from '../../assets/vendor/GLTFLoader.js';
 import { clone as cloneSkeleton } from '../../assets/vendor/SkeletonUtils.js';
-import * as Content from './content.js?v=campaign-130';
+import * as Content from './content.js?v=campaign-140';
 import { battleFormation, fitBattleCamera, facingToward, oppositionFacing, wrapFacing } from './battle-stage.js?v=0.16.0-demo';
 import { combatMotionPolicy, actionLunge, impactRecoil, meleeTiming, meleeTravel } from './presentation-motion.js?v=motion-110';
 import { actionTimeline, actionClipPhase } from './presentation-timing.js?v=motion-110';
 import { reactionPhase, contactReaction, transitionBlend, hasUnsettledDeath } from './combat200-animation-policy.js?v=0.16.0-demo';
 import { PartyTrail, loopTiming, COMBAT_MOTION, combatPlaybackRate } from './party-motion.js?v=motion-110';
-import { walkable } from './model.js?v=campaign-130';
+import { walkable } from './model.js?v=campaign-140';
 import { gaitForSpeed, gaitRate, gaitEntryPhase } from './actor-locomotion.js?v=motion-110';
 import { applyFootContact, resetFootContact } from './foot-contact.js?v=motion-110';
-import { applyPartyGait, leavePartyGait, resetPartyGait } from './party-gait.js?v=stride-112';
+import { applyPartyGait, leavePartyGait, resetPartyGait } from './party-gait.js?v=campaign-140';
 import { updateBow, disposeBow } from './bow-presentation.js?v=motion-110';
 import { BattleLayoutCache } from './ui-framing.js?v=0.16.0-demo';
-import { paintGildedLine } from './bitmap.js?v=painted-20261114-r2';
+import { paintGildedLine } from './bitmap.js?v=campaign-140';
 
 import { buildAuthoredRoad } from './authored-landscape.js?v=campaign-v1';
 import { bridgeAt, bridgeHeight, nearestLand, terrainElevation } from './area-geometry.js?v=rivers-0181';
-import { Groundcover } from './groundcover.js?v=campaign-v1';
+import { Groundcover } from './groundcover.js?v=campaign-140';
 import { CHAPTER_BIOMES } from './campaign-visuals.js?v=campaign-v1';
 
 const UP = new T.Vector3(0, 1, 0);
 const TAU = Math.PI * 2;
+const NO_EVENTS = Object.freeze([]);
 const MODEL_NAMES = ['hero', 'husk', 'acolyte', 'sentinel', 'boss', 'environment'];
 const PALETTES = {
   village: { tile: 0, sky: 0x9abeb7, fog: 0x92b0ac, foliage: 0x627948, earth: 0x79745e, light: 0xffe1aa },
@@ -74,6 +75,17 @@ function visible(state, entity) {
   return condition(state, entity.visibleWhen ?? entity.requiresFlag ?? entity.requiresFlags ?? entity.requires)
     && !(entity.hideWhen && condition(state, entity.hideWhen))
     && !(entity.hiddenByFlag && flag(state, entity.hiddenByFlag));
+}
+
+function lockStaticTransforms(root, animated) {
+  root.updateWorldMatrix(true, true);
+  const freeze = object => {
+    if (animated.has(object) || object.isSkinnedMesh || object.isBone) return;
+    object.matrixAutoUpdate = false;
+    object.matrixWorldAutoUpdate = false;
+    for (const child of object.children) freeze(child);
+  };
+  freeze(root);
 }
 
 /** Read-only Three.js presentation. All movement, flags and combat belong to the model. */
@@ -895,6 +907,9 @@ export class World {
   }
 
   syncInteractions(state) {
+    this.interactionRevision = state.revision;
+    this.interactionFlags = state.flags;
+    this.interactionEncounter = state.battle?.encounterId ?? null;
     const partyIds = new Set(state.party?.map(member => member.id));
     for (const item of this.interactables) {
       const d = item.definition;
@@ -906,12 +921,20 @@ export class World {
       item.ready = condition(state, d.requiresFlags || d.requires);
       item.group.visible = shown;
       item.proxy.visible = shown;
-      if (actor) actor.wrapper.visible = shown;
+      if (actor) actor.wrapper.visible = shown && !state.battle;
       const used = (d.type === 'chest' && hasId(state.claimed, `node:${d.id}`)) || (d.flag && flag(state, d.flag));
       if (item.marker) item.marker.visible = !used;
       if (item.lid) { item.lid.rotation.x = used ? -0.9 : 0; if (!item.craftedLid) item.lid.position.y = used ? 1.18 : 0.98; }
       if (item.glyph) item.glyph.visible = item.ready;
     }
+  }
+
+  lockEnvironmentTransforms(group) {
+    // World coordinates are fixed for the lifetime of these environment layers.
+    const animated = new Set(this.animations.map(animation => animation.object));
+    for (const item of this.interactables) if (item.lid) animated.add(item.lid);
+    for (const fire of this.worldElements?.fires || []) animated.add(fire.root);
+    lockStaticTransforms(group, animated);
   }
 
   animatePatrol(actor, dt) {
@@ -1254,6 +1277,7 @@ export class World {
       this.battleKey = battle.encounterId;
       this.enteringBattle = true;
       this.buildBattleStage();
+      this.lockEnvironmentTransforms(this.battleStage);
       this.timeline = this.time;
     }
     for (let index = 0; index < battle.enemies.length; index++) {
@@ -1369,9 +1393,11 @@ export class World {
   }
 
   readEvents(state) {
-    const events = state.events || [];
+    const events = state.events || NO_EVENTS;
     const frame = this.pendingEventFrame?.events === events && this.pendingEventFrame.previous === this.previousEvents ? this.pendingEventFrame : this.presentationEventFrame(events);
     const { keys, fresh } = frame;
+    this.eventSource = events;
+    this.eventRevision = state.revision;
     this.previousEvents = keys; this.pendingEventFrame = null; this.unreadDeathActors = null;
     let actionCue = null;
     const actionsBySource = new Map();
@@ -1547,7 +1573,7 @@ export class World {
 
   presentationPending() { return this.cues.length > 0 || this.time < (this.timeline || 0) + COMBAT_MOTION.finishPad || !!(this.visualBattle && !this.state?.battle); }
 
-  clearPresentation() { this.pendingCombatHover=null;this.hoverCombatTarget=null;this.magicVfx?.clear(); this.browserPerformance?.resetTiming(); this.partyTrail=null;this.motionContext=null;this.combatSelection={};this.pendingReviveActors=new Set();this.cues.length = 0; this.timeline = this.time - 1; this.lastActionStart = 0; this.previousEvents = null; this.visualBattle = null; this.visualBattleSource = null; for (const actor of this.actors.values()) { resetPaintedPose(actor); resetFootContact(actor); resetPartyGait(actor); actor.pulseUntil = 0; actor.lungeUntil = 0; actor.actionTargetId = null; actor.deathFacingYaw = null; actor.deathPosition=null;actor.restoredCorpse=false;actor.reactionAt=null; actor.reactionUntil = 0; actor.deathAt = 0; actor.clearanceLift=0; if(actor.refreshRootBaseY!=null)actor.root.position.y=actor.refreshRootBaseY; } for (const effect of this.effects) { effect.mesh.material.dispose(); this.fxGroup.remove(effect.mesh); } this.effects.length = 0; }
+  clearPresentation() { this.pendingCombatHover=null;this.hoverCombatTarget=null;this.magicVfx?.clear(); this.browserPerformance?.resetTiming(); this.partyTrail=null;this.motionContext=null;this.combatSelection={};this.pendingReviveActors=new Set();this.cues.length = 0; this.timeline = this.time - 1; this.lastActionStart = 0; this.previousEvents = null; this.eventSource = null; this.visualBattle = null; this.visualBattleSource = null; for (const actor of this.actors.values()) { resetPaintedPose(actor); resetFootContact(actor); resetPartyGait(actor); actor.pulseUntil = 0; actor.lungeUntil = 0; actor.actionTargetId = null; actor.deathFacingYaw = null; actor.deathPosition=null;actor.restoredCorpse=false;actor.reactionAt=null; actor.reactionUntil = 0; actor.deathAt = 0; actor.clearanceLift=0; if(actor.refreshRootBaseY!=null)actor.root.position.y=actor.refreshRootBaseY; } for (const effect of this.effects) { effect.mesh.material.dispose(); this.fxGroup.remove(effect.mesh); } this.effects.length = 0; }
 
   render(state, dt = 0) {
     if (this.disposed || !this.loaded || !state) return;
@@ -1559,20 +1585,29 @@ export class World {
     const newRun = this.runId !== state.runId;
     if (newRun) { this.clearPresentation(); this.runId = state.runId; }
     this.justEnteredArea = newRun || this.areaId !== state.areaId;
-    if (this.justEnteredArea) this.loadArea(state.areaId, state);
-    if (!this.area) return;
-    this.pendingEventFrame = this.presentationEventFrame(state.events || []);
-    this.unreadDeathActors = new Set();
-    this.pendingReviveActors ||= new Set();
-    for (const event of this.pendingEventFrame.fresh) if (event.type === 'revive') {
-      const id = event.targetId || event.heroId;
-      if (id) {
-        const existing = this.eventActor(id), key = existing?.id || ((state.party || []).some(hero => hero.id === id) ? 'party:' : 'enemy:') + id;
-        this.pendingReviveActors.add(key);
-      }
+    if (this.justEnteredArea) {
+      this.loadArea(state.areaId, state);
+      this.lockEnvironmentTransforms(this.areaGroup);
     }
-    for (const event of this.pendingEventFrame.fresh) if (event.type === 'hit') {
-      const id = event.targetId || event.heroId; this.unreadDeathActors.add('party:' + id); this.unreadDeathActors.add('enemy:' + id);
+    if (!this.area) return;
+    // A transaction replaces the event array. Ordinary movement keeps it intact.
+    const events = state.events || NO_EVENTS;
+    const eventsChanged = !Number.isSafeInteger(state.revision) || this.eventSource !== events || this.eventRevision !== state.revision;
+    if (eventsChanged) {
+      this.pendingEventFrame = this.presentationEventFrame(events);
+      this.pendingReviveActors ||= new Set();
+      for (const event of this.pendingEventFrame.fresh) {
+        const id = event.targetId || event.heroId;
+        if (event.type === 'revive' && id) {
+          const existing = this.eventActor(id);
+          const key = existing?.id || ((state.party || []).some(hero => hero.id === id) ? 'party:' : 'enemy:') + id;
+          this.pendingReviveActors.add(key);
+        } else if (event.type === 'hit') {
+          this.unreadDeathActors ||= new Set();
+          this.unreadDeathActors.add('party:' + id);
+          this.unreadDeathActors.add('enemy:' + id);
+        }
+      }
     }
     const paused = state.mode === 'dialogue';
     const animationDelta = paused ? 0 : dt;
@@ -1585,11 +1620,15 @@ export class World {
       this.lastBattleSeen = this.time;
     } else if (this.visualBattle && this.time > Math.max((this.lastBattleSeen || 0) + COMBAT_MOTION.duration, (this.timeline || 0) + COMBAT_MOTION.finishPad) && !hasUnsettledDeath(this.actors)) this.visualBattle = null;
     const presentation = this.visualBattle ? { ...state, battle: this.visualBattle } : state;
-    this.syncInteractions(presentation);
+    const encounterId = presentation.battle?.encounterId ?? null;
+    if (!Number.isSafeInteger(state.revision) || this.interactionRevision !== state.revision ||
+        this.interactionFlags !== state.flags || this.interactionEncounter !== encounterId) {
+      this.syncInteractions(presentation);
+    }
     this.playCues();
     this.syncBattle(presentation, animationDelta);
     this.syncParty(presentation, animationDelta, presentation.battle);
-    this.readEvents(state);
+    if (eventsChanged) this.readEvents(state);
     this.playCues();
     for (const [id, actor] of this.actors) if ((id.startsWith('npc:') || id.startsWith('encounter:')) && actor.wrapper.visible) {
       const actorDelta = this.browserPerformance?.shouldUpdateActor(actor, animationDelta, { critical: false }) ?? animationDelta;
@@ -1606,12 +1645,11 @@ export class World {
     const destination = inBattle ? this.battleCenter : point(state.position || state.hero);
     const desired = (this.cameraTarget ||= new T.Vector3()).set(destination.x, 0.4, destination.z);
     this.focus.lerp(desired, this.justEnteredArea || this.reducedMotion ? 1 : 1 - Math.exp(-dt * 4.4));
-    const rect = this.canvas.getBoundingClientRect();
+    const rect = this.browserPerformance?.viewport ?? this.canvas.getBoundingClientRect();
     const aspect = Math.max(0.25, rect.width / Math.max(1, rect.height));
     this.areaGroup.visible = !inBattle;
     this.battleStage.visible = inBattle;
     if (inBattle) {
-      for (const [id, actor] of this.actors) if (id.startsWith('npc:') || id.startsWith('encounter:')) actor.wrapper.visible = false;
       const hud = globalThis.document?.getElementById('actHud');
       this.battleLayoutCache ||= new BattleLayoutCache();
       if(hud!==this.observedHud){
@@ -1637,10 +1675,12 @@ export class World {
         for(const x of [-.75,.75])for(const z of [-.75,.75])for(const y of [0,bodyHeight+(side==='enemy'?1.05:0)])
           points.push([slot.x+x,floor+y-1,slot.z+z]);
       });
+      const compact = hud?.ownerDocument.documentElement.hasAttribute('data-compact-ui');
+      const topHeading = heading?.height && !(compact && panel?.height && heading.top >= panel.top);
       const insets = {
-        right:party?.width ? rect.right-party.left+8 : (rect.width<=900?150:186),
-        top:Math.max(heading?.height?heading.bottom-rect.top:95,turnOrder?.height?turnOrder.bottom-rect.top:0)+8,
-        bottom:panel?.height ? rect.bottom-panel.top+60 : (rect.width<=900?195:130),
+        right:party?.width && party.height ? rect.right-party.left+8 : compact ? 0 : (rect.width<=900?150:186),
+        top:Math.max(topHeading?heading.bottom-rect.top:compact?0:95,turnOrder?.height?turnOrder.bottom-rect.top:0)+8,
+        bottom:panel?.height ? rect.bottom-panel.top+(compact?8:60) : compact ? 0 : (rect.width<=900?195:130),
       };
       return fitBattleCamera(points,rect.width,rect.height,insets);
       });
@@ -1723,10 +1763,15 @@ export class World {
     if(!rect.width||!rect.height||clientX<rect.left||clientX>rect.right||clientY<rect.top||clientY>rect.bottom)return null;
     this.pointer.set((clientX-rect.left)/rect.width*2-1,1-(clientY-rect.top)/rect.height*2);
     this.raycaster.setFromCamera(this.pointer,this.activeCamera);
-    this.scene.updateMatrixWorld(true);
     const roots=[];
     const shown=object=>{for(let parent=object;parent;parent=parent.parent)if(!parent.visible)return false;return true;};
-    for(const unit of this.state.battle.enemies){if(unit.hp<=0)continue;const actor=this.actors.get(`enemy:${unit.uid}`);if(!actor||!shown(actor.wrapper))continue;actor.root.traverse(object=>{if(object.isMesh&&shown(object))roots.push(object);});}
+    for (const unit of this.state.battle.enemies) {
+      if (unit.hp <= 0) continue;
+      const actor = this.actors.get(`enemy:${unit.uid}`);
+      if (!actor || !shown(actor.wrapper)) continue;
+      actor.wrapper.updateMatrixWorld(true);
+      actor.root.traverseVisible(object => { if (object.isMesh) roots.push(object); });
+    }
     const hit=this.raycaster.intersectObjects(roots,false)[0];
     if(!hit)return null;
     let object=hit.object;while(object){if(object.userData.combatUid)return object.userData.combatUid;object=object.parent;}
@@ -1739,14 +1784,15 @@ export class World {
     if (!rect.width || !rect.height || clientX < rect.left || clientX > rect.right || clientY < rect.top || clientY > rect.bottom) return null;
     this.pointer.set((clientX - rect.left) / rect.width * 2 - 1, 1 - (clientY - rect.top) / rect.height * 2);
     this.raycaster.setFromCamera(this.pointer, this.camera);
-    this.scene.updateMatrixWorld(true);
     const proxies = this.interactables.filter(item => item.group.visible && item.proxy.visible).map(item => item.proxy);
+    for (const proxy of proxies) proxy.updateWorldMatrix(true, false);
     const hits = this.raycaster.intersectObjects(proxies, false);
     if (hits.length) {
       const item = hits[0].object.userData.interaction;
       return { x: item.definition.x, z: item.definition.z, id: item.id, kind: item.kind };
     }
     const terrain = this.ground.parent?.children.filter(object => object.isMesh) || [this.ground];
+    for (const mesh of terrain) mesh.updateWorldMatrix(true, false);
     const groundHit = this.raycaster.intersectObjects(terrain, false)[0];
     let hit = groundHit?.point;
     if (!hit) { hit = new T.Vector3(); if (!this.raycaster.ray.intersectPlane(this.groundPlane, hit)) return null; }
@@ -1760,10 +1806,9 @@ export class World {
     return { x: rect.left + (p.x * 0.5 + 0.5) * rect.width, y: rect.top + (0.5 - p.y * 0.5) * rect.height, visible: p.z > -1 && p.z < 1 && Math.abs(p.x) < 1.1 && Math.abs(p.y) < 1.1 };
   }
 
-  resize() {
+  resize(rect = this.canvas.getBoundingClientRect()) {
     if (this.disposed) return;
     this.invalidateLayout();
-    const rect = this.canvas.getBoundingClientRect();
     const width = Math.max(1, Math.floor(rect.width || this.canvas.clientWidth || 1));
     const height = Math.max(1, Math.floor(rect.height || this.canvas.clientHeight || 1));
     // BrowserPerformance owns the budgeted backing size. Avoid allocating a CSS-sized

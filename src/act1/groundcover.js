@@ -278,6 +278,11 @@ export class Groundcover {
     }
     chunk.species.clear();
     cover.group.add(chunk.group);
+    chunk.group.updateWorldMatrix(true, true);
+    chunk.group.traverse(object => {
+      object.matrixAutoUpdate = false;
+      object.matrixWorldAutoUpdate = false;
+    });
     cover.chunks.set(cellKey(i, j), chunk);
     return chunk;
   }

@@ -25,8 +25,8 @@ export class BrowserPerformance {
   }
   resetTiming(){this.lastFrame=0;this.slow=0;this.fast=0;this.actorClocks=new WeakMap();}
   setQuality(value){const quality=LIMITS[value]?value:'high';this.world.terrainMaterials?.setQuality(quality);if(quality===this.quality)return false;this.quality=quality;this.scale=1;this.ema=16.67;this.resetTiming();return true;}
-  resize(){
-    const renderer=this.world.renderer,canvas=this.world.canvas,rect=canvas.getBoundingClientRect(),limits=LIMITS[this.quality];
+  resize(rect=this.viewport??this.world.canvas.getBoundingClientRect()){
+    const renderer=this.world.renderer,canvas=this.world.canvas,limits=LIMITS[this.quality];
     const cssWidth=Math.max(1,Math.round(rect.width||canvas.clientWidth||1)),cssHeight=Math.max(1,Math.round(rect.height||canvas.clientHeight||1));
     let density=Math.min(globalThis.devicePixelRatio||1,limits.density)*this.scale;
     density=Math.min(density,Math.sqrt(limits.pixels/(cssWidth*cssHeight)));
@@ -37,7 +37,7 @@ export class BrowserPerformance {
     this.width=width;this.height=height;
   }
   begin(dt){
-    if(this.hidden||globalThis.document?.hidden){this.resetTiming();return false;}
+    if(this.hidden||globalThis.document?.hidden)return false;
     const ratio=globalThis.devicePixelRatio||1;if(ratio!==this.pixelRatio){this.pixelRatio=ratio;this.resize();}
     const time=now();
     if(!this.world.loaded||!(dt>0)){this.lastFrame=time;return true;}
@@ -78,7 +78,13 @@ export function installBrowserPerformance(World){
   if(p.__browserPerformanceInstalled)return;p.__browserPerformanceInstalled=true;
   const render=p.render,resize=p.resize,quality=p.quality,dispose=p.dispose;
   const controller=world=>world.browserPerformance??=new BrowserPerformance(world);
-  p.resize=function(...args){const performance=controller(this);resize.apply(this,args);performance.resize();};
+  p.resize=function(){
+    if(this.disposed)return;
+    const performance=controller(this),previous=performance.viewport,rect=this.canvas.getBoundingClientRect();
+    performance.viewport=rect;
+    if(!previous||rect.width!==previous.width||rect.height!==previous.height||rect.left!==previous.left||rect.top!==previous.top)resize.call(this,rect);
+    performance.resize(rect);
+  };
   p.quality=function(value,...args){const performance=controller(this),changed=performance.setQuality(value);if(!changed&&this.qualityLevel===performance.quality){performance.resize();return;}return quality.call(this,performance.quality,...args);};
   p.render=function(state,dt=0){if(!controller(this).begin(dt))return;return render.call(this,state,dt);};
   p.dispose=function(...args){this.browserPerformance?.dispose();return dispose.apply(this,args);};
