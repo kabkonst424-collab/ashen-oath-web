@@ -1,9 +1,9 @@
 import {SLOT_LABELS} from './equipment-slots.js?v=campaign-150';
 
-const RARITY = { common:'Обычный', uncommon:'Необычный', rare:'Редкий' };
+import {ITEM_QUALITIES, itemQuality} from './item-quality.js?v=campaign-170';
 
 export function itemRarity(def) {
-  return RARITY[def?.rarity] || '';
+  return ITEM_QUALITIES[itemQuality(def)]?.label || '';
 }
 
 export function durabilityLabel(condition) {

@@ -1,11 +1,14 @@
+import {ENCOUNTER_OPENINGS, applyOpening} from './encounter-openings.js?v=campaign-170';
 import {AREA_GEOMETRY_REVISION, legacyPosition, migratePosition, nearestLand, returnArrival, walkableLayout} from './area-geometry.js?v=rivers-0181';
 import {roleCatalog} from './hero-abilities.js?v=campaign-v1';
-import * as CONTENT from './content.js?v=campaign-150';
-import {chestLoot,encounterLoot,enemyLoot,rollLoot} from './loot-tables.js?v=forged-019';
-import {ACT_ENTRY_LEVELS, BOSS_CHAPTER_PRESSURE, LEVEL_CAP, STARTERS, experienceAtLevel, experienceThreshold, runedSkill, talentBonuses, talentCatalog, validTalents} from './campaign-progression.js?v=campaign-130';
+import * as CONTENT from './content.js?v=campaign-170';
+import {chestLoot,encounterLoot,enemyLoot,rollLoot} from './loot-tables.js?v=campaign-170';
+import {ITEM_QUALITIES, itemQuality} from './item-quality.js?v=campaign-170';
+import {POWER_KEYS, attributeBonuses, attributeCatalog, validAttributeRanks} from './hero-attributes.js?v=campaign-170';
+import {ACT_ENTRY_LEVELS, BOSS_CHAPTER_PRESSURE, LEVEL_CAP, STARTERS, experienceAtLevel, experienceThreshold, runedSkill, talentBonuses, talentCatalog, validTalents} from './campaign-progression.js?v=campaign-170';
 import {BAG_SIZE, LEGACY_BAG_SIZE, EQUIPMENT_SLOTS, LEGACY_EQUIPMENT_SLOTS, emptyEquipment, isEquipmentKind, RESISTANCE_KEYS, effectiveResistance} from './equipment-slots.js?v=campaign-150';
 
-export const VERSION='1.5.0';
+export const VERSION='1.7.0';
 export const SCHEMA=3;
 export const LEGACY_SCHEMA=2;
 export {BAG_SIZE};
@@ -34,6 +37,7 @@ const kind=item=>item.kind||item.type;
 const fail=message=>{throw Error(message);};
 const result=(ok,message,extra={})=>({ok,message,...extra});
 const totalExperience=hero=>experienceAtLevel(hero.level)+hero.xp;
+const heroAttributes=(s,heroId)=>s.attributes?.[heroId]||{};
 const learnedTalents=(s,heroId)=>s.talents?.[heroId]||[];
 const heroSkill=(s,heroId,skill)=>runedSkill(heroId,skill,learnedTalents(s,heroId));
 function emit(s,type,message,data={}){s.events.push({type,message,...data});if(s.events.length>40)s.events.splice(0,s.events.length-40);}
@@ -72,19 +76,36 @@ function insertItems(s,items){
   while(qty){const free=bag.indexOf(null);if(free<0)fail('В сумке нет места. Освободите ячейку.');const moved=Math.min(qty,max);bag[free]=itemRecord(s.runId,next++,id,moved);qty-=moved;}
  }s.bag=bag;s.nextUid=next;
 }
-function resistanceStats(source={},factor=1){
- return Object.fromEntries(RESISTANCE_KEYS.map(key=>[key,Math.floor((source[key]||0)*factor)]));
+const PERCENT_STATS=[...RESISTANCE_KEYS,...POWER_KEYS];
+function percentageStats(source={},factor=1){
+ return Object.fromEntries(PERCENT_STATS.map(key=>[key,Math.floor((source[key]||0)*factor)]));
 }
-function heroBase(def,level){const b=def.stats||def;return {hp:(b.hp||b.maxHp||120)+(level-1)*16,mp:(b.mp||b.maxMp||30)+(level-1)*5,atk:(b.atk||20)+(level-1)*3,def:(b.def||12)+(level-1)*2,speed:(b.speed||12)+(level-1),initiative:(b.initiative??b.speed??12)+(level-1),...resistanceStats(b)};}
-const STAT_KEYS=['hp','mp','atk','def','speed','initiative',...RESISTANCE_KEYS];
+function heroBase(def,level){const b=def.stats||def;return {hp:(b.hp||b.maxHp||120)+(level-1)*16,mp:(b.mp||b.maxMp||30)+(level-1)*5,atk:(b.atk||20)+(level-1)*3,def:(b.def||12)+(level-1)*2,speed:(b.speed||12)+(level-1),initiative:(b.initiative??b.speed??12)+(level-1),...percentageStats(b)};}
+const STAT_KEYS=['hp','mp','atk','def','speed','initiative',...PERCENT_STATS];
 function gearBonuses(item){
  const stats=ITEMS[item.defId]?.stats||{},factor=durabilityInfo(item)?.combatFactor??1;
  return {hp:stats.hp??stats.maxHp??0,mp:stats.mp??stats.maxMp??0,
   atk:stats.atk>0?Math.floor(stats.atk*factor):stats.atk||0,
   def:stats.def>0?Math.floor(stats.def*factor):stats.def||0,
-  speed:stats.speed||0,initiative:stats.initiative??stats.speed??0,...resistanceStats(stats,factor)};
+  speed:stats.speed||0,initiative:stats.initiative??stats.speed??0,...percentageStats(stats,factor)};
 }
-export function stats(s,heroId){const hero=s.party.find(h=>h.id===heroId);if(!hero)return null;const out=heroBase(PARTY[heroId],hero.level);for(const slot of SLOTS){const item=s.gear[heroId]?.[slot];if(!item)continue;const bonuses=gearBonuses(item);for(const key of STAT_KEYS)out[key]+=bonuses[key];}const talents=talentBonuses(heroId,learnedTalents(s,heroId));for(const key of STAT_KEYS)out[key]+=talents[key]||0;out.initiative=Math.max(1,Math.round(out.initiative));out.maxHp=out.hp;out.maxMp=out.mp;return out;}
+export function stats(s,heroId){
+ const hero=s.party.find(h=>h.id===heroId);
+ if(!hero)return null;
+ const out=heroBase(PARTY[heroId],hero.level);
+ for(const slot of SLOTS){
+  const item=s.gear[heroId]?.[slot];
+  if(!item)continue;
+  const bonuses=gearBonuses(item);
+  for(const key of STAT_KEYS)out[key]+=bonuses[key];
+ }
+ const talents=talentBonuses(heroId,learnedTalents(s,heroId));
+ const attributes=attributeBonuses(heroAttributes(s,heroId));
+ for(const key of STAT_KEYS)out[key]+=(talents[key]||0)+(attributes[key]||0);
+ out.initiative=Math.max(1,Math.round(out.initiative));
+ out.maxHp=out.hp;out.maxMp=out.mp;
+ return out;
+}
 function refresh(s,full=false){for(const hero of s.party){const value=stats(s,hero.id);hero.maxHp=value.hp;hero.maxMp=value.mp;hero.hp=full?value.hp:clamp(hero.hp,0,value.hp);hero.mp=full?value.mp:clamp(hero.mp,0,value.mp);}}
 function recruit(s,id){if(s.party.some(hero=>hero.id===id))return;if(!PARTY[id]||s.party.length>=4)fail('Этот спутник недоступен');const level=Math.max(1,Math.floor(s.party.reduce((sum,h)=>sum+h.level,0)/(s.party.length||1)));const base=heroBase(PARTY[id],level);s.party.push({id,level,xp:0,hp:base.hp,mp:base.mp,maxHp:base.hp,maxMp:base.mp});s.gear[id]=emptyEquipment();const starting=PARTY[id].startingGear||{};for(const slot of SLOTS)if(starting[slot]){const defId=typeof starting[slot]==='string'?starting[slot]:starting[slot].id;itemDefinition(defId);s.gear[id][slot]=createItem(s,defId);}refresh(s);const joined=s.party.find(h=>h.id===id);joined.hp=joined.maxHp;joined.mp=joined.maxMp;emit(s,'recruit',PARTY[id].name+' присоединяется к отряду.',{heroId:id});}
 export function progressionInfo(s,heroId){
@@ -94,7 +115,12 @@ export function progressionInfo(s,heroId){
 }
 export function talentInfo(s,heroId){
  const hero=s.party.find(h=>h.id===heroId);
- return hero ? talentCatalog(hero,learnedTalents(s,heroId),s.mode) : null;
+ if(!hero)return null;
+ const learned=learnedTalents(s,heroId),info=talentCatalog(hero,learned,s.mode);
+ for(const branch of info.branches)for(const node of branch.nodes){
+  node.refundable=node.learned&&validTalents(hero,learned.filter(id=>id!==node.id));
+ }
+ return info;
 }
 export function learnTalent(s,heroId,talentId){return transact(s,next=>{
  const entry=talentInfo(next,heroId)?.branches.flatMap(b=>b.nodes).find(n=>n.id===talentId);
@@ -105,6 +131,15 @@ export function learnTalent(s,heroId,talentId){return transact(s,next=>{
  refresh(next);
  return {message:'Изучен талант «'+entry.name+'».',heroId,talentId};
 });}
+export function refundTalent(s,heroId,talentId){return transact(s,next=>{
+ if(next.mode!=='explore')fail('Перераспределение доступно в пути');
+ const node=talentInfo(next,heroId)?.branches.flatMap(branch=>branch.nodes).find(entry=>entry.id===talentId);
+ if(!node?.learned)fail('Этот талант ещё не изучен');
+ if(!node.refundable)fail('Сначала верните очки зависимых талантов');
+ next.talents[heroId]=learnedTalents(next,heroId).filter(id=>id!==talentId);
+ refresh(next);
+ return {message:'Возвращено одно очко талантов.',heroId,talentId};
+});}
 export function resetTalents(s,heroId){return transact(s,next=>{
  if(next.mode!=='explore')fail('Перераспределение доступно в пути');
  if(!next.party.some(h=>h.id===heroId))fail('Спутник не найден');
@@ -112,6 +147,46 @@ export function resetTalents(s,heroId){return transact(s,next=>{
  delete next.talents[heroId];
  refresh(next);
  return {message:'Очки талантов возвращены.',heroId};
+});}
+
+export function resetSpecialization(s,heroId){return transact(s,next=>{
+ if(next.mode!=='explore')fail('Перераспределение доступно в пути');
+ const branch=talentInfo(next,heroId)?.branches.find(b=>b.id==='specialization');
+ const choice=branch?.nodes.find(node=>node.alternative&&node.learned);
+ if(!choice)fail('Специализация ещё не выбрана');
+ next.talents[heroId]=next.talents[heroId].filter(id=>id!==choice.id);
+ return {message:'Очко специализации возвращено.',heroId};
+});}
+
+export function attributeInfo(s,heroId){
+ const hero=s.party.find(h=>h.id===heroId);
+ return hero ? attributeCatalog(hero.level,heroAttributes(s,heroId),s.mode) : null;
+}
+export function trainAttribute(s,heroId,attributeId){return transact(s,next=>{
+ const entry=attributeInfo(next,heroId)?.entries.find(row=>row.id===attributeId);
+ if(!entry)fail('Неизвестная характеристика');
+ if(!entry.available)fail(entry.reason);
+ next.attributes??={};
+ (next.attributes[heroId]??={})[attributeId]=entry.rank+1;
+ refresh(next);
+ return {message:entry.name+' повышена.',heroId,attributeId};
+});}
+export function refundAttribute(s,heroId,attributeId){return transact(s,next=>{
+ if(next.mode!=='explore')fail('Перераспределение доступно в пути');
+ const row=attributeInfo(next,heroId)?.entries.find(entry=>entry.id===attributeId);
+ if(!row?.rank)fail('Характеристика ещё не повышалась');
+ const ranks=next.attributes[heroId];
+ if(row.rank===1)delete ranks[attributeId];
+ else ranks[attributeId]--;
+ refresh(next);
+ return {message:'Возвращено одно очко характеристик.',heroId,attributeId};
+});}
+export function resetAttributes(s,heroId){return transact(s,next=>{
+ if(next.mode!=='explore')fail('Перераспределение доступно в пути');
+ if(!attributeInfo(next,heroId)?.spent)fail('Очки характеристик ещё не потрачены');
+ delete next.attributes[heroId];
+ refresh(next);
+ return {message:'Очки характеристик возвращены.',heroId};
 });}
 
 function grantHeroXP(s,hero,amount){
@@ -186,7 +261,7 @@ function transact(s,work){try{const next=clone(s),answer=work(next);if(answer?.o
 export function newGame(starterId='alar'){
  if(!STARTERS.includes(starterId)||!PARTY[starterId])fail('Выберите начального героя');
  const firstArea=AREAS.monastery||list(CONTENT.AREAS)[0],spawn=firstArea.spawn||{x:-8,z:19};
- const s={schema:SCHEMA,mapRevision:AREA_GEOMETRY_REVISION,contentVersion:CONTENT.CONTENT_VERSION||1,runId:globalThis.crypto?.randomUUID?.()||'ashen-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,9),areaId:firstArea.id,position:{x:spawn.x,z:spawn.z},angle:Math.PI,mode:'explore',party:[],talents:{},bag:Array(BAG_SIZE).fill(null),gear:{},gold:120,flags:{},completedQuests:[],claimed:[],defeated:[],dialogue:null,battle:null,revision:0,nextUid:1,playSeconds:0,rng:748291,lastCamp:{areaId:firstArea.id,position:{x:spawn.x,z:spawn.z}},pendingRewards:[],events:[]};
+ const s={schema:SCHEMA,mapRevision:AREA_GEOMETRY_REVISION,contentVersion:CONTENT.CONTENT_VERSION||1,runId:globalThis.crypto?.randomUUID?.()||'ashen-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,9),areaId:firstArea.id,position:{x:spawn.x,z:spawn.z},angle:Math.PI,mode:'explore',party:[],talents:{},attributes:{},bag:Array(BAG_SIZE).fill(null),gear:{},gold:120,flags:{},completedQuests:[],claimed:[],defeated:[],dialogue:null,battle:null,revision:0,nextUid:1,playSeconds:0,rng:748291,lastCamp:{areaId:firstArea.id,position:{x:spawn.x,z:spawn.z}},pendingRewards:[],events:[]};
  s.lootRng=lootSeed(s.runId);recruit(s,starterId);
  const supplies=list(CONTENT.ITEMS).filter(item=>kind(item)==='consumable');
  const heal=supplies.find(item=>item.effect?.kind==='heal'),mp=supplies.find(item=>item.effect?.kind==='mp'),revival=supplies.find(item=>(item.effect||item.use)?.kind==='revive');
@@ -270,7 +345,7 @@ function restInternal(s,node){refresh(s,true);s.lastCamp={areaId:s.areaId,positi
 export function rest(s,nodeId){return transact(s,next=>{const node=objectById(next,nodeId)||nearby(next).find(o=>o.kind==='camp');checkNear(next,node);if(node.kind!=='camp')fail('Отдохнуть можно в лагере');return restInternal(next,node);});}
 
 function rng(s){let value=s.rng|0;value^=value<<13;value^=value>>>17;value^=value<<5;s.rng=value>>>0;return s.rng/4294967296;}
-function enemyStats(def){return {hp:def.stats?.hp||def.hp||80,mp:def.stats?.mp||0,atk:def.stats?.atk||def.atk||20,def:def.stats?.def||def.def||8,speed:def.stats?.speed||12,initiative:Math.max(1,Math.round(def.stats?.initiative??def.stats?.speed??12)),...resistanceStats(def.stats)};}
+function enemyStats(def){return {hp:def.stats?.hp||def.hp||80,mp:def.stats?.mp||0,atk:def.stats?.atk||def.atk||20,def:def.stats?.def||def.def||8,speed:def.stats?.speed||12,initiative:Math.max(1,Math.round(def.stats?.initiative??def.stats?.speed??12)),...percentageStats(def.stats)};}
 const isBoss=def=>def.kind==='boss'||!!def.boss;
 const DEFAULT_BOSS_PHASE=[{at:.5,damage:1.16,text:'Снимает печать'}];
 const phaseList=def=>def.phases||(isBoss(def)?DEFAULT_BOSS_PHASE:[]);
@@ -288,7 +363,32 @@ function advanceBossPhase(s,enemy,def){
  if(def.phases)enemy.phaseRound=s.battle.round;
  battleLog(s,def.name+': фаза '+enemy.phase+' · '+phase.text);
 }
-function startBattle(s,encounter){const enemies=encounter.enemies.map((id,i)=>{const def=ENEMIES[typeof id==='string'?id:id.kind||id.id];if(!def)fail('Неизвестный противник');const b=enemyStats(def);return {uid:encounter.id+':'+i,kind:def.id,hp:b.hp,maxHp:b.hp,mp:b.mp,phase:1,status:{},intent:'attack'};});s.mode='battle';s.dialogue=null;s.battle={encounterId:encounter.id,enemies,activeHeroId:s.party.find(h=>h.hp>0)?.id,round:1,acted:[],log:[],status:{},forced:!!(encounter.required||encounter.forced),boss:!!encounter.boss||enemies.some(e=>ENEMIES[e.kind].kind==='boss')};telegraph(s);battleLog(s,'Отряд вступает в бой.');beginRoundOrder(s);resolveInitiative(s);}
+function startBattle(s,encounter){
+ const opening=ENCOUNTER_OPENINGS[encounter.id];
+ const enemies=encounter.enemies.map((id,index)=>{
+  const def=ENEMIES[typeof id==='string'?id:id.kind||id.id];
+  if(!def)fail('Неизвестный противник');
+  const base=enemyStats(def);
+  const status=!opening&&encounter.openingGuard&&index===0 ? {guard:1} : {};
+  return {uid:encounter.id+':'+index,kind:def.id,hp:base.hp,maxHp:base.hp,mp:base.mp,phase:1,status,intent:'attack'};
+ });
+ s.mode='battle';
+ s.dialogue=null;
+ s.battle={encounterId:encounter.id,enemies,activeHeroId:s.party.find(h=>h.hp>0)?.id,round:1,acted:[],log:[],status:{},
+  forced:!!(encounter.required||encounter.forced),boss:!!encounter.boss||enemies.some(e=>ENEMIES[e.kind].kind==='boss')};
+ telegraph(s);
+ applyOpening(s.battle,opening);
+ battleLog(s,opening ? 'Начало боя · '+opening.title : encounter.openingGuard ?
+  'Отряд вступает в бой. Передний враг начал в защитной стойке.' : 'Отряд вступает в бой.');
+ beginRoundOrder(s);
+ resolveInitiative(s);
+}
+export function encounterOpeningInfo(s){
+ const battle=s.battle;
+ if(!battle?.openingApplied||battle.round!==1)return null;
+ const plan=ENCOUNTER_OPENINGS[battle.encounterId];
+ return plan ? {title:plan.title,readied:battle.enemies.filter(enemy=>enemy.hp>0&&!battle.completedTurns?.includes(enemy.uid)).length} : null;
+}
 function battleLog(s,message){s.battle.log.push(message);if(s.battle.log.length>30)s.battle.log.shift();emit(s,'battle',message);}
 function telegraph(s){for(const enemy of s.battle.enemies){
  if(enemy.hp<=0)continue;
@@ -302,19 +402,25 @@ function telegraph(s){for(const enemy of s.battle.enemies){
  const authored=skill?.telegraph&&(skill.intent?skill.intent===enemy.intent:!healBlocked&&enemy.intent!=='heavy');
  enemy.telegraph=authored?skill.telegraph:enemy.intent==='all'?'Готовит удар по всему отряду':enemy.intent==='heavy'?'Готовит мощный удар':enemy.intent==='guard'?'Готовится защищаться':enemy.intent==='heal'?'Готовит восстановление союзника':'Прицеливается в одного героя';
 }}
+const skillLevel=skill=>skill.level||skill.unlockLevel||1;
+const canLearnSkill=(s,hero,skill)=>hero.level>=skillLevel(skill)&&
+ (!skill.requiresTalent||learnedTalents(s,hero.id).includes(skill.requiresTalent));
+
 export function skillProgression(s,heroId){
  const hero=s.party.find(h=>h.id===heroId);if(!hero)return null;
  const skills=(PARTY[heroId].skills||[]).map(id=>SKILLS[id]).filter(Boolean).map(base=>{
-  const skill=heroSkill(s,heroId,base),unlockLevel=skill.level||skill.unlockLevel||1;
-  return {id:skill.id,name:skill.name,unlockLevel,unlocked:hero.level>=unlockLevel,cost:skillCost(skill),target:skill.target,kind:skill.kind,element:skill.element||'physical',runeId:skill.runeId||null};
+  const skill=heroSkill(s,heroId,base),unlockLevel=skillLevel(skill),unlocked=canLearnSkill(s,hero,skill);
+  const reason=unlocked?'':hero.level<unlockLevel?`Уровень ${unlockLevel}`:'Выберите этот талант в специализации';
+  return {id:skill.id,name:skill.name,unlockLevel,unlocked,reason,requiresTalent:skill.requiresTalent||null,
+   cost:skillCost(skill),target:skill.target,kind:skill.kind,element:skill.element||'physical',runeId:skill.runeId||null};
  });
- const locked=skills.filter(k=>!k.unlocked),nextUnlockLevel=locked.length?Math.min(...locked.map(k=>k.unlockLevel)):null;
+ const locked=skills.filter(k=>!k.unlocked&&!k.requiresTalent),nextUnlockLevel=locked.length?Math.min(...locked.map(k=>k.unlockLevel)):null;
  return {heroId,policy:'authored-levels',skills,unlocked:skills.filter(k=>k.unlocked),nextUnlockLevel,nextUnlocks:locked.filter(k=>k.unlockLevel===nextUnlockLevel)};
 }
 export function availableSkills(s,heroId=s.battle?.activeHeroId){
  const hero=s.party.find(h=>h.id===heroId);
  if(!hero)return [];
- return (PARTY[heroId].skills||[]).map(id=>SKILLS[id]).filter(skill=>skill&&hero.level>=(skill.level||skill.unlockLevel||1)).map(skill=>heroSkill(s,heroId,skill));
+ return (PARTY[heroId].skills||[]).map(id=>SKILLS[id]).filter(skill=>skill&&canLearnSkill(s,hero,skill)).map(skill=>heroSkill(s,heroId,skill));
 }
 /** Read-only methods for one fallen companion; choosing a method spends nothing. */
 export function revivalOptions(s,targetId){
@@ -353,14 +459,18 @@ export function reviveCompanion(s,targetId,request={}){return transact(s,next=>{
  else{
   const caster=next.party.find(h=>h.id===option.casterId),target=next.party.find(h=>h.id===targetId);
   caster.mp-=option.cost;
-  emit(next,'action',option.name,{actorId:caster.id,targetId,skillId:option.skillId,kind:'skill'});
+  emit(next,'action',option.name,{actorId:caster.id,targetId,skillId:option.skillId,kind:'skill',presentation:SKILLS[option.skillId].presentation});
   reviveHero(next,target,option.amount,caster.id);
  }
  const target=next.party.find(h=>h.id===targetId);
  return {message:PARTY[targetId].name+' возрождён: '+target.hp+' / '+target.maxHp+' HP.'};
 });}
 function heroStatus(s,id){return s.battle.status[id]||(s.battle.status[id]={});}
-function rolledDamage(attacker,defender,power,magic,roll){const raw=attacker.atk*(power||1)-(magic?.22:.55)*defender.def;return Math.max(3,Math.round(raw*(.94+roll*.12)));}
+function rolledDamage(attacker,defender,power,magic,roll){
+ const bonus=attacker[magic?'spellPower':'physicalPower']||0;
+ const raw=attacker.atk*(power||1)*(1+bonus/100)-(magic?.22:.55)*defender.def;
+ return Math.max(3,Math.round(raw*(.94+roll*.12)));
+}
 function damage(s,attacker,defender,power,magic=false){return rolledDamage(attacker,defender,power,magic,rng(s));}
 function enemyMultiplier(enemy,element='physical',ignoreGuard=false){
  const def=ENEMIES[enemy.kind],weak=def.weakness||def.weakElement;
@@ -394,8 +504,25 @@ function abilityEnemyStats(enemy){const out=enemyStats(ENEMIES[enemy.kind]);if(e
 function abilityPower(skill,enemy,secondary=false){const fx=abilityEffects(skill);return (skill?.power||1)*(fx.heavyPunish&&['heavy','all'].includes(enemy.intent)?1.45:1)*(secondary?.55:1);}
 function abilityFoes(s,skill,targetId){const living=(s.battle?.enemies||[]).filter(e=>e.hp>0);if(skill?.target==='allEnemies'||targetId==null)return living.map(enemy=>({enemy,secondary:false}));const primary=living.find(e=>e.uid===targetId);if(!primary)return [];const result=[{enemy:primary,secondary:false}];if(abilityEffects(skill).chain){const second=living.find(e=>e.uid!==primary.uid);if(second)result.push({enemy:second,secondary:true});}return result;}
 function abilityFriends(s,hero,skill,targetId){return skill?.target==='self'||skill?.kind==='taunt'?[hero]:skill?.target==='allAllies'||targetId==null?s.party:s.party.filter(h=>h.id===targetId);}
-function abilityHealAmount(s,hero,skill,ally){const st=stats(s,hero.id),power=skill.power||1,fx=abilityEffects(skill),base=Math.round(power>5?power:(st.atk+st.mp*.2)*power+24),bonus=fx.triage&&ally.hp/ally.maxHp<=fx.triage.threshold?fx.triage.bonus:0;return ally.hp>0?Math.min(ally.maxHp-ally.hp,base+bonus):0;}
-function abilityHealingUseful(s,hero,skill,ally){if(ally.hp<=0)return false;if(!s.battle)return ally.hp<ally.maxHp;const fx=abilityEffects(skill),effect=s.battle.status[ally.id]||{};return ally.hp<ally.maxHp||fx.manaTransfer&&ally.id!==hero.id&&ally.mp<ally.maxMp||fx.regen&&(effect.regen||0)<fx.regen.turns||fx.rallyMana&&abilityLowestMana(s,hero.id)?.id===ally.id;}
+function abilityHealPlan(st,skill,ally){
+ if(ally.hp<=0)return {total:0,triage:0};
+ const power=skill.power||1,triage=abilityEffects(skill).triage,missing=ally.maxHp-ally.hp;
+ const base=Math.round((power>5?power:(st.atk+st.mp*.2)*power+24)*(1+st.healingPower/100));
+ const eligible=triage&&ally.hp/ally.maxHp<=triage.threshold;
+ const bonus=eligible?Math.min(triage.bonus,Math.max(0,missing-base)):0;
+ return {total:Math.min(missing,base+bonus),triage:bonus};
+}
+const abilityHealAmount=(s,hero,skill,ally)=>abilityHealPlan(stats(s,hero.id),skill,ally).total;
+function abilityHealingUseful(s,hero,skill,ally){
+ if(ally.hp<=0)return false;
+ if(ally.hp<ally.maxHp)return true;
+ if(!s.battle)return false;
+ const fx=abilityEffects(skill),effect=s.battle.status[ally.id]||{};
+ const betterRegen=fx.regen&&((effect.regen||0)<fx.regen.turns||
+  abilityAmount(fx.regen,stats(s,hero.id))>(effect.regenPower||0));
+ return fx.manaTransfer&&ally.id!==hero.id&&ally.mp<ally.maxMp||betterRegen||
+  fx.rallyMana&&abilityLowestMana(s,hero.id)?.id===ally.id;
+}
 function abilityLowestMana(s,casterId){return s.party.filter(h=>h.hp>0&&h.id!==casterId&&h.mp<h.maxMp).sort((a,b)=>a.mp/a.maxMp-b.mp/b.maxMp)[0];}
 function abilityLowestHealth(s){return s.party.filter(h=>h.hp>0&&h.hp<h.maxHp).sort((a,b)=>a.hp/a.maxHp-b.hp/b.maxHp)[0];}
 function abilityPreviewEffects(s,hero,skill,targetId,targets){
@@ -403,10 +530,13 @@ function abilityPreviewEffects(s,hero,skill,targetId,targets){
  for(const {enemy}of foes){if(fx.ignoreGuard&&enemy.status.guard>0)add(enemy.uid,'ignoreGuard','Удар обходит защитную стойку');if(fx.stripGuard&&enemy.status.guard>0)add(enemy.uid,'stripGuard','Снимет защитную стойку');if(fx.burn)add(enemy.uid,'burn',periodicDamageName(fx.bleed)+' перед действиями противника',{amount:periodicDamage(enemy,fx,st),duration:fx.burn.turns,bleed:!!fx.bleed});if(fx.chill)add(enemy.uid,'chill','Ослабит следующую атаку',{amount:Math.max(enemy.status.chill>0?enemy.status.chillPower||0:0,fx.chill.percent),duration:1});if(fx.fracture)add(enemy.uid,'fracture','Броня ослаблена на 25%',{amount:25,duration:2});if(fx.disrupt)add(enemy.uid,'disrupt','Следующая магия заменится обычной атакой',{duration:2});if(fx.heavyPunish&&['heavy','all'].includes(enemy.intent))add(enemy.uid,'break','Прервёт тяжёлую подготовку, если нет восстановления равновесия',{duration:1});}
  if(skill.kind==='break')for(const {enemy}of foes)add(enemy.uid,'break','Нарушит равновесие: противник пропустит два действия',{duration:2});
  if(fx.chain&&targetId!=null&&foes.length>1)add(foes[1].enemy.uid,'chain','Цепь: дополнительный разряд 55% мощности');
- for(const ally of friends){if(ally.hp<=0&&skill.kind!=='revive')continue;if(fx.emergencyBarrier&&ally.hp>0&&ally.hp/ally.maxHp<=fx.emergencyBarrier.threshold)add(ally.id,'barrier','Экстренный барьер после лечения; не складывается',{amount:Math.max(abilityAmount(fx.emergencyBarrier,st),s.battle.status[ally.id]?.barrier||0),duration:fx.emergencyBarrier.turns});if(fx.triage&&ally.hp>0&&ally.hp/ally.maxHp<=fx.triage.threshold)add(ally.id,'triage','Экстренное исцеление: дополнительный предел',{amount:fx.triage.bonus});if(fx.manaTransfer&&ally.hp>0&&ally.id!==hero.id)add(ally.id,'mana','Восстановит ману',{amount:Math.min(fx.manaTransfer,ally.maxMp-ally.mp)});if(fx.barrier&&ally.hp>0)add(ally.id,'barrier','Барьер поглотит урон; не складывается',{amount:Math.max(abilityAmount(fx.barrier,st),s.battle.status[ally.id]?.barrier||0),duration:fx.barrier.turns});if(fx.regen&&ally.hp>0)add(ally.id,'regen','Восстановление в начале ходов союзника',{amount:Math.max(s.battle.status[ally.id]?.regen>0?s.battle.status[ally.id].regenPower||0:0,abilityAmount(fx.regen,st)),duration:fx.regen.turns});if(fx.reviveGuard&&ally.hp===0)add(ally.id,'guard','После возрождения урон снижен на 35% до хода союзника',{duration:1});}
- if(fx.counter)add(hero.id,'counter','Один ответный удар после физического попадания',{duration:2,amount:1});if(fx.cover&&targetId&&targetId!==hero.id)add(hero.id,'cover','Прикроет выбранного союзника: 30% урона примет Алар',{duration:2,protectsId:targetId});if(fx.tauntSelf)add(hero.id,'taunt','Одиночные атаки направлены на Радана; массовые не перенаправляются',{duration:2});
+ for(const ally of friends){if(skill.kind==='revive'?ally.hp>0:ally.hp<=0)continue;if(fx.emergencyBarrier&&ally.hp>0&&ally.hp/ally.maxHp<=fx.emergencyBarrier.threshold)add(ally.id,'barrier','Экстренный барьер после лечения; не складывается',{amount:Math.max(abilityAmount(fx.emergencyBarrier,st),s.battle.status[ally.id]?.barrier||0),duration:fx.emergencyBarrier.turns});const extraHeal=fx.triage?abilityHealPlan(st,skill,ally).triage:0;if(extraHeal)add(ally.id,'triage','Экстренное исцеление с учётом свободного HP',{amount:extraHeal});if(fx.manaTransfer&&ally.hp>0&&ally.id!==hero.id)add(ally.id,'mana','Восстановит ману',{amount:Math.min(fx.manaTransfer,ally.maxMp-ally.mp)});if(fx.barrier)add(ally.id,'barrier','Барьер поглотит урон; не складывается',{amount:Math.max(abilityAmount(fx.barrier,st),s.battle.status[ally.id]?.barrier||0),duration:fx.barrier.turns});if(fx.regen&&ally.hp>0)add(ally.id,'regen','Восстановление в начале ходов союзника',{amount:Math.max(s.battle.status[ally.id]?.regen>0?s.battle.status[ally.id].regenPower||0:0,abilityAmount(fx.regen,st)),duration:fx.regen.turns});if(fx.reviveGuard&&ally.hp===0)add(ally.id,'guard','После возрождения урон снижен на 35% до хода союзника',{duration:1});}
+ if(fx.counter)add(hero.id,'counter','Один ответный удар после физического попадания',{duration:2,amount:1});if(fx.cover&&targetId&&targetId!==hero.id)add(hero.id,'cover','Прикроет выбранного союзника. 30% урона примет '+PARTY[hero.id].name,{duration:2,protectsId:targetId});if(fx.tauntSelf)add(hero.id,'taunt','Одиночные атаки принимает '+PARTY[hero.id].name+'. Массовые не перенаправляются',{duration:2});
  if(fx.rallyMana){const ally=abilityLowestMana(s,hero.id);if(ally)add(ally.id,'mana','Поддержит самого истощённого спутника',{amount:Math.min(fx.rallyMana,ally.maxMp-ally.mp)});}
- if(fx.restoreSelfMana)add(hero.id,'mana','Восстановит собственную ману',{amount:Math.min(fx.restoreSelfMana,hero.maxMp-hero.mp)});
+ if(fx.restoreSelfMana&&hero.mp>=skillCost(skill)){
+  const afterCost=hero.mp-skillCost(skill),restored=Math.min(fx.restoreSelfMana,hero.maxMp-afterCost);
+  add(hero.id,'mana','Восстановит собственную ману после оплаты умения',{amount:restored,mpAfter:afterCost+restored});
+ }
  if(fx.lifeHeal){const ally=abilityLowestHealth(s),damage=targets.filter(t=>t.effect==='damage').reduce((n,t)=>n+t.max,0);if(ally)add(ally.id,'lifeHeal','Свет исцелит самого раненого живого спутника',{min:Math.min(ally.maxHp-ally.hp,Math.round(targets.reduce((n,t)=>n+(t.effect==='damage'?t.min:0),0)*fx.lifeHeal)),max:Math.min(ally.maxHp-ally.hp,Math.round(damage*fx.lifeHeal))});}
  return enrichSupportPreview(s,hero,skill,targetId,enrichDebuffPreview(s,enrichRegenPreview(s,enrichBarrierPreview(s,result))));
 }
@@ -432,8 +562,35 @@ function wearDefence(s,id){
  const equipped=ADDITIONAL_WEAR_SLOTS.filter(slot=>s.gear[id]?.[slot]);
  if(equipped.length)wearEquipment(s,id,equipped[(s.battle.round+s.battle.turnIndex)%equipped.length],1);
 }
+const guardMultiplier=effect=>effect.guardMultiplier??.42;
+function guardPlan(current,multiplier,turns,untilRound=null){
+ const active=current.guard>0,prior=guardMultiplier(current);
+ const keep=active&&(prior<multiplier||prior===multiplier&&current.guard>=turns&&
+  (current.guardUntilRound??-1)>=(untilRound??-1));
+ return keep?{multiplier:prior,turns:current.guard,untilRound:current.guardUntilRound??null,kept:true}:
+  {multiplier,turns,untilRound,kept:false};
+}
+function setGuard(s,heroId,multiplier,turns,untilRound=null){
+ const effect=heroStatus(s,heroId);
+ const next=guardPlan(effect,multiplier,turns,untilRound);
+ effect.guard=next.turns;
+ effect.guardMultiplier=next.multiplier;
+ if(next.untilRound===null)delete effect.guardUntilRound;
+ else effect.guardUntilRound=next.untilRound;
+}
+function guardForecast(s,heroId,multiplier,turns,untilRound=null){
+ const status=s.battle.status[heroId]||{},next=guardPlan(status,multiplier,turns,untilRound);
+ const percent=value=>Math.round((1-value)*100);
+ const current={amount:status.guard>0?percent(guardMultiplier(status)):0,duration:status.guard||0};
+ const after={amount:percent(next.multiplier),duration:next.turns};
+ const output=previewTransition({targetId:heroId,kind:'guard'},current,after);
+ const durationText=next.untilRound===null?' · до '+after.duration+' начал хода':' · до конца раунда '+next.untilRound;
+ output.label=(next.kept?'Действующая защита сохраняется, ':'Защита после действия, ')+after.amount+'%'+durationText;
+ return output;
+}
+const skillGuardMultiplier=skill=>skill.kind==='guard'?clamp(1-(skill.power??.58),.05,1):.42;
 function guardedDamage(amount,effect){
- return effect.guard>0?Math.max(1,Math.round(amount*(effect.guardMultiplier??.42))):amount;
+ return effect.guard>0?Math.max(1,Math.round(amount*guardMultiplier(effect))):amount;
 }
 const redirectedShare=(amount,coverer)=>coverer?Math.min(coverer.hp,Math.round(amount*.3)):0;
 function abilityTakeHit(s,enemy,hero,amount,element,defences){
@@ -461,11 +618,29 @@ export function battlePreview(s,action={},targetId=action.targetId){
   }
  }else if(['heal','revive','guard','buff','taunt'].includes(effect)){
   const friends=abilityFriends(s,hero,skill,targetId);if(!friends.length){out.message='Выберите спутника';return out;}for(const ally of friends){let amount=0;if(effect==='heal')amount=abilityHealAmount(s,hero,skill,ally);if(effect==='revive'&&ally.hp===0)amount=Math.max(1,Math.round(ally.maxHp*((skill.power||.35)>1?.35:skill.power)));out.targets.push({id:ally.id,side:'party',name:PARTY[ally.id].name,min:amount,max:amount,effect,alive:ally.hp>0});}
- }else if(effect==='defend')out.message='Урон снижен на 58% до следующего хода этого героя.';else{out.message='Для этого действия нет прогноза';return out;}
+ }else if(effect==='defend'){
+  const guard=guardForecast(s,hero.id,.42,1);
+  out.additionalEffects=[guard];
+  out.message=guard.label;
+ }else{out.message='Для этого действия нет прогноза';return out;}
  if(skill){
   out.additionalEffects=abilityPreviewEffects(s,hero,skill,targetId,out.targets);
-  for(const t of out.targets)if(t.vulnerable&&ENEMIES[s.battle.enemies.find(enemy=>enemy.uid===t.id)?.kind]?.phases){
-   out.additionalEffects.push({targetId:t.id,kind:'bossResolve',label:'Уязвимость: ×1,5 к урону. Сбивает действие прерывающий приём.'});
+  if(out.affordable&&(out.cost>0||fx.restoreSelfMana)){
+   out.manaAfter=out.additionalEffects.find(entry=>entry.kind==='mana'&&Number.isFinite(entry.mpAfter))?.mpAfter??
+    hero.mp-out.cost;
+  }
+ }
+ for(const target of out.targets){
+  if(!target.vulnerable)continue;
+  const enemy=s.battle.enemies.find(unit=>unit.uid===target.id);
+  if(ENEMIES[enemy.kind].phases){
+   out.additionalEffects.push({targetId:target.id,kind:'bossResolve',label:'Уязвимость даёт ×1,5 к урону. Сбивает действие прерывающий приём.'});
+  }else if(target.min<enemy.hp){
+   const otherBreak=out.additionalEffects.findIndex(entry=>entry.kind==='break'&&entry.targetId===target.id);
+   const [stagger]=enrichDebuffPreview(s,[{targetId:target.id,kind:'break',duration:2,
+    label:'Уязвимость: если цель выживет, она пропустит до двух действий.'}]);
+   if(otherBreak<0)out.additionalEffects.push(stagger);
+   else out.additionalEffects[otherBreak]=stagger;
   }
  }
  out.reason=skill?skillEligibility(s,hero,skill,targetId):'';out.canCommit=!out.reason&&out.affordable;out.ok=targetId==null?true:out.canCommit;if(out.reason&&targetId!=null){out.message=out.reason;return out;}
@@ -476,12 +651,18 @@ function skillEligibility(s,hero,skill,targetId){
 }
 function applySkill(s,hero,skill,targetId){
  const reason=skillEligibility(s,hero,skill,targetId);if(reason)fail(reason);const cost=skillCost(skill),fx=abilityEffects(skill),friends=abilityFriends(s,hero,skill,targetId),foes=abilityFoes(s,skill,targetId),priorHp=Object.fromEntries(friends.map(h=>[h.id,h.hp]));if(!['damage','break','heal','revive','guard','buff','taunt'].includes(skill.kind))fail('Неизвестное умение');hero.mp-=cost;const st=stats(s,hero.id);let dealt=0;
- emit(s,'action',skill.name,{actorId:hero.id,skillId:skill.id,targetId,kind:'skill',...(skill.runeId?{runeId:skill.runeId,element:skill.element}:{})});battleLog(s,PARTY[hero.id].name+': '+skill.name+'.');
+ emit(s,'action',skill.name,{actorId:hero.id,skillId:skill.id,targetId,kind:'skill',...(skill.presentation?{presentation:skill.presentation}:{}),...(skill.runeId?{runeId:skill.runeId,element:skill.element}:{})});battleLog(s,PARTY[hero.id].name+': '+skill.name+'.');
  if(['damage','break'].includes(skill.kind)){for(const {enemy:foe,secondary}of foes){if(fx.stripGuard)foe.status.guard=0;const before=foe.hp,amount=damage(s,st,abilityEnemyStats(foe),abilityPower(skill,foe,secondary),!!skill.element&&skill.element!=='physical');hitEnemy(s,foe,amount,skill.element,{ignoreGuard:fx.ignoreGuard});if(skill.kind==='break')applyBreak(foe);const actual=before-foe.hp;dealt+=actual;battleLog(s,ENEMIES[foe.kind].name+' получает '+actual+' урона.');emit(s,'hit',String(actual),{actorId:hero.id,targetId:foe.uid,amount:actual});}}
  else if(skill.kind==='heal'){for(const ally of friends)if(ally.hp>0){const amount=abilityHealAmount(s,hero,skill,ally);ally.hp+=amount;battleLog(s,PARTY[ally.id].name+' восстанавливает '+amount+' здоровья.');emit(s,'heal',String(amount),{actorId:hero.id,targetId:ally.id,amount});}}
  else if(skill.kind==='revive'){for(const ally of friends)if(ally.hp===0)reviveHero(s,ally,Math.round(ally.maxHp*(skill.power>1?.35:skill.power)),hero.id);}
- else if((skill.kind==='guard'||skill.kind==='buff')&&!fx.barrierOnly){for(const ally of friends)if(ally.hp>0){const effect=heroStatus(s,ally.id);effect.guard=2;if(skill.target==='allAllies')effect.guardUntilRound=s.battle.round+1;else delete effect.guardUntilRound;effect.guardMultiplier=skill.kind==='guard'?clamp(1-(skill.power??.58),.05,1):.42;if(skill.kind==='buff')effect.attack=3;}}
- else if(skill.kind==='taunt'){abilityProvoke(s,hero.id);if(!fx.tauntOnly)heroStatus(s,hero.id).guard=2;}
+ else if((skill.kind==='guard'||skill.kind==='buff')&&!fx.barrierOnly){
+  const untilRound=skill.target==='allAllies'?s.battle.round+1:null;
+  for(const ally of friends)if(ally.hp>0){
+   setGuard(s,ally.id,skillGuardMultiplier(skill),2,untilRound);
+   if(skill.kind==='buff')heroStatus(s,ally.id).attack=3;
+  }
+ }
+ else if(skill.kind==='taunt'){abilityProvoke(s,hero.id);if(!fx.tauntOnly)setGuard(s,hero.id,.42,2);}
  applyAbilityEffects(s,hero,skill,targetId,dealt,priorHp);
  if(dealt>0)wearEquipment(s,hero.id,'weapon',2);
  if(cost>0&&skill.element!=='physical')wearEquipment(s,hero.id,'charm',1);
@@ -598,7 +779,7 @@ export function battleAction(s,action){return transact(s,next=>{
  }else if(action.kind==='skill'){
   const skill=availableSkills(next,hero.id).find(skill=>skill.id===action.skillId);if(!skill)fail('Это умение ещё не изучено');applySkill(next,hero,skill,action.targetId);
  }else if(action.kind==='defend'){
-  heroStatus(next,hero.id).guard=1;delete heroStatus(next,hero.id).guardUntilRound;heroStatus(next,hero.id).guardMultiplier=.42;battleLog(next,PARTY[hero.id].name+' защищается.');emit(next,'action','Защита',{actorId:hero.id,targetId:hero.id,kind:'defend'});
+  setGuard(next,hero.id,.42,1);battleLog(next,PARTY[hero.id].name+' защищается.');emit(next,'action','Защита',{actorId:hero.id,targetId:hero.id,kind:'defend'});
  }else if(action.kind==='item'){
   emit(next,'action','Предмет',{actorId:hero.id,targetId:action.targetId,kind:'item'});consume(next,action.slot,action.targetId);battleLog(next,PARTY[hero.id].name+' использует предмет.');
  }else if(action.kind==='flee'){
@@ -612,6 +793,17 @@ function accepts(loc,item){if(!item||!loc.slot)return true;const def=itemDefinit
 export function moveItem(s,from,to,expectedUid,expectedRevision){if(expectedRevision!==s.revision)return result(false,'Сумка изменилась. Повторите перенос.');return transact(s,next=>{if(next.mode==='battle'||next.mode==='dialogue')fail('Переставлять снаряжение можно вне боя и разговора');const source=location(next,from),target=location(next,to),item=source.get(),other=target.get();if(!item||item.uid!==expectedUid)fail('Предмет уже перемещён');if(other?.uid===item.uid)fail('Выберите другую ячейку');if(!accepts(target,item)||!accepts(source,other))fail('Предмет не подходит для этого слота');const max=stackMax(itemDefinition(item.defId));if(!source.slot&&!target.slot&&other?.defId===item.defId&&max>1){const moved=Math.min(item.qty,max-other.qty);if(!moved)fail('Стопка заполнена');other.qty+=moved;item.qty-=moved;if(!item.qty)source.set(null);}else{source.set(other||null);target.set(item);}refresh(next);return {message:'Предмет перемещён'};});}
 export function equip(s,bagIndex,heroId,slot,expectedRevision=s.revision){return moveItem(s,{kind:'bag',index:bagIndex},{kind:'gear',heroId,slot},s.bag[bagIndex]?.uid,expectedRevision);}
 export function unequip(s,heroId,slot,bagIndex=s.bag.indexOf(null),expectedRevision=s.revision){return moveItem(s,{kind:'gear',heroId,slot},{kind:'bag',index:bagIndex},s.gear[heroId]?.[slot]?.uid,expectedRevision);}
+export function toggleItemFavorite(s,where,expectedUid,expectedRevision=s.revision){
+ if(expectedRevision!==s.revision)return result(false,'Сумка изменилась. Повторите действие.');
+ return transact(s,next=>{
+  if(!['explore','complete'].includes(next.mode))fail('Отметить вещь можно в пути');
+  const item=location(next,where).get();
+  if(!item||item.uid!==expectedUid||!isEquipment(itemDefinition(item.defId)))fail('Выберите снаряжение');
+  if(item.favorite)delete item.favorite;
+  else item.favorite=true;
+  return {message:item.favorite?'Вещь добавлена в избранное.':'Вещь убрана из избранного.',uid:item.uid};
+ });
+}
 export function splitItem(s,from,to,qty,expectedUid,expectedRevision){if(expectedRevision!==s.revision)return result(false,'Сумка изменилась. Повторите перенос.');return transact(s,next=>{if(next.mode!=='explore')fail('Сейчас нельзя разделить стопку');const a=location(next,from),b=location(next,to),item=a.get();if(a.slot||b.slot||b.get()||!item||item.uid!==expectedUid||!Number.isSafeInteger(qty)||qty<=0||qty>=item.qty)fail('Выберите пустую ячейку и часть стопки');item.qty-=qty;b.set(createItem(next,item.defId,qty));return {message:'Стопка разделена'};});}
 function consumablePlan(s,slot,targetId){
  const loc=location(s,Number.isSafeInteger(slot)?{kind:'bag',index:slot}:slot),item=loc.get();if(!item||loc.slot)fail('Выберите предмет в сумке');
@@ -651,6 +843,7 @@ export function sell(s,shopId,bagIndex,qty=1,expectedUid=s.bag[bagIndex]?.uid){r
  findShop(next,shopId);
  const item=next.bag[bagIndex];
  if(!item||item.uid!==expectedUid)fail('Предмет уже перемещён');
+ if(item.favorite)fail('Снимите отметку «Избранное», чтобы продать вещь');
  const def=itemDefinition(item.defId);
  if(['quest','key'].includes(kind(def))||def.sellable===false)fail('Этот предмет нужен для задания');
  if(!Number.isSafeInteger(qty)||qty<1||qty>item.qty)fail('Недопустимое количество');
@@ -731,6 +924,7 @@ export function snapshot(s){const out=clone(s);out.events=[];delete out.shopId;r
 export function upgradeCampaignState(s){
  if(s.mode==='complete'&&s.flags.act1_complete&&!s.flags.campaign_complete)s.mode='explore';
  s.talents??={};
+ s.attributes??={};
  return s;
 }
 
@@ -767,12 +961,16 @@ export function validate(s){
  if(s.talents!==undefined&&(!plainAbilityStatus(s.talents)||Object.entries(s.talents).some(([id,nodes])=>{
   const hero=s.party.find(h=>h.id===id);return !hero||!validTalents(hero,nodes);
  })))bad('таланты');
+ if(s.attributes!==undefined&&(!plainAbilityStatus(s.attributes)||Object.entries(s.attributes).some(([id,ranks])=>{
+  const hero=s.party.find(h=>h.id===id);return !hero||!validAttributeRanks(hero.level,ranks);
+ })))bad('характеристики');
  if(!Array.isArray(s.bag)||s.bag.length!==BAG_SIZE)bad('сумка');const uids=new Set();let maxUid=0;
  const checkItem=(item,slot=null,heroId=null)=>{
   if(item===null)return;
   const def=item&&ITEMS[item.defId];
   if(!def||typeof item.uid!=='string'||item.uid.length>150||!item.uid.startsWith(s.runId+':i')||uids.has(item.uid)||!int(item.qty,1,stackMax(def)))bad('предмет');
   if(item.durability!==undefined&&(!isEquipment(def)||!int(item.durability,0,MAX_DURABILITY)))bad('прочность предмета');
+  if(item.favorite!==undefined&&(item.favorite!==true||!isEquipment(def)))bad('избранный предмет');
   const suffix=Number(item.uid.slice((s.runId+':i').length));
   if(!int(suffix,1,1e8)||item.uid!==s.runId+':i'+suffix)bad('идентификатор предмета');
   maxUid=Math.max(maxUid,suffix);uids.add(item.uid);
@@ -792,6 +990,7 @@ export function validate(s){
  if(s.battle){
   const b=s.battle,encounter=area(s).encounters?.find(e=>e.id===b.encounterId);
   if(!encounter||s.defeated.includes(b.encounterId)||!int(b.round,1,10000)||!unique(b.acted)||b.acted.some(id=>!s.party.some(h=>h.id===id))||!s.party.some(h=>h.id===b.activeHeroId&&h.hp>0&&!b.acted.includes(h.id))||!Array.isArray(b.enemies)||b.enemies.length!==encounter.enemies.length||!Array.isArray(b.log)||b.log.length>30||b.log.some(line=>typeof line!=='string'||line.length>1000)||!plainAbilityStatus(b.status)||typeof b.forced!=='boolean'||typeof b.boss!=='boolean'||b.forced!==!!(encounter.required||encounter.forced))bad('бой');
+  if(b.openingApplied!==undefined&&(b.openingApplied!==true||!Object.hasOwn(ENCOUNTER_OPENINGS,b.encounterId)))bad('начало боя');
   const expectedBoss=!!encounter.boss||b.enemies.some(e=>ENEMIES[e.kind]?.kind==='boss');if(b.boss!==expectedBoss)bad('босс');
   for(let i=0;i<b.enemies.length;i++){
    const e=b.enemies[i],expected=encounter.enemies[i],id=typeof expected==='string'?expected:expected.kind||expected.id;
@@ -852,7 +1051,7 @@ export function fieldHealingOptions(s,targetId){
 export function healCompanion(s,targetId,request={}){return transact(s,next=>{
  if(next.mode!=='explore')fail('В бою используйте панель умений');if(request.revision!==undefined&&request.revision!==next.revision)fail('Отряд изменился. Выберите лечение заново.');
  const option=fieldHealingOptions(next,targetId).options.find(o=>o.casterId===request.casterId&&o.skillId===request.skillId);if(!option)fail('Это лечение недоступно');if(!option.enabled)fail(option.reason);
- const caster=next.party.find(h=>h.id===option.casterId);caster.mp-=option.cost;emit(next,'action',option.name,{actorId:caster.id,targetId,skillId:option.skillId,kind:'skill'});
+ const caster=next.party.find(h=>h.id===option.casterId);caster.mp-=option.cost;emit(next,'action',option.name,{actorId:caster.id,targetId,skillId:option.skillId,kind:'skill',presentation:SKILLS[option.skillId].presentation});
  for(const t of option.targets)if(t.amount>0){next.party.find(h=>h.id===t.id).hp+=t.amount;emit(next,'heal',String(t.amount),{actorId:caster.id,targetId:t.id,amount:t.amount});}
  return {message:option.name+': здоровье восстановлено.',targets:option.targets};
 });}
@@ -862,7 +1061,14 @@ export function organizeBag(s,expectedRevision=s.revision){if(expectedRevision!=
  if(!['explore','complete'].includes(next.mode))fail('Сначала завершите текущее действие');const groups=new Map();
  for(const entry of next.bag.filter(Boolean)){const group=groups.get(entry.defId)||[];group.push(entry);groups.set(entry.defId,group);}
  const arranged=[];for(const [id,group]of groups){let total=group.reduce((sum,i)=>sum+i.qty,0);const max=stackMax(itemDefinition(id));for(const entry of group){if(!total)break;entry.qty=Math.min(max,total);total-=entry.qty;arranged.push(entry);}}
- const order=['weapon','armor','charm','consumable','material','quest','key'];arranged.sort((a,b)=>{const k=order.indexOf(kind(ITEMS[a.defId]))-order.indexOf(kind(ITEMS[b.defId]));return k||(a.defId<b.defId?-1:a.defId>b.defId?1:0);});
+ const order=[...SLOTS,'consumable','material','quest','key'];
+ const typeOrder=def=>order.indexOf(kind(def));
+ const qualityRank=def=>ITEM_QUALITIES[itemQuality(def)]?.rank||0;
+ arranged.sort((a,b)=>{
+  const first=ITEMS[a.defId],second=ITEMS[b.defId];
+  return typeOrder(first)-typeOrder(second)||qualityRank(second)-qualityRank(first)||
+   (a.defId<b.defId?-1:a.defId>b.defId?1:0);
+ });
  const bag=[...arranged,...Array(BAG_SIZE-arranged.length).fill(null)];if(JSON.stringify(bag)===JSON.stringify(s.bag))fail('Сумка уже упорядочена');next.bag=bag;return {message:'Припасы объединены, сумка упорядочена.'};
 });}
 
@@ -870,8 +1076,10 @@ export function organizeBag(s,expectedRevision=s.revision){if(expectedRevision!=
 export function heroRoleInfo(s,heroId){
  const hero=s.party.find(h=>h.id===heroId),definition=PARTY[heroId];
  const description=roleCatalog(hero,definition,(definition?.skills||[]).map(id=>SKILLS[id]).filter(Boolean).map(skill=>heroSkill(s,heroId,skill)));
- if(!description||description.identity)return description;
- return {...description,identity:definition.role,signature:definition.description||definition.bio||definition.role};
+ if(!description)return description;
+ const progression=skillProgression(s,heroId);
+ description.skills=description.skills.map(skill=>({...skill,...progression.skills.find(row=>row.id===skill.id)}));
+ return description.identity?description:{...description,identity:definition.role,signature:definition.description||definition.bio||definition.role};
 }
 
 
@@ -888,7 +1096,10 @@ export function enemyIntentInfo(s,enemyId){
  if(status.disrupt>0&&magical){out.effectiveIntent='attack';out.skillId=null;out.reason='Печать заменяет магию обычной атакой';}
  if(out.effectiveIntent==='heal'){
   const candidates=b.enemies.map(e=>e.uid===enemyId?{...e,hp:enemyPreActionHp(e)}:e).filter(e=>e.hp>0),target=candidates.sort((a,c)=>a.hp/a.maxHp-c.hp/c.maxHp)[0];
-  if(!target||!candidates.some(e=>e.hp<e.maxHp))out.effectiveIntent='guard';
+  if(!target||!candidates.some(e=>e.hp<e.maxHp)){
+   out.effectiveIntent='guard';
+   out.reason='Все союзники целы. Вместо лечения поднимет защитную стойку.';
+  }
   else{out.policy='lowest-health-ratio-enemy';out.targetIds=[target.uid];out.guaranteed=true;return out;}
  }
  if(out.effectiveIntent==='guard'){out.policy='self';out.targetIds=[enemyId];out.guaranteed=true;return out;}
@@ -959,8 +1170,8 @@ function enrichDebuffPreview(s,effects){return effects.map(effect=>{
 
 function enrichSupportPreview(s,hero,skill,targetId,effects){
  const out=[...effects],fx=abilityEffects(skill),add=(id,key,amount,duration)=>{const status=s.battle.status[id]||{},current={amount:status[key]>0?(key==='guard'?Math.round((1-(status.guardMultiplier??.42))*100):key==='attack'?30:1):0,duration:status[key]||0},after={amount,duration},entry=previewTransition({targetId:id,kind:key,label:''},current,after);entry.label=({guard:'Снижение урона, %',attack:'Усиление атаки, %',taunt:'Провокация'}[key])+': '+current.amount+' → '+after.amount+' · длительность '+current.duration+' → '+after.duration;out.push(entry);};
- if(['guard','buff'].includes(skill.kind)&&!fx.barrierOnly)for(const ally of abilityFriends(s,hero,skill,targetId).filter(h=>h.hp>0)){add(ally.id,'guard',Math.round((skill.kind==='guard'?clamp(skill.power??.58,0,.95):.58)*100),2);if(skill.kind==='buff')add(ally.id,'attack',30,3);}
- if(skill.kind==='taunt'||fx.tauntSelf){for(const ally of s.party)if(ally.id!==hero.id&&(s.battle.status[ally.id]?.taunt||0)>0)add(ally.id,'taunt',0,0);if(!out.some(e=>e.kind==='taunt'&&e.targetId===hero.id))add(hero.id,'taunt',1,2);else{const index=out.findIndex(e=>e.kind==='taunt'&&e.targetId===hero.id);out.splice(index,1);add(hero.id,'taunt',1,2);}if(skill.kind==='taunt'&&!fx.tauntOnly){const status=s.battle.status[hero.id]||{};add(hero.id,'guard',Math.round((1-(status.guardMultiplier??.42))*100),2);}}
+ if(['guard','buff'].includes(skill.kind)&&!fx.barrierOnly)for(const ally of abilityFriends(s,hero,skill,targetId).filter(h=>h.hp>0)){out.push(guardForecast(s,ally.id,skillGuardMultiplier(skill),2,skill.target==='allAllies'?s.battle.round+1:null));if(skill.kind==='buff')add(ally.id,'attack',30,3);}
+ if(skill.kind==='taunt'||fx.tauntSelf){for(const ally of s.party)if(ally.id!==hero.id&&(s.battle.status[ally.id]?.taunt||0)>0)add(ally.id,'taunt',0,0);if(!out.some(e=>e.kind==='taunt'&&e.targetId===hero.id))add(hero.id,'taunt',1,2);else{const index=out.findIndex(e=>e.kind==='taunt'&&e.targetId===hero.id);out.splice(index,1);add(hero.id,'taunt',1,2);}if(skill.kind==='taunt'&&!fx.tauntOnly)out.push(guardForecast(s,hero.id,.42,2));}
  return out;
 }
 
@@ -997,7 +1208,12 @@ export function statBreakdown(s,heroId){
  const hero=s.party.find(h=>h.id===heroId);if(!hero)return null;const base=heroBase(PARTY[heroId],1),leveled=heroBase(PARTY[heroId],hero.level),levelBonus=Object.fromEntries(STAT_KEYS.map(key=>[key,leveled[key]-base[key]])),gearTotal=Object.fromEntries(STAT_KEYS.map(key=>[key,0])),gear=[];
  for(const slot of SLOTS){const item=s.gear[heroId]?.[slot];if(!item)continue;const bonuses=gearBonuses(item);for(const key of STAT_KEYS)gearTotal[key]+=bonuses[key];gear.push({slot,uid:item.uid,itemId:item.defId,bonuses,durability:durabilityInfo(item)});}
  const bonuses=talentBonuses(heroId,learnedTalents(s,heroId)),talents=Object.fromEntries(STAT_KEYS.map(key=>[key,bonuses[key]||0]));
- const totals=stats(s,heroId),raw=base.initiative+levelBonus.initiative+gearTotal.initiative+talents.initiative;return {heroId,base,levelBonus,gear,gearTotal,talents,totals,initiative:{base:base.initiative,level:levelBonus.initiative,gear:gearTotal.initiative,talent:talents.initiative,raw,total:totals.initiative,roundingDelta:totals.initiative-raw}};
+ const training=attributeBonuses(heroAttributes(s,heroId));
+ const attributes=Object.fromEntries(STAT_KEYS.map(key=>[key,training[key]||0]));
+ const totals=stats(s,heroId),raw=base.initiative+levelBonus.initiative+gearTotal.initiative+talents.initiative+attributes.initiative;
+ return {heroId,base,levelBonus,gear,gearTotal,talents,attributes,totals,initiative:{
+  base:base.initiative,level:levelBonus.initiative,gear:gearTotal.initiative,talent:talents.initiative,training:attributes.initiative,
+  raw,total:totals.initiative,roundingDelta:totals.initiative-raw}};
 }
 
 

@@ -83,7 +83,7 @@ test('A016: six different role branches expose both real skill runes and new sta
       }
     }
     const firstFive = branch.nodes.slice(0, 5).map(node => node.id);
-    const finalStep = level => talentCatalog({ ...hero, level }, firstFive).branches.at(-1).nodes.at(-1);
+    const finalStep = level => talentCatalog({ ...hero, level }, firstFive).branches.find(entry => entry.id === 'campaign').nodes.at(-1);
     assert.equal(finalStep(26).available, false);
     assert.equal(finalStep(27).available, true);
   }

@@ -1,6 +1,8 @@
 import { STARTERS } from './campaign-starters.js?v=campaign-140';
 
-export const RELEASE = '1.5.0';
+import {itemStatLine} from './ui-feedback.js?v=campaign-170';
+
+export const RELEASE = '1.7.0';
 const portraits = new Set(STARTERS.map(hero => hero.id));
 
 const LOADING_TIPS = {
@@ -70,7 +72,7 @@ export function renderStarterSelection(body, { el, text, button, partyDefs, item
     button('Начать · ' + partyDefs[selected].name, () => begin(selected), { width: 260, primary: true, focusKey: 'starter:start' })));
 }
 
-export function renderCompanionBar(body, { el, button, portrait, party, partyDefs, heroId, surface, select, switchView }) {
+export function renderCompanionBar(body, { el, button, portrait, party, partyDefs, heroId, surface, select, switchView, unspent = {} }) {
   const tabs = el('div', 'companion-tabs');
   tabs.role = 'group';
   tabs.ariaLabel = 'Выбор героя';
@@ -78,10 +80,15 @@ export function renderCompanionBar(body, { el, button, portrait, party, partyDef
     const def = partyDefs[hero.id];
     const tab = button(def.name, () => select(hero.id), {
       small: true, width: 82, focusKey: `${surface}-hero:${hero.id}`,
-      ariaLabel: `${def.name} · уровень ${hero.level}${hero.hp ? '' : ' · павший'}`,
+      ariaLabel: `${def.name} · уровень ${hero.level}${hero.hp ? '' : ' · павший'}${unspent[hero.id] ? ' · свободные очки '+unspent[hero.id] : ''}`,
     });
     tab.classList.add('companion-tab');
     tab.prepend(portrait(def.portrait, 'companion-thumb'));
+    if (unspent[hero.id]) {
+      const marker = el('span', 'development-ready');
+      marker.setAttribute('aria-hidden', 'true');
+      tab.append(marker);
+    }
     tab.setAttribute('aria-pressed', String(hero.id === heroId));
     tabs.append(tab);
   }
@@ -102,29 +109,55 @@ function abilityArt(el, icon, tone) {
   return el('span', `ability-art tone-${tone}`, el('span', `combat-icon combat-icon-${icon}`));
 }
 
-export function renderTalentTree(body, { el, text, button, info, skills, definitions, skillIcon,
-  view, focus, selectView, selectNode, canEdit, learn, reset }) {
+function renderAttributes(body, {el, text, button, info, heroId, train, refund, reset, canEdit}) {
+  const rows = el('div', 'attribute-grid');
+  for (const entry of info.entries) {
+    const add = button('+', () => train(entry.id), {small: true, width: 42, disabled: !entry.available,
+      ariaLabel: `Повысить: ${entry.name}${entry.reason ? ' · '+entry.reason : ''}`, focusKey: `train:${heroId}:${entry.id}`});
+    const undo = entry.rank ? button('−', () => refund(entry.id), {small: true, width: 42, disabled: !canEdit,
+      ariaLabel: `Вернуть одно очко: ${entry.name}`, focusKey: `refund-attribute:${heroId}:${entry.id}`}) : null;
+    rows.append(el('div', 'attribute-row', abilityArt(el, entry.icon, 'azure'),
+      el('div', 'attribute-copy', text(entry.name, 210, 16, '#efd599', true),
+        text('За очко: '+itemStatLine(entry), 250, 14), text(`Ранг ${entry.rank} / ${entry.max}`, 160, 13, '#8ed2c1')), el('div', 'attribute-controls', add, undo)));
+  }
+  body.append(rows);
+  const footer = el('div', 'talent-footer');
+  if (info.nextPointLevel) footer.append(text(`Следующее очко на уровне ${info.nextPointLevel}`, 360, 13));
+  if (info.spent) footer.append(button('Вернуть очки характеристик', reset, {small: true, width: 285,
+    disabled: !canEdit, focusKey: `reset-attributes:${heroId}`}));
+  if (footer.childElementCount) body.append(footer);
+}
+
+export function renderTalentTree(body, { el, text, button, info, skills, attributes, definitions, skillIcon,
+  view, focus, selectView, selectNode, canEdit, learn, refundTalent, reset, resetChoice, train, refundAttribute, resetAttributes }) {
   const branch = info.branches.find(b => b.id === view) || info.branches[0];
-  const showSkills = view === 'abilities';
+  const showSkills = view === 'abilities', showAttributes = view === 'attributes';
   const tabs = el('div', 'talent-tabs');
   tabs.role = 'group';
-  tabs.ariaLabel = 'Ветки и боевые умения';
-  for (const [index, entry] of [...info.branches, { id: 'abilities', name: 'Боевые умения' }].entries()) {
-    const isCurrent = showSkills ? entry.id === 'abilities' : entry.id === branch.id;
-    const tab = button(entry.name, () => selectView(entry.id), { small: true, width: 214,
-      combatIcon: BRANCH_ICONS[index], focusKey: `talent-view:${info.heroId}:${entry.id}` });
-    tab.dataset.tone = BRANCH_TONES[index];
-    tab.setAttribute('aria-pressed', String(isCurrent));
+  tabs.ariaLabel = 'Развитие героя';
+  const extraTabs = [{id: 'abilities', name: 'Боевые умения'}, {id: 'attributes', name: 'Характеристики'}];
+  for (const [index, entry] of [...info.branches, ...extraTabs].entries()) {
+    const currentView = showSkills || showAttributes ? view : branch.id;
+    const tab = button(entry.name, () => selectView(entry.id), {small: true, width: 214,
+      combatIcon: BRANCH_ICONS[index % BRANCH_ICONS.length], focusKey: `talent-view:${info.heroId}:${entry.id}`});
+    tab.dataset.tone = BRANCH_TONES[index % BRANCH_TONES.length];
+    tab.setAttribute('aria-pressed', String(entry.id === currentView));
     tabs.append(tab);
   }
-  body.append(el('header', 'workbench-heading', text('Дерево навыков', 330, 23, '#efd599', true),
-    el('div', 'talent-points', text(`Очки ${info.points} / ${info.totalPoints}`, 142, 15, '#8ed2c1', true))), tabs);
+  const points = showAttributes ? attributes.points : info.points;
+  const total = showAttributes ? attributes.total : info.totalPoints;
+  body.append(el('header', 'workbench-heading', text(showAttributes ? 'Характеристики' : 'Дерево навыков', 330, 23, '#efd599', true),
+    el('div', 'talent-points', text(`Очки ${points} / ${total}`, 142, 15, '#8ed2c1', true))), tabs);
+  if (showAttributes) {
+    renderAttributes(body, {el, text, button, info: attributes, heroId: info.heroId, train, refund: refundAttribute, reset: resetAttributes, canEdit});
+    return;
+  }
 
   if (showSkills) {
     const current = skills.find(skill => skill.id === focus) || skills[0];
     const cards = el('div', 'ability-grid');
     for (const skill of skills) {
-      const status = skill.unlocked ? `${skill.cost} MP${skill.runeId ? ' · Руна' : ''}` : `Уровень ${skill.unlockLevel}`;
+      const status = skill.unlocked ? `${skill.cost} MP${skill.runeId ? ' · Руна' : ''}` : (skill.requiresTalent ? 'Специализация' : `Уровень ${skill.unlockLevel}`);
       const tile = button(skill.name, () => selectNode(skill.id), { small: true, width: 186,
         ariaLabel: `${skill.name} · ${status}`, focusKey: `ability:${info.heroId}:${skill.id}` });
       tile.classList.add('ability-tile');
@@ -137,12 +170,18 @@ export function renderTalentTree(body, { el, text, button, info, skills, definit
     body.append(cards);
     if (current) {
       const def = definitions[current.id];
+      const linkedId = current.runeId || current.requiresTalent;
+      const linked = info.branches.find(branch => branch.nodes.some(node => linkedId ? node.id === linkedId : node.skillId === current.id));
+      const talent = linked?.nodes.find(node => linkedId ? node.id === linkedId : node.skillId === current.id);
       body.append(el('section', 'talent-inspector', text(current.name, 410, 19, '#efd599', true),
-        text(current.unlocked ? `${current.cost} MP · ${SCOPE_LABEL[current.target] || 'Боевое умение'}` : `Откроется на уровне ${current.unlockLevel}`,
+        text(current.unlocked ? `${current.cost} MP · ${SCOPE_LABEL[current.target] || 'Боевое умение'}` : current.reason,
           440, 14, '#8ed2c1'),
         text(def?.description || '', 655, 16),
         current.unlocked && ['damage', 'break'].includes(current.kind)
-          ? text(`Мощность ×${def?.power ?? 1}. В бою виден прогноз по цели.`, 560, 14) : null));
+          ? text(`Мощность ×${def?.power ?? 1}. В бою виден прогноз по цели.`, 560, 14) : null,
+        talent && button(talent.grantsSkill ? 'К специализации' : 'К руне', () => selectView(linked.id, talent.id),
+          {small: true, width: 160, focusKey: `linked-talent:${info.heroId}:${current.id}`,
+            ariaLabel: 'Открыть талант «'+talent.name+'»'})));
     }
     return;
   }
@@ -150,20 +189,23 @@ export function renderTalentTree(body, { el, text, button, info, skills, definit
   const branchIndex = info.branches.indexOf(branch);
   const tone = BRANCH_TONES[branchIndex];
   const current = branch.nodes.find(node => node.id === focus) || branch.nodes.find(node => node.available) || branch.nodes[0];
-  const cards = el('ol', 'talent-route');
+  const fork = branch.id === 'specialization';
+  const cards = el('ol', 'talent-route'+(fork?' specialization-route':''));
+  if (fork) body.append(text('Из двух итоговых талантов можно изучить один.', 470, 14));
   cards.ariaLabel = branch.name;
   for (const [index, node] of branch.nodes.entries()) {
     const state = node.learned ? 'learned' : node.available ? 'available' : 'locked';
     const status = node.learned ? 'Изучено' : node.available ? 'Доступно' : `Уровень ${node.level} · Закрыто`;
+    const tier = node.alternative ? 2 : index + 1;
     const tile = button(node.name, () => selectNode(node.id), { small: true, width: 168,
-      ariaLabel: `${node.name} · ступень ${index + 1} · ${node.reason || status}`,
+      ariaLabel: `${node.name} · ступень ${tier} · ${node.reason || status}`,
       focusKey: `talent-node:${info.heroId}:${node.id}` });
     const art = abilityArt(el, node.passive ? BRANCH_ICONS[branchIndex] : skillIcon(definitions[node.skillId] || {}), tone);
     tile.classList.add('ability-tile');
     tile.setAttribute('aria-pressed', String(current.id === node.id));
     tile.prepend(art);
     tile.append(text(status, 150, 12, '#8ed2c1'));
-    const frame = el('li', 'talent-step', el('div', 'talent-tier', text(TIERS[index] || index + 1, 40, 14, '#efd599', true)), tile);
+    const frame = el('li', 'talent-step', el('div', 'talent-tier', text(TIERS[tier - 1] || tier, 40, 14, '#efd599', true)), tile);
     frame.dataset.state = state;
     if (canEdit && node.available) {
       const add = button('+', () => learn(node.id), { small: true, width: 40,
@@ -173,13 +215,23 @@ export function renderTalentTree(body, { el, text, button, info, skills, definit
     }
     cards.append(frame);
   }
-  const type = current.passive ? 'Пассивный талант' : `Руна · ${definitions[current.skillId]?.name || 'Боевое умение'}`;
+  const type = current.passive ? 'Пассивный талант' : current.grantsSkill ?
+    `Боевое умение · ${definitions[current.skillId].mp} MP` : `Руна · ${definitions[current.skillId]?.name || 'Боевое умение'}`;
   body.append(cards, el('section', 'talent-inspector',
     text(current.name, 470, 19, '#efd599', true), text(type, 470, 14, '#8ed2c1'),
     text(current.description, 655, 16),
-    text(current.reason || `Уровень ${current.level} · Цена ${current.cost} очко`, 655, 14, '#8ed2c1')));
+    current.stats && text(itemStatLine({stats:current.stats}), 655, 14, '#8ed2c1'),
+    text(current.reason || `Уровень ${current.level} · Цена ${current.cost} очко`, 655, 14, '#8ed2c1'),
+    current.learned && !current.alternative && button('Вернуть одно очко', () => refundTalent(current.id),
+      {small: true, width: 234, disabled: !canEdit || !current.refundable,
+        hint: !current.refundable ? 'Сначала верните очки зависимых талантов' : null,
+        focusKey: `refund-talent:${info.heroId}:${current.id}`, ariaLabel: 'Вернуть очко таланта «'+current.name+'»'})));
   const footer = el('div', 'talent-footer');
   if (info.nextPointLevel) footer.append(text(`Следующее очко на уровне ${info.nextPointLevel}`, 360, 13));
+  if (fork && branch.nodes.some(node => node.alternative && node.learned)) {
+    footer.append(button('Сменить специализацию', resetChoice, {small: true, width: 234,
+      disabled: !canEdit, focusKey: `reset-specialization:${info.heroId}`}));
+  }
   if (info.spent) footer.append(button('Вернуть очки талантов', reset, { small: true, width: 234,
     disabled: !canEdit, focusKey: `reset:${info.heroId}` }));
   if (footer.childElementCount) body.append(footer);

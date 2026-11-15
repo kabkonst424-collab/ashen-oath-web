@@ -1,4 +1,4 @@
-import {magicProfile} from './data/magic-profiles.js?v=motion-110';
+import {magicProfile} from './data/magic-profiles.js?v=campaign-170';
 
 const smooth = t => {const s=Math.max(0,Math.min(1,t));return s*s*(3-2*s);};
 

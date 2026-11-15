@@ -116,7 +116,7 @@ export const ENEMY_MAGIC_OVERRIDES = Object.freeze({
 export function magicProfile(event = {}, actor) {
   const hostile = !!actor?.options?.hostile || String(actor?.id || '').startsWith('enemy:');
   const skillId = event.skillId || (event.kind === 'defend' ? 'enemy_guard' : null);
-  let selected = MAGIC_PROFILES[skillId];
+  let selected = MAGIC_PROFILES[event.presentation || skillId];
   if (!selected && event.kind === 'attack') {
     const role = actor?.options?.role || event.actorId;
     selected = hostile ? MAGIC_PROFILES.enemy_claw : role === 'myrt' ? BASIC_BOW : role === 'radan' ? BASIC_SPEAR : BASIC_BLADE;

@@ -1,5 +1,5 @@
-import * as M from './model.js?v=campaign-150';
-import * as CONTENT from './content.js?v=campaign-150';
+import * as M from './model.js?v=campaign-170';
+import * as CONTENT from './content.js?v=campaign-170';
 
 // Routes and the schematic take their boundaries from the movement model.
 const PHASES=[];

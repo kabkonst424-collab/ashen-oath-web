@@ -1,6 +1,6 @@
 {
   "id": "ashen-oath",
-  "version": "1.5.0",
+  "version": "1.7.0",
   "releaseStatus": "release",
   "demo": false,
   "posterArtRevision": {
@@ -2126,12 +2126,12 @@
     "act1PriorDesignTargetMinutes": 180
   },
   "platform": "WebGL2",
-  "builtAt": "2026-11-15T12:30:44Z",
+  "builtAt": "2026-11-15T14:02:41Z",
   "files": [
     {
       "path": "README.md",
-      "bytes": 3508,
-      "sha256": "2b4e147d487d434390e50005e5a4d58353332f3eb97082191f7435ca2e99ab35"
+      "bytes": 3998,
+      "sha256": "025e4879806397818aa4c915cb00bc9e2e54a72cd54720531f6810a2e1daf997"
     },
     {
       "path": "act1.css",
@@ -2141,7 +2141,7 @@
     {
       "path": "act1.html",
       "bytes": 2219,
-      "sha256": "b3271b5e2dc26a44eccfda96b2def609800050571f4908e0a948f70597668965"
+      "sha256": "7e33a2db2c173cddb021a3c4d2ac828c411019e853a2d8b402d90dfe7150f2c2"
     },
     {
       "path": "assets/act1/animation/animation-library.json",
@@ -3599,6 +3599,11 @@
       "sha256": "6003b9aa1f02a07af78837426c0403bf7a01705699629c94a30f0b8b7597267b"
     },
     {
+      "path": "assets/campaign/cover-170.webp",
+      "bytes": 151534,
+      "sha256": "94f40ad2fb23f5aafe8fe091cd02f9ff1ebb7716e7d5f83d69b1a832c12f6a1f"
+    },
+    {
       "path": "assets/campaign/cover.webp",
       "bytes": 125644,
       "sha256": "f924a7c3a14cc7cec2b2adb1405c223060e9de9bb00a56482e6291521524d883"
@@ -4035,8 +4040,8 @@
     },
     {
       "path": "companion.css",
-      "bytes": 15666,
-      "sha256": "4d7ad676bd323cb79d0f19624c5a1b82f42670ed8b83d868c8b81eb6b634b9a7"
+      "bytes": 18433,
+      "sha256": "4d78a51f1871a6850dea428af91d9e580a1e734607f7c401685493ba48ebcb69"
     },
     {
       "path": "docs/improvements/1.2.0.md",
@@ -4059,14 +4064,34 @@
       "sha256": "52e8c4ab4571fb57af196a2c951a7fcbed346e7b9d02f5bc52446de3d6f7e248"
     },
     {
+      "path": "docs/improvements/1.6.0.md",
+      "bytes": 9699,
+      "sha256": "8ee0dbb3d140f8f6ac908d1970a49c6be831cae23970db6028aa6d38b368fa9c"
+    },
+    {
+      "path": "docs/improvements/1.7.0.md",
+      "bytes": 9623,
+      "sha256": "006a2889b455b0980aea8eef0dee10606ea8ba5a404980e518518399b8e5d757"
+    },
+    {
       "path": "docs/improvements/PLAN.txt",
       "bytes": 8511,
       "sha256": "e6eef9dbdf9aa279b5c3bdc056b2625f9960a8826615c07506f6bcc93128fb71"
     },
     {
       "path": "docs/improvements/ledger.json",
-      "bytes": 877,
-      "sha256": "d1bd1e9e129a99c00daf005effc0d997004d1db09dfc2cb373610825764f628f"
+      "bytes": 3396,
+      "sha256": "71f876101a74475382c22f85ce008bcc8b92dbae92badf3e42e5c78708fd8765"
+    },
+    {
+      "path": "docs/improvements/stage007-loot.md",
+      "bytes": 9816,
+      "sha256": "7f2786359f093b64220b47300acebd91a558aa5bb02025fc22ff317dc9166c7d"
+    },
+    {
+      "path": "docs/improvements/stage007-talents.md",
+      "bytes": 9790,
+      "sha256": "bb08666c65e77cecafeea93e30b8b707c9015f4d32b5f067f83846e5c80579aa"
     },
     {
       "path": "forged.css",
@@ -4076,7 +4101,7 @@
     {
       "path": "index.html",
       "bytes": 2219,
-      "sha256": "b3271b5e2dc26a44eccfda96b2def609800050571f4908e0a948f70597668965"
+      "sha256": "7e33a2db2c173cddb021a3c4d2ac828c411019e853a2d8b402d90dfe7150f2c2"
     },
     {
       "path": "interface-windows.css",
@@ -4131,7 +4156,7 @@
     {
       "path": "src/act1/area-asset-plan.js",
       "bytes": 6056,
-      "sha256": "1b46057f448ad1a3f82d61ec061ed4c15ae129dc5037661c883568a442f8c268"
+      "sha256": "23e8b46c671c0a9b5f12d7d531061c90e9e9e9d12cc2f5b9b60973e2cddd2e38"
     },
     {
       "path": "src/act1/area-geometry.js",
@@ -4195,13 +4220,13 @@
     },
     {
       "path": "src/act1/campaign-patrols.js",
-      "bytes": 3705,
-      "sha256": "1b310c1c1972f402cd14e8e65d68edcd3dc9c34eefca6547531a630ce9045b49"
+      "bytes": 3825,
+      "sha256": "d59c7a570fbf18841ecfc6b73fa9bf1516d16fd534ebe5f0e3dc13485d73b09b"
     },
     {
       "path": "src/act1/campaign-progression.js",
-      "bytes": 20177,
-      "sha256": "97518604a5a4e097edc9b59648633d1f73375d99735521c6fca4da40c0be74a7"
+      "bytes": 26495,
+      "sha256": "83b4e0950b09d16d68ef0cc144dc19f55ccbdda32c52a89b3de9d4e62634a21a"
     },
     {
       "path": "src/act1/campaign-starters.js",
@@ -4210,8 +4235,8 @@
     },
     {
       "path": "src/act1/campaign-ui.js",
-      "bytes": 12554,
-      "sha256": "43173957d8d8cf933b6942f4df5a7e5022927ef1ee716a19c738de264d15a3b8"
+      "bytes": 16715,
+      "sha256": "90f0817a6fd77f84f57d42e2764b2cc329f0257184cec0b63eb0541d2b6d0259"
     },
     {
       "path": "src/act1/campaign-visuals.js",
@@ -4226,7 +4251,7 @@
     {
       "path": "src/act1/character-animation.js",
       "bytes": 15945,
-      "sha256": "c0de727199be04dbf4cf1c73b872b3732c1a6ff5ba928e476fe842f1639e95e5"
+      "sha256": "5f8345add8f3bbf9b611ab26e36a77f23a6d6c5c3fabd98518048f6270c6e1c7"
     },
     {
       "path": "src/act1/combat200-animation-policy.js",
@@ -4240,8 +4265,8 @@
     },
     {
       "path": "src/act1/content.js",
-      "bytes": 160225,
-      "sha256": "f1b37f6d4089944de928c6eb6e8f63cd8ac2ee4efa3105c0005c3667b7319b42"
+      "bytes": 160468,
+      "sha256": "d8b1fc969a90a27ce8b3f8912558289627ef6c388921ab003f5e628046132ca6"
     },
     {
       "path": "src/act1/data/ground-clearance.js",
@@ -4250,8 +4275,8 @@
     },
     {
       "path": "src/act1/data/magic-profiles.js",
-      "bytes": 10456,
-      "sha256": "8311461cfd2cd3a4c0617fd7846663fd64ba11566d95f9acb161da05ced0a245"
+      "bytes": 10478,
+      "sha256": "b07a9e3fb9f0cbffa02b721ab6f2dfc85343e235d115119aa04a6df228d72190"
     },
     {
       "path": "src/act1/data/party-locomotion.js",
@@ -4262,6 +4287,11 @@
       "path": "src/act1/encounter-balance.js",
       "bytes": 1660,
       "sha256": "43529dbbd70c6e524674388c7b45a8b11ebd6dab4ceb5e06e361416ac7d65dfd"
+    },
+    {
+      "path": "src/act1/encounter-openings.js",
+      "bytes": 6555,
+      "sha256": "03bc67a347161a8ad4272697e5f08da51bba32cc78e76b369f8c3048b0f82646"
     },
     {
       "path": "src/act1/equipment-presentation.js",
@@ -4295,8 +4325,8 @@
     },
     {
       "path": "src/act1/forged-ui.js",
-      "bytes": 4364,
-      "sha256": "4631b51fcd0f18efb8827044ab37079a7ec284f77878032944c80bdb615c9e24"
+      "bytes": 4366,
+      "sha256": "61aa34e78c787ed1d0ca98e058854570514e4641a4f055cde031270dabb0cf90"
     },
     {
       "path": "src/act1/graphics-refresh.js",
@@ -4319,6 +4349,11 @@
       "sha256": "ccf352d0faa0b26560766443272bf51afba6afeccb71006e23d3b0cef4424ddb"
     },
     {
+      "path": "src/act1/hero-attributes.js",
+      "bytes": 2149,
+      "sha256": "033028548ae6530ec77dacd78486c3575bb62b4b72b514e3f0dff0b2501a52c9"
+    },
+    {
       "path": "src/act1/hud-presentation.js",
       "bytes": 5755,
       "sha256": "f79d43f3d7829718dd8fc76310669e33068c1a27a4ed44c281e08de3cfb27c62"
@@ -4330,13 +4365,18 @@
     },
     {
       "path": "src/act1/interface-100.js",
-      "bytes": 49935,
-      "sha256": "4fd66f57682e9c702e7db2714577a0437c4c63a4de364097b67c60038b635cff"
+      "bytes": 50189,
+      "sha256": "0b0c1f9c0d3341019dd2aabe8a853c3caa6c441d222ee0b64f353e56b1a8eb78"
     },
     {
       "path": "src/act1/interface-presentation.js",
-      "bytes": 1726,
-      "sha256": "f4d680133eb847a912aefdb6a7bbbfa0d2f8e96736d14e99b63e5570db51a695"
+      "bytes": 2008,
+      "sha256": "53214f33dd3c2858d4be61b4988357dd4d43736cb67de58ce1e67e691c77d4e1"
+    },
+    {
+      "path": "src/act1/item-quality.js",
+      "bytes": 648,
+      "sha256": "cd0e295f02e01dd0e98f6737c6df642131b384c351c417df871ad1e304de355a"
     },
     {
       "path": "src/act1/limb-ik.js",
@@ -4345,33 +4385,33 @@
     },
     {
       "path": "src/act1/loot-tables.js",
-      "bytes": 6093,
-      "sha256": "7dcf5d399bbab1b76631d447deac8b23626a7288e4e478a7e676ad8957581ac6"
+      "bytes": 6113,
+      "sha256": "4ed38e35625e2f2cd916a5d1675e622c10061238ed3cdc9ed441232819dfc322"
     },
     {
       "path": "src/act1/magic-vfx.js",
-      "bytes": 51856,
-      "sha256": "98f8ad5c3763bc98af0cc9cb2ba35b5817e4960dd75a9d043090f01d1c555be7"
+      "bytes": 51860,
+      "sha256": "2c43c87e532b36d0bc7f538b43e299f4232c7648395d0b68ddd442fb83139031"
     },
     {
       "path": "src/act1/main.js",
-      "bytes": 125307,
-      "sha256": "d8b6dba23dc7a67aa7d00a1c615ebf646480c61a8524e40e26d37b12e4255c41"
+      "bytes": 129818,
+      "sha256": "a41f44f82e0cb78271212679b4793286f4bd94ba0bd3bac33d28095e22752405"
     },
     {
       "path": "src/act1/meshy-world.js",
       "bytes": 46808,
-      "sha256": "51beb2c2c93bb4f05c97ec51ab27accf5f4a5c521ece1d44bb824b5c5957ff0c"
+      "sha256": "ac7abdaf355b8323a77a6e02f3c5139263a9a749622f06ea018e7ddc75f68532"
     },
     {
       "path": "src/act1/minimap.js",
       "bytes": 13796,
-      "sha256": "1797d055b0101afb606ba037939d3438941842849c28c699263312494c5b8826"
+      "sha256": "1d5ec4e554f180357c93684d2e36bf6c5e3718de623f057c7151437b8378415c"
     },
     {
       "path": "src/act1/model.js",
-      "bytes": 126300,
-      "sha256": "fe11eab089cb49f5bfb6e8b5197f3deab022a41185e506b8869e86de34150a32"
+      "bytes": 136254,
+      "sha256": "74bf1df57bec014a5a471e3d6270ef21b2aef009d8dfc9354dfa91b0ea477ce3"
     },
     {
       "path": "src/act1/motion-clip-corrections.js",
@@ -4381,7 +4421,7 @@
     {
       "path": "src/act1/navigation.js",
       "bytes": 16347,
-      "sha256": "31066e28a9e9b0e2b29bc4991e4f880e462c42579db4f4dc12e90ff0a7a4a55d"
+      "sha256": "9bb858fb9ed0b534da52b8ca984d569fb5aa0ef0e0df60e7bc506cf60074d130"
     },
     {
       "path": "src/act1/painted-material.js",
@@ -4410,8 +4450,8 @@
     },
     {
       "path": "src/act1/presentation-motion.js",
-      "bytes": 2693,
-      "sha256": "78dd00f10512d0146c14e02847970da8ccad2acf72fccdb299486c735fb01dec"
+      "bytes": 2695,
+      "sha256": "9290adf6e766bb96bd05168159d5a6e6fdb9b92906285f5c5d0585e64dc26021"
     },
     {
       "path": "src/act1/presentation-paths.js",
@@ -4425,8 +4465,8 @@
     },
     {
       "path": "src/act1/presentation-timing.js",
-      "bytes": 1863,
-      "sha256": "0ee82e9e5c6b2cbfff0b0dc0bfe3f182a52e72b5e832fabb85fb311110cdeba5"
+      "bytes": 1865,
+      "sha256": "26b21ce6f8afeb14acd9dd2c6758cfb1b2706a4d41bdabf5fdb89b59b2c420a9"
     },
     {
       "path": "src/act1/presentation-visibility.js",
@@ -4445,8 +4485,8 @@
     },
     {
       "path": "src/act1/regional-equipment.js",
-      "bytes": 9274,
-      "sha256": "9103de8dc049b3b348892766d5f707409ea95904bce9fe24a4ae461d2161980b"
+      "bytes": 9612,
+      "sha256": "d1850ecd2df94d9b9d30be09d3f1070f2df252151e687b5ae22dcceafaa9c251"
     },
     {
       "path": "src/act1/resource-loader.js",
@@ -4471,12 +4511,22 @@
     {
       "path": "src/act1/save.js",
       "bytes": 13425,
-      "sha256": "3d646106398b743521bb1345404a9031193c07b5ace5183547a1b4eedba2d444"
+      "sha256": "4f098d224b89a73ad8b832fab42baa8f052db06040affbd258c4fea3981371cf"
     },
     {
       "path": "src/act1/source-facing.js",
       "bytes": 5030,
       "sha256": "1fa3313714b042ed4326128ba70d77b7c29fa25626a7edad2897c6932e9ea8b5"
+    },
+    {
+      "path": "src/act1/specializations.js",
+      "bytes": 6369,
+      "sha256": "8c44cbaa4a2e45495035a247a9e68fdc3e4864400b095e80a10c2de8a310a333"
+    },
+    {
+      "path": "src/act1/specialty-equipment.js",
+      "bytes": 13508,
+      "sha256": "7d279058a70da0a4e251f0f5a7ee6fc8ad04d56590f2e134e4eb7e09f23109e4"
     },
     {
       "path": "src/act1/terrain-material.js",
@@ -4490,8 +4540,8 @@
     },
     {
       "path": "src/act1/ui-feedback.js",
-      "bytes": 10667,
-      "sha256": "be9fa5591ad0316fde44cbb80cb5b0e3b030e2ee4e66b451dc546e3a7ce51577"
+      "bytes": 10783,
+      "sha256": "5ee31b4ff3b0441c382a19a26810de02d3e0b09fd7a4b806ac7de5339d6f4722"
     },
     {
       "path": "src/act1/ui-framing.js",
@@ -4501,12 +4551,12 @@
     {
       "path": "src/act1/water-fire.js",
       "bytes": 15789,
-      "sha256": "279d9057085e62398bf0aeb75787e184b4365422d997fe66782364991ffa2590"
+      "sha256": "9f159f8192f26f82d1a713b8a2fbaeefffc4173925566a6200b7b42afd5e6e44"
     },
     {
       "path": "src/act1/world.js",
-      "bytes": 109926,
-      "sha256": "840e061f21ab8e1a8e725b1c0226691b608e5a6a2957e5ed6f63e4d123378413"
+      "bytes": 109932,
+      "sha256": "fd6ad07f89a64580906cfabe6551ea34cecc2af001a6d9bd93f0370318ed4666"
     },
     {
       "path": "src/act1/writer-session.js",
@@ -4565,18 +4615,38 @@
     },
     {
       "path": "tests/stage001-ui.test.mjs",
-      "bytes": 15079,
-      "sha256": "e55baeb8a416f413004f8f207863b4e57065d5af7abad98a7db3d77c360fca3b"
+      "bytes": 15149,
+      "sha256": "47b68263f5c9093ecbdb46725849f9bc549dc82607afba7a52d39233852b3384"
     },
     {
       "path": "tests/stage003-campaign.test.mjs",
-      "bytes": 6240,
-      "sha256": "8d86908eef67f30bd5c81146353e473edcd4ecf8b790b16052775d1e1fd19674"
+      "bytes": 6272,
+      "sha256": "498d022cb3d3b973a14a7c49f9e52b89f9edcaed3c9aac2cc563b02f8968b87e"
     },
     {
       "path": "tests/stage005-equipment.test.mjs",
       "bytes": 6307,
       "sha256": "ee1e3f70bec472d9cdf12a7f2a4e65bcb175932340b1f9a1493741a5603a62ea"
+    },
+    {
+      "path": "tests/stage006-progression.test.mjs",
+      "bytes": 11417,
+      "sha256": "7f2cf5687616f66185500678e450884aeda08a4952e11424e5a986118c7c5afe"
+    },
+    {
+      "path": "tests/stage007-loot.test.mjs",
+      "bytes": 12745,
+      "sha256": "462d86b373eea58cb4668288283289d4ee5809bc7870ac6a5a7602aa16c7c956"
+    },
+    {
+      "path": "tests/stage007-tactics-and-management.test.mjs",
+      "bytes": 8298,
+      "sha256": "c3ab4ab26aa345b93beb696700063f91b9dad66d0886dd86fd2db2eed7ccad62"
+    },
+    {
+      "path": "tests/stage007-talents.test.mjs",
+      "bytes": 17619,
+      "sha256": "5043be0ed9b434a42c500c9d68297a4a89deb8eecefd1220b807e3cbc1e160fc"
     }
   ],
   "paintedRevision": {
@@ -4692,12 +4762,12 @@
     "saveSchema": 2
   },
   "campaignRevision": {
-    "id": "campaign-150",
-    "baseCommit": "07e8ea8e1c076847067bcdb9c78cd8c4dfc5a751",
+    "id": "campaign-170",
+    "baseCommit": "433a9ae7048078d48c1bdc5c33fefb0da9a18eac",
     "saveSchema": 3,
-    "improvements": 25,
+    "improvements": 125,
     "ledger": "docs/improvements/ledger.json",
-    "summary": "docs/improvements/1.5.0.md"
+    "summary": "docs/improvements/1.7.0.md"
   },
   "motionRevision": {
     "id": "motion-110",

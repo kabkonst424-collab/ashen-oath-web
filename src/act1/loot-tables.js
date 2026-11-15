@@ -13,7 +13,7 @@ export const FORGE_ITEMS = {
   tin_waymark: equipment('tin_waymark', 'Оловянная метка тропы', 'charm', 55, 'uncommon',
     { def: 1, initiative: 2 }, 'Охотники носят такие метки на шнуре и узнают своих по вырезу.'),
   resin_eye_pin: equipment('resin_eye_pin', 'Глаз золотой смолы', 'charm', 108, 'rare',
-    { atk: 3, initiative: 4 }, 'В янтаре застыла тёмная игла. Под светом она поворачивается к движению.'),
+    { healingPower: 5, initiative: 4 }, 'Игла в янтаре помогает лекарю раньше сделать ход и усиливает прямое лечение.'),
   slag_bracer: equipment('slag_bracer', 'Панцирь восьмой плавки', 'armor', 145, 'rare',
     { def: 9, hp: 12, speed: -1 }, 'Кузнецы обожгли кромки пластин шлака и нашили их на мягкое основание.'),
   reedglass_spindle: equipment('reedglass_spindle', 'Веретено тростникового стекла', 'weapon', 172, 'rare',
@@ -43,7 +43,7 @@ const regions = {
   quarry: region('iron_ore', ['road_mail', 'hardened_jack'], 16),
   fen: region('river_pearl', ['reed_staff', 'copper_ring'], 16),
   archive: region('ash_glass', ['margin_coat', 'bell_charm'], 16),
-  sunfields: region('river_pearl', ['road_mail', 'ash_locket'], 17),
+  sunfields: region('river_pearl', ['road_mail', 'travel_stew'], 17),
   fortress: region('salvaged_clasp', ['ward_spear', 'road_mail'], 18),
   abbey: region('ash_glass', ['hospice_cloak', 'bell_charm'], 18),
 };

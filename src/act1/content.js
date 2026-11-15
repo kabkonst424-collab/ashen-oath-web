@@ -3,11 +3,13 @@ import { applyAreaLayouts } from './area-geometry.js?v=rivers-0181';
 import { extendRoadsContent } from './roads-content.js?v=campaign-140';
 import { extendForgedEncounters } from './forged-enemies.js?v=forged-meshy-0191';
 import { addSmithies } from './forged-smiths.js?v=forged-019';
-import { FORGE_ITEMS } from './loot-tables.js?v=forged-019';
+import { FORGE_ITEMS } from './loot-tables.js?v=campaign-170';
 import { addStartingHeroes } from './campaign-starters.js?v=campaign-140';
 import { extendCampaign } from './campaign-content.js?v=campaign-140';
-import { addCampaignPatrols } from './campaign-patrols.js?v=campaign-130';
-import { addRegionalEquipment } from './regional-equipment.js?v=campaign-150';
+import { addCampaignPatrols } from './campaign-patrols.js?v=campaign-170';
+import { addRegionalEquipment } from './regional-equipment.js?v=campaign-170';
+import { addSpecialtyEquipment } from './specialty-equipment.js?v=campaign-170';
+import { addSpecializationSkills } from './specializations.js?v=campaign-170';
 import { applyEncounterBalance } from './encounter-balance.js?v=campaign-150';
 export { CAMPAIGN_ACTS, CAMPAIGN_COMICS, CAMPAIGN_ENDINGS } from './campaign-content.js?v=campaign-140';
 
@@ -1422,6 +1424,7 @@ export const QUEST_TARGETS = {
 };
 
 addStartingHeroes(PARTY, SKILLS, ITEMS);
+addSpecializationSkills(PARTY, SKILLS);
 addSmithies(AREAS, AREA_LAYOUTS);
 extendForgedEncounters({ENEMIES,SKILLS,AREAS,AREA_LAYOUTS});
 extendCampaign({ areas:AREAS, layouts:AREA_LAYOUTS, quests:QUESTS, dialogues:DIALOGUES, targets:QUEST_TARGETS, enemies:ENEMIES, skills:SKILLS, items:ITEMS, actInfo:ACT_INFO });
@@ -1429,6 +1432,7 @@ applyAreaLayouts(AREAS, AREA_LAYOUTS);
 extendRoadsContent({areas:AREAS,quests:QUESTS,dialogues:DIALOGUES,targets:QUEST_TARGETS,enemies:ENEMIES});
 addCampaignPatrols(AREAS);
 addRegionalEquipment(ITEMS, AREAS);
+addSpecialtyEquipment(ITEMS, AREAS);
 applyEncounterBalance(ENEMIES);
 ACT_INFO.optionalQuestCount = QUESTS.filter(quest => quest.optional).length;
 ACT_INFO.encounterCount = AREAS.reduce((sum, area) => sum + area.encounters.length, 0);

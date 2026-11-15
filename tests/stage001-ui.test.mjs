@@ -5,6 +5,7 @@ import vm from 'node:vm';
 import * as M from '../src/act1/model.js';
 import * as UI from '../src/act1/interface-100.js';
 import {PARTY,ITEMS,SKILLS,ENEMIES} from '../src/act1/content.js';
+import {POWER_KEYS} from '../src/act1/hero-attributes.js';
 import {windowValidSelection} from '../src/act1/interface-presentation.js';
 import {captureSurface,restoreSurface,bindSearchEditing,itemStatLine} from '../src/act1/ui-feedback.js';
 import {RESISTANCE_KEYS} from '../src/act1/equipment-slots.js';
@@ -145,7 +146,7 @@ test('A006 live drag nodes stay inside modal, use viewport coordinates and cance
  const modal=node(),slot=node(),drop=node();drop.dataset.location=JSON.stringify(to);drop.closest=()=>drop;
  let moves=0;
  let hovered=drop,checks=0;
- const context={ui,state,M:{previewMoveItem(...args){checks++;return M.previewMoveItem(...args);},moveItem(){moves++;}},UI100:UI,itemDefs:ITEMS,itemStatLine,RESISTANCE_KEYS,locationItem:loc=>state.bag[loc.index],canStartInventoryDrag:()=>true,icon:()=>node(),el:()=>node(),text:value=>value,$:()=>modal,document:{querySelectorAll:()=>nodes.filter(n=>n.dataset.dropState),elementFromPoint:()=>hovered},innerWidth:1280,performance:{now:()=>1},commit(){},renderModal(){},sameLocation:(a,b)=>JSON.stringify(a)===JSON.stringify(b)};
+ const context={ui,state,M:{previewMoveItem(...args){checks++;return M.previewMoveItem(...args);},moveItem(){moves++;}},UI100:UI,itemDefs:ITEMS,itemStatLine,RESISTANCE_KEYS,POWER_KEYS,locationItem:loc=>state.bag[loc.index],canStartInventoryDrag:()=>true,icon:()=>node(),el:()=>node(),text:value=>value,$:()=>modal,document:{querySelectorAll:()=>nodes.filter(n=>n.dataset.dropState),elementFromPoint:()=>hovered},innerWidth:1280,performance:{now:()=>1},commit(){},renderModal(){},sameLocation:(a,b)=>JSON.stringify(a)===JSON.stringify(b)};
  const dragCode=main.slice(main.indexOf('function paintDropTarget('),main.indexOf('function equipmentChanges('));
  const comparisonCode=main.slice(main.indexOf('function equipmentChanges('),main.indexOf('function companionView('));
  vm.createContext(context);vm.runInContext(dragCode+comparisonCode,context);

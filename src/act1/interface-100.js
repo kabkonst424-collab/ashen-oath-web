@@ -1,6 +1,7 @@
 // Read-only UI adapters. Commands are passed by main; no model state is mutated here.
-import {statusDescription as modelStatusDescription,itemStatLine,resistanceDeltaCopy,damageResistanceCopy} from './ui-feedback.js?v=campaign-150';
+import {statusDescription as modelStatusDescription,itemStatLine,resistanceDeltaCopy,damageResistanceCopy} from './ui-feedback.js?v=campaign-170';
 import {isEquipmentKind,SLOT_LABELS,RESISTANCE_LABELS} from './equipment-slots.js?v=campaign-150';
+import {POWER_LABELS} from './hero-attributes.js?v=campaign-170';
 export const features=[];
 export function decorate(root,surface,d){if(root._ui100Marker?.parentNode===root)return;for(const f of features)if(f.surface===surface)f.apply(root,d);const marker=d.el('span','ui100-render-boundary');marker.hidden=true;root.append(marker);root._ui100Marker=marker;}
 export function applyFeature(id,root,d){const f=features.find(f=>f.id===id);if(!f)throw Error('Unknown UI feature '+id);f.apply(root,d);}
@@ -334,17 +335,18 @@ export function milestoneLines(m){if(!m)return [];return m.nextUnlockLevel?['Б�
 feature(62,'party',(root,d)=>{const growth=q(root,'.hero-growth');if(growth)growth.append(rows(d,'Открытие умений',milestoneLines(d.M.skillMilestone(d.state,d.ui.hero)),'ui100-summary ui100-milestone'));});
 
 
-export function initiativeBreakdownCopy(info){if(!info)return '';const v=info.initiative;return 'Инициатива: база '+v.base+' + рост '+v.level+' + снаряжение '+v.gear+(v.talent?' + таланты '+v.talent:'')+' = '+v.total+(v.roundingDelta?' · округление '+v.roundingDelta:'')+' · Порядок хода определяется инициативой.';}
+export function initiativeBreakdownCopy(info){if(!info)return '';const v=info.initiative;return 'Инициатива: база '+v.base+' + рост '+v.level+' + снаряжение '+v.gear+(v.talent?' + таланты '+v.talent:'')+(v.training?' + развитие '+v.training:'')+' = '+v.total+(v.roundingDelta?' · округление '+v.roundingDelta:'')+' · Порядок хода определяется инициативой.';}
 feature(63,'party',(root,d)=>{const stats=q(root,'.hero-breakdown');if(stats)stats.append(line(d,initiativeBreakdownCopy(d.M.statBreakdown(d.state,d.ui.hero))));});
 
 
 export function statBreakdownLines(info){
  if(!info)return [];
- const labels={maxHp:'HP',maxMp:'MP',atk:'Атака',def:'Защита',...RESISTANCE_LABELS};
+ const labels={maxHp:'HP',maxMp:'MP',atk:'Атака',def:'Защита',...POWER_LABELS,...RESISTANCE_LABELS};
  return Object.keys(labels).filter(key=>info.totals[key]!==undefined).map(key=>{
   const short={maxHp:'hp',maxMp:'mp'}[key]||key,value=source=>source?.[key]??source?.[short]??0;
-  const talents=value(info.talents),suffix=Object.hasOwn(RESISTANCE_LABELS,key)?'%':'';
-  return labels[key]+': база '+value(info.base)+' + рост '+value(info.levelBonus)+' + снаряжение '+value(info.gearTotal)+(talents?' + таланты '+talents:'')+' = '+info.totals[key]+suffix;
+  const talents=value(info.talents),training=value(info.attributes);
+  const suffix=(Object.hasOwn(RESISTANCE_LABELS,key)||Object.hasOwn(POWER_LABELS,key))?'%':'';
+  return labels[key]+': база '+value(info.base)+' + рост '+value(info.levelBonus)+' + снаряжение '+value(info.gearTotal)+(talents?' + таланты '+talents:'')+(training?' + развитие '+training:'')+' = '+info.totals[key]+suffix;
  });
 }
 feature(64,'party',(root,d)=>{const stats=q(root,'.hero-breakdown');if(stats)stats.append(...statBreakdownLines(d.M.statBreakdown(d.state,d.ui.hero)).map(s=>line(d,s)));});

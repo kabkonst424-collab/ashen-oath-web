@@ -71,6 +71,8 @@ export function addCampaignPatrols(areas) {
     for (const [id, label, x, z, enemies, xp] of PATROLS[area.id] || []) {
       area.encounters.push({
         id: `patrol_${area.id}_${id}`, label, x, z, enemies, stroll: [1.4, 0.5],
+        // Late patrols give their front line one chance to survive a fast opener.
+        openingGuard: area.act >= 4,
         rewards: { xp }, lootTable: { guaranteed: [], choices: [] },
       });
     }

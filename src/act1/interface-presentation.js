@@ -1,13 +1,15 @@
 import {isEquipmentKind} from './equipment-slots.js?v=campaign-150';
 
+import {itemQuality} from './item-quality.js?v=campaign-170';
+
 // Pure presentation selectors: never mutate model state or invent inventory objects.
-export function windowBagView(bag,defs,category='all',query='') {
+export function windowBagView(bag,defs,category='all',query='',quality='all',{slot=null,favoriteOnly=false}={}) {
   const term=String(query).trim().toLocaleLowerCase('ru-RU');
   return bag.map((item,index)=>({item,index})).filter(({item})=>{
-    if(!item)return category==='all'&&!term;
+    if(!item)return category==='all'&&quality==='all'&&!slot&&!favoriteOnly&&!term;
     const def=defs[item.defId]||{},kind=def.kind;
     const match=category==='all'||category==='equipment'&&isEquipmentKind(kind)||category==='supplies'&&kind==='consumable'||category==='trophy'&&kind==='material'||category==='quest'&&['quest','key'].includes(kind);
-    return match&&(!term||String(def.name||'').toLocaleLowerCase('ru-RU').includes(term));
+    return match&&(!slot||kind===slot)&&(!favoriteOnly||item.favorite===true)&&(quality==='all'||itemQuality(def)===quality)&&(!term||String(def.name||'').toLocaleLowerCase('ru-RU').includes(term));
   });
 }
 export function windowValidSelection(state,selected){

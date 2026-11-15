@@ -169,6 +169,8 @@
 #gameModal .workbench-inventory .item-slot .sprite.icons { width: min(80%, 50px); height: auto; aspect-ratio: 1; }
 #gameModal .workbench-inventory .item-slot[data-rarity="uncommon"] { border-color: #84ae78; background: radial-gradient(#385143, #202b24 78%); }
 #gameModal .workbench-inventory .item-slot[data-rarity="rare"] { border-color: #93ace0; background: radial-gradient(#3b4866, #222339 78%); }
+#gameModal .workbench-inventory .item-slot[data-rarity="epic"] { border-color: #b48be7; background: radial-gradient(#58416e, #2e233c 78%); }
+#gameModal .workbench-inventory .item-slot[data-rarity="legendary"] { border-color: #e5ac6b; background: radial-gradient(#714829, #3a2520 78%); }
 #gameModal .workbench-inventory .item-slot.selected { border-color: #ffe09e; box-shadow: inset 0 0 0 2px #e5b96c, inset 0 0 16px #b6813a75; }
 #gameModal .workbench-inventory .item-slot:hover { border-color: var(--sheet-pale); }
 #gameModal .workbench-inventory .item-slot img.qty { width: min(52%, 27px); min-height: 0; padding: 0; right: 1px; bottom: 2px; }
@@ -179,7 +181,7 @@
 .workbench-inventory .item-detail .paint-button { max-width: 100%; }
 
 .talent-points { border: 1px solid #a27d47; border-radius: 4px; padding: 0 5px; background: #1c2527; }
-.talent-tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; margin: 7px 0 10px; }
+.talent-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; margin: 7px 0 10px; }
 #gameModal .talent-tabs .paint-button { min-width: 0; min-height: 50px; gap: 6px; padding: 3px 6px; background: linear-gradient(#393035, #25222a); }
 #gameModal .talent-tabs .paint-button[aria-pressed="true"] { border-color: var(--sheet-pale); box-shadow: inset 0 0 0 1px #bfa069; }
 #gameModal .talent-tabs [data-tone="ember"][aria-pressed="true"] { background: linear-gradient(#6c3428, #392027); }
@@ -190,6 +192,22 @@
 .talent-route,
 .ability-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 0; margin: 0; }
 .talent-route { list-style: none; }
+.talent-route.specialization-route { grid-template-columns: repeat(2, minmax(0,1fr)); }
+.specialization-route > .talent-step:first-child { grid-column: 1 / -1; width: min(100%, 270px); justify-self: center; }
+.specialization-route .talent-step .talent-tier::after { display: none; }
+.attribute-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%,225px),1fr)); gap: 6px; }
+.attribute-row { display: grid; grid-template-columns: 48px minmax(0,1fr) 44px; align-items: center; gap: 6px; padding: 6px; min-width: 0; border: 1px solid #766550; background: #242029; border-radius: 4px; }
+.attribute-row .ability-art { width: 46px; height: 46px; }
+.attribute-controls { display: grid; gap: 4px; }
+.attribute-row .paint-button { min-width: 0; min-height: 44px; padding-inline: 4px; }
+.attribute-copy { display: grid; align-content: center; gap: 3px; min-width: 0; }
+.companion-tab { position: relative; }
+html:not([data-compact-ui]) #actHud[data-mode="battle"] .battle-intel[open] { z-index: 9; }
+.development-ready { width: 7px; height: 7px; border-radius: 50%; background: #eacb76; position: absolute; right: 6px; top: 5px; }
+#gameModal .item-slot[data-favorite="true"]::after { content: ''; position: absolute; right: 5px; top: 5px; width: 7px; height: 7px; transform: rotate(45deg); background: #eacb76; border-radius: 1px; pointer-events: none; }
+.bag-quality-options { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+#gameModal .bag-quality-options .paint-button { flex: 1 1 92px; min-width: 0; min-height: 36px; }
+#gameModal .bag-quality-options .paint-button[aria-pressed="true"], #gameModal .backpack-tools [data-focus-key="bag-favorites"][aria-pressed="true"] { border-color: var(--sheet-pale); background: #3d4132; }
 .talent-step { position: relative; min-width: 0; padding: 4px; border: 1px solid #66584d; border-radius: 4px; background: #191a20; }
 .talent-step[data-state="available"] { border-color: #d59f65; background: linear-gradient(#512b27, #2d2228); }
 .talent-step[data-state="learned"] { border-color: #b2aa68; background: linear-gradient(#40432e, #2c2e26); }
@@ -253,7 +271,8 @@
 @media (max-width: 440px) {
   #gameModal .talent-tabs { display: flex; flex-wrap: wrap; }
   #gameModal .talent-tabs .paint-button { flex: 1 1 120px; }
-  .talent-route { grid-template-columns: 1fr; }
+  .talent-route, .talent-route.specialization-route { grid-template-columns: 1fr; }
+  .specialization-route > .talent-step:first-child { width: 100%; }
   .ability-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .talent-step { display: grid; grid-template-columns: 32px minmax(0,1fr) auto; gap: 4px; align-items: stretch; }
   .talent-step .talent-tier { display: grid; align-content: center; margin: 0; border: 0; }
@@ -265,10 +284,17 @@
   #gameModal .backpack-sheet .bag-grid { grid-template-columns: repeat(5, minmax(0,1fr)); }
 }
 
+html[data-compact-ui] #gameModal .workbench-development { grid-template-columns: minmax(0,1fr); gap: 8px; }
+html[data-compact-ui] #gameModal .workbench-development .talent-sheet { grid-row: 1; }
+html[data-compact-ui] #gameModal .bag-quality-options { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); }
+html[data-compact-ui] #gameModal .bag-quality-options .paint-button { min-height: 44px; }
+
 html[data-compact-ui] #gameModal .companion-bar { display: grid; grid-template-columns: minmax(0, 1fr) auto; }
 html[data-compact-ui] #gameModal .companion-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; padding: 2px; }
 html[data-compact-ui] #gameModal .companion-tab { flex-shrink: 0; }
 html[data-compact-ui] #gameModal .companion-switch { align-self: start; }
+html[data-compact-ui] #gameModal .backpack-tools { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); }
+html[data-compact-ui] #gameModal .backpack-tools .touch-drag-switch { grid-column: 1 / -1; }
 html[data-compact-ui] #gameModal .backpack-filters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; padding: 2px; }
 
 @media (hover: hover) and (pointer: fine) {

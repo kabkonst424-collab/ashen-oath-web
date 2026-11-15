@@ -1,5 +1,7 @@
 import {SLOT_LABELS,RESISTANCE_LABELS,ELEMENT_RESISTANCE,effectiveResistance} from './equipment-slots.js?v=campaign-150';
 
+import {POWER_LABELS} from './hero-attributes.js?v=campaign-170';
+
 export function normalizeSettings(value={}){
  const gain=(name,fallback)=>Number.isFinite(value?.[name])?Math.max(0,Math.min(1,value[name])):fallback;
  return {volume:gain('volume',.3),music:gain('music',.8),sfx:gain('sfx',.92),ambience:gain('ambience',.72),
@@ -32,8 +34,8 @@ export function restoreDisclosures(root,records=[]){for(const n of root.querySel
 export function heroSummary(name,hero,stats,active,conditions=''){return [name,'Уровень '+hero.level,'Жизнь '+Math.ceil(hero.hp)+' из '+stats.maxHp,'Мана '+Math.ceil(hero.mp)+' из '+stats.maxMp,active?'Сейчас ходит':'',hero.hp<=0?'Павший. Нажмите для возрождения':'',conditions].filter(Boolean).join(' · ');}
 export function slotSummary(loc,item,name,owner,selected){const destination=loc.kind==='bag'?'Сумка · ячейка '+(loc.index+1):(owner||loc.heroId)+' · '+(SLOT_LABELS[loc.slot]||loc.slot);return destination+' · '+(item?name+' · количество '+item.qty:'Пустая ячейка')+(selected?' · Выбран для переноса':'');}
 export function saveWarning({failure='',conflict=false}={}){return 'Прогресс не записан. Экспортируйте прохождение.'+(conflict?' Запись в другой вкладке изменилась; нужен свежий запуск.':' Можно повторить сохранение после устранения ошибки.')+(failure?'\n'+failure:'');}
-const STAT_LABELS={hp:'Жизнь',mp:'Мана',maxHp:'HP',maxMp:'MP',atk:'Атака',def:'Защита',initiative:'Инициатива',speed:'Инициатива',magicResist:'Сопр. магии',fireResist:'Сопр. огню',iceResist:'Сопр. холоду',lightningResist:'Сопр. молнии',lightResist:'Сопр. свету'};
-export function itemStatLine(def){return Object.entries(def.stats||{}).map(([key,value])=>(STAT_LABELS[key]||key)+' '+(value>0?'+':'')+value+(Object.hasOwn(RESISTANCE_LABELS,key)?'%':'')).join(' · ');}
+const STAT_LABELS={hp:'Жизнь',mp:'Мана',maxHp:'HP',maxMp:'MP',atk:'Атака',def:'Защита',initiative:'Инициатива',speed:'Инициатива',magicResist:'Сопр. магии',fireResist:'Сопр. огню',iceResist:'Сопр. холоду',lightningResist:'Сопр. молнии',lightResist:'Сопр. свету',...POWER_LABELS};
+export function itemStatLine(def){return Object.entries(def.stats||{}).map(([key,value])=>(STAT_LABELS[key]||key)+' '+(value>0?'+':'')+value+(Object.hasOwn(RESISTANCE_LABELS,key)||Object.hasOwn(POWER_LABELS,key)?'%':'')).join(' · ');}
 export function resistanceDeltaCopy(before,after){
  if(!before||!after)return '';
  return [['magic','magicResist'],...Object.entries(ELEMENT_RESISTANCE)].flatMap(([element,key])=>{
