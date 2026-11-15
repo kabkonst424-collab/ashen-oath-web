@@ -1,5 +1,5 @@
 import * as T from '../../assets/vendor/three.module.js';
-import { PARTY } from './content.js?v=campaign-v1';
+import { PARTY } from './content.js?v=campaign-130';
 import { fetchBytes } from './resource-loader.js?v=0.16.0-demo';
 import { validateCastHands } from './cast-anchors.js?v=forged-019';
 import { SOURCE_BASES, SOURCE_FRONT_YAW, resolveBaseFrontYaw, resolveProfileFrontYaw, actorSourceBase, isSourceBase, sourceValue, normalizeSourceHash, normalizeSourceYaw, sourceFacingBasis, applySourceFacing } from './source-facing.js?v=campaign-v1';

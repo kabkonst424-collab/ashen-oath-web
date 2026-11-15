@@ -1,4 +1,4 @@
-import { AREAS, DIALOGUES, ENEMIES, PARTY } from './content.js?v=campaign-v1';
+import { AREAS, DIALOGUES, ENEMIES, PARTY } from './content.js?v=campaign-130';
 import { CHAPTER_BIOMES, isCampaignModel } from './campaign-visuals.js?v=campaign-v1';
 import { actorAnimationIdentity, resolveActorVisual } from './graphics-refresh.js?v=stride-112';
 

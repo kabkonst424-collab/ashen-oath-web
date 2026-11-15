@@ -1,22 +1,22 @@
 import {resolveInitialQuality} from './browser-performance.js?v=0.16.0-demo-mobile-default20261107';
 import {createQuestArrow} from './quest-arrow-view.js?v=0.16.0-demo-webperf20261106';
-import {approachTarget,areaBounds,planPath,validSegment} from './navigation.js?v=companion-120';
-import {createMinimap,createAreaSchematic} from './minimap.js?v=companion-120';
+import {approachTarget,areaBounds,planPath,validSegment} from './navigation.js?v=campaign-130';
+import {createMinimap,createAreaSchematic} from './minimap.js?v=campaign-130';
 import * as HUD50 from './hud-presentation.js?v=0.16.0-demo';
 import * as UI100 from './interface-100.js?v=companion-120';
 import {ownsMovementKey,ignoreGameShortcut,canBattleShortcut,canStartInventoryDrag,worldTapStart,worldTapComplete} from './input-policy.js?v=0.16.0-demo';
 import {normalizeSettings,bindSearchEditing,captureSurface,restoreSurface,captureDisclosures,restoreDisclosures,heroSummary,slotSummary,saveWarning,itemStatLine,feedbackSurface,normalizePresentationSettings,statusDescription,createAudioEventCursor,eventAudioCues,presentationAudioCue} from './ui-feedback.js?v=companion-120';
-import * as M from './model.js?v=companion-120';
-import {PARTY,ITEMS,SKILLS,ENEMIES,AREAS,QUESTS,DIALOGUES,CAMPAIGN_ACTS,CAMPAIGN_COMICS,CAMPAIGN_ENDINGS} from './content.js?v=campaign-v1';
-import {Saves} from './save.js?v=companion-120';
-import {World} from './world.js?v=companion-120';
+import * as M from './model.js?v=campaign-130';
+import {PARTY,ITEMS,SKILLS,ENEMIES,AREAS,QUESTS,DIALOGUES,CAMPAIGN_ACTS,CAMPAIGN_COMICS,CAMPAIGN_ENDINGS} from './content.js?v=campaign-130';
+import {Saves} from './save.js?v=campaign-130';
+import {World} from './world.js?v=campaign-130';
 import {WriterSession} from './writer-session.js?v=0.16.0-demo';
 import {Audio} from './act-audio.js?v=campaign-v1';
 import {bridgeAt,riverSection} from './area-geometry.js?v=rivers-0181';
 import {magicProfile} from './data/magic-profiles.js?v=motion-110';
 import {durabilityLabel,durabilityMeter,itemRarity,renderChestLoot,renderSmithy} from './forged-ui.js?v=forged-019';
 import {textImage,sprite,atlasCell,loadTypography} from './bitmap.js?v=painted-20261114-r2';
-import {RELEASE,campaignPortrait,renderStarterSelection,renderCompanionBar,renderTalentTree,renderCampaignComic} from './campaign-ui.js?v=companion-120';
+import {RELEASE,areaLoadingPresentation,campaignPortrait,renderStarterSelection,renderCompanionBar,renderTalentTree,renderCampaignComic} from './campaign-ui.js?v=campaign-130';
 
 const $=id=>document.getElementById(id),list=v=>Array.isArray(v)?v:Object.values(v||{}),dict=v=>Object.fromEntries(list(v).map(x=>[x.id,x]));
 const partyDefs=dict(PARTY),itemDefs=dict(ITEMS),areaDefs=dict(AREAS),dialogueDefs=dict(DIALOGUES),enemyDefs=dict(ENEMIES);
@@ -182,8 +182,21 @@ function showComic(id){
  const comic=CAMPAIGN_COMICS[id];if(!comic)return;
  ui.comic=comic;ui.comicPage=0;openModal('comic');renderModal();audio.play('chapter');
 }
-function loadingScreen(visible,value){
+const loadingTipVisits = new Map();
+function loadingScreen(visible,value,area){
  const overlay=$('areaLoading'),bar=$('areaProgress');
+ if(visible&&overlay.hidden){
+  const chapter=area?.act||0,visit=loadingTipVisits.get(chapter)||0;
+  loadingTipVisits.set(chapter,visit+1);
+  const info=areaLoadingPresentation(area,CAMPAIGN_COMICS,visit);
+  $('areaLoadingTitle').replaceChildren(text(info.title,390,29,'#f2d294',true));
+  $('areaLoadingTip').replaceChildren(text('Совет',100,15,'#a2d6ca',true),text(info.tip,390,19));
+  const art=$('areaLoadingArt');
+  art.onerror=()=>{art.hidden=true;};
+  art.toggleAttribute('data-cover',info.cover);
+  art.src=info.illustration+'?v=campaign-v1';
+  art.hidden=false;
+ }
  overlay.hidden=!visible;
  for(const node of [$('actMenu'),$('actHud'),$('actWorld')])node.inert=visible;
  if(!visible)return;
@@ -199,7 +212,7 @@ function prepareScene(){
  if(areaLoad)return false;
  if(world?.loaded&&sceneKey===key)return true;
  const nextState=state,area=areaDefs[state.areaId];
- sceneError='';cancelDrag();clearInput();loadingScreen(true,0);
+ sceneError='';cancelDrag();clearInput();loadingScreen(true,0,area);
  let lastProgress=0;
  const measure=fraction=>{
   const value=Math.min(99,Math.max(lastProgress,Math.round(fraction*100)));

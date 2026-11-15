@@ -1,7 +1,46 @@
 import { STARTERS } from './campaign-starters.js?v=campaign-v1';
 
-export const RELEASE = '1.2.0';
+export const RELEASE = '1.3.0';
 const portraits = new Set(STARTERS.map(hero => hero.id));
+
+const LOADING_TIPS = {
+  1: [
+    'Проверяйте журнал: кнопка «Карта цели» открывает область выбранного задания.',
+    'Инициатива определяет порядок ходов. Сверьтесь с очередью перед выбором цели.',
+    'Лагерь восстанавливает силы отряда. Дойдите до него, если закончились зелья.',
+  ],
+  2: [
+    'В бою выберите умение и цель, чтобы увидеть диапазон урона перед подтверждением.',
+    'Боковые тропы ведут к необязательным дозорам. Победа даёт опыт каждому герою.',
+  ],
+  3: [
+    'Следите за подготовкой тяжёлой атаки. Некоторые умения могут сорвать её до хода врага.',
+    'Защита смягчает удар, а барьер поглощает часть урона. Их можно совмещать.',
+  ],
+  4: [
+    'Осматривайте снаряжение после боёв. Кузнец или верстак помогут восстановить прочность.',
+    'Подготовьте запас маны перед боем. Боевые умения показывают расход MP.',
+  ],
+  5: [
+    'Раскол ослабляет броню. Наложите его раньше, чтобы следующие атаки нанесли больше урона.',
+    'Руны меняют действие конкретных умений. Смотрите их описание в дереве навыков.',
+  ],
+  6: [
+    'Если враг сменил фазу, заново проверьте его намерение и очередь ходов.',
+    'Лечение помогает живым. Для павшего спутника нужна «Искра возвращения» или «Соль пробуждения».',
+  ],
+};
+
+export function areaLoadingPresentation(area, comics, visit = 0) {
+  const tips = LOADING_TIPS[area?.act] || LOADING_TIPS[1];
+  const illustration = comics[area?.entryComic]?.illustration;
+  return {
+    title: area?.title || 'Пепельная клятва',
+    tip: tips[visit % tips.length],
+    illustration: illustration || 'assets/campaign/cover.webp',
+    cover: !illustration,
+  };
+}
 
 export function campaignPortrait(id) {
   const safe = portraits.has(id) || typeof id === 'string' && /^c[2-6]_npc_[ab]$/.test(id);
@@ -52,7 +91,9 @@ export function renderCompanionBar(body, { el, button, portrait, party, partyDef
   body.append(el('div', 'companion-bar', tabs, switcher));
 }
 
-const TIERS = ['I', 'II', 'III'];
+const TIERS = ['I', 'II', 'III', 'IV', 'V', 'VI'];
+const BRANCH_TONES = ['ember', 'azure', 'verdant', 'violet'];
+const BRANCH_ICONS = ['attack', 'defend', 'heal', 'arcane'];
 const SCOPE_LABEL = {
   enemy: 'Один враг', allEnemies: 'Все враги', self: 'На себя', ally: 'Один спутник', allAllies: 'Весь отряд',
 };
@@ -70,10 +111,9 @@ export function renderTalentTree(body, { el, text, button, info, skills, definit
   tabs.ariaLabel = 'Ветки и боевые умения';
   for (const [index, entry] of [...info.branches, { id: 'abilities', name: 'Боевые умения' }].entries()) {
     const isCurrent = showSkills ? entry.id === 'abilities' : entry.id === branch.id;
-    const icon = ['attack', 'defend', 'arcane'][index];
     const tab = button(entry.name, () => selectView(entry.id), { small: true, width: 214,
-      combatIcon: icon, focusKey: `talent-view:${info.heroId}:${entry.id}` });
-    tab.dataset.tone = ['ember', 'azure', 'violet'][index];
+      combatIcon: BRANCH_ICONS[index], focusKey: `talent-view:${info.heroId}:${entry.id}` });
+    tab.dataset.tone = BRANCH_TONES[index];
     tab.setAttribute('aria-pressed', String(isCurrent));
     tabs.append(tab);
   }
@@ -107,7 +147,8 @@ export function renderTalentTree(body, { el, text, button, info, skills, definit
     return;
   }
 
-  const tone = branch === info.branches[0] ? 'ember' : 'azure';
+  const branchIndex = info.branches.indexOf(branch);
+  const tone = BRANCH_TONES[branchIndex];
   const current = branch.nodes.find(node => node.id === focus) || branch.nodes.find(node => node.available) || branch.nodes[0];
   const cards = el('ol', 'talent-route');
   cards.ariaLabel = branch.name;
@@ -117,7 +158,7 @@ export function renderTalentTree(body, { el, text, button, info, skills, definit
     const tile = button(node.name, () => selectNode(node.id), { small: true, width: 168,
       ariaLabel: `${node.name} · ступень ${index + 1} · ${node.reason || status}`,
       focusKey: `talent-node:${info.heroId}:${node.id}` });
-    const art = abilityArt(el, node.passive ? (tone === 'ember' ? 'attack' : 'defend') : skillIcon(definitions[node.skillId] || {}), tone);
+    const art = abilityArt(el, node.passive ? BRANCH_ICONS[branchIndex] : skillIcon(definitions[node.skillId] || {}), tone);
     tile.classList.add('ability-tile');
     tile.setAttribute('aria-pressed', String(current.id === node.id));
     tile.prepend(art);

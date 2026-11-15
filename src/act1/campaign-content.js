@@ -1,5 +1,5 @@
 import {CAMPAIGN_LAYOUTS} from './campaign-layouts.js?v=campaign-1';
-import {CHAPTERS} from './campaign-acts/chapters.js?v=campaign-1';
+import {CHAPTERS} from './campaign-acts/chapters.js?v=campaign-130';
 
 export const CAMPAIGN_ACTS = [
   {id:'act1', number:1, title:'Право на последний голос', areas:['monastery','village','briarwood','quarry','fen','archive','sunfields','fortress','abbey'], bossId:'bellkeeper'},

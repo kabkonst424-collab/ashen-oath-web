@@ -1,10 +1,10 @@
 import {AREA_GEOMETRY_REVISION, legacyPosition, migratePosition, nearestLand, returnArrival, walkableLayout} from './area-geometry.js?v=rivers-0181';
 import {roleCatalog} from './hero-abilities.js?v=campaign-v1';
-import * as CONTENT from './content.js?v=campaign-v1';
+import * as CONTENT from './content.js?v=campaign-130';
 import {chestLoot,encounterLoot,enemyLoot,rollLoot} from './loot-tables.js?v=forged-019';
-import {ACT_ENTRY_LEVELS, BOSS_CHAPTER_PRESSURE, LEVEL_CAP, STARTERS, experienceAtLevel, experienceThreshold, runedSkill, talentBonuses, talentCatalog, validTalents} from './campaign-progression.js?v=companion-120';
+import {ACT_ENTRY_LEVELS, BOSS_CHAPTER_PRESSURE, LEVEL_CAP, STARTERS, experienceAtLevel, experienceThreshold, runedSkill, talentBonuses, talentCatalog, validTalents} from './campaign-progression.js?v=campaign-130';
 
-export const VERSION='1.2.0';
+export const VERSION='1.3.0';
 export const SCHEMA=2;
 export const BAG_SIZE=30;
 const list=value=>Array.isArray(value)?value:Object.values(value||{});

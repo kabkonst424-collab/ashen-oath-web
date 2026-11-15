@@ -157,11 +157,12 @@
 .workbench-inventory .item-detail .paint-button { max-width: 100%; }
 
 .talent-points { border: 1px solid #a27d47; border-radius: 4px; padding: 0 5px; background: #1c2527; }
-.talent-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; margin: 7px 0 10px; }
-#gameModal .talent-tabs .paint-button { min-height: 50px; gap: 6px; padding: 3px 6px; background: linear-gradient(#393035, #25222a); }
+.talent-tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; margin: 7px 0 10px; }
+#gameModal .talent-tabs .paint-button { min-width: 0; min-height: 50px; gap: 6px; padding: 3px 6px; background: linear-gradient(#393035, #25222a); }
 #gameModal .talent-tabs .paint-button[aria-pressed="true"] { border-color: var(--sheet-pale); box-shadow: inset 0 0 0 1px #bfa069; }
 #gameModal .talent-tabs [data-tone="ember"][aria-pressed="true"] { background: linear-gradient(#6c3428, #392027); }
 #gameModal .talent-tabs [data-tone="azure"][aria-pressed="true"] { background: linear-gradient(#314e68, #22293e); }
+#gameModal .talent-tabs [data-tone="verdant"][aria-pressed="true"] { background: linear-gradient(#35574d, #242e2c); }
 #gameModal .talent-tabs [data-tone="violet"][aria-pressed="true"] { background: linear-gradient(#574065, #292139); }
 
 .talent-route,
@@ -172,7 +173,7 @@
 .talent-step[data-state="learned"] { border-color: #b2aa68; background: linear-gradient(#40432e, #2c2e26); }
 .talent-tier { margin: -4px -4px 4px; text-align: center; border-bottom: 1px solid #74604d; background: #19181d; }
 .talent-tier > .bitmap-text { width: 24px !important; margin-inline: auto; }
-.talent-step:not(:last-child) .talent-tier::after {
+.talent-step:not(:nth-child(3n)):not(:last-child) .talent-tier::after {
   content: ""; position: absolute; top: 12px; left: 100%; width: 9px; border-top: 2px solid #76644c;
 }
 .talent-step[data-state="learned"] .talent-tier::after { border-color: #dfad63; }
@@ -190,6 +191,7 @@
   box-shadow: inset 0 0 10px #160f1b8c;
 }
 .ability-art.tone-azure { background: radial-gradient(#537c92, #193655 78%); }
+.ability-art.tone-verdant { background: radial-gradient(#699665, #27443a 78%); }
 .ability-art.tone-violet { background: radial-gradient(#6b588a, #372849 78%); }
 .ability-art > .combat-icon { width: 46px; height: 46px; }
 [data-state="locked"] .ability-art { filter: grayscale(.92); opacity: .64; }
@@ -222,6 +224,7 @@
   .equipment-sheet .sheet-vitals { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 7px; }
   .equipment-sheet .sheet-stats { display: none; }
   .backpack-tools .touch-drag-switch { display: inline-flex; }
+  .talent-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 440px) {

@@ -9,13 +9,15 @@ export const BOSS_CHAPTER_PRESSURE = Object.freeze({
  c5_boss: { power: 1.40, phaseInitiative: 13, peakPressure: 1.20 },
  c6_boss: { power: 1.50, phaseInitiative: 15, peakPressure: 1.25 },
 });
-const POINT_LEVELS = [4, 8, 12, 18];
+const POINT_LEVELS = [4, 6, 8, 12, 13, 16, 18, 20, 23, 27];
 const NODE_LEVELS = [4, 9, 17];
+const CAMPAIGN_NODE_LEVELS = [6, 13, 16, 20, 23, 27];
 
 const node = (id, name, description, effect) => ({ id, name, description, ...effect });
 const attribute = (id, name, description, stats) => node(id, name, description, { stats });
 const rune = (id, name, description, skillId, adjustment) => node(id, name, description, { skill: { id: skillId, ...adjustment } });
-const branch = (id, name, nodes) => ({ id, name, nodes });
+const branch = (id, name, nodes, levels = NODE_LEVELS) => ({ id, name, nodes, levels });
+const campaignBranch = (name, nodes) => branch('campaign', name, nodes, CAMPAIGN_NODE_LEVELS);
 
 const TREES = {
  alar: [
@@ -29,6 +31,14 @@ const TREES = {
    rune('oath_wall', 'Твёрдый обет', 'Стойкость обета добавляет личный барьер на два начала хода.', 'oath_guard', { heroEffects: { barrier: { base: 14, scale: .32, turns: 2 } } }),
    rune('oath_shelter', 'Укрытие', 'Связанный обет снижает входящий урон прикрытого героя на 38% и ставит ему барьер.', 'oath_link', { power: .38, heroEffects: { barrier: { base: 12, scale: .36, turns: 2 } } }),
   ]),
+  campaignBranch('Долг хранителя', [
+   attribute('keeper_resolve', 'Выдержка', '+10 к запасу здоровья и +2 к защите.', { hp: 10, def: 2 }),
+   attribute('keeper_watch', 'Первый на страже', '+3 к инициативе.', { initiative: 3 }),
+   rune('keeper_aid', 'Свет над раной', 'Последний свет лечит на 25% больше. В бою защищает барьером союзника, у которого до лечения было не больше 35% HP.', 'last_light', { powerScale: 1.25, heroEffects: { emergencyBarrier: { threshold: .35, base: 18, scale: .28, turns: 2 } } }),
+   attribute('keeper_sinew', 'Стойкость караула', '+18 к запасу здоровья и +3 к защите.', { hp: 18, def: 3 }),
+   attribute('keeper_ember', 'Свет в кольчуге', '+9 к запасу маны и +3 к атаке.', { mp: 9, atk: 3 }),
+   rune('keeper_bastion', 'Вызов бастиона', 'Вызов рассвета стоит на 2 MP меньше и даёт Алару более прочный барьер на три начала его хода.', 'dawn_challenge', { mpDelta: -2, heroEffects: { barrier: { base: 30, scale: .62, turns: 3 } } }),
+  ]),
  ],
  myrt: [
   branch('hunt', 'След зверя', [
@@ -40,6 +50,14 @@ const TREES = {
    attribute('paths_cover', 'Знание укрытий', '+16 к запасу здоровья и +3 к защите.', { hp: 16, def: 3 }),
    rune('paths_brush', 'Живой заслон', 'Защита из зарослей даёт личный барьер перед ответным ударом.', 'brush_guard', { heroEffects: { barrier: { base: 12, scale: .30, turns: 2 } } }),
    rune('paths_breath', 'Ровное дыхание', 'Тихий привал восстанавливает 18 MP и снижает входящий урон на 52%.', 'trail_breath', { power: .52, heroEffects: { restoreSelfMana: 18 } }),
+  ]),
+  campaignBranch('Охота за гранью', [
+   attribute('range_wind', 'Попутный ветер', '+2 к атаке и +2 к инициативе.', { atk: 2, initiative: 2 }),
+   attribute('range_patience', 'Терпение следопыта', '+12 к запасу здоровья и +5 к запасу маны.', { hp: 12, mp: 5 }),
+   rune('range_sign', 'Подбитое крыло', 'Метка охотника по-прежнему раскалывает броню, а в бою ещё ослабляет следующую атаку цели на 25%.', 'trail_mark', { heroEffects: { chill: { percent: 25 } } }),
+   attribute('range_stride', 'Шаг по карнизу', '+3 к инициативе и +2 к защите.', { initiative: 3, def: 2 }),
+   attribute('range_draw', 'Тугой лук', '+5 к атаке.', { atk: 5 }),
+   rune('range_turn', 'Лиса у порога', 'Лисий шаг стоит на 2 MP меньше и наносит на 18% больше базового урона. Срыв действует по обычным правилам.', 'fox_step', { mpDelta: -2, powerScale: 1.18 }),
   ]),
  ],
  elian: [
@@ -53,6 +71,14 @@ const TREES = {
    rune('circles_mend', 'Тихий свет', 'Бледная нить получает ×1,2 к мощности лечения и расходует на 1 MP меньше.', 'pale_mend', { powerScale: 1.20, mpDelta: -1 }),
    rune('circles_aegis', 'Медная кромка', 'Охранительный контур ставит небольшой барьер всему отряду в дополнение к защитной стойке.', 'ward_circuit', { heroEffects: { barrier: { base: 8, scale: .20, turns: 2 } } }),
   ]),
+  campaignBranch('Страж порогов', [
+   attribute('threshold_salt', 'Соль на ладони', '+7 к запасу маны и +2 к инициативе.', { mp: 7, initiative: 2 }),
+   attribute('threshold_stone', 'Камень под ногой', '+10 к запасу здоровья и +3 к защите.', { hp: 10, def: 3 }),
+   rune('threshold_rime', 'Глубокий иней', 'Зеркало инея стоит на 1 MP меньше и ослабляет следующую атаку цели на 38%.', 'frost_mirror', { mpDelta: -1, heroEffects: { chill: { percent: 38 } } }),
+   attribute('threshold_draft', 'Сквозняк разлома', '+4 к атаке и +7 к запасу маны.', { atk: 4, mp: 7 }),
+   attribute('threshold_reed', 'Гибкий оберег', '+15 к запасу здоровья и +2 к инициативе.', { hp: 15, initiative: 2 }),
+   rune('threshold_echo', 'Печать поперёк', 'Ответная печать обходит защитную стойку и наносит на 12% больше базового урона. Срыв магического приёма сохраняется.', 'counterseal', { powerScale: 1.12, heroEffects: { ignoreGuard: true } }),
+  ]),
  ],
  iona: [
   branch('weather', 'Школа погод', [
@@ -64,6 +90,14 @@ const TREES = {
    attribute('seal_margin', 'Свободное поле', '+3 к защите и +2 к инициативе.', { def: 3, initiative: 2 }),
    rune('seal_ink', 'Прочная печать', 'Чернильная печать стоит на 3 MP меньше и раскрывает броню врага.', 'ink_seal', { mpDelta: -3, heroEffects: { fracture: true } }),
    rune('seal_lightning', 'Разрыв контура', 'Цепь озарений наносит электрический урон и снимает активную стойку цели.', 'lightning_chain', { element: 'lightning', heroEffects: { stripGuard: true } }),
+  ]),
+  campaignBranch('Живой архив', [
+   attribute('ledger_notes', 'Заметки в пути', '+6 к запасу маны и +2 к атаке.', { mp: 6, atk: 2 }),
+   attribute('ledger_stride', 'Почерк на бегу', '+3 к инициативе и +2 к защите.', { initiative: 3, def: 2 }),
+   rune('ledger_shards', 'Рассыпанный алфавит', 'Рассыпанные руны стоят на 2 MP меньше и наносят на 10% больше базового урона. Стойки снимаются как обычно.', 'scatter_runes', { mpDelta: -2, powerScale: 1.10 }),
+   attribute('ledger_calm', 'Тихая полка', '+12 к запасу здоровья и +8 к запасу маны.', { hp: 12, mp: 8 }),
+   attribute('ledger_ink', 'Чернила с медью', '+4 к атаке и +2 к инициативе.', { atk: 4, initiative: 2 }),
+   rune('ledger_reply', 'Письмо живому', 'Ясная мысль лечит на 30% больше. В бою передаёт другому живому спутнику до 7 MP за 7 MP Ионы.', 'clear_thought', { powerScale: 1.30, heroEffects: { manaTransfer: 7 } }),
   ]),
  ],
  radan: [
@@ -77,6 +111,14 @@ const TREES = {
    rune('spear_charge', 'Короткий выпад', 'Сбить разгон стоит на 2 MP меньше и наносит на 10% больше базового урона.', 'counter_charge', { mpDelta: -2, powerScale: 1.10 }),
    rune('spear_sweep', 'Ломая строй', 'Железная дуга дополнительно ослабляет броню задетых врагов.', 'iron_sweep', { heroEffects: { fracture: true } }),
   ]),
+  campaignBranch('Полевой устав', [
+   attribute('field_drill', 'Утренняя выучка', '+12 к запасу здоровья и +2 к защите.', { hp: 12, def: 2 }),
+   attribute('field_stride', 'На полшага раньше', '+3 к инициативе и +2 к атаке.', { initiative: 3, atk: 2 }),
+   rune('field_steel', 'Копьё под щитом', 'Упор копья обходит защитную стойку. Раскол брони сохраняется.', 'spear_thrust', { heroEffects: { ignoreGuard: true } }),
+   attribute('field_pack', 'Плечо ветерана', '+14 к запасу здоровья и +8 к запасу маны.', { hp: 14, mp: 8 }),
+   attribute('field_brace', 'Крепкая связка', '+4 к защите и +2 к атаке.', { def: 4, atk: 2 }),
+   rune('field_rally', 'Походный переклик', 'Держаться вместе лечит на 35% больше. В бою даёт до 6 MP одному истощённому спутнику, кроме Радана.', 'rally', { powerScale: 1.35, heroEffects: { rallyMana: 6 } }),
+  ]),
  ],
  leia: [
   branch('mercy', 'Руки лекарки', [
@@ -88,6 +130,14 @@ const TREES = {
    attribute('hymn_glow', 'Тёплый металл', '+3 к атаке и +2 к защите.', { atk: 3, def: 2 }),
    rune('hymn_spark', 'Отзвук искры', 'Медная искра лечит самого раненого на 36% нанесённого урона.', 'copper_spark', { heroEffects: { lifeHeal: .36 } }),
    rune('hymn_ward', 'Протяжная песнь', 'Песня заслона даёт более прочные барьеры и стоит на 2 MP меньше.', 'warding_hymn', { mpDelta: -2, heroEffects: { barrier: { base: 29, scale: .78, turns: 2 } } }),
+  ]),
+  campaignBranch('Обет спутницы', [
+   attribute('care_vials', 'Запас перевязи', '+10 к запасу здоровья и +6 к запасу маны.', { hp: 10, mp: 6 }),
+   attribute('care_ear', 'Слышать дыхание', '+3 к инициативе и +2 к защите.', { initiative: 3, def: 2 }),
+   rune('care_chorus', 'Ровный хор', 'Общее дыхание лечит сразу на 18% больше и усиливает восстановление в начале двух следующих ходов каждого живого спутника.', 'shared_breath', { powerScale: 1.18, heroEffects: { regen: { base: 10, scale: .18, turns: 2 } } }),
+   attribute('care_cloak', 'Подкладка знахарки', '+16 к запасу здоровья и +3 к защите.', { hp: 16, def: 3 }),
+   attribute('care_steady', 'Сберечь силы', '+12 к запасу маны и +2 к инициативе.', { mp: 12, initiative: 2 }),
+   rune('care_lantern', 'Нить до рассвета', 'Нить возвращения лечит сразу на 25% больше. В бою последующее восстановление длится три начала хода цели.', 'healing_thread', { powerScale: 1.25, heroEffects: { regen: { base: 16, scale: .45, turns: 3 } } }),
   ]),
  ],
 };
@@ -101,7 +151,7 @@ export function talentCatalog(hero, learned = [], mode = 'explore') {
   nextPointLevel: POINT_LEVELS.find(level => level > hero.level) ?? null,
   branches: (TREES[hero.id] || []).map(b => ({
   id: b.id, name: b.name, nodes: b.nodes.map(({ id, name, description, skill, stats }, index) => {
-   const level = NODE_LEVELS[index], acquired = learned.includes(id), predecessor = b.nodes[index - 1];
+   const level = b.levels[index], acquired = learned.includes(id), predecessor = b.nodes[index - 1];
    const reason = acquired ? 'Изучено' : hero.level < level ? `Требуется уровень ${level}` :
     predecessor && !learned.includes(predecessor.id) ? `Сначала изучите «${predecessor.name}»` :
     points < 1 ? 'Нет очков талантов' : mode !== 'explore' ? 'Таланты изучаются в пути' : '';
