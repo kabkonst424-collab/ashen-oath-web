@@ -1,5 +1,5 @@
 // Read-only UI adapters. Commands are passed by main; no model state is mutated here.
-import {statusDescription as modelStatusDescription} from './ui-feedback.js?v=forged-019';
+import {statusDescription as modelStatusDescription} from './ui-feedback.js?v=companion-120';
 export const features=[];
 export function decorate(root,surface,d){if(root._ui100Marker?.parentNode===root)return;for(const f of features)if(f.surface===surface)f.apply(root,d);const marker=d.el('span','ui100-render-boundary');marker.hidden=true;root.append(marker);root._ui100Marker=marker;}
 export function applyFeature(id,root,d){const f=features.find(f=>f.id===id);if(!f)throw Error('Unknown UI feature '+id);f.apply(root,d);}
@@ -12,12 +12,53 @@ function rows(d,title,lines,cls='ui100-summary'){return d.el('section',cls,line(
 function disclosure(d,title,lines,cls){const box=d.el('details',cls),head=d.el('summary','',d.text(title,300,13,'#e5ce9b',true));box.dataset.disclosure='ui100:'+title;head.dataset.focusKey='ui100:'+title;box.append(head,...lines.filter(Boolean).map(t=>line(d,t,'ui100-line',320)));return box;}
 function actorNames(d){return {...d.partyDefs,...Object.fromEntries((d.state.battle?.enemies||[]).map(e=>[e.uid,{name:d.enemyDefs[e.kind]?.name||e.kind}]))};}
 
-export function queueEnemyChoice(state,id,locked=false){return !locked&&state.mode==='battle'&&state.battle.enemies.some(e=>e.uid===id&&e.hp>0)?id:null;}
-feature(21,'hud',(root,d)=>{for(const n of qa(root,'.turn-entry.enemy')){const id=n.dataset.actorId;if(queueEnemyChoice(d.state,id,d.ui.presentationLock))press(n,()=>d.targetEnemy(id));}});
+// Cards, queue and keyboard share this read-only targeting policy.
+export function battleTargetScope(state,target,{M,SKILLS={},itemDefs={}}={}){
+ if(!target||['attack','items'].includes(target.kind))return 'enemy';
+ if(target.kind==='skill')return M?.availableSkills?.(state,state.battle?.activeHeroId).find(skill=>skill.id===target.skillId)?.target||SKILLS[target.skillId]?.target||(target.ally?'ally':null);
+ if(target.kind==='item'){const item=itemDefs[state.bag[target.slot]?.defId],effect=item?.effect||item?.use;return effect?.kind==='allHeal'?'allAllies':M?.previewUseItem?.(state,target.slot)?.scope||'ally';}
+ return null;
+}
+export function battleTargetEligibility(state,target,side,id,locked=false,deps={}){
+ const reject=reason=>({ok:false,reason});
+ if(locked||state.mode!=='battle'||!state.battle)return reject('');
+ const scope=battleTargetScope(state,target,deps);
+ if(['allEnemies','allAllies','self'].includes(scope))return reject('Это действие не требует выбора отдельной цели.');
+ if(side==='enemy'){
+  if(scope!=='enemy')return reject('Это действие применяется к спутнику справа.');
+  if(!state.battle.enemies.some(e=>e.uid===id&&e.hp>0))return reject('Выберите живого противника.');
+ }else{
+  if(scope!=='ally')return reject('Выберите противника.');
+  const hero=state.party.find(h=>h.id===id);if(!hero)return reject('Выберите спутника.');
+  if(target?.kind==='item'&&deps.M?.previewUseItem){const forecast=deps.M.previewUseItem(state,target.slot,id);return forecast.canCommit?{ok:true,scope,side}:reject(forecast.reason||forecast.message);}
+  const effect=deps.SKILLS?.[target?.skillId]?.kind;
+  if(hero.hp<=0&&effect!=='revive')return reject('Выберите живого спутника.');
+  if(hero.hp>0&&effect==='revive')return reject('Искра возвращает только павших спутников.');
+ }
+ if(target?.kind==='skill'&&deps.M?.battlePreview){const forecast=deps.M.battlePreview(state,{kind:'skill',skillId:target.skillId},id);if(forecast.ok===false||forecast.canCommit===false)return reject(forecast.reason||forecast.message);}
+ return {ok:true,scope,side};
+}
+export function queueEnemyChoice(state,id,locked=false,target=null,deps={}){return battleTargetEligibility(state,target,'enemy',id,locked,deps).ok?id:null;}
+feature(21,'hud',(root,d)=>{for(const n of qa(root,'.turn-entry.enemy')){const id=n.dataset.actorId;if(queueEnemyChoice(d.state,id,d.ui.presentationLock,d.ui.target,d))press(n,()=>d.targetEnemy(id));}});
 
 
-export function queueAllyChoice(state,target,id,locked=false){return !locked&&state.mode==='battle'&&(target?.ally||target?.kind==='item')&&state.party.some(h=>h.id===id)?id:null;}
-feature(22,'hud',(root,d)=>{for(const n of qa(root,'.turn-entry.party')){const id=n.dataset.actorId;if(queueAllyChoice(d.state,d.ui.target,id,d.ui.presentationLock))press(n,()=>d.targetHero(id));}});
+export function queueAllyChoice(state,target,id,locked=false,deps={}){return battleTargetEligibility(state,target,'party',id,locked,deps).ok?id:null;}
+feature(22,'hud',(root,d)=>{for(const n of qa(root,'.turn-entry.party')){const id=n.dataset.actorId;if(queueAllyChoice(d.state,d.ui.target,id,d.ui.presentationLock,d))press(n,()=>d.targetHero(id));}});
+export function battleTargetSelected(state,ui,side,id,deps={}){
+ if(!ui.target||!state.battle)return false;
+ const scope=battleTargetScope(state,ui.target,deps);
+ if(side==='enemy')return (scope==='allEnemies'||scope==='enemy'&&ui.enemyId===id)&&state.battle.enemies.some(enemy=>enemy.uid===id&&enemy.hp>0);
+ const hero=state.party.find(hero=>hero.id===id);if(!hero)return false;
+ if(scope==='allAllies')return hero.hp>0;
+ if(scope==='self')return id===state.battle.activeHeroId;
+ return scope==='ally'&&ui.allyId===id&&battleTargetEligibility(state,ui.target,side,id,false,deps).ok;
+}
+export function battleChoicePrompt(state,ui,pending,deps={}){
+ const scope=battleTargetScope(state,ui.target,deps);
+ if(['allEnemies','allAllies','self'].includes(scope))return pending?'Действие готово. Подтвердите применение.':'Отдельная цель не требуется. Проверьте доступность действия.';
+ return pending?'Цель выбрана. Подтвердите применение.':scope==='ally'?'Выберите спутника справа.':ui.target?.kind==='items'?'Выберите припас.':'Выберите противника на поле или его номер.';
+}
+export function armSkill(ui,skill){ui.target={kind:'skill',skillId:skill.id,ally:skill.target==='ally'};if(skill.target!=='enemy')ui.enemyId=null;ui.allyId=null;}
 
 
 export function targetHealthForecast(hp,maxHp,target){if(!target||!['damage','heal','allHeal','revive'].includes(target.effect))return null;const min=Number(target.min??target.max??0),max=Number(target.max??target.min??0),damage=target.effect==='damage';const low=Math.max(0,Math.min(maxHp,damage?hp-max:hp+min)),high=Math.max(0,Math.min(maxHp,damage?hp-min:hp+max));return {low,high,before:hp,maxHp,beforePercent:100*hp/maxHp,afterPercent:100*low/maxHp,label:'HP после: '+Math.ceil(low)+(low!==high?'–'+Math.ceil(high):'')+' / '+maxHp};}
@@ -64,8 +105,17 @@ feature(31,'hud',(root,d)=>{if(d.state.battle)q(root,'.battle-actions')?.append(
 
 
 export function adjacentTarget(enemies,current,direction){const ids=enemies.filter(alive).map(e=>e.uid);if(!ids.length)return null;let index=ids.indexOf(current);if(index<0)return direction<0?ids.at(-1):ids[0];return ids[(index+direction+ids.length)%ids.length];}
-export function targetArrowShortcut(event,d){if(!['ArrowLeft','ArrowRight'].includes(event.code)||!d.ui.target||d.ui.target.ally||['item','items','defend','flee'].includes(d.ui.target.kind))return false;const id=adjacentTarget(d.state.battle.enemies,d.ui.enemyId,event.code==='ArrowLeft'?-1:1);if(id)d.targetEnemy(id);return !!id;}
-feature(32,'hud',(root,d)=>{if(d.state.battle&&d.ui.target&&!d.ui.target.ally)q(root,'.battle-targets')?.append(line(d,'← / → — выбрать живую цель','ui100-target-keys',320));});
+export function targetArrowShortcut(event,d){
+ if(!['ArrowLeft','ArrowRight'].includes(event.code)||!d.ui.target)return false;
+ const scope=battleTargetScope(d.state,d.ui.target,d),side=scope==='ally'?'party':scope==='enemy'?'enemy':null;
+ if(!side||['items','defend','flee'].includes(d.ui.target.kind))return false;
+ const candidates=(side==='party'?d.state.party:d.state.battle?.enemies||[]).filter(actor=>battleTargetEligibility(d.state,d.ui.target,side,side==='party'?actor.id:actor.uid,d.ui.presentationLock,d).ok);
+ const ids=candidates.map(actor=>side==='party'?actor.id:actor.uid),current=side==='party'?d.ui.allyId:d.ui.enemyId,direction=event.code==='ArrowLeft'?-1:1,index=ids.indexOf(current);
+ const id=index<0?(direction<0?ids.at(-1):ids[0]):ids[(index+direction+ids.length)%ids.length];
+ if(!id)return false;
+ (side==='party'?d.targetHero:d.targetEnemy)(id);return true;
+}
+feature(32,'hud',(root,d)=>{const scope=battleTargetScope(d.state,d.ui.target,d);if(d.state.battle&&d.ui.target&&['enemy','ally'].includes(scope)&&d.ui.target.kind!=='items')q(root,'.battle-targets')?.append(line(d,'← / → — выбрать подходящую цель','ui100-target-keys',320));});
 
 
 export function skillTooltip(skill){return skill.name+' · '+(skill.mp??skill.cost??0)+' MP';}
@@ -112,15 +162,35 @@ export function autoScrollDrag(container,event){if(!container||container.scrollH
 
 export function responsiveGridColumns(grid,window){const columns=window.getComputedStyle(grid).gridTemplateColumns.trim().split(/\s+/).filter(Boolean);return Math.max(1,columns[0]==='none'?1:columns.length);}
 export function gridDestination(index,key,total,columns){const start=Math.floor(index/columns)*columns,end=Math.min(total-1,start+columns-1);return Math.max(0,Math.min(total-1,key==='Home'?start:key==='End'?end:key==='ArrowLeft'?index-1:key==='ArrowRight'?index+1:key==='ArrowUp'?index-columns:key==='ArrowDown'?index+columns:index));}
-feature(43,'inventory',(root,d)=>{const grid=q(root,'.bag-grid');if(!grid)return;grid.role='grid';grid.ariaLabel='Ячейки сумки · стрелки и Home/End';const cells=qa(grid,'.item-slot');const active=Math.max(0,cells.findIndex(n=>n.dataset.location===d.ui.gridFocus));cells.forEach((n,i)=>{n.tabIndex=i===active?0:-1;n.onkeydown=e=>{if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(e.key))return;e.preventDefault();const next=gridDestination(i,e.key,cells.length,responsiveGridColumns(grid,d.window));cells.forEach((c,j)=>c.tabIndex=j===next?0:-1);d.ui.gridFocus=cells[next].dataset.location;cells[next].focus();cells[next].scrollIntoView({block:'nearest',inline:'nearest',behavior:'instant'});};});});
+export function bindBagGrid(grid,ui,window){
+ grid.role='group';grid.ariaLabel='Ячейки сумки · стрелки и Home/End';
+ const cells=qa(grid,'.item-slot');
+ const active=Math.max(0,cells.findIndex(n=>n.dataset.location===ui.gridFocus));
+ cells.forEach((cell,index)=>{
+   cell.tabIndex=index===active?0:-1;
+   cell.onfocus=()=>{
+     ui.gridFocus=cell.dataset.location;
+     cells.forEach((candidate,i)=>{candidate.tabIndex=i===index?0:-1;});
+   };
+   cell.onkeydown=event=>{
+     if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(event.key))return;
+     event.preventDefault();
+     const next=cells[gridDestination(index,event.key,cells.length,responsiveGridColumns(grid,window))];
+     next.focus();next.scrollIntoView({block:'nearest',inline:'nearest',behavior:'instant'});
+   };
+ });
+}
+feature(43,'inventory',(root,d)=>{const grid=q(root,'.bag-grid');if(grid)bindBagGrid(grid,d.ui,d.window);});
 
 
 export function validGearTargets(state,selected,locations,preview){if(!selected)return [];return locations.filter(loc=>loc.kind==='gear'&&preview(state,selected.from,loc).ok);}
-feature(44,'inventory',(root,d)=>{if(!d.ui.selected)return;for(const n of qa(root,'.gear-slot')){const loc=JSON.parse(n.dataset.location),valid=d.M.previewMoveItem(d.state,d.ui.selected.from,loc).ok;n.classList.toggle('ui100-valid-gear',valid);if(valid){n.append(d.text('Можно надеть',110,11,'#bde0c1'));n.ariaLabel+=' · Можно надеть выбранный предмет';}}});
+feature(44,'inventory',(root,d)=>{if(!d.ui.selected)return;for(const n of qa(root,'.gear-slot')){const loc=JSON.parse(n.dataset.location),valid=d.M.previewMoveItem(d.state,d.ui.selected.from,loc).ok;n.classList.toggle('ui100-valid-gear',valid);if(valid)n.ariaLabel+=' · Можно надеть выбранный предмет';}});
 
 
 export function equipmentResourceRisks(compare,hero){if(!compare?.ok)return [];const out=[];for(const type of ['hp','mp']){const after=compare.resourceAfter[type],current=hero[type];if(after<current)out.push('! После смены '+type.toUpperCase()+': '+Math.ceil(current)+' → '+Math.ceil(after)+' · потеря '+Math.ceil(current-after));}return out;}
-feature(45,'inventory',(root,d)=>{const item=d.itemDefs[d.ui.detail],hero=d.state.party.find(h=>h.id===d.ui.hero);if(!item||!hero||!['weapon','armor','charm'].includes(item.kind))return;const c=d.M.equipmentComparison(d.state,item.id,hero.id),warnings=equipmentResourceRisks(c,hero);if(warnings.length)q(root,'.item-detail')?.append(rows(d,'Проверьте запас здоровья и маны',warnings,'ui100-summary ui100-gear-risk'));});
+export function equipmentMoveResourceRisks(forecast,names={}){if(!forecast?.ok)return [];return (forecast.heroes||[]).flatMap(hero=>equipmentResourceRisks({ok:true,resourceAfter:hero.currentAfter},hero.currentBefore).map(warning=>(names[hero.id]?.name||hero.id)+' · '+warning));}
+feature(45,'inventory',(root,d)=>{const selected=d.ui.selected,item=selected&&d.locationItem(selected.from),def=d.itemDefs[item?.defId],hero=d.state.party.find(h=>h.id===d.ui.hero);if(!item||!hero||!['weapon','armor','charm'].includes(def?.kind))return;const forecast=d.M.previewMoveItem(d.state,selected.from,{kind:'gear',heroId:hero.id,slot:def.kind}),warnings=equipmentMoveResourceRisks(forecast,d.partyDefs);if(warnings.length)q(root,'.item-detail')?.append(rows(d,'Проверьте запас здоровья и маны',warnings,'ui100-summary ui100-gear-risk'));});
+export function selectInventoryHero(state,ui,id,validSelection){if(!state.party.some(hero=>hero.id===id))return false;ui.hero=id;if(ui.selected&&!validSelection(state,ui.selected)){ui.selected=null;ui.detail=null;}return true;}
 
 
 function shopProducts(d){const npc=d.areaDefs[d.state.areaId]?.npcs?.find(n=>n.id===d.ui.shop);return (npc?.shop||npc?.shopItems||[]).map(e=>typeof e==='string'?e:e.id);}
@@ -149,7 +219,8 @@ export function pendingRewardLines(info,defs){return !info?.quantity?[]:[...(inf
 feature(51,'inventory',(root,d)=>{const info=d.M.pendingRewardInfo(d.state);if(info.quantity)root.append(rows(d,'Отложенные припасы',pendingRewardLines(info,d.itemDefs),'ui100-summary ui100-pending'));});
 
 
-export function dropPreviewCopy(forecast,source,target,defs){if(!forecast.ok)return 'Нельзя перенести: '+(forecast.reason||forecast.message);const action=target?target.defId===source.defId?'Объединить стопки':'Обменять предметы':'Переместить предмет';return action+' · '+(defs[source.defId]?.name||source.defId)+' ×'+source.qty+(target?' · '+(defs[target.defId]?.name||target.defId)+' ×'+target.qty:'');}
+export function dropActionKind(forecast,source,target,defs){if(!forecast.ok)return 'invalid';if(!target)return 'move';const def=defs[source?.defId]||{},max=['weapon','armor','charm'].includes(def.kind)?1:Math.max(1,Math.min(999,def.stackMax||def.maxStack||99));return target.defId===source?.defId&&max>1&&forecast.source?.kind!=='gear'&&forecast.target?.kind!=='gear'?'merge':'swap';}
+export function dropPreviewCopy(forecast,source,target,defs){if(!forecast.ok)return 'Нельзя перенести: '+(forecast.reason||forecast.message);const action={merge:'Объединить стопки',swap:'Обменять предметы',move:'Переместить предмет'}[dropActionKind(forecast,source,target,defs)];return action+' · '+(defs[source.defId]?.name||source.defId)+' ×'+source.qty+(target?' · '+(defs[target.defId]?.name||target.defId)+' ×'+target.qty:'');}
 feature(52,'inventory',(root,d)=>{if(!d.ui.selected)return;const live=d.el('div','ui100-drop-preview');live.role='status';live.ariaLive='polite';root.append(live);for(const n of qa(root,'.item-slot')){const loc=JSON.parse(n.dataset.location),show=()=>{const from=d.ui.selected?.from;if(!from)return;const source=d.locationItem(from);if(!source)return;const forecast=d.M.previewMoveItem(d.state,from,loc),copy=dropPreviewCopy(forecast,source,d.locationItem(loc),d.itemDefs);live.replaceChildren(line(d,copy));n.ariaDescription=copy;};n.onfocus=show;n.onpointerenter=show;}});
 
 
@@ -227,10 +298,11 @@ export function areaCompletionLines(info){if(!info?.known)return ['Област�
 feature(57,'map',(root,d)=>{const info=d.M.areaCompletion(d.state,d.ui.mapAreaId||d.state.areaId);root.append(rows(d,info.known?'Область · '+info.name:'Неизвестная область',areaCompletionLines(info),'ui100-summary ui100-area-completion'));});
 
 
-feature(58,'journal',(root,d)=>{const targets=d.M.journalNavigationTargets(d.state).filter(q=>q.target),box=rows(d,'Известные ориентиры',[],'ui100-summary ui100-journal-targets');for(const record of targets){const b=d.button(record.title+' · '+record.target.label,()=>{d.ui.windowMapQuestId=record.questId;d.ui.mapAreaId=record.target.areaId;saveUIPreferences(d.storage,d.state.runId,d.ui);d.openModal('map');},{small:true,width:650,focusKey:'journal-route:'+record.questId});box.append(b,...knownPrerequisiteLines(record).map(s=>line(d,s)));}if(targets.length)root.append(box);});
+feature(58,'journal',(root,d)=>{const targets=d.M.journalNavigationTargets(d.state).filter(q=>q.target),box=rows(d,'Известные ориентиры',[],'ui100-summary ui100-journal-targets');for(const record of targets){const b=d.button(record.title+' · '+record.target.label,()=>{openJournalTarget(d.ui,record.questId,record.target,d.storage,d.state.runId,d.openModal);},{small:true,width:650,focusKey:'journal-route:'+record.questId});box.append(b,...knownPrerequisiteLines(record).map(s=>line(d,s)));}if(targets.length)root.append(box);});
 
 
 const preferenceKey=runId=>'ashen-act1-ui:'+runId;
+export function openJournalTarget(ui,questId,target,storage,runId,openModal){if(!target?.areaId)return false;ui.windowMapQuestId=questId;ui.mapAreaId=target.areaId;saveUIPreferences(storage,runId,ui);openModal('map');return true;}
 export function saveUIPreferences(storage,runId,ui){try{storage.setItem(preferenceKey(runId),JSON.stringify({trackedQuestId:ui.trackedQuestId||null,mapAreaId:ui.mapAreaId||null,mapQuestId:ui.windowMapQuestId||null}));return true;}catch{return false;}}
 export function restoreUIPreferences(storage,state,ui,M,areas){if(ui.preferencesRun===state.runId)return;ui.preferencesRun=state.runId;let saved={};try{saved=JSON.parse(storage.getItem(preferenceKey(state.runId))||'{}')||{};}catch{}const quest=saved.trackedQuestId?M.questProgress(state,saved.trackedQuestId):null;ui.trackedQuestId=quest?.known&&!quest.complete&&quest.available?saved.trackedQuestId:null;const mapQuest=saved.mapQuestId?M.questProgress(state,saved.mapQuestId):null;ui.windowMapQuestId=mapQuest?.known?saved.mapQuestId:null;ui.mapAreaId=areas[saved.mapAreaId]&&M.areaCompletion(state,saved.mapAreaId).known?saved.mapAreaId:state.areaId;}
 
@@ -243,11 +315,11 @@ feature(61,'map',(root,d)=>{const nodes=qa(root,'.ui100-map-node'),active=Math.m
 
 
 export function milestoneLines(m){if(!m)return [];return m.nextUnlockLevel?['Ближайшая веха: уровень '+m.nextUnlockLevel+' · До неё '+m.xpToUnlock+' XP · Уровней: '+m.levelsAway,...m.skills.map(s=>s.name+' · '+(s.cost??s.mp??0)+' MP')]:['Все исходные навыки уже открыты.'];}
-feature(62,'party',(root,d)=>{for(const h of d.state.party)root.append(rows(d,'Следующее умение · '+d.partyDefs[h.id].name,milestoneLines(d.M.skillMilestone(d.state,h.id)),'ui100-summary ui100-milestone'));});
+feature(62,'party',(root,d)=>{const growth=q(root,'.hero-growth');if(growth)growth.append(rows(d,'Открытие умений',milestoneLines(d.M.skillMilestone(d.state,d.ui.hero)),'ui100-summary ui100-milestone'));});
 
 
 export function initiativeBreakdownCopy(info){if(!info)return '';const v=info.initiative;return 'Инициатива: база '+v.base+' + рост '+v.level+' + снаряжение '+v.gear+(v.talent?' + таланты '+v.talent:'')+' = '+v.total+(v.roundingDelta?' · округление '+v.roundingDelta:'')+' · Порядок хода определяется инициативой.';}
-feature(63,'party',(root,d)=>{for(const h of d.state.party)root.append(rows(d,'Инициатива · '+d.partyDefs[h.id].name,[initiativeBreakdownCopy(d.M.statBreakdown(d.state,h.id))],'ui100-summary ui100-initiative-breakdown'));});
+feature(63,'party',(root,d)=>{const stats=q(root,'.hero-breakdown');if(stats)stats.append(line(d,initiativeBreakdownCopy(d.M.statBreakdown(d.state,d.ui.hero))));});
 
 
 export function statBreakdownLines(info){
@@ -259,14 +331,14 @@ export function statBreakdownLines(info){
   return labels[key]+': база '+value(info.base)+' + рост '+value(info.levelBonus)+' + снаряжение '+value(info.gearTotal)+(talents?' + таланты '+talents:'')+' = '+info.totals[key];
  });
 }
-feature(64,'party',(root,d)=>{for(const h of d.state.party){const box=d.el('details','window-disclosure ui100-stat-breakdown'),summary=d.el('summary','',d.text('Источники характеристик · '+d.partyDefs[h.id].name,700,16,'#e9ca91',true));box.dataset.disclosure='ui100-stats:'+h.id;box.append(summary,...statBreakdownLines(d.M.statBreakdown(d.state,h.id)).map(s=>line(d,s)));root.append(box);}});
+feature(64,'party',(root,d)=>{const stats=q(root,'.hero-breakdown');if(stats)stats.append(...statBreakdownLines(d.M.statBreakdown(d.state,d.ui.hero)).map(s=>line(d,s)));});
 
 
 export function recapLines(summary,defs={}){if(!summary)return [];return ['Вы здесь: '+(summary.area?.title||summary.area?.name||'Область'),summary.objective?'Цель: '+summary.objective.title:null,'Отряд: '+summary.party.map(h=>(defs[h.id]?.name||h.id)+' · '+h.level+' ур.'+(h.fallen?' · пал':'')).join(', '),'Золото: '+summary.gold+' · Ожидает припасов: '+summary.pendingRewards.quantity,'Известных заданий завершено: '+summary.quests.completed];}
 feature(65,'menu',(root,d)=>{if(!d.menuState)return;const summary=d.M.runSummary(d.menuState),box=d.el('details','window-disclosure ui100-resume-recap');box.dataset.disclosure='ui100-recap';box.append(d.el('summary','',d.text('Вспомнить путь перед возвращением',330,15,'#e9ca91',true)),...recapLines(summary,d.partyDefs).filter(Boolean).map(s=>line(d,s,'ui100-line',330)));root.append(box);});
 
 
-feature(66,'party',(root,d)=>{const info=d.M.revivalSupplyInfo(d.state);if(info.fallenIds.length)root.append(rows(d,'Павших спутников: '+info.fallenIds.length,[info.fallenIds.map(id=>d.partyDefs[id]?.name||id).join(', '),...revivalSupplyLines(info,d.partyDefs),'Лагерь восстанавливает отряд бесплатно после возвращения к доступному лагерю.'],'ui100-summary ui100-party-recovery'));});
+feature(66,'party',(root,d)=>{const info=d.M.revivalSupplyInfo(d.state);if(info.fallenIds.length)(q(root,'.party-overview')||root).append(rows(d,'Павших спутников: '+info.fallenIds.length,[info.fallenIds.map(id=>d.partyDefs[id]?.name||id).join(', '),...revivalSupplyLines(info,d.partyDefs),'Лагерь восстанавливает отряд бесплатно после возвращения к доступному лагерю.'],'ui100-summary ui100-party-recovery'));});
 
 
 export function dialogueSpeakerView(state,defs,areas){const dialogue=defs[state.dialogue?.id];if(!dialogue)return null;const npc=areas[state.areaId]?.npcs?.find(n=>n.id===state.dialogue?.npcId||n.id===dialogue.npcId),line=dialogue.lines?.[Math.min(state.dialogue?.line||0,Math.max(0,(dialogue.lines?.length||1)-1))]||{speaker:npc?.name,text:''};return {speaker:line.speaker||npc?.name||'Собеседник',originalText:line.text||'',npc:!!npc};}
@@ -277,7 +349,7 @@ export function accessibleChoiceCopy(original,consequences){return original+(con
 feature(68,'dialogue',(root,d)=>{const dialogue=d.dialogueDefs[d.state.dialogue?.id];if(!dialogue)return;const buttons=qa(root,'.window-choice-card button');for(const b of buttons){const id=b.dataset.focusKey?.split(':').at(-1),choice=dialogue.choices?.find(c=>c.id===id);if(choice){const consequences=d.M.choiceConsequences(d.state,id);b.ariaLabel=accessibleChoiceCopy(choice.text,consequences);b.ariaDescription=consequences.ok?consequences.message||'':'';}}});
 
 
-for(const surface of ['party','menu'])feature(69,surface,(root,d)=>{const state=surface==='menu'?d.menuState:d.state;if(!state)return;const summary=d.M.runSummary(state),objective=summary.objective;if(!objective||summary.complete||['complete','dialogue'].includes(summary.mode)||objective.complete)return;root.append(d.button('К текущей цели · '+objective.title,()=>{if(surface==='menu')d.openObjective(objective.id);else{d.ui.trackedQuestId=objective.id;d.ui.windowQuestFilter='active';d.openModal('journal');}},{small:true,width:surface==='menu'?320:650,focusKey:'current-objective'}));});
+for(const surface of ['party','menu'])feature(69,surface,(root,d)=>{const state=surface==='menu'?d.menuState:d.state;if(!state)return;const summary=d.M.runSummary(state),objective=summary.objective;if(!objective||summary.complete||['complete','dialogue'].includes(summary.mode)||objective.complete)return;(q(root,'.party-overview')||root).append(d.button('К текущей цели · '+objective.title,()=>{if(surface==='menu')d.openObjective(objective.id);else{d.ui.trackedQuestId=objective.id;d.ui.windowQuestFilter='active';d.openModal('journal');}},{small:true,width:surface==='menu'?320:650,focusKey:'current-objective'}));});
 
 
 export function actSummaryLines(summary,pending,reward,defs){return [...recapLines(summary,defs),'Известные бои: '+summary.encounters.completed+' / '+summary.encounters.total,'Сумка: '+summary.bag.used+' / '+summary.bag.capacity,'Припасы возрождения: '+summary.revivalSupply.quantity,...pendingRewardLines(pending,defs),...(reward?['Последний бой (текущий сеанс)',...rewardSummaryLines(reward,defs)]:[])];}

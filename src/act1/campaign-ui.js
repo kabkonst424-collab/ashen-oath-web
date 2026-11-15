@@ -1,6 +1,6 @@
 import { STARTERS } from './campaign-starters.js?v=campaign-v1';
 
-export const RELEASE = '1.1.2';
+export const RELEASE = '1.2.0';
 const portraits = new Set(STARTERS.map(hero => hero.id));
 
 export function campaignPortrait(id) {
@@ -31,26 +31,117 @@ export function renderStarterSelection(body, { el, text, button, partyDefs, item
     button('Начать · ' + partyDefs[selected].name, () => begin(selected), { width: 260, primary: true, focusKey: 'starter:start' })));
 }
 
-export function renderTalentBranches(body, { el, text, button, info, canEdit, learn, reset }) {
-  if (!info) return;
-  const branches = el('div', 'campaign-talents-grid');
-  for (const branch of info.branches) {
-    const panel = el('section', 'campaign-talent-branch', text(branch.name, 350, 18, '#e6c980', true));
-    for (const node of branch.nodes) {
-      const status = node.learned ? 'Изучено' : node.available ? `${node.cost} очк. · уровень ${node.level}` : node.reason || 'Уровень ' + node.level;
-      const learnButton = button(node.learned ? 'Изучено' : 'Изучить', () => learn(node.id), {
-        small: true, width: 135, disabled: !canEdit || !node.available || node.learned,
-        focusKey: `talent:${info.heroId}:${node.id}`, ariaLabel: (node.learned ? 'Изучено: ' : 'Изучить ') + node.name,
-      });
-      panel.append(el('article', 'campaign-talent' + (node.learned ? ' learned' : ''),
-        text(node.name, 320, 16, '#efd599', true), text(node.description, 320, 13),
-        text(status, 320, 12, node.learned ? '#a9dac3' : '#cebc92'), learnButton));
-    }
-    branches.append(panel);
+export function renderCompanionBar(body, { el, button, portrait, party, partyDefs, heroId, surface, select, switchView }) {
+  const tabs = el('div', 'companion-tabs');
+  tabs.role = 'group';
+  tabs.ariaLabel = 'Выбор героя';
+  for (const hero of party) {
+    const def = partyDefs[hero.id];
+    const tab = button(def.name, () => select(hero.id), {
+      small: true, width: 82, focusKey: `${surface}-hero:${hero.id}`,
+      ariaLabel: `${def.name} · уровень ${hero.level}${hero.hp ? '' : ' · павший'}`,
+    });
+    tab.classList.add('companion-tab');
+    tab.prepend(portrait(def.portrait, 'companion-thumb'));
+    tab.setAttribute('aria-pressed', String(hero.id === heroId));
+    tabs.append(tab);
   }
-  body.append(text(`Доступно ${info.points} из ${info.totalPoints} очк.`, 710, 15, '#b8dcc8'), branches);
-  body.append(button('Вернуть очки талантов', reset, { small: true, width: 260, disabled: !canEdit || !info.spent,
-    focusKey: `reset:${info.heroId}` }));
+  const switcher = button(surface === 'inventory' ? 'Навыки ↗' : 'Сумка ↗', switchView,
+    { small: true, width: 96, focusKey: 'switch-companion-view' });
+  switcher.classList.add('companion-switch');
+  body.append(el('div', 'companion-bar', tabs, switcher));
+}
+
+const TIERS = ['I', 'II', 'III'];
+const SCOPE_LABEL = {
+  enemy: 'Один враг', allEnemies: 'Все враги', self: 'На себя', ally: 'Один спутник', allAllies: 'Весь отряд',
+};
+
+function abilityArt(el, icon, tone) {
+  return el('span', `ability-art tone-${tone}`, el('span', `combat-icon combat-icon-${icon}`));
+}
+
+export function renderTalentTree(body, { el, text, button, info, skills, definitions, skillIcon,
+  view, focus, selectView, selectNode, canEdit, learn, reset }) {
+  const branch = info.branches.find(b => b.id === view) || info.branches[0];
+  const showSkills = view === 'abilities';
+  const tabs = el('div', 'talent-tabs');
+  tabs.role = 'group';
+  tabs.ariaLabel = 'Ветки и боевые умения';
+  for (const [index, entry] of [...info.branches, { id: 'abilities', name: 'Боевые умения' }].entries()) {
+    const isCurrent = showSkills ? entry.id === 'abilities' : entry.id === branch.id;
+    const icon = ['attack', 'defend', 'arcane'][index];
+    const tab = button(entry.name, () => selectView(entry.id), { small: true, width: 214,
+      combatIcon: icon, focusKey: `talent-view:${info.heroId}:${entry.id}` });
+    tab.dataset.tone = ['ember', 'azure', 'violet'][index];
+    tab.setAttribute('aria-pressed', String(isCurrent));
+    tabs.append(tab);
+  }
+  body.append(el('header', 'workbench-heading', text('Дерево навыков', 330, 23, '#efd599', true),
+    el('div', 'talent-points', text(`Очки ${info.points} / ${info.totalPoints}`, 142, 15, '#8ed2c1', true))), tabs);
+
+  if (showSkills) {
+    const current = skills.find(skill => skill.id === focus) || skills[0];
+    const cards = el('div', 'ability-grid');
+    for (const skill of skills) {
+      const status = skill.unlocked ? `${skill.cost} MP${skill.runeId ? ' · Руна' : ''}` : `Уровень ${skill.unlockLevel}`;
+      const tile = button(skill.name, () => selectNode(skill.id), { small: true, width: 186,
+        ariaLabel: `${skill.name} · ${status}`, focusKey: `ability:${info.heroId}:${skill.id}` });
+      tile.classList.add('ability-tile');
+      tile.dataset.state = skill.unlocked ? 'learned' : 'locked';
+      tile.setAttribute('aria-pressed', String(current?.id === skill.id));
+      tile.prepend(abilityArt(el, skillIcon(skill), 'violet'));
+      tile.append(text(status, 120, 13, '#8ed2c1'));
+      cards.append(tile);
+    }
+    body.append(cards);
+    if (current) {
+      const def = definitions[current.id];
+      body.append(el('section', 'talent-inspector', text(current.name, 410, 19, '#efd599', true),
+        text(current.unlocked ? `${current.cost} MP · ${SCOPE_LABEL[current.target] || 'Боевое умение'}` : `Откроется на уровне ${current.unlockLevel}`,
+          440, 14, '#8ed2c1'),
+        text(def?.description || '', 655, 16),
+        current.unlocked && ['damage', 'break'].includes(current.kind)
+          ? text(`Мощность ×${def?.power ?? 1}. В бою виден прогноз по цели.`, 560, 14) : null));
+    }
+    return;
+  }
+
+  const tone = branch === info.branches[0] ? 'ember' : 'azure';
+  const current = branch.nodes.find(node => node.id === focus) || branch.nodes.find(node => node.available) || branch.nodes[0];
+  const cards = el('ol', 'talent-route');
+  cards.ariaLabel = branch.name;
+  for (const [index, node] of branch.nodes.entries()) {
+    const state = node.learned ? 'learned' : node.available ? 'available' : 'locked';
+    const status = node.learned ? 'Изучено' : node.available ? 'Доступно' : `Уровень ${node.level} · Закрыто`;
+    const tile = button(node.name, () => selectNode(node.id), { small: true, width: 168,
+      ariaLabel: `${node.name} · ступень ${index + 1} · ${node.reason || status}`,
+      focusKey: `talent-node:${info.heroId}:${node.id}` });
+    const art = abilityArt(el, node.passive ? (tone === 'ember' ? 'attack' : 'defend') : skillIcon(definitions[node.skillId] || {}), tone);
+    tile.classList.add('ability-tile');
+    tile.setAttribute('aria-pressed', String(current.id === node.id));
+    tile.prepend(art);
+    tile.append(text(status, 150, 12, '#8ed2c1'));
+    const frame = el('li', 'talent-step', el('div', 'talent-tier', text(TIERS[index] || index + 1, 40, 14, '#efd599', true)), tile);
+    frame.dataset.state = state;
+    if (canEdit && node.available) {
+      const add = button('+', () => learn(node.id), { small: true, width: 40,
+        focusKey: `talent:${info.heroId}:${node.id}`, ariaLabel: `Изучить ${node.name} · ${node.cost} очко` });
+      add.classList.add('talent-add');
+      frame.append(add);
+    }
+    cards.append(frame);
+  }
+  const type = current.passive ? 'Пассивный талант' : `Руна · ${definitions[current.skillId]?.name || 'Боевое умение'}`;
+  body.append(cards, el('section', 'talent-inspector',
+    text(current.name, 470, 19, '#efd599', true), text(type, 470, 14, '#8ed2c1'),
+    text(current.description, 655, 16),
+    text(current.reason || `Уровень ${current.level} · Цена ${current.cost} очко`, 655, 14, '#8ed2c1')));
+  const footer = el('div', 'talent-footer');
+  if (info.nextPointLevel) footer.append(text(`Следующее очко на уровне ${info.nextPointLevel}`, 360, 13));
+  if (info.spent) footer.append(button('Вернуть очки талантов', reset, { small: true, width: 234,
+    disabled: !canEdit, focusKey: `reset:${info.heroId}` }));
+  if (footer.childElementCount) body.append(footer);
 }
 
 export function renderCampaignComic(body, { comic, page, el, text, button, finish, previous, next }) {

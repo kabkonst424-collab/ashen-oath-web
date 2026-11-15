@@ -15,7 +15,7 @@ import { combatMotionPolicy, actionLunge, impactRecoil, meleeTiming, meleeTravel
 import { actionTimeline, actionClipPhase } from './presentation-timing.js?v=motion-110';
 import { reactionPhase, contactReaction, transitionBlend, hasUnsettledDeath } from './combat200-animation-policy.js?v=0.16.0-demo';
 import { PartyTrail, loopTiming, COMBAT_MOTION, combatPlaybackRate } from './party-motion.js?v=motion-110';
-import { walkable } from './model.js?v=stride-112';
+import { walkable } from './model.js?v=companion-120';
 import { gaitForSpeed, gaitRate, gaitEntryPhase } from './actor-locomotion.js?v=motion-110';
 import { applyFootContact, resetFootContact } from './foot-contact.js?v=motion-110';
 import { applyPartyGait, leavePartyGait, resetPartyGait } from './party-gait.js?v=stride-112';

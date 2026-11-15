@@ -97,13 +97,16 @@ const pointsAt = level => POINT_LEVELS.filter(required => level >= required).len
 
 export function talentCatalog(hero, learned = [], mode = 'explore') {
  const totalPoints = pointsAt(hero.level), points = totalPoints - learned.length;
- return { heroId: hero.id, points, totalPoints, spent: learned.length, branches: (TREES[hero.id] || []).map(b => ({
-  id: b.id, name: b.name, nodes: b.nodes.map(({ id, name, description }, index) => {
+ return { heroId: hero.id, points, totalPoints, spent: learned.length,
+  nextPointLevel: POINT_LEVELS.find(level => level > hero.level) ?? null,
+  branches: (TREES[hero.id] || []).map(b => ({
+  id: b.id, name: b.name, nodes: b.nodes.map(({ id, name, description, skill, stats }, index) => {
    const level = NODE_LEVELS[index], acquired = learned.includes(id), predecessor = b.nodes[index - 1];
    const reason = acquired ? 'Изучено' : hero.level < level ? `Требуется уровень ${level}` :
     predecessor && !learned.includes(predecessor.id) ? `Сначала изучите «${predecessor.name}»` :
     points < 1 ? 'Нет очков талантов' : mode !== 'explore' ? 'Таланты изучаются в пути' : '';
-   return { id, name, description, level, cost: 1, learned: acquired, available: !reason, reason };
+   return { id, name, description, level, cost: 1, learned: acquired, available: !reason, reason,
+    skillId: skill?.id ?? null, passive: !!stats };
   }),
  })) };
 }

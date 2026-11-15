@@ -1,0 +1,244 @@
+/* Character, inventory and talent windows. Artwork and raster labels share the game's atlas. */
+#gameModal[data-companion-view] {
+  --sheet-gold: #a57b43;
+  --sheet-pale: #f2cc83;
+  width: min(1160px, 96vw);
+  padding: 0;
+  border: 1px solid #c59858;
+  border-radius: 8px;
+  background: #121418;
+  box-shadow: 0 16px 65px #000d, 0 0 0 2px #2a2017, 0 0 0 3px #826039;
+}
+
+#gameModal[data-companion-view]::backdrop {
+  background: #0b080aca;
+  backdrop-filter: none;
+}
+
+#gameModal[data-companion-view] #modalContent {
+  padding: 14px;
+  border: 0;
+  border-radius: 0;
+  background: linear-gradient(145deg, #3b2622 0, #201c1c 31%, #17191c 80%);
+}
+
+#gameModal[data-companion-view] .modal-header {
+  margin: -14px -14px 12px;
+  padding: 8px 14px;
+  border-block: 1px solid #9f733f;
+  background: linear-gradient(#4a3026, #201715);
+  box-shadow: inset 0 0 0 2px #0e0e10;
+}
+
+#gameModal[data-companion-view] .modal-header > .bitmap-text { align-self: center; }
+#gameModal[data-companion-view] .modal-header > button { background: linear-gradient(#7e352f, #3b1f22); }
+#gameModal[data-companion-view] .paint-button { margin: 0; }
+#gameModal[data-companion-view] :is(button, summary):focus-visible { outline: 2px solid #b2e8db; outline-offset: 2px; }
+#gameModal[data-companion-view] .drag-feedback:empty { display: none; }
+
+.companion-bar { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+.companion-tabs { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+#gameModal .companion-tab { min-height: 46px; gap: 5px; padding: 4px 7px; background: linear-gradient(#343138, #181b20); }
+.companion-tab .sprite.companion-thumb { width: 32px; height: 32px; border: 1px solid #926f43; border-radius: 4px; }
+#gameModal .companion-tab[aria-pressed="true"] { background: linear-gradient(#68472e, #362622); border-color: #f2cc83; }
+#gameModal .companion-switch { min-width: 92px; flex: 0 0 auto; background: linear-gradient(#29434a, #15292f); }
+
+.workbench-inventory,
+.workbench-development {
+  display: grid;
+  gap: 10px;
+  align-items: start;
+}
+.workbench-inventory { grid-template-columns: minmax(220px, .9fr) minmax(306px, 1.5fr) minmax(218px, .9fr); }
+.workbench-development { grid-template-columns: minmax(220px, .82fr) minmax(0, 2fr); }
+.workbench-panel {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--sheet-gold);
+  border-radius: 5px;
+  background: radial-gradient(ellipse at 45% 0%, #332926, #1b1b20 73%);
+  box-shadow: inset 0 0 0 2px #131216, inset 0 0 0 3px #a57b4333;
+}
+.workbench-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3px 8px;
+  margin: -5px -4px 9px;
+  padding: 3px 8px;
+  border-block: 1px solid #73543a;
+  background: linear-gradient(90deg, #4c3226, #302523 57%, #242026);
+}
+.workbench-heading > img { align-self: center; }
+
+.equipment-paper {
+  display: grid;
+  grid-template-columns: minmax(44px, 1fr) minmax(78px, 2.2fr) minmax(44px, 1fr);
+  grid-template-areas: "weapon portrait armor" "charm portrait armor";
+  align-items: center;
+  gap: 6px;
+  padding: 10px 4px;
+  border: 1px solid #5f4b36;
+  background: radial-gradient(ellipse, #464138, #14151b 72%);
+}
+.equipment-paper .sprite.sheet-portrait { grid-area: portrait; }
+#gameModal .sprite.sheet-portrait {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  max-width: 142px;
+  justify-self: center;
+  border: 2px solid #c79b57;
+  border-radius: 6px;
+  box-shadow: 0 4px 20px #0009;
+}
+.equipment-cell { min-width: 0; display: grid; justify-items: center; gap: 2px; }
+.equipment-cell[data-slot="weapon"] { grid-area: weapon; }
+.equipment-cell[data-slot="armor"] { grid-area: armor; }
+.equipment-cell[data-slot="charm"] { grid-area: charm; }
+.equipment-cell > .bitmap-text { margin: 0; }
+
+.sheet-vitals { display: grid; gap: 4px; margin: 8px 0; }
+.sheet-meter { display: block; height: 8px; border: 1px solid #715b43; border-radius: 3px; background: #121317; box-shadow: inset 0 1px 3px #0009; }
+.sheet-meter > i { display: block; height: 100%; border-radius: 2px; }
+.sheet-meter.hp > i { background: linear-gradient(#de805c, #8d3435); }
+.sheet-meter.mp > i { background: linear-gradient(#59b0cf, #2d5d97); }
+.sheet-meter.xp > i { background: linear-gradient(#f6cd77, #ab773c); }
+.sheet-experience { margin-block: 9px; }
+.sheet-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
+.sheet-stat { padding: 3px; border: 1px solid #6c5238; background: linear-gradient(#2d2726, #191a1e); }
+.hero-profile { display: flex; align-items: center; gap: 8px; }
+#gameModal .hero-profile .sprite.sheet-portrait { flex: 0 0 42%; width: 42%; }
+.hero-sheet > .window-disclosure { margin: 6px 0 0; }
+
+.backpack-filters { display: flex; flex-wrap: wrap; align-items: stretch; gap: 4px; margin-bottom: 6px; }
+#gameModal .backpack-filters .paint-button { flex: 1 1 62px; min-height: 44px; padding: 4px 5px; }
+#gameModal .backpack-filters .paint-button[aria-pressed="true"] { border-color: var(--sheet-pale); background: linear-gradient(#755137, #33241f); }
+.backpack-search { display: grid; grid-template-columns: minmax(0, 1fr) 44px; gap: 4px; margin-block: 6px; }
+#gameModal .backpack-search .window-search { background: #14161a; min-height: 44px; }
+#gameModal .backpack-search input { height: 44px; }
+#gameModal .backpack-search button { padding: 5px 10px; }
+#gameModal .backpack-sheet .bag-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; padding: 3px; background: #101216; border: 1px solid #5f4c36; }
+#gameModal .backpack-sheet .bag-grid:empty { display: none; }
+.backpack-tools { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
+#gameModal .backpack-tools .paint-button { flex: 1 1 100px; }
+#gameModal .touch-drag-switch[aria-pressed="true"] { border-color: #b4dca9; background: linear-gradient(#355149, #192829); }
+#gameModal .backpack-sheet .window-disclosure { margin: 6px 0 0; }
+
+#gameModal .workbench-inventory .item-slot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: auto;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0;
+  aspect-ratio: 1;
+  border: 1px solid #7b654b;
+  border-radius: 3px;
+  background: radial-gradient(ellipse at 50% 74%, #403534, #211e24 75%);
+  box-shadow: inset 0 0 0 1px #151418;
+}
+#gameModal .workbench-inventory .item-slot[data-filled="false"] { background: linear-gradient(135deg, #262429, #191a1f); border-color: #544b40; }
+#gameModal .workbench-inventory .gear-slot { width: clamp(44px, 4.4vw, 59px); }
+#gameModal .workbench-inventory .item-slot .sprite.icons { width: min(80%, 50px); height: auto; aspect-ratio: 1; }
+#gameModal .workbench-inventory .item-slot[data-rarity="uncommon"] { border-color: #84ae78; background: radial-gradient(#385143, #202b24 78%); }
+#gameModal .workbench-inventory .item-slot[data-rarity="rare"] { border-color: #93ace0; background: radial-gradient(#3b4866, #222339 78%); }
+#gameModal .workbench-inventory .item-slot.selected { border-color: #ffe09e; box-shadow: inset 0 0 0 2px #e5b96c, inset 0 0 16px #b6813a75; }
+#gameModal .workbench-inventory .item-slot:hover { border-color: var(--sheet-pale); }
+#gameModal .workbench-inventory .item-slot img.qty { width: min(52%, 27px); min-height: 0; padding: 0; right: 1px; bottom: 2px; }
+.empty-slot-symbol { opacity: .24; filter: grayscale(1); pointer-events: none; }
+.workbench-inventory .item-detail { display: flex; flex-direction: column; gap: 4px; margin: 0; }
+.workbench-inventory .item-detail > .sprite.icons { width: 58px; height: 58px; border: 1px solid #896b45; border-radius: 4px; }
+.workbench-inventory .item-detail .window-compare { margin-block: 4px; background: #242724; border-color: #846a46; }
+.workbench-inventory .item-detail .paint-button { max-width: 100%; }
+
+.talent-points { border: 1px solid #a27d47; border-radius: 4px; padding: 0 5px; background: #1c2527; }
+.talent-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; margin: 7px 0 10px; }
+#gameModal .talent-tabs .paint-button { min-height: 50px; gap: 6px; padding: 3px 6px; background: linear-gradient(#393035, #25222a); }
+#gameModal .talent-tabs .paint-button[aria-pressed="true"] { border-color: var(--sheet-pale); box-shadow: inset 0 0 0 1px #bfa069; }
+#gameModal .talent-tabs [data-tone="ember"][aria-pressed="true"] { background: linear-gradient(#6c3428, #392027); }
+#gameModal .talent-tabs [data-tone="azure"][aria-pressed="true"] { background: linear-gradient(#314e68, #22293e); }
+#gameModal .talent-tabs [data-tone="violet"][aria-pressed="true"] { background: linear-gradient(#574065, #292139); }
+
+.talent-route,
+.ability-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 0; margin: 0; }
+.talent-route { list-style: none; }
+.talent-step { position: relative; min-width: 0; padding: 4px; border: 1px solid #66584d; border-radius: 4px; background: #191a20; }
+.talent-step[data-state="available"] { border-color: #d59f65; background: linear-gradient(#512b27, #2d2228); }
+.talent-step[data-state="learned"] { border-color: #b2aa68; background: linear-gradient(#40432e, #2c2e26); }
+.talent-tier { margin: -4px -4px 4px; text-align: center; border-bottom: 1px solid #74604d; background: #19181d; }
+.talent-tier > .bitmap-text { width: 24px !important; margin-inline: auto; }
+.talent-step:not(:last-child) .talent-tier::after {
+  content: ""; position: absolute; top: 12px; left: 100%; width: 9px; border-top: 2px solid #76644c;
+}
+.talent-step[data-state="learned"] .talent-tier::after { border-color: #dfad63; }
+#gameModal .ability-tile { display: grid; justify-items: center; align-content: start; gap: 3px; width: 100%; padding: 5px; background: linear-gradient(#342b31, #211f26); }
+#gameModal .ability-tile[aria-pressed="true"] { border-color: #f5d196; background: linear-gradient(#584437, #2a252a); box-shadow: inset 0 0 0 1px #caa069; }
+.ability-art {
+  display: grid;
+  width: 58px;
+  height: 58px;
+  place-items: center;
+  justify-self: center;
+  border: 1px solid #b88a60;
+  border-radius: 4px;
+  background: radial-gradient(#9b563c, #4e2833 78%);
+  box-shadow: inset 0 0 10px #160f1b8c;
+}
+.ability-art.tone-azure { background: radial-gradient(#537c92, #193655 78%); }
+.ability-art.tone-violet { background: radial-gradient(#6b588a, #372849 78%); }
+.ability-art > .combat-icon { width: 46px; height: 46px; }
+[data-state="locked"] .ability-art { filter: grayscale(.92); opacity: .64; }
+#gameModal .talent-add { display: flex; justify-content: center; width: 100%; min-height: 44px; margin-top: 4px; padding: 2px 4px; background: linear-gradient(#90413a, #53282b); border-color: #d39f65; }
+.talent-add .bitmap-text { width: 17px !important; }
+.talent-inspector { display: grid; gap: 3px; margin-top: 8px; padding: 10px; border: 1px solid #856844; background: linear-gradient(110deg, #28272a, #201e25); }
+.talent-footer { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 5px; margin-top: 7px; }
+
+@media (max-width: 880px) {
+  .workbench-inventory { grid-template-columns: minmax(210px, .95fr) minmax(280px, 1.35fr); }
+  .workbench-inventory .item-detail { grid-column: 1 / -1; }
+}
+
+@media (max-width: 630px) {
+  #gameModal[data-companion-view] #modalContent { padding: 7px; }
+  #gameModal[data-companion-view] .modal-header { margin: -7px -7px 8px; padding: 4px 7px; }
+  .companion-bar { flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+  .companion-tabs { flex: 1 1 0; gap: 4px; }
+  #gameModal .companion-tab { flex: 0 0 auto; width: auto; min-width: 70px; padding-inline: 4px; }
+  #gameModal .companion-tab .bitmap-text { width: 47px !important; }
+  .companion-tab .sprite.companion-thumb { width: 26px; height: 26px; }
+  #gameModal .companion-switch { width: auto; min-width: 74px; padding-inline: 5px; }
+  #gameModal .companion-switch .bitmap-text { width: 71px !important; }
+  .workbench-inventory, .workbench-development { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .workbench-development .talent-sheet { grid-row: 1; }
+  .workbench-panel { padding: 8px; }
+  .equipment-paper { grid-template-columns: 72px repeat(3,minmax(0,1fr)); grid-template-areas: "portrait weapon armor charm"; padding: 5px; }
+  #gameModal .equipment-paper .sprite.sheet-portrait { width: 64px; }
+  .equipment-cell { width: 100%; }
+  .equipment-sheet .sheet-vitals { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 7px; }
+  .equipment-sheet .sheet-stats { display: none; }
+  .backpack-tools .touch-drag-switch { display: inline-flex; }
+}
+
+@media (max-width: 440px) {
+  #gameModal .talent-tabs { display: flex; flex-wrap: wrap; }
+  #gameModal .talent-tabs .paint-button { flex: 1 1 120px; }
+  .talent-route { grid-template-columns: 1fr; }
+  .ability-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .talent-step { display: grid; grid-template-columns: 32px minmax(0,1fr) auto; gap: 4px; align-items: stretch; }
+  .talent-step .talent-tier { display: grid; align-content: center; margin: 0; border: 0; }
+  .talent-step .talent-tier::after { display: none; }
+  #gameModal .talent-step .ability-tile { grid-template-columns: 42px minmax(0,1fr); text-align: left; justify-items: start; }
+  .talent-step .ability-art { grid-row: span 2; width: 40px; height: 40px; }
+  .talent-step .ability-art > .combat-icon { width: 33px; height: 33px; }
+  #gameModal .talent-add { width: 44px; min-height: 44px; margin: 0; }
+  #gameModal .backpack-sheet .bag-grid { grid-template-columns: repeat(5, minmax(0,1fr)); }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #gameModal .touch-drag-switch { display: none; }
+}

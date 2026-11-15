@@ -1,4 +1,4 @@
-import * as M from './model.js?v=stride-112';
+import * as M from './model.js?v=companion-120';
 import * as CONTENT from './content.js?v=campaign-v1';
 
 // Routes and the schematic take their boundaries from the movement model.
@@ -105,7 +105,27 @@ export function planPath(areaId,start,end,{walkable=M.walkable,bounds,step=2,max
  }
  return {status:'ready',points:smooth};
 }
-phase(70,(v,s,selection,c)=>{if(!v.waypoint)return;const endpoint=v.waypoint.approach,key=JSON.stringify([s.runId,s.areaId,v.waypoint.id,endpoint,Math.floor(v.player.x/2),Math.floor(v.player.z/2),s.flags,s.claimed,s.defeated]);let path;if(c.routeCache?.key===key&&c.routeCache.path.status==='ready'&&validSegment(s.areaId,v.player,c.routeCache.path.points[1]||endpoint,c.walkable)){c.metrics.routeCacheHits++;path={...c.routeCache.path,points:[{...v.player},...c.routeCache.path.points.slice(1)]};}else{c.metrics.routeComputations++;path=planPath(s.areaId,v.player,endpoint,{walkable:c.walkable,bounds:v.area.bounds});c.routeCache={key,path};}v.route={...v.route,...path};if(path.status==='unreachable')v.route.reason='Не удалось построить доступный путь. Проверьте цель в журнале.';});
+phase(70,(v,s,selection,c)=>{
+ if(!v.waypoint)return;
+ const endpoint=v.waypoint.approach;
+ const key=JSON.stringify([s.runId,s.areaId,v.waypoint.id,endpoint,Math.floor(v.player.x/2),Math.floor(v.player.z/2),s.flags,s.claimed,s.defeated]);
+ const cached=c.routeCache?.key===key?c.routeCache:null;
+ // A failed search is reusable only from the exact same position. Moving even
+ // inside one grid cell can reveal a path, unlike following a valid cached route.
+ const sameFailedStart=cached?.path.status==='unreachable'&&cached.from?.x===v.player.x&&cached.from?.z===v.player.z;
+ let path;
+ if(sameFailedStart){
+  c.metrics.routeCacheHits++;path={...cached.path,points:[]};
+ }else if(cached?.path.status==='ready'&&validSegment(s.areaId,v.player,cached.path.points[1]||endpoint,c.walkable)){
+  c.metrics.routeCacheHits++;path={...cached.path,points:[{...v.player},...cached.path.points.slice(1)]};
+ }else{
+  c.metrics.routeComputations++;
+  path=planPath(s.areaId,v.player,endpoint,{walkable:c.walkable,bounds:v.area.bounds});
+  c.routeCache={key,path,from:{x:v.player.x,z:v.player.z}};
+ }
+ v.route={...v.route,...path};
+ if(path.status==='unreachable')v.route.reason='Не удалось построить доступный путь. Проверьте цель в журнале.';
+});
 phase(96,v=>{if(v.route.points.length>1)v.distance=Math.ceil(v.route.points.slice(1).reduce((sum,p,i)=>sum+distance(v.route.points[i],p),0));});
 
 

@@ -1,6 +1,6 @@
 {
   "id": "ashen-oath",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "releaseStatus": "release",
   "demo": false,
   "posterArtRevision": {
@@ -2126,12 +2126,12 @@
     "act1PriorDesignTargetMinutes": 180
   },
   "platform": "WebGL2",
-  "builtAt": "2026-11-14T19:22:42.116Z",
+  "builtAt": "2026-11-15T09:49:11Z",
   "files": [
     {
       "path": "README.md",
-      "bytes": 1921,
-      "sha256": "47cb06219c9e708e05bc1bb185341eb99dd40eba7ab4bc699c52455d0500f70b"
+      "bytes": 2200,
+      "sha256": "74abf99a999467ed42d43a14162d4041b5eb638dcfae8a3f9b68d13c124d3721"
     },
     {
       "path": "act1.css",
@@ -2140,8 +2140,8 @@
     },
     {
       "path": "act1.html",
-      "bytes": 1726,
-      "sha256": "fc8fe7e62a122f58709103a93b45c0d987b7127efa4f5b727db13ed413ac92bb"
+      "bytes": 1789,
+      "sha256": "fb7ff950811d070689a5e0326142db9c6591ac6d6302f03434df4d7264ac0d37"
     },
     {
       "path": "assets/act1/animation/animation-library.json",
@@ -4029,14 +4029,34 @@
       "sha256": "b738b588295e10c6df735c36cfd14172e21ea48f1d42fb1e0fbc59f45103d750"
     },
     {
+      "path": "companion.css",
+      "bytes": 13619,
+      "sha256": "d134155a4e8c96a5b66d679580598c5d15fd659470de2252a75585557cb9f82a"
+    },
+    {
+      "path": "docs/improvements/1.2.0.md",
+      "bytes": 2890,
+      "sha256": "73403e4bca22d220c347aef59aa4fa5e379f55e8662f001b982eb6440e5db904"
+    },
+    {
+      "path": "docs/improvements/PLAN.txt",
+      "bytes": 8511,
+      "sha256": "e6eef9dbdf9aa279b5c3bdc056b2625f9960a8826615c07506f6bcc93128fb71"
+    },
+    {
+      "path": "docs/improvements/ledger.json",
+      "bytes": 548,
+      "sha256": "e4158c2f453e73f9e731f5a74696d0760db2a7499e9129900331b3a6010400af"
+    },
+    {
       "path": "forged.css",
       "bytes": 1343,
       "sha256": "60cd819b0a9da5c4926210079ca722a90fb179e7a65ff8c1453003cd2b268a4a"
     },
     {
       "path": "index.html",
-      "bytes": 1726,
-      "sha256": "fc8fe7e62a122f58709103a93b45c0d987b7127efa4f5b727db13ed413ac92bb"
+      "bytes": 1789,
+      "sha256": "fb7ff950811d070689a5e0326142db9c6591ac6d6302f03434df4d7264ac0d37"
     },
     {
       "path": "interface-windows.css",
@@ -4150,8 +4170,8 @@
     },
     {
       "path": "src/act1/campaign-progression.js",
-      "bytes": 12421,
-      "sha256": "98d38bf491b4d0ad9d165c5092eaebf74aa39b6a6fdb3790d4a64340fcdf5de9"
+      "bytes": 12561,
+      "sha256": "aa2ab69c1c46431c25bb43291705e35b20741aa5173239066615d5f6d23b34d1"
     },
     {
       "path": "src/act1/campaign-starters.js",
@@ -4160,8 +4180,8 @@
     },
     {
       "path": "src/act1/campaign-ui.js",
-      "bytes": 4861,
-      "sha256": "4bb91a33ca1b2a53751ec3c21a9ef8153cc70d35e91be099740cc96c3bea9a21"
+      "bytes": 9954,
+      "sha256": "1a9debeaffb47fc9e1519a09442de2954d8a668c53a27907d797cbe15674e6f6"
     },
     {
       "path": "src/act1/campaign-visuals.js",
@@ -4270,8 +4290,8 @@
     },
     {
       "path": "src/act1/interface-100.js",
-      "bytes": 44207,
-      "sha256": "f673bf8bb55bae77dcc77251733a6fe706ebca60675d86b4de85b0ad128da0c6"
+      "bytes": 49638,
+      "sha256": "658d4da94a97227839febeafc2f4074679a668e426b5084bfcc5268553625c33"
     },
     {
       "path": "src/act1/interface-presentation.js",
@@ -4295,8 +4315,8 @@
     },
     {
       "path": "src/act1/main.js",
-      "bytes": 113468,
-      "sha256": "153265d84d921d8e75441d2add6fe90673a98c0134176b221aaba9695e0cefe3"
+      "bytes": 113822,
+      "sha256": "e098886cd7eaaaafa166f5204157c9cdf5655e4d63eaee822b0690306bf198da"
     },
     {
       "path": "src/act1/meshy-world.js",
@@ -4305,13 +4325,13 @@
     },
     {
       "path": "src/act1/minimap.js",
-      "bytes": 13645,
-      "sha256": "056de32960c485c75910473b583bce5c93e4ec45b1cc8a2b9d1f8675e8c48db5"
+      "bytes": 13648,
+      "sha256": "0f9397e3e44865fd4b9816b3d016a7adba88c6efad1adaa0de0ded47ea02bf00"
     },
     {
       "path": "src/act1/model.js",
-      "bytes": 123587,
-      "sha256": "8c17e607173c291309dcaf5e93cb855b5a342b96f77d6c153f009058cf2902c5"
+      "bytes": 123791,
+      "sha256": "a70349c05a2875866d45f57e0b91ff33a2a1714f15b4f6abfe004adc505a1d6e"
     },
     {
       "path": "src/act1/motion-clip-corrections.js",
@@ -4320,8 +4340,8 @@
     },
     {
       "path": "src/act1/navigation.js",
-      "bytes": 15875,
-      "sha256": "9add0c2132c8eb873c52f8d8630f95bded0a7ddf282f5dc033f958f8abc5390e"
+      "bytes": 16347,
+      "sha256": "c23b98d71399a34602a5a7d3bb9e008a137a2cd0ccc5aa9ba2797e4205320767"
     },
     {
       "path": "src/act1/painted-material.js",
@@ -4405,8 +4425,8 @@
     },
     {
       "path": "src/act1/save.js",
-      "bytes": 13293,
-      "sha256": "2b11a90d9046236360fae67d847a949327d2f4b28c36a33f72a6cc6251f6d725"
+      "bytes": 13296,
+      "sha256": "95d8dca721572e608370f8f6eea5f36953b97ef4df432483f0fdcaf63d845f28"
     },
     {
       "path": "src/act1/source-facing.js",
@@ -4425,8 +4445,8 @@
     },
     {
       "path": "src/act1/ui-feedback.js",
-      "bytes": 8443,
-      "sha256": "a327ba3d247af8d9dd1c482436cb7172ecb06d101366f1f071e38bd2db5dff9f"
+      "bytes": 9599,
+      "sha256": "4c13ebfddea82d5bf43435e783190fe84c0be1063a42e1edf7d984bf607b8385"
     },
     {
       "path": "src/act1/ui-framing.js",
@@ -4440,8 +4460,8 @@
     },
     {
       "path": "src/act1/world.js",
-      "bytes": 107847,
-      "sha256": "68c3a6c39634138e6c9ee68b40ff1f64ff59b26355ab2b31c7558ab856660d97"
+      "bytes": 107850,
+      "sha256": "b3aa2e1fa7c82583a4eb17965cb8c2664b970ce54ef217ab1d6dc5011f87f0b0"
     },
     {
       "path": "src/act1/writer-session.js",
@@ -4487,6 +4507,21 @@
       "path": "style.css",
       "bytes": 13622,
       "sha256": "879615f8dcf700f612c736e16a2da70d93b75a698f6fdf7c04a8f25242c881bb"
+    },
+    {
+      "path": "tests/stage001-model.test.mjs",
+      "bytes": 10774,
+      "sha256": "834759ae8e1780f67c0d52f01b48d1ceba7842979a530b05ecca687dd3fa43ab"
+    },
+    {
+      "path": "tests/stage001-navigation.test.mjs",
+      "bytes": 2908,
+      "sha256": "3120a3425551a3eea37893d6980c7c75a5ea24a4231f188ed0edac10bd3a1cbd"
+    },
+    {
+      "path": "tests/stage001-ui.test.mjs",
+      "bytes": 14941,
+      "sha256": "155830e15229590b41f1c6ffd39c84663725dbac5e287342533fe2308d969544"
     }
   ],
   "paintedRevision": {
@@ -4692,5 +4727,13 @@
       "pelvic motion and counter rotation",
       "combat approach"
     ]
+  },
+  "companionUiRevision": {
+    "id": "companion-120",
+    "baseCommit": "3344eedea8662164ee82fed787826998aeed2a37",
+    "saveSchema": 2,
+    "improvements": 12,
+    "ledger": "docs/improvements/ledger.json",
+    "summary": "docs/improvements/1.2.0.md"
   }
 }

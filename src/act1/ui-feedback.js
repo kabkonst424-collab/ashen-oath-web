@@ -4,18 +4,28 @@ export function normalizeSettings(value={}){
    textScale:[1,1.25,1.5].includes(value?.textScale)?value.textScale:1,quality:value?.quality==='low'?'low':'high'};
 }
 export function captureSurface(root){
- const active=root.ownerDocument?.activeElement;
- return {key:root.contains(active)?active?.dataset?.focusKey||active?.ariaLabel:null,index:[...root.querySelectorAll('button,[role="button"],input,a,summary')].indexOf(active),scroll:[root,...root.querySelectorAll('[data-scroll-key],.scroll')].map(n=>({key:n.dataset?.scrollKey||null,top:n.scrollTop,left:n.scrollLeft}))};
+ const active=root.ownerDocument?.activeElement,inside=root.contains(active);
+ const selection=inside&&Number.isInteger(active?.selectionStart)&&Number.isInteger(active?.selectionEnd)?{start:active.selectionStart,end:active.selectionEnd,direction:active.selectionDirection||'none',scrollLeft:active.scrollLeft}:null;
+ return {selection,key:inside?active?.dataset?.focusKey||active?.ariaLabel:null,index:[...root.querySelectorAll('button,[role="button"],input,a,summary')].indexOf(active),scroll:[root,...root.querySelectorAll('[data-scroll-key],.scroll')].map(n=>({key:n.dataset?.scrollKey||null,top:n.scrollTop,left:n.scrollLeft}))};
 }
 export function restoreSurface(root,snapshot){
  if(!snapshot)return;
  const key=typeof snapshot==='string'?snapshot:snapshot.key;
  const candidates=[...root.querySelectorAll('button,[role="button"],input,a,summary')];
  const target=candidates.find(n=>(n.dataset?.focusKey||n.ariaLabel)===key&&!n.disabled)||(key&&snapshot.index>=0?candidates.filter(n=>!n.disabled)[Math.min(snapshot.index,candidates.filter(n=>!n.disabled).length-1)]:null);
- if(target)target.focus({preventScroll:true});
+ if(target){target.focus({preventScroll:true});const selection=snapshot.selection;if(selection&&(target.dataset?.focusKey||target.ariaLabel)===key&&typeof target.setSelectionRange==='function'){try{target.setSelectionRange(selection.start,selection.end,selection.direction);target.scrollLeft=selection.scrollLeft||0;}catch{}}}
  if(typeof snapshot==='object')for(const [i,n] of [root,...root.querySelectorAll('[data-scroll-key],.scroll')].entries()){const saved=snapshot.scroll?.find(s=>s.key&&s.key===n.dataset?.scrollKey)||snapshot.scroll?.[i];if(saved){n.scrollTop=saved.top;n.scrollLeft=saved.left;}}
 }
 export function captureDisclosures(root){return [...root.querySelectorAll('details[data-disclosure]')].map(n=>({key:n.dataset.disclosure,open:n.open,top:n.scrollTop,follow:n.scrollHeight-n.clientHeight-n.scrollTop<8}));}
+// Keep bitmap text live during IME input; rebuild results after the commit.
+export function bindSearchEditing(input,paint,onChange){
+ let composing=false,committed=input.value;
+ const commit=()=>{if(input.value===committed)return;committed=input.value;onChange(input.value);};
+ input.addEventListener('compositionstart',()=>{composing=true;input.dataset.composing='true';});
+ input.addEventListener('compositionend',()=>{composing=false;delete input.dataset.composing;paint();commit();});
+ input.oninput=event=>{paint();if(!composing&&!event?.isComposing)commit();};
+ input.onfocus=paint;input.onselect=paint;
+}
 export function restoreDisclosures(root,records=[]){for(const n of root.querySelectorAll('details[data-disclosure]')){const saved=records.find(r=>r.key===n.dataset.disclosure);if(saved){n.open=saved.open;n.scrollTop=saved.follow?n.scrollHeight:saved.top;}}}
 export function heroSummary(name,hero,stats,active,conditions=''){return [name,'Уровень '+hero.level,'Жизнь '+Math.ceil(hero.hp)+' из '+stats.maxHp,'Мана '+Math.ceil(hero.mp)+' из '+stats.maxMp,active?'Сейчас ходит':'',hero.hp<=0?'Павший. Нажмите для возрождения':'',conditions].filter(Boolean).join(' · ');}
 export function slotSummary(loc,item,name,owner,selected){const destination=loc.kind==='bag'?'Сумка · ячейка '+(loc.index+1):(owner||loc.heroId)+' · '+({weapon:'Оружие',armor:'Доспех',charm:'Талисман'}[loc.slot]||loc.slot);return destination+' · '+(item?name+' · количество '+item.qty:'Пустая ячейка')+(selected?' · Выбран для переноса':'');}
